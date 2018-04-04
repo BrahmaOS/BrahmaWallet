@@ -1,7 +1,7 @@
 # wallet
 A secure and native wallet for brahma os.
 
-##Building
+## Building
 To build everything from source, simply checkout the source and build using gradle on the build system you need.
 
  - JDK 1.8
