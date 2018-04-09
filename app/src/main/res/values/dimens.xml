@@ -1,0 +1,23 @@
+<resources>
+    <dimen name="height_toolbar">52dp</dimen>
+
+    <dimen name="font_size_display1">34sp</dimen>
+    <dimen name="font_size_headline">24sp</dimen>
+    <dimen name="font_size_title">20sp</dimen>
+    <dimen name="font_size_subheading">16sp</dimen>
+    <dimen name="font_size_body">14sp</dimen>
+    <dimen name="font_size_caption">12sp</dimen>
+
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+
+    <dimen name="space_unit">4dp</dimen>
+    <dimen name="space_smaller">8dp</dimen>
+    <dimen name="space_small">12dp</dimen>
+    <dimen name="space_normal">16dp</dimen>
+    <dimen name="space_large">24dp</dimen>
+    <dimen name="space_larger">32dp</dimen>
+    <dimen name="space_largest">40dp</dimen>
+</resources>

@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">BrahmaWallet</string>
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="title_wallets">Wallets</string>
+    <string name="title_markets">Markets</string>
+    <string name="title_profile">Profile</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_wallet_fragment">Hello wallet fragment</string>
+    <string name="hello_market_fragment">Hello market fragment</string>
+    <string name="hello_me_fragment">Hello me fragment</string>
+    <string name="title_brahma_wallet">Brahma Wallet</string>
+    <string name="brahma_wallet_desc">Your smart digital wallet</string>
+    <string name="action_create_wallet">Create Wallet</string>
+    <string name="action_import_wallet">Import Wallet</string>
 </resources>

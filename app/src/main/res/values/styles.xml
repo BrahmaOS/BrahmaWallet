@@ -1,8 +1,38 @@
 <resources>
 
+    <style name="Base.AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:actionBarSize">@dimen/height_toolbar</item>
+    </style>
+
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="android:Theme.Material.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+    <style name="AppTheme" parent="Base.AppTheme">
+        <item name="android:windowTranslucentStatus">true</item>
+        <!--<item name="android:fontFamily">monospace</item>
+        <item name="actionOverflowMenuStyle">@style/MenuActionStyle</item>
+        <item name="android:spinnerItemStyle">@style/MabTextAppearanceSpinnerItem</item>
+        <item name="android:listDivider">@drawable/divider_horizontal</item>-->
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <!-- single round button -->
+    <style name="RoundButtonSingle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:textSize">@dimen/font_size_body</item>
+        <item name="android:textColor">@color/main_btn_text</item>
+        <item name="android:layout_marginLeft">48dp</item>
+        <item name="android:layout_marginRight">48dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:background">@drawable/btn_round_bg</item>
     </style>
 
 </resources>

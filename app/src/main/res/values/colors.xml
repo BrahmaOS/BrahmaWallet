@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimary">@color/master</color>
+    <color name="colorPrimaryDark">@color/master</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="master">#D3AB5A</color>
+
+    <color name="main_bg">#F6F6F6</color>
+    <color name="main_btn_bg">@color/master</color>
+    <color name="main_btn_selected_bg">@color/master</color>
+    <color name="main_btn_disabled_bg">#cccccc</color>
+    <color name="main_btn_text">#FFFFFF</color>
 </resources>
