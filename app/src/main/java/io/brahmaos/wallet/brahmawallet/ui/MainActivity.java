@@ -77,7 +77,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * TAB 页面的适配
+     * Represent each page as a fragment that is persistently
+     * kept in the fragment manager
      */
     private class MainViewPagerAdapter extends FragmentPagerAdapter {
 
