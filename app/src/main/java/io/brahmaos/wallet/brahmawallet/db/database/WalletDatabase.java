@@ -65,6 +65,14 @@ public abstract class WalletDatabase extends RoomDatabase {
                     @Override
                     public void onCreate(@NonNull SupportSQLiteDatabase db) {
                         super.onCreate(db);
+                        // Check whether the database already exists after first create database
+                        sInstance.updateDatabaseCreated(appContext);
+                    }
+
+                    @Override
+                    public void onOpen(@NonNull SupportSQLiteDatabase db) {
+                        super.onOpen(db);
+                        // Check whether the database already exists after access database
                         sInstance.updateDatabaseCreated(appContext);
                     }
                 }).build();

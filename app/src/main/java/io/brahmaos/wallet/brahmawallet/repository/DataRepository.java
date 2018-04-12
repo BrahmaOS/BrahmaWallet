@@ -9,6 +9,7 @@ import java.util.List;
 
 import io.brahmaos.wallet.brahmawallet.db.database.WalletDatabase;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
+import io.brahmaos.wallet.util.BLog;
 import rx.Completable;
 
 /**
@@ -29,6 +30,7 @@ public class DataRepository {
                 new Observer<List<AccountEntity>>() {
                     @Override
                     public void onChanged(@Nullable List<AccountEntity> accountEntities) {
+                        BLog.e("data repository", "" + mDatabase.getDatabaseCreated().getValue());
                         if (mDatabase.getDatabaseCreated().getValue() != null) {
                             mObservableAccounts.postValue(accountEntities);
                         }
@@ -60,9 +62,5 @@ public class DataRepository {
 
     public void createAccount(AccountEntity account) {
         mDatabase.accountDao().insertAccount(account);
-    }
-
-    public LiveData<Boolean> isDatabaseExist() {
-        return mDatabase.getDatabaseCreated();
     }
 }

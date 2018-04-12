@@ -7,14 +7,13 @@ import android.annotation.TargetApi;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import org.web3j.crypto.CipherException;
 import org.web3j.crypto.WalletUtils;
@@ -23,7 +22,6 @@ import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.util.concurrent.BlockingDeque;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -67,7 +65,6 @@ public class CreateAccountActivity extends BaseActivity {
         setContentView(R.layout.activity_create_account);
         ButterKnife.bind(this);
         showNavBackBtn();
-
         mViewModel = ViewModelProviders.of(this).get(AccountViewModel.class);
     }
 
@@ -135,7 +132,7 @@ public class CreateAccountActivity extends BaseActivity {
             account.setAddress("address");
             account.setFilename(filename);
 
-            mViewModel.createCount(account)
+            mViewModel.createAccount(account)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(() -> {

@@ -31,7 +31,7 @@
         </activity>
         <activity
             android:name=".ui.account.CreateAccountActivity"
-            android:label="@string/title_activity_create_account"></activity>
+            android:label="@string/title_activity_create_account" />
     </application>
 
 </manifest>

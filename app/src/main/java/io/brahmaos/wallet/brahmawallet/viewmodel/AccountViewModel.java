@@ -35,19 +35,12 @@ public class AccountViewModel extends AndroidViewModel {
     // MediatorLiveData can observe other LiveData objects and react on their emissions.
     private final MediatorLiveData<List<AccountEntity>> mObservableAccounts;
 
-    private final MediatorLiveData<Boolean> mObservableDatabaseFlag;
-
     public AccountViewModel(Application application) {
         super(application);
 
         mObservableAccounts = new MediatorLiveData<>();
         // set by default null, until we get data from the database.
         mObservableAccounts.setValue(null);
-
-        mObservableDatabaseFlag = new MediatorLiveData<>();
-        mObservableDatabaseFlag.setValue(null);
-
-        BLog.e("viewModel", "" + ((WalletApp) application).getRepository().isDatabaseExist().getValue());
 
         LiveData<List<AccountEntity>> accounts = ((WalletApp) application).getRepository()
                 .getAccounts();
@@ -59,14 +52,6 @@ public class AccountViewModel extends AndroidViewModel {
                 mObservableAccounts.setValue(value);
             }
         });
-
-        LiveData<Boolean> databaseFlag = ((WalletApp) application).getRepository().isDatabaseExist();
-        mObservableDatabaseFlag.addSource(databaseFlag, new Observer<Boolean>() {
-            @Override
-            public void onChanged(@Nullable Boolean value) {
-                mObservableDatabaseFlag.setValue(value);
-            }
-        });
     }
 
     /**
@@ -76,13 +61,9 @@ public class AccountViewModel extends AndroidViewModel {
         return mObservableAccounts;
     }
 
-    public Completable createCount(AccountEntity account) {
+    public Completable createAccount(AccountEntity account) {
         return Completable.fromAction(() -> {
             ((WalletApp) getApplication()).getRepository().createAccount(account);
         });
-    }
-
-    public LiveData<Boolean> getDatabaseCreated() {
-        return mObservableDatabaseFlag;
     }
 }

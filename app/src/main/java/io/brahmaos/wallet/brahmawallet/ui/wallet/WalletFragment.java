@@ -15,7 +15,6 @@ import android.widget.TextView;
 import java.util.List;
 
 import io.brahmaos.wallet.brahmawallet.R;
-import io.brahmaos.wallet.brahmawallet.db.database.WalletDatabase;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.ui.account.CreateAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseFragment;
@@ -33,7 +32,6 @@ public class WalletFragment extends BaseFragment {
     }
 
     private Button createWalletBtn;
-    private Button testBtn;
     private TextView tvTest;
 
     private AccountViewModel mViewModel;
@@ -60,8 +58,6 @@ public class WalletFragment extends BaseFragment {
             }
         });
 
-        testBtn = (Button) parentView.findViewById(R.id.btn_import_wallet);
-
         return true;
     }
 
@@ -86,33 +82,6 @@ public class WalletFragment extends BaseFragment {
                 } else {
                     tvTest.setText("" + accountEntities.size());
                 }
-            }
-        });
-
-        mViewModel.getDatabaseCreated().observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(@Nullable Boolean createdFlag) {
-                if (createdFlag != null && createdFlag) {
-                    BLog.e(tag(), "the databases has created");
-                } else {
-                    BLog.e(tag(), "the databases has not created");
-                }
-            }
-        });
-
-        testBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mViewModel.getAccounts().observe(WalletFragment.this, new Observer<List<AccountEntity>>() {
-                    @Override
-                    public void onChanged(@Nullable List<AccountEntity> accountEntities) {
-                        if (accountEntities == null) {
-                            tvTest.setText("the test account is null");
-                        } else {
-                            tvTest.setText("test" + accountEntities.size());
-                        }
-                    }
-                });
             }
         });
     }
