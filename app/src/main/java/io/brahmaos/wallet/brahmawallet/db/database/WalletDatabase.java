@@ -30,13 +30,14 @@ import io.brahmaos.wallet.brahmawallet.db.converter.DateConverter;
 import io.brahmaos.wallet.brahmawallet.db.dao.AccountDao;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 
+
 @Database(entities = {AccountEntity.class}, version = 1, exportSchema = false)
 @TypeConverters(DateConverter.class)
 public abstract class WalletDatabase extends RoomDatabase {
 
     private static WalletDatabase sInstance;
 
-    public static final String DATABASE_NAME = "wallet-db";
+    private static final String DATABASE_NAME = "wallet-db";
 
     public abstract AccountDao accountDao();
 
@@ -47,7 +48,6 @@ public abstract class WalletDatabase extends RoomDatabase {
             synchronized (WalletDatabase.class) {
                 if (sInstance == null) {
                     sInstance = buildDatabase(context.getApplicationContext());
-                    sInstance.updateDatabaseCreated(context.getApplicationContext());
                 }
             }
         }
@@ -65,6 +65,7 @@ public abstract class WalletDatabase extends RoomDatabase {
                     @Override
                     public void onCreate(@NonNull SupportSQLiteDatabase db) {
                         super.onCreate(db);
+                        sInstance.updateDatabaseCreated(appContext);
                     }
                 }).build();
     }
