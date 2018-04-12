@@ -1,20 +1,24 @@
 package io.brahmaos.wallet.brahmawallet.ui.wallet;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+
+import java.util.List;
 
 import io.brahmaos.wallet.brahmawallet.R;
+import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
+import io.brahmaos.wallet.brahmawallet.ui.account.CreateAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseFragment;
+import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
 
 /**
@@ -26,6 +30,11 @@ public class WalletFragment extends BaseFragment {
     protected String tag() {
         return WalletFragment.class.getName();
     }
+
+    private Button createWalletBtn;
+    private TextView tvTest;
+
+    private AccountViewModel mViewModel;
 
     /**
      * Use this factory method to create a new instance of
@@ -39,6 +48,16 @@ public class WalletFragment extends BaseFragment {
 
     @Override
     protected boolean initView() {
+        tvTest = (TextView) parentView.findViewById(R.id.test_text);
+        createWalletBtn = (Button) parentView.findViewById(R.id.btn_create_wallet);
+        createWalletBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), CreateAccountActivity.class);
+                startActivity(intent);
+            }
+        });
+
         return true;
     }
 
@@ -50,12 +69,22 @@ public class WalletFragment extends BaseFragment {
         toolbar.setTitle(titleResId);
     }
 
-    /*// TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }*/
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        mViewModel = ViewModelProviders.of(this).get(AccountViewModel.class);
+        mViewModel.getAccounts().observe(this, new Observer<List<AccountEntity>>() {
+            @Override
+            public void onChanged(@Nullable List<AccountEntity> accountEntities) {
+                if (accountEntities == null) {
+                    tvTest.setText("the account is null");
+                } else {
+                    tvTest.setText("" + accountEntities.size());
+                }
+            }
+        });
+    }
 
     @Override
     public void onStart() {

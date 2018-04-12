@@ -12,6 +12,7 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Base.AppTheme">
+        <item name="android:windowDrawsSystemBarBackgrounds">@android:color/transparent</item>
         <item name="android:windowTranslucentStatus">true</item>
         <!--<item name="android:fontFamily">monospace</item>
         <item name="actionOverflowMenuStyle">@style/MenuActionStyle</item>
@@ -22,6 +23,16 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <!-- material edit text input -->
+    <style name="customEditTextLineColor" parent="Theme.AppCompat.Light">
+        <item name="colorControlActivated">@color/colorPrimary</item>
+    </style>
+
+    <!-- material edit text input -->
+    <style name="customEditTextHint" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
 
     <!-- single round button -->
     <style name="RoundButtonSingle">

@@ -5,7 +5,6 @@
     <string name="title_markets">Markets</string>
     <string name="title_profile">Profile</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_wallet_fragment">Hello wallet fragment</string>
     <string name="hello_market_fragment">Hello market fragment</string>
     <string name="hello_me_fragment">Hello me fragment</string>
@@ -13,4 +12,19 @@
     <string name="brahma_wallet_desc">Your smart digital wallet</string>
     <string name="action_create_wallet">Create Wallet</string>
     <string name="action_import_wallet">Import Wallet</string>
+    <string name="title_activity_create_account">Create Account</string>
+
+    <!-- Strings related to create wallet -->
+    <string name="prompt_account_name">Name</string>
+    <string name="prompt_password">Password</string>
+    <string name="prompt_repeat_password">Repeat password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
 </resources>
