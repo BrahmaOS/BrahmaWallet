@@ -5,26 +5,33 @@
     <string name="title_markets">Markets</string>
     <string name="title_profile">Profile</string>
 
-    <string name="hello_wallet_fragment">Hello wallet fragment</string>
-    <string name="hello_market_fragment">Hello market fragment</string>
-    <string name="hello_me_fragment">Hello me fragment</string>
     <string name="title_brahma_wallet">Brahma Wallet</string>
     <string name="brahma_wallet_desc">Your smart digital wallet</string>
     <string name="action_create_wallet">Create Wallet</string>
     <string name="action_import_wallet">Import Wallet</string>
     <string name="title_activity_create_account">Create Account</string>
+    <string name="total_assets">Total Assets(CNY)</string>
+    <string name="assets_class">Assets Class</string>
+    <string name="asymptotic">~</string>
+
+    <!-- Strings related to accounts -->
+    <string name="title_accounts">Accounts</string>
 
     <!-- Strings related to create wallet -->
     <string name="prompt_account_name">Name</string>
     <string name="prompt_password">Password</string>
     <string name="prompt_repeat_password">Repeat password</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="action_agree">Agree on</string>
+    <string name="project_protocol">&#160;Terms of Service and Privacy Policy</string>
+    <string name="tip_create_account_one">&#8226;Password strength is critical to guard your account</string>
+    <string name="tip_create_account_two">&#8226;BrahmaWallet can\'t recover the password, please backup cautiously</string>
+    <string name="error_incorrect_name">The name is taken</string>
     <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_incorrect_password">Password is not match</string>
     <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
+    <string name="success_create_account">Create account success!</string>
+    <string name="error_create_account">Create account error! please try again!</string>
+
+    <!-- menu list -->
+    <string name="menu_accounts">accounts</string>
 </resources>

@@ -1,5 +1,8 @@
 <resources>
     <dimen name="height_toolbar">52dp</dimen>
+    <dimen name="block_corner">4dp</dimen>
+
+    <dimen name="toolbar_init_elevation">0dp</dimen>
 
     <dimen name="font_size_display1">34sp</dimen>
     <dimen name="font_size_headline">24sp</dimen>
