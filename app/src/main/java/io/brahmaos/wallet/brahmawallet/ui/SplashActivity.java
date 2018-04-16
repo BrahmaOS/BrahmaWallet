@@ -1,5 +1,6 @@
 package io.brahmaos.wallet.brahmawallet.ui;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -46,7 +47,7 @@ public class SplashActivity extends BaseActivity {
     protected void onStart() {
         super.onStart();
         // Get the account list to prevent the home page sloshing
-        mViewModel.getAccounts().observe(this, new android.arch.lifecycle.Observer<List<AccountEntity>>() {
+        mViewModel.getAccounts().observe(this, new Observer<List<AccountEntity>>() {
             @Override
             public void onChanged(@Nullable List<AccountEntity> accountEntities) {
                 if (accountEntities != null) {

@@ -1,11 +1,16 @@
 package io.brahmaos.wallet.brahmawallet.ui.account;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -18,6 +23,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
+import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.CommonUtil;
@@ -61,6 +67,27 @@ public class AccountsActivity extends BaseActivity {
         });
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_account_add, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.menu_create_account) {
+            Intent intent = new Intent(this, CreateAccountActivity.class);
+            startActivity(intent);
+            return true;
+        } else if (id == android.R.id.home) {
+            finish();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     /**
      * list item account
      */
@@ -96,6 +123,7 @@ public class AccountsActivity extends BaseActivity {
             if (account == null) {
                 return ;
             }
+            ImageManager.showAccountAvatar(AccountsActivity.this, holder.ivAccountAvatar, account);
             holder.tvAccountName.setText(account.getName());
             holder.tvAccountAddress.setText(CommonUtil.generateSimpleAddress(account.getAddress()));
             holder.tvTotalAssets.setText("0");
