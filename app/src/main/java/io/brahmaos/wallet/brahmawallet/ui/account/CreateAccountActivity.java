@@ -1,32 +1,26 @@
 package io.brahmaos.wallet.brahmawallet.ui.account;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
-
 import android.arch.lifecycle.ViewModelProviders;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 
 import org.web3j.crypto.CipherException;
-import org.web3j.crypto.WalletUtils;
 
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
+import io.brahmaos.wallet.brahmawallet.service.Web3jService;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
@@ -49,10 +43,13 @@ public class CreateAccountActivity extends BaseActivity {
     Button btnCreateAccount;
     @BindView(R.id.create_progress)
     View mProgressBar;
+    @BindView(R.id.checkbox_read_protocol)
+    CheckBox checkBoxReadProtocol;
     @BindView(R.id.layout_create_account_form)
     View formCreateAccount;
 
     private AccountViewModel mViewModel;
+    private List<AccountEntity> accounts;
 
     @Override
     protected String tag() {
@@ -66,18 +63,22 @@ public class CreateAccountActivity extends BaseActivity {
         ButterKnife.bind(this);
         showNavBackBtn();
         mViewModel = ViewModelProviders.of(this).get(AccountViewModel.class);
+        mViewModel.getAccounts().observe(this, accountEntities -> {
+            if (accountEntities == null) {
+                accounts = null;
+            } else {
+                accounts = accountEntities;
+            }
+        });
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        btnCreateAccount.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                createAccount();
-            }
-        });
+        btnCreateAccount.setOnClickListener(view -> createAccount());
+
+        checkBoxReadProtocol.setOnCheckedChangeListener((buttonView, isChecked) -> btnCreateAccount.setEnabled(isChecked));
     }
 
     /**
@@ -99,17 +100,38 @@ public class CreateAccountActivity extends BaseActivity {
         boolean cancel = false;
         View focusView = null;
 
+        // Check for a valid account name.
+        if (TextUtils.isEmpty(name)) {
+            etAccountName.setError(getString(R.string.error_field_required));
+            focusView = etAccountName;
+            cancel = true;
+        }
+
+        if (!cancel && accounts != null && accounts.size() > 0) {
+            for (AccountEntity accountEntity : accounts) {
+                if (accountEntity.getName().equals(name)) {
+                    cancel = true;
+                    break;
+                }
+            }
+            if (cancel) {
+                etAccountName.setError(getString(R.string.error_incorrect_name));
+                focusView = etAccountName;
+                focusView.requestFocus();
+                return;
+            }
+        }
+
         // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+        if (!cancel && (TextUtils.isEmpty(password) || !isPasswordValid(password))) {
             etPassword.setError(getString(R.string.error_invalid_password));
             focusView = etPassword;
             cancel = true;
         }
 
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(name)) {
-            etAccountName.setError(getString(R.string.error_field_required));
-            focusView = etAccountName;
+        if (!cancel && !password.equals(repeatPassword)) {
+            etPassword.setError(getString(R.string.error_incorrect_password));
+            focusView = etPassword;
             cancel = true;
         }
 
@@ -117,83 +139,41 @@ public class CreateAccountActivity extends BaseActivity {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
             focusView.requestFocus();
-        } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-            showProgress(true);
+            return;
         }
 
+        mProgressBar.setVisibility(View.VISIBLE);
+
         try {
-            mProgressBar.setVisibility(View.VISIBLE);
-            String filename = WalletUtils.generateLightNewWalletFile(password, getFilesDir());
+            String filename = Web3jService.getInstance().generateLightNewWalletFile(password, getFilesDir());
+            String address = Web3jService.getInstance().getWalletAddress(password,
+                    getFilesDir() + "/" +  filename);
 
             AccountEntity account = new AccountEntity();
             account.setName(name);
-            account.setAddress("address");
+            account.setAddress(address);
             account.setFilename(filename);
-
+            BLog.i(tag(), getFilesDir() + filename);
+            BLog.i(tag(), address);
             mViewModel.createAccount(account)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(() -> {
                                 mProgressBar.setVisibility(View.GONE);
-                                showLongToast("create account success!");
-                                BLog.i(tag(), "the file name is: " + filename);
+                                showLongToast(R.string.success_create_account);
                                 finish();
                             },
-                            throwable -> {
-                                BLog.e(tag(), "Unable to create account", throwable);
-                            });
+                            throwable -> BLog.e(tag(), "Unable to create account", throwable));
         } catch (NoSuchAlgorithmException | NoSuchProviderException | InvalidAlgorithmParameterException | IOException | CipherException e) {
             e.printStackTrace();
             BLog.e(tag(), e.getMessage());
+            mProgressBar.setVisibility(View.GONE);
+            showLongToast(R.string.error_create_account);
         }
-    }
-
-    private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
         return password.length() > 4;
-    }
-
-    /**
-     * Shows the progress UI and hides the login form.
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    private void showProgress(final boolean show) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-            formCreateAccount.setVisibility(show ? View.GONE : View.VISIBLE);
-            formCreateAccount.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    formCreateAccount.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
-
-            mProgressBar.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressBar.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mProgressBar.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
-        } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            mProgressBar.setVisibility(show ? View.VISIBLE : View.GONE);
-            formCreateAccount.setVisibility(show ? View.GONE : View.VISIBLE);
-        }
     }
 }
 

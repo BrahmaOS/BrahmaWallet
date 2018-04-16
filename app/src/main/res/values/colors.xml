@@ -2,13 +2,18 @@
 <resources>
     <color name="colorPrimary">@color/master</color>
     <color name="colorPrimaryDark">@color/master</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">@color/master</color>
 
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
     <color name="master">#D3AB5A</color>
+    <color name="divider">#18000000</color>
 
     <color name="main_bg">#F6F6F6</color>
     <color name="main_btn_bg">@color/master</color>
     <color name="main_btn_selected_bg">@color/master</color>
     <color name="main_btn_disabled_bg">#cccccc</color>
     <color name="main_btn_text">#FFFFFF</color>
+
+    <color name="horizontal_divider">@color/divider</color>
 </resources>

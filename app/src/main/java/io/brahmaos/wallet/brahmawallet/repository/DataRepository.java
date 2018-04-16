@@ -30,7 +30,6 @@ public class DataRepository {
                 new Observer<List<AccountEntity>>() {
                     @Override
                     public void onChanged(@Nullable List<AccountEntity> accountEntities) {
-                        BLog.e("data repository", "" + mDatabase.getDatabaseCreated().getValue());
                         if (mDatabase.getDatabaseCreated().getValue() != null) {
                             mObservableAccounts.postValue(accountEntities);
                         }
