@@ -28,6 +28,7 @@ import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.ui.account.AccountsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.account.CreateAccountActivity;
+import io.brahmaos.wallet.brahmawallet.ui.account.ImportAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseFragment;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
@@ -44,6 +45,7 @@ public class WalletFragment extends BaseFragment {
 
     private ConstraintLayout createAccountLayout;
     private Button createWalletBtn;
+    private Button importAccountBtn;
     private RecyclerView recyclerViewAssets;
     private SwipeRefreshLayout swipeRefreshLayout;
 
@@ -77,9 +79,14 @@ public class WalletFragment extends BaseFragment {
         recyclerViewAssets.setNestedScrollingEnabled(false);
 
         createAccountLayout = parentView.findViewById(R.id.layout_new_account);
-        createWalletBtn = parentView.findViewById(R.id.btn_create_wallet);
+        createWalletBtn = parentView.findViewById(R.id.btn_create_account);
         createWalletBtn.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), CreateAccountActivity.class);
+            startActivity(intent);
+        });
+        importAccountBtn = parentView.findViewById(R.id.btn_import_account);
+        importAccountBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), ImportAccountActivity.class);
             startActivity(intent);
         });
 

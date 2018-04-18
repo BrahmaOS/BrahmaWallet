@@ -23,12 +23,27 @@ import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.Observer;
 import android.support.annotation.Nullable;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.web3j.crypto.CipherException;
+import org.web3j.crypto.WalletFile;
+import org.web3j.protocol.ObjectMapperFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import io.brahmaos.wallet.brahmawallet.WalletApp;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
+import io.brahmaos.wallet.brahmawallet.service.BrmWeb3jService;
 import io.brahmaos.wallet.util.BLog;
-import rx.Completable;
+import io.reactivex.Completable;
+import io.reactivex.Observable;
 
 public class AccountViewModel extends AndroidViewModel {
 
@@ -46,12 +61,7 @@ public class AccountViewModel extends AndroidViewModel {
                 .getAccounts();
 
         // observe the changes of the accounts from the database and forward them
-        mObservableAccounts.addSource(accounts, new Observer<List<AccountEntity>>() {
-            @Override
-            public void onChanged(@Nullable List<AccountEntity> value) {
-                mObservableAccounts.setValue(value);
-            }
-        });
+        mObservableAccounts.addSource(accounts, value -> mObservableAccounts.setValue(value));
     }
 
     /**
@@ -64,6 +74,50 @@ public class AccountViewModel extends AndroidViewModel {
     public Completable createAccount(AccountEntity account) {
         return Completable.fromAction(() -> {
             ((WalletApp) getApplication()).getRepository().createAccount(account);
+        });
+    }
+
+    public Completable createAccount(String name, String password) {
+        return Completable.fromAction(() -> {
+            try {
+                String filename = BrmWeb3jService.getInstance().generateLightNewWalletFile(password,
+                        getApplication().getFilesDir());
+                String address = BrmWeb3jService.getInstance().getWalletAddress(password,
+                        getApplication().getFilesDir() + "/" +  filename);
+
+                AccountEntity account = new AccountEntity();
+                account.setName(name);
+                account.setAddress(address);
+                account.setFilename(filename);
+                ((WalletApp) getApplication()).getRepository().createAccount(account);
+            } catch (NoSuchAlgorithmException | NoSuchProviderException | InvalidAlgorithmParameterException | IOException | CipherException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public Observable<Boolean> importAccount(WalletFile walletFile, String password, String name) {
+        return Observable.create(e -> {
+            BLog.e("view model", "Observable thread is : " + Thread.currentThread().getName());
+            if (BrmWeb3jService.getInstance().isValidKeystore(walletFile, password)) {
+                // save keystore in local system
+                SimpleDateFormat dateFormat = new SimpleDateFormat("'UTC--'yyyy-MM-dd'T'HH-mm-ss.SSS'--'");
+                String filename = dateFormat.format(new Date()) + walletFile.getAddress() + ".json";
+                File destination = new File(getApplication().getFilesDir(), filename);
+                ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
+                objectMapper.writeValue(destination, walletFile);
+
+                BLog.i("viewModel", "the private key is valid;");
+                AccountEntity account = new AccountEntity();
+                account.setName(name);
+                account.setAddress(BrmWeb3jService.getInstance().prependHexPrefix(walletFile.getAddress()));
+                account.setFilename(filename);
+                ((WalletApp) getApplication()).getRepository().createAccount(account);
+                e.onNext(Boolean.TRUE);
+            } else {
+                e.onNext(Boolean.FALSE);
+            }
+            e.onComplete();
         });
     }
 }

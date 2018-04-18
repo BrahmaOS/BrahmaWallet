@@ -16,6 +16,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +30,7 @@ import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
+import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
 
 public class AccountsActivity extends BaseActivity {
@@ -80,6 +85,10 @@ public class AccountsActivity extends BaseActivity {
             Intent intent = new Intent(this, CreateAccountActivity.class);
             startActivity(intent);
             return true;
+        } else if (id == R.id.menu_import_account) {
+            Intent intent = new Intent(this, ImportAccountActivity.class);
+            startActivity(intent);
+            return true;
         } else if (id == android.R.id.home) {
             finish();
             return true;
@@ -101,7 +110,23 @@ public class AccountsActivity extends BaseActivity {
                 int position = recyclerViewAccounts.getChildAdapterPosition(v);
                 AccountEntity account = accounts.get(position);
                 if (account.getAddress() != null && account.getAddress().length() > 0) {
-
+                    File file = new File(getFilesDir() + "/" +  account.getFilename());
+                    if (file != null) {
+                        FileInputStream fis = null;
+                        try {
+                            fis = new FileInputStream(file);
+                            int length = fis.available();
+                            byte [] buffer = new byte[length];
+                            fis.read(buffer);
+                            String encoded = new String(buffer);
+                            fis.close();
+                            BLog.i(tag(), file.getAbsolutePath() + "---:" + encoded);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             });
             return new ItemViewHolder(rootView);

@@ -25,4 +25,5 @@
     <dimen name="space_largest">40dp</dimen>
 
     <dimen name="icon_normal_size">40dp</dimen>
+    <dimen name="appbar_padding_top">8dp</dimen>
 </resources>
