@@ -16,14 +16,14 @@ import java.security.NoSuchProviderException;
 
 import io.brahmaos.wallet.util.BLog;
 
-public class BrmWeb3jService {
+public class BrahmaWeb3jService {
     protected String tag() {
-        return BrmWeb3jService.class.getName();
+        return BrahmaWeb3jService.class.getName();
     }
 
     // singleton
-    private static BrmWeb3jService instance = new BrmWeb3jService();
-    public static BrmWeb3jService getInstance() {
+    private static BrahmaWeb3jService instance = new BrahmaWeb3jService();
+    public static BrahmaWeb3jService getInstance() {
         return instance;
     }
 

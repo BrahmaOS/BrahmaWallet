@@ -13,37 +13,25 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.web3j.crypto.CipherException;
-import org.web3j.crypto.Credentials;
-import org.web3j.crypto.Wallet;
 import org.web3j.crypto.WalletFile;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.ObjectMapperFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.math.BigInteger;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
-import io.brahmaos.wallet.brahmawallet.service.BrmWeb3jService;
-import io.brahmaos.wallet.brahmawallet.ui.base.BaseFragment;
+import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class ImportOfficialFragment extends Fragment {
@@ -181,7 +169,7 @@ public class ImportOfficialFragment extends Fragment {
         try {
             ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
             WalletFile walletFile = objectMapper.readValue(officialKeystore, WalletFile.class);
-            String address = BrmWeb3jService.getInstance().prependHexPrefix(walletFile.getAddress());
+            String address = BrahmaWeb3jService.getInstance().prependHexPrefix(walletFile.getAddress());
             BLog.i(tag(), "the address is :" + address);
 
             // check the account address

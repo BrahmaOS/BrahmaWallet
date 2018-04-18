@@ -20,8 +20,6 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
-import android.arch.lifecycle.Observer;
-import android.support.annotation.Nullable;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -40,7 +38,7 @@ import java.util.List;
 
 import io.brahmaos.wallet.brahmawallet.WalletApp;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
-import io.brahmaos.wallet.brahmawallet.service.BrmWeb3jService;
+import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
 import io.brahmaos.wallet.util.BLog;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
@@ -80,9 +78,9 @@ public class AccountViewModel extends AndroidViewModel {
     public Completable createAccount(String name, String password) {
         return Completable.fromAction(() -> {
             try {
-                String filename = BrmWeb3jService.getInstance().generateLightNewWalletFile(password,
+                String filename = BrahmaWeb3jService.getInstance().generateLightNewWalletFile(password,
                         getApplication().getFilesDir());
-                String address = BrmWeb3jService.getInstance().getWalletAddress(password,
+                String address = BrahmaWeb3jService.getInstance().getWalletAddress(password,
                         getApplication().getFilesDir() + "/" +  filename);
 
                 AccountEntity account = new AccountEntity();
@@ -99,7 +97,7 @@ public class AccountViewModel extends AndroidViewModel {
     public Observable<Boolean> importAccount(WalletFile walletFile, String password, String name) {
         return Observable.create(e -> {
             BLog.e("view model", "Observable thread is : " + Thread.currentThread().getName());
-            if (BrmWeb3jService.getInstance().isValidKeystore(walletFile, password)) {
+            if (BrahmaWeb3jService.getInstance().isValidKeystore(walletFile, password)) {
                 // save keystore in local system
                 SimpleDateFormat dateFormat = new SimpleDateFormat("'UTC--'yyyy-MM-dd'T'HH-mm-ss.SSS'--'");
                 String filename = dateFormat.format(new Date()) + walletFile.getAddress() + ".json";
@@ -110,7 +108,7 @@ public class AccountViewModel extends AndroidViewModel {
                 BLog.i("viewModel", "the private key is valid;");
                 AccountEntity account = new AccountEntity();
                 account.setName(name);
-                account.setAddress(BrmWeb3jService.getInstance().prependHexPrefix(walletFile.getAddress()));
+                account.setAddress(BrahmaWeb3jService.getInstance().prependHexPrefix(walletFile.getAddress()));
                 account.setFilename(filename);
                 ((WalletApp) getApplication()).getRepository().createAccount(account);
                 e.onNext(Boolean.TRUE);

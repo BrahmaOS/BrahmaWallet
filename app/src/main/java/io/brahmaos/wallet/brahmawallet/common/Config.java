@@ -23,9 +23,6 @@ public class Config {
 
     public String localKeystorePath;
 
-    /**
-     * 初始化配置
-     */
     public boolean init(Context context) {
         sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         localKeystorePath = context.getFilesDir().toString();
