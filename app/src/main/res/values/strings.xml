@@ -40,8 +40,10 @@
     <string name="error_account_exists">Account exists! Please check the input.</string>
     <string name="error_account_address">Error account address!</string>
     <string name="success_import_account">Import account success!</string>
-    <string name="error_import_account">Import account error! please check keystore and password!</string>
+    <string name="error_import_keystore">Import account error! please check keystore and password!</string>
+    <string name="error_import_private_key">Import account error! please check private key!</string>
     <string name="error_keystore">Error keystore!</string>
+    <string name="error_private_key">Error private key!</string>
 
     <string name="tip_keystore_presence"></string>
 
@@ -52,6 +54,5 @@
 
     <string name="title_activity_import_account">Import Account</string>
     <string name="import_official_editor_hint">keystore content</string>
-    <string name="action_settings">Settings</string>
-    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="import_private_key_hint">private key</string>
 </resources>

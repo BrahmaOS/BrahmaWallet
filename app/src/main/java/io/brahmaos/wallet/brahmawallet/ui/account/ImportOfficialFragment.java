@@ -1,7 +1,6 @@
 package io.brahmaos.wallet.brahmawallet.ui.account;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -39,7 +38,7 @@ public class ImportOfficialFragment extends Fragment {
         return ImportOfficialFragment.class.getName();
     }
 
-    public static final String ARG_PAGE = "ARG_PAGE";
+    public static final String ARG_PAGE = "OFFICIAL_KEYSTORE_PAGE";
     private AccountViewModel mViewModel;
     private List<AccountEntity> accounts;
 
@@ -101,7 +100,7 @@ public class ImportOfficialFragment extends Fragment {
         etAccountName = parentView.findViewById(R.id.et_account_name);
         etPassword = parentView.findViewById(R.id.et_password);
         etRepeatPassword = parentView.findViewById(R.id.et_repeat_password);
-        btnImportAccount = parentView.findViewById(R.id.btn_create_account);
+        btnImportAccount = parentView.findViewById(R.id.btn_import_keystore);
         checkBoxReadProtocol= parentView.findViewById(R.id.checkbox_read_protocol);
         checkBoxReadProtocol.setOnCheckedChangeListener((buttonView, isChecked) -> btnImportAccount.setEnabled(isChecked));
 
@@ -112,6 +111,7 @@ public class ImportOfficialFragment extends Fragment {
     private void importOfficialAccount() {
         btnImportAccount.setEnabled(false);
         // Reset errors.
+        etAccountName.setError(null);
         etPassword.setError(null);
         etRepeatPassword.setError(null);
 
@@ -182,14 +182,9 @@ public class ImportOfficialFragment extends Fragment {
                 }
                 if (cancel) {
                     // dialog show the account exists
-                    AlertDialog dialogTip = new AlertDialog.Builder(getContext())
+                    AlertDialog dialogTip = new AlertDialog.Builder(getActivity())
                             .setMessage(R.string.error_account_exists)
-                            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.cancel();
-                                }
-                            })
+                            .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel())
                             .create();
                     dialogTip.show();
                     etKeystore.requestFocus();
@@ -215,8 +210,9 @@ public class ImportOfficialFragment extends Fragment {
                                     Toast.makeText(getContext(), R.string.success_import_account, Toast.LENGTH_SHORT).show();
                                     getActivity().finish();
                                 } else {
-                                    Toast.makeText(getContext(), R.string.error_import_account, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getContext(), R.string.error_import_keystore, Toast.LENGTH_SHORT).show();
                                     mProgressBar.setVisibility(View.GONE);
+                                    etKeystore.requestFocus();
                                     btnImportAccount.setEnabled(true);
                                 }
                             }
@@ -224,8 +220,9 @@ public class ImportOfficialFragment extends Fragment {
                             @Override
                             public void onError(Throwable e) {
                                 e.printStackTrace();
-                                Toast.makeText(getContext(), R.string.error_import_account, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), R.string.error_import_keystore, Toast.LENGTH_SHORT).show();
                                 mProgressBar.setVisibility(View.GONE);
+                                etKeystore.requestFocus();
                                 btnImportAccount.setEnabled(true);
                             }
 
@@ -238,6 +235,7 @@ public class ImportOfficialFragment extends Fragment {
                 BLog.e(tag(), "the error keystore about address");
                 Toast.makeText(getContext(), R.string.error_account_address, Toast.LENGTH_SHORT).show();
                 btnImportAccount.setEnabled(true);
+                etKeystore.requestFocus();
                 mProgressBar.setVisibility(View.GONE);
             }
 
@@ -245,6 +243,7 @@ public class ImportOfficialFragment extends Fragment {
             e.printStackTrace();
             Toast.makeText(getActivity(), R.string.error_keystore, Toast.LENGTH_SHORT).show();
             btnImportAccount.setEnabled(true);
+            etKeystore.requestFocus();
             mProgressBar.setVisibility(View.GONE);
         }
     }

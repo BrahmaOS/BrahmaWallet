@@ -1,33 +1,23 @@
 package io.brahmaos.wallet.brahmawallet.ui.account;
 
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.content.Context;
+import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
 import android.widget.EditText;
-import android.widget.TextView;
 
 import butterknife.BindView;
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
+import io.brahmaos.wallet.util.BLog;
 
 public class ImportAccountActivity extends BaseActivity {
 
@@ -49,15 +39,13 @@ public class ImportAccountActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_import_account);
         showNavBackBtn();
+        initView();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
+    private void initView() {
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
-        SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), this);
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = findViewById(R.id.viewpager);
@@ -83,6 +71,16 @@ public class ImportAccountActivity extends BaseActivity {
                         cancel = TextUtils.isEmpty(etKeystore.getText().toString().trim());
                     }
                 }
+            } else if (mViewPager.getCurrentItem() == 1) {
+                SectionsPagerAdapter adapter = (SectionsPagerAdapter) mViewPager.getAdapter();
+                if (adapter != null) {
+                    ImportPrivateKeyFragment fragment = (ImportPrivateKeyFragment) adapter.getCurrentFragment();
+                    View view = fragment.getView();
+                    if (view != null) {
+                        EditText etPrivateKey =  view.findViewById(R.id.et_private_key);
+                        cancel = TextUtils.isEmpty(etPrivateKey.getText().toString().trim());
+                    }
+                }
             }
             if (cancel) {
                 finish();
@@ -105,41 +103,6 @@ public class ImportAccountActivity extends BaseActivity {
     }
 
     /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        public PlaceholderFragment() {
-        }
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @Override
-        public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_import_account, container, false);
-            TextView textView = rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
-            return rootView;
-        }
-    }
-
-    /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
@@ -148,9 +111,11 @@ public class ImportAccountActivity extends BaseActivity {
         final int PAGE_COUNT = 2;
         private String tabTitles[] = new String[]{"Official", "Private Key"};
         private Fragment mCurrentFragment;
+        private Context context;
 
-        SectionsPagerAdapter(FragmentManager fm) {
+        SectionsPagerAdapter(FragmentManager fm, Context context) {
             super(fm);
+            this.context = context;
         }
 
         @Override
@@ -159,7 +124,7 @@ public class ImportAccountActivity extends BaseActivity {
             if (position == 0) {
                 return ImportOfficialFragment.newInstance(position + 1);
             } else {
-                return PlaceholderFragment.newInstance(position + 1);
+                return ImportPrivateKeyFragment.newInstance(position + 1);
             }
         }
 
