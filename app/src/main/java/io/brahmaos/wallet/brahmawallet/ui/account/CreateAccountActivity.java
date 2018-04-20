@@ -1,31 +1,28 @@
 package io.brahmaos.wallet.brahmawallet.ui.account;
 
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
 
-import org.web3j.crypto.CipherException;
-
-import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
-import io.brahmaos.wallet.brahmawallet.service.Web3jService;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * A create account screen
@@ -41,6 +38,8 @@ public class CreateAccountActivity extends BaseActivity {
     EditText etRepeatPassword;
     @BindView(R.id.btn_create_account)
     Button btnCreateAccount;
+    @BindView(R.id.btn_import_account)
+    TextView tvImportAccount;
     @BindView(R.id.create_progress)
     View mProgressBar;
     @BindView(R.id.checkbox_read_protocol)
@@ -79,14 +78,20 @@ public class CreateAccountActivity extends BaseActivity {
         btnCreateAccount.setOnClickListener(view -> createAccount());
 
         checkBoxReadProtocol.setOnCheckedChangeListener((buttonView, isChecked) -> btnCreateAccount.setEnabled(isChecked));
+
+        tvImportAccount.setOnClickListener(v -> {
+            Intent intent = new Intent(CreateAccountActivity.this, ImportAccountActivity.class);
+            startActivity(intent);
+        });
     }
 
     /**
      * Attempts to sign in or register the account specified by the login form.
-     * If there are form errors (invalid email, missing fields, etc.), the
+     * If there are form errors (invalid name, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
     private void createAccount() {
+        btnCreateAccount.setEnabled(false);
         // Reset errors.
         etAccountName.setError(null);
         etPassword.setError(null);
@@ -117,8 +122,6 @@ public class CreateAccountActivity extends BaseActivity {
             if (cancel) {
                 etAccountName.setError(getString(R.string.error_incorrect_name));
                 focusView = etAccountName;
-                focusView.requestFocus();
-                return;
             }
         }
 
@@ -139,23 +142,13 @@ public class CreateAccountActivity extends BaseActivity {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
             focusView.requestFocus();
+            btnCreateAccount.setEnabled(true);
             return;
         }
 
         mProgressBar.setVisibility(View.VISIBLE);
-
         try {
-            String filename = Web3jService.getInstance().generateLightNewWalletFile(password, getFilesDir());
-            String address = Web3jService.getInstance().getWalletAddress(password,
-                    getFilesDir() + "/" +  filename);
-
-            AccountEntity account = new AccountEntity();
-            account.setName(name);
-            account.setAddress(address);
-            account.setFilename(filename);
-            BLog.i(tag(), getFilesDir() + filename);
-            BLog.i(tag(), address);
-            mViewModel.createAccount(account)
+            Disposable createAccount = mViewModel.createAccount(name, password)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(() -> {
@@ -163,11 +156,17 @@ public class CreateAccountActivity extends BaseActivity {
                                 showLongToast(R.string.success_create_account);
                                 finish();
                             },
-                            throwable -> BLog.e(tag(), "Unable to create account", throwable));
-        } catch (NoSuchAlgorithmException | NoSuchProviderException | InvalidAlgorithmParameterException | IOException | CipherException e) {
+                            throwable -> {
+                                BLog.e(tag(), "Unable to create account", throwable);
+                                mProgressBar.setVisibility(View.GONE);
+                                btnCreateAccount.setEnabled(true);
+                                showLongToast(R.string.error_create_account);
+                            });
+        } catch (Exception e) {
             e.printStackTrace();
             BLog.e(tag(), e.getMessage());
             mProgressBar.setVisibility(View.GONE);
+            btnCreateAccount.setEnabled(true);
             showLongToast(R.string.error_create_account);
         }
     }

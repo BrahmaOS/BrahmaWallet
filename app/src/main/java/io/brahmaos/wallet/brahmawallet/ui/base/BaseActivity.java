@@ -8,9 +8,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.util.BLog;
@@ -22,10 +19,6 @@ import io.brahmaos.wallet.util.BLog;
 public abstract class BaseActivity extends AppCompatActivity {
 
     protected abstract String tag();
-
-    protected static Gson gson
-            = new GsonBuilder().excludeFieldsWithoutExposeAnnotation()
-            .setDateFormat("yyyy-MM-dd HH:mm:ss").create();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +64,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     // show navigation backup action icon
     protected void showNavBackBtn() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
             ActionBar ab = getSupportActionBar();

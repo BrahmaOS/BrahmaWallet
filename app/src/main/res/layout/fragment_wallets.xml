@@ -59,21 +59,23 @@
                     android:text="@string/brahma_wallet_desc" />
 
                 <Button
-                    android:id="@+id/btn_create_wallet"
+                    android:id="@+id/btn_create_account"
                     style="@style/RoundButtonSingle"
                     android:layout_marginTop="@dimen/space_larger"
-                    android:text="@string/action_create_wallet" />
+                    android:text="@string/action_create_account" />
 
                 <Button
-                    android:id="@+id/btn_import_wallet"
+                    android:id="@+id/btn_import_account"
                     style="@style/RoundButtonSingle"
                     android:layout_marginTop="@dimen/space_larger"
-                    android:text="@string/action_import_wallet" />
+                    android:layout_marginBottom="@dimen/space_larger"
+                    android:text="@string/action_import_account" />
 
             </LinearLayout>
         </android.support.constraint.ConstraintLayout>
 
         <android.support.v4.widget.SwipeRefreshLayout
+            android:visibility="gone"
             android:id="@+id/swipe_refresh_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -119,6 +121,7 @@
                                 android:textColor="@color/white"
                                 android:text="@string/assets_class"/>
                             <TextView
+                                android:id="@+id/tv_assets_categories_num"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="@dimen/space_small"

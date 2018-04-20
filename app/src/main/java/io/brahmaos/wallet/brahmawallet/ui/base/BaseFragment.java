@@ -10,9 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import io.brahmaos.wallet.util.BLog;
 
 /**
@@ -31,12 +28,6 @@ public abstract class BaseFragment extends Fragment {
     private static final String ARGS_TITLE_RES = "title_res";
     
     protected abstract String tag();
-
-    // gson decoder & encoder
-    protected Gson gson = new GsonBuilder()
-            .setDateFormat("yyyy-MM-dd HH:mm:ss")
-            .excludeFieldsWithoutExposeAnnotation()
-            .create();
 
     /**
      * init fragment UI component

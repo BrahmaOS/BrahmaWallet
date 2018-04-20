@@ -26,8 +26,10 @@ import java.util.List;
 
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
+import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 import io.brahmaos.wallet.brahmawallet.ui.account.AccountsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.account.CreateAccountActivity;
+import io.brahmaos.wallet.brahmawallet.ui.account.ImportAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseFragment;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
@@ -43,9 +45,9 @@ public class WalletFragment extends BaseFragment {
     }
 
     private ConstraintLayout createAccountLayout;
-    private Button createWalletBtn;
-    private RecyclerView recyclerViewAssets;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private TextView tvTokenCategories;
+    private RecyclerView recyclerViewAssets;
 
     private AccountViewModel mViewModel;
     private List<AccountEntity> cacheAccounts = new ArrayList<>();
@@ -68,6 +70,7 @@ public class WalletFragment extends BaseFragment {
 
         swipeRefreshLayout = parentView.findViewById(R.id.swipe_refresh_layout);
         recyclerViewAssets = parentView.findViewById(R.id.assets_recycler);
+        tvTokenCategories = parentView.findViewById(R.id.tv_assets_categories_num);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerViewAssets.setLayoutManager(layoutManager);
         recyclerViewAssets.setAdapter(new AssetsRecyclerAdapter());
@@ -77,9 +80,14 @@ public class WalletFragment extends BaseFragment {
         recyclerViewAssets.setNestedScrollingEnabled(false);
 
         createAccountLayout = parentView.findViewById(R.id.layout_new_account);
-        createWalletBtn = parentView.findViewById(R.id.btn_create_wallet);
+        Button createWalletBtn = parentView.findViewById(R.id.btn_create_account);
         createWalletBtn.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), CreateAccountActivity.class);
+            startActivity(intent);
+        });
+        Button importAccountBtn = parentView.findViewById(R.id.btn_import_account);
+        importAccountBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), ImportAccountActivity.class);
             startActivity(intent);
         });
 
@@ -95,17 +103,14 @@ public class WalletFragment extends BaseFragment {
             toolbar.setTitle(titleResId);
             toolbar.inflateMenu(R.menu.fragment_wallet);
 
-            toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    if (item.getItemId() == R.id.menu_accounts) {
-                        if (cacheAccounts != null && cacheAccounts.size() > 0) {
-                            Intent intent = new Intent(getActivity(), AccountsActivity.class);
-                            startActivity(intent);
-                        }
+            toolbar.setOnMenuItemClickListener(item -> {
+                if (item.getItemId() == R.id.menu_accounts) {
+                    if (cacheAccounts != null && cacheAccounts.size() > 0) {
+                        Intent intent = new Intent(getActivity(), AccountsActivity.class);
+                        startActivity(intent);
                     }
-                    return true;
                 }
+                return true;
             });
         }
     }
@@ -115,11 +120,14 @@ public class WalletFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
 
         mViewModel = ViewModelProviders.of(this).get(AccountViewModel.class);
-        mViewModel.getAccounts().observe(this, new Observer<List<AccountEntity>>() {
-            @Override
-            public void onChanged(@Nullable List<AccountEntity> accountEntities) {
-                cacheAccounts = accountEntities;
-                checkContentShow();
+        mViewModel.getAccounts().observe(this, accountEntities -> {
+            cacheAccounts = accountEntities;
+            WalletFragment.this.checkContentShow();
+        });
+
+        mViewModel.getTokens().observe(this, tokenEntities -> {
+            if (tokenEntities != null) {
+                tvTokenCategories.setText("" + tokenEntities.size());
             }
         });
     }

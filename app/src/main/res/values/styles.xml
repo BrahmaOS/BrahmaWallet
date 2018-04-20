@@ -23,12 +23,14 @@
     <!-- material edit text input -->
     <style name="customEditTextLineColor" parent="Theme.AppCompat.Light">
         <item name="colorControlActivated">@color/colorPrimary</item>
-        <!--<item name="colorControlNormal">@color/main_btn_bg</item>-->
+        <item name="colorControlNormal">@color/divider</item>
+        <item name="android:textColorHint">@color/color_hint_text</item>
     </style>
 
     <!-- material edit text input -->
     <style name="customEditTextHint" parent="TextAppearance.AppCompat">
         <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:textSize">@dimen/font_size_body</item>
     </style>
 
     <!-- single round button -->

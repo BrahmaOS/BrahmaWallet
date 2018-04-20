@@ -21,6 +21,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:largeHeap="true"
         android:theme="@style/AppTheme">
         <activity android:name=".ui.SplashActivity">
             <intent-filter>
@@ -36,6 +37,10 @@
             android:name=".ui.MainActivity"
             android:launchMode="singleTask" />
         <activity android:name=".ui.account.AccountsActivity" />
+        <activity
+            android:name=".ui.account.ImportAccountActivity"
+            android:label="@string/title_activity_import_account"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

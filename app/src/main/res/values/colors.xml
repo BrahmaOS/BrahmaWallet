@@ -4,10 +4,18 @@
     <color name="colorPrimaryDark">@color/master</color>
     <color name="colorAccent">@color/master</color>
 
+
+    <color name="color_primary_text">#da000000</color>
+    <color name="color_secondary_text">#72000000</color>
+    <color name="color_disabled_text">#64000000</color>
+    <color name="color_hint_text">#64000000</color>
+    <color name="color_divider">#1c000000</color>
+
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
     <color name="master">#D3AB5A</color>
     <color name="divider">#18000000</color>
+    <color name="gray_border">#c6c6c6</color>
 
     <color name="main_bg">#F6F6F6</color>
     <color name="main_btn_bg">@color/master</color>

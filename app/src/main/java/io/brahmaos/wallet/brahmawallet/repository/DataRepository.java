@@ -9,6 +9,7 @@ import java.util.List;
 
 import io.brahmaos.wallet.brahmawallet.db.database.WalletDatabase;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
+import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 import io.brahmaos.wallet.util.BLog;
 import rx.Completable;
 
@@ -21,10 +22,12 @@ public class DataRepository {
 
     private final WalletDatabase mDatabase;
     private MediatorLiveData<List<AccountEntity>> mObservableAccounts;
+    private MediatorLiveData<List<TokenEntity>> mObservableTokens;
 
     private DataRepository(final WalletDatabase database) {
         mDatabase = database;
         mObservableAccounts = new MediatorLiveData<>();
+        mObservableTokens = new MediatorLiveData<>();
 
         mObservableAccounts.addSource(mDatabase.accountDao().loadAllAccounts(),
                 new Observer<List<AccountEntity>>() {
@@ -32,6 +35,16 @@ public class DataRepository {
                     public void onChanged(@Nullable List<AccountEntity> accountEntities) {
                         if (mDatabase.getDatabaseCreated().getValue() != null) {
                             mObservableAccounts.postValue(accountEntities);
+                        }
+                    }
+                });
+
+        mObservableTokens.addSource(mDatabase.tokenDao().loadAllTokens(),
+                new Observer<List<TokenEntity>>() {
+                    @Override
+                    public void onChanged(@Nullable List<TokenEntity> tokenEntities) {
+                        if (mDatabase.getDatabaseCreated().getValue() != null) {
+                            mObservableTokens.postValue(tokenEntities);
                         }
                     }
                 });
@@ -61,5 +74,20 @@ public class DataRepository {
 
     public void createAccount(AccountEntity account) {
         mDatabase.accountDao().insertAccount(account);
+    }
+
+    /**
+     *  process the tokens
+     */
+    public LiveData<List<TokenEntity>> getTokens() {
+        return mObservableTokens;
+    }
+
+    public LiveData<TokenEntity> loadToken(final int tokenId) {
+        return mDatabase.tokenDao().loadToken(tokenId);
+    }
+
+    public void createToken(TokenEntity token) {
+        mDatabase.tokenDao().insertToken(token);
     }
 }

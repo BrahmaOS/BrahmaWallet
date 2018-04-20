@@ -23,15 +23,19 @@ import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
+import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.db.converter.DateConverter;
 import io.brahmaos.wallet.brahmawallet.db.dao.AccountDao;
+import io.brahmaos.wallet.brahmawallet.db.dao.TokenDao;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
+import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 
 
-@Database(entities = {AccountEntity.class}, version = 1, exportSchema = false)
+@Database(entities = {AccountEntity.class, TokenEntity.class}, version = 2, exportSchema = false)
 @TypeConverters(DateConverter.class)
 public abstract class WalletDatabase extends RoomDatabase {
 
@@ -40,6 +44,7 @@ public abstract class WalletDatabase extends RoomDatabase {
     private static final String DATABASE_NAME = "wallet-db";
 
     public abstract AccountDao accountDao();
+    public abstract TokenDao tokenDao();
 
     private final MutableLiveData<Boolean> mIsDatabaseCreated = new MutableLiveData<>();
 
@@ -75,8 +80,24 @@ public abstract class WalletDatabase extends RoomDatabase {
                         // Check whether the database already exists after access database
                         sInstance.updateDatabaseCreated(appContext);
                     }
-                }).build();
+                })
+                .addMigrations(MIGRATION_1_2).build();
     }
+
+    static final Migration MIGRATION_1_2 = new Migration(1, 2) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("CREATE TABLE `tokens` (`id` INTEGER not null, "
+                    + "`name` TEXT, `address` TEXT, `shortName` TEXT, `icon` INTEGER, " +
+                    "PRIMARY KEY(`id`))");
+            database.execSQL("INSERT INTO tokens (name, address, shortName, icon) " +
+                    "values (\"BrahmaOS\", \"0xd7732e3783b0047aa251928960063f863ad022d8\", \"BRM\", "
+                    + R.drawable.ic_logo + ")");
+            database.execSQL("INSERT INTO tokens (name, address, shortName, icon) " +
+                    "values (\"Ethereum\", \"\", \"ETH\", "
+                    + R.drawable.icon_eth + ")");
+        }
+    };
 
     /**
      * Check whether the database already exists and expose it via {@link #getDatabaseCreated()}
