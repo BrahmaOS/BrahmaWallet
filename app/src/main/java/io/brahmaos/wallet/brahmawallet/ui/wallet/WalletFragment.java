@@ -1,8 +1,6 @@
 package io.brahmaos.wallet.brahmawallet.ui.wallet;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,25 +12,29 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
+import io.brahmaos.wallet.brahmawallet.model.AccountAssets;
+import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.ui.account.AccountsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.account.CreateAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.account.ImportAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseFragment;
+import io.brahmaos.wallet.brahmawallet.ui.token.TokensActivity;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
+import io.brahmaos.wallet.util.CommonUtil;
 
 /**
  * Use the {@link WalletFragment#newInstance} factory method to
@@ -46,12 +48,14 @@ public class WalletFragment extends BaseFragment {
 
     private ConstraintLayout createAccountLayout;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private TextView tvTotalAssets;
     private TextView tvTokenCategories;
     private RecyclerView recyclerViewAssets;
 
     private AccountViewModel mViewModel;
     private List<AccountEntity> cacheAccounts = new ArrayList<>();
-    private List<String> assetsClass = new ArrayList<>();
+    private List<TokenEntity> cacheTokens = new ArrayList<>();
+    private List<AccountAssets> cacheAssets = new ArrayList<>();
 
     /**
      * Use this factory method to create a new instance of
@@ -65,9 +69,6 @@ public class WalletFragment extends BaseFragment {
 
     @Override
     protected boolean initView() {
-        assetsClass.add("BRM");
-        assetsClass.add("ETH");
-
         swipeRefreshLayout = parentView.findViewById(R.id.swipe_refresh_layout);
         recyclerViewAssets = parentView.findViewById(R.id.assets_recycler);
         tvTokenCategories = parentView.findViewById(R.id.tv_assets_categories_num);
@@ -78,6 +79,14 @@ public class WalletFragment extends BaseFragment {
         // Solve the sliding lag problem
         recyclerViewAssets.setHasFixedSize(true);
         recyclerViewAssets.setNestedScrollingEnabled(false);
+
+        tvTotalAssets = parentView.findViewById(R.id.tv_total_assets);
+
+        ImageView ivChooseToken = parentView.findViewById(R.id.iv_choose_token);
+        ivChooseToken.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), TokensActivity.class);
+            startActivity(intent);
+        });
 
         createAccountLayout = parentView.findViewById(R.id.layout_new_account);
         Button createWalletBtn = parentView.findViewById(R.id.btn_create_account);
@@ -122,12 +131,25 @@ public class WalletFragment extends BaseFragment {
         mViewModel = ViewModelProviders.of(this).get(AccountViewModel.class);
         mViewModel.getAccounts().observe(this, accountEntities -> {
             cacheAccounts = accountEntities;
-            WalletFragment.this.checkContentShow();
+            checkContentShow();
         });
 
         mViewModel.getTokens().observe(this, tokenEntities -> {
             if (tokenEntities != null) {
-                tvTokenCategories.setText("" + tokenEntities.size());
+                tvTokenCategories.setText(String.valueOf(tokenEntities.size()));
+                cacheTokens = tokenEntities;
+                recyclerViewAssets.getAdapter().notifyDataSetChanged();
+            }
+        });
+
+        mViewModel.getAssets().observe(this, (List<AccountAssets> accountAssets) -> {
+            BLog.i(tag(), "get home account assets");
+            if (accountAssets != null) {
+                cacheAssets = accountAssets;
+                if (cacheAssets.size() == cacheAccounts.size() * cacheTokens.size()) {
+                    BLog.i(tag(), "Home assets sync change");
+                    recyclerViewAssets.getAdapter().notifyDataSetChanged();
+                }
             }
         });
     }
@@ -174,27 +196,32 @@ public class WalletFragment extends BaseFragment {
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             if (holder instanceof ItemViewHolder) {
                 ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
-                String assets = assetsClass.get(position);
-                setAssetsData(itemViewHolder, assets, position);
+                TokenEntity tokenEntity = cacheTokens.get(position);
+                setAssetsData(itemViewHolder, tokenEntity);
             }
         }
 
         /**
          * set assets view
          */
-        private void setAssetsData(ItemViewHolder holder, final String assets, int position) {
-            if (assets == null) {
+        private void setAssetsData(ItemViewHolder holder, final TokenEntity tokenEntity) {
+            if (tokenEntity == null) {
                 return;
             }
-            holder.tvTokenName.setText(assets);
-            if (position == 1) {
-                holder.ivTokenIcon.setImageResource(R.drawable.icon_eos);
+            holder.tvTokenName.setText(tokenEntity.getShortName());
+            ImageManager.showTokenIcon(getContext(), holder.ivTokenIcon, tokenEntity.getIcon());
+            BigInteger tokenCount = BigInteger.ZERO;
+            for (AccountAssets accountAssets : cacheAssets) {
+                if (accountAssets.getTokenEntity().getAddress().equals(tokenEntity.getAddress())) {
+                    tokenCount = tokenCount.add(accountAssets.getBalance());
+                }
             }
+            holder.tvTokenAccount.setText(String.valueOf(CommonUtil.getAccountFromWei(tokenCount)));
         }
 
         @Override
         public int getItemCount() {
-            return assetsClass.size();
+            return cacheTokens.size();
         }
 
         class ItemViewHolder extends RecyclerView.ViewHolder {

@@ -45,8 +45,6 @@
     <string name="error_keystore">Error keystore!</string>
     <string name="error_private_key">Error private key!</string>
 
-    <string name="tip_keystore_presence"></string>
-
     <!-- menu list -->
     <string name="menu_accounts">accounts</string>
     <string name="action_create_account">Create Account</string>
@@ -55,4 +53,7 @@
     <string name="title_activity_import_account">Import Account</string>
     <string name="import_official_editor_hint">keystore content</string>
     <string name="import_private_key_hint">private key</string>
+
+    <!-- Strings related to tokens -->
+    <string name="title_tokens">Tokens</string>
 </resources>

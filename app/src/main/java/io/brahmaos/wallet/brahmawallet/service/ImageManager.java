@@ -41,4 +41,13 @@ public class ImageManager {
                 .load(resId)
                 .into(iv);
     }
+
+    /*
+     * Avatar of token
+     */
+    public static void showTokenIcon(Context Context, ImageView iv, int resId) {
+        Glide.with(Context)
+                .load(resId)
+                .into(iv);
+    }
 }

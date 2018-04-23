@@ -19,9 +19,9 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:largeHeap="true"
         android:theme="@style/AppTheme">
         <activity android:name=".ui.SplashActivity">
             <intent-filter>
@@ -40,7 +40,8 @@
         <activity
             android:name=".ui.account.ImportAccountActivity"
             android:label="@string/title_activity_import_account"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
+        <activity android:name=".ui.token.TokensActivity"></activity>
     </application>
 
 </manifest>

@@ -28,10 +28,10 @@ import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
+import io.brahmaos.wallet.util.CommonUtil;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class ImportOfficialFragment extends Fragment {
     protected String tag() {
@@ -116,7 +116,7 @@ public class ImportOfficialFragment extends Fragment {
         etRepeatPassword.setError(null);
 
         // Store values at the time of the create account.
-        String officialKeystore = etKeystore.getText().toString().trim();
+        String officialKeystore = CommonUtil.parseAccountContent(etKeystore.getText().toString().trim());
         String name = etAccountName.getText().toString().trim();
         String password = etPassword.getText().toString();
         String repeatPassword = etRepeatPassword.getText().toString();
@@ -200,11 +200,6 @@ public class ImportOfficialFragment extends Fragment {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new Observer<Boolean>() {
                             @Override
-                            public void onSubscribe(Disposable d) {
-
-                            }
-
-                            @Override
                             public void onNext(Boolean flag) {
                                 if (flag) {
                                     Toast.makeText(getContext(), R.string.success_import_account, Toast.LENGTH_SHORT).show();
@@ -227,7 +222,7 @@ public class ImportOfficialFragment extends Fragment {
                             }
 
                             @Override
-                            public void onComplete() {
+                            public void onCompleted() {
 
                             }
                         });

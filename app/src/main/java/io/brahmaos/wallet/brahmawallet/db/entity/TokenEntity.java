@@ -19,16 +19,18 @@ package io.brahmaos.wallet.brahmawallet.db.entity;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
 import io.brahmaos.wallet.brahmawallet.R;
 
-@Entity(tableName = "tokens")
+@Entity(tableName = "tokens", indices = {@Index(value = {"address"}, unique = true)})
 public class TokenEntity {
     @PrimaryKey(autoGenerate = true)
     private int id;
     private String name;
     private String shortName;
+
     private String address;
     private Integer icon;
 
@@ -82,5 +84,16 @@ public class TokenEntity {
 
     public void setIcon(Integer icon) {
         this.icon = icon;
+    }
+
+    @Override
+    public String toString() {
+        return "TokenEntity{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", shortName='" + shortName + '\'' +
+                ", address='" + address + '\'' +
+                ", icon=" + icon +
+                '}';
     }
 }

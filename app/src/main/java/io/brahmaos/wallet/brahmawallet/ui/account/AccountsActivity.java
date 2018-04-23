@@ -109,6 +109,7 @@ public class AccountsActivity extends BaseActivity {
             rootView.setOnClickListener(v -> {
                 int position = recyclerViewAccounts.getChildAdapterPosition(v);
                 AccountEntity account = accounts.get(position);
+                BLog.i(tag(), account.getFilename());
                 if (account.getAddress() != null && account.getAddress().length() > 0) {
                     File file = new File(getFilesDir() + "/" +  account.getFilename());
                     if (file != null) {

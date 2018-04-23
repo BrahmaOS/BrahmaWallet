@@ -72,6 +72,12 @@ public abstract class WalletDatabase extends RoomDatabase {
                         super.onCreate(db);
                         // Check whether the database already exists after first create database
                         sInstance.updateDatabaseCreated(appContext);
+                        db.execSQL("INSERT INTO tokens (name, address, shortName, icon) " +
+                                "values (\"BrahmaOS\", \"0xd7732e3783b0047aa251928960063f863ad022d8\", \"BRM\", "
+                                + R.drawable.icon_brm + ")");
+                        db.execSQL("INSERT INTO tokens (name, address, shortName, icon) " +
+                                "values (\"Ethereum\", \"\", \"ETH\", "
+                                + R.drawable.icon_eth + ")");
                     }
 
                     @Override
@@ -84,15 +90,15 @@ public abstract class WalletDatabase extends RoomDatabase {
                 .addMigrations(MIGRATION_1_2).build();
     }
 
-    static final Migration MIGRATION_1_2 = new Migration(1, 2) {
+    private static final Migration MIGRATION_1_2 = new Migration(1, 2) {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
             database.execSQL("CREATE TABLE `tokens` (`id` INTEGER not null, "
-                    + "`name` TEXT, `address` TEXT, `shortName` TEXT, `icon` INTEGER, " +
+                    + "`name` TEXT, `address` TEXT unique, `shortName` TEXT, `icon` INTEGER, " +
                     "PRIMARY KEY(`id`))");
             database.execSQL("INSERT INTO tokens (name, address, shortName, icon) " +
                     "values (\"BrahmaOS\", \"0xd7732e3783b0047aa251928960063f863ad022d8\", \"BRM\", "
-                    + R.drawable.ic_logo + ")");
+                    + R.drawable.icon_brm + ")");
             database.execSQL("INSERT INTO tokens (name, address, shortName, icon) " +
                     "values (\"Ethereum\", \"\", \"ETH\", "
                     + R.drawable.icon_eth + ")");

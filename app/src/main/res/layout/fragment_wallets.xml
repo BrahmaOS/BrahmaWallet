@@ -75,7 +75,7 @@
         </android.support.constraint.ConstraintLayout>
 
         <android.support.v4.widget.SwipeRefreshLayout
-            android:visibility="gone"
+            android:visibility="visible"
             android:id="@+id/swipe_refresh_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -96,16 +96,19 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textAlignment="center"
-                            android:layout_marginTop="@dimen/space_small"
+                            android:layout_marginTop="@dimen/space_smaller"
+                            android:textSize="@dimen/font_size_subheading"
                             android:textColor="@color/white"
                             android:text="@string/total_assets"/>
                         <TextView
+                            android:id="@+id/tv_total_assets"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textAlignment="center"
                             android:layout_marginTop="@dimen/space_normal"
                             android:textColor="@color/white"
-                            android:textSize="@dimen/font_size_headline"
+                            android:textSize="@dimen/font_size_display1"
+                            android:textStyle="italic|bold"
                             android:text="1982.1521"/>
                         <RelativeLayout
                             android:layout_width="match_parent"
@@ -113,24 +116,29 @@
                             android:paddingStart="@dimen/space_normal"
                             android:paddingEnd="@dimen/space_normal"
                             android:paddingTop="@dimen/space_small"
-                            android:paddingBottom="@dimen/space_small">
+                            android:paddingBottom="@dimen/space_smaller">
                             <TextView
                                 android:id="@+id/tv_assets_class"
+                                android:layout_centerVertical="true"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:textSize="@dimen/font_size_body"
                                 android:textColor="@color/white"
                                 android:text="@string/assets_class"/>
                             <TextView
                                 android:id="@+id/tv_assets_categories_num"
+                                android:layout_centerVertical="true"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="@dimen/space_small"
                                 android:layout_toEndOf="@id/tv_assets_class"
-                                android:textColor="@color/white"
-                                android:text="7"/>
+                                android:textSize="@dimen/font_size_body"
+                                android:textColor="@color/white"/>
                             <ImageView
+                                android:id="@+id/iv_choose_token"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/space_unit"
                                 android:layout_alignParentEnd="true"
                                 android:src="@drawable/ic_add_circle_outline"/>
                         </RelativeLayout>

@@ -84,4 +84,14 @@ public class AccountEntity implements Account {
         this.address = account.getAddress();
         this.filename = account.getFilename();
     }
+
+    @Override
+    public String toString() {
+        return "AccountEntity{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", filename='" + filename + '\'' +
+                '}';
+    }
 }
