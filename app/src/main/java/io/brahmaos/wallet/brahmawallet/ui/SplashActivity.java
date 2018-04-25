@@ -23,7 +23,7 @@ public class SplashActivity extends BaseActivity {
     }
 
     // display time length
-    private static final int DISPLAY_LEN = 500;
+    private static final int DISPLAY_LEN = 1000;
 
     private AccountViewModel mViewModel;
 
@@ -42,9 +42,10 @@ public class SplashActivity extends BaseActivity {
         super.onStart();
         // Get the account list to prevent the home page sloshing
         mViewModel.getAccounts().observe(this, accountEntities -> {
-            if (accountEntities != null) {
-                jumpToMain();
-            }
+
+        });
+        mViewModel.getTokens().observe(this, accountEntities -> {
+
         });
         jumpToMain();
     }

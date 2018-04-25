@@ -45,12 +45,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.WalletApp;
+import io.brahmaos.wallet.brahmawallet.api.Networks;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 import io.brahmaos.wallet.brahmawallet.model.AccountAssets;
+import io.brahmaos.wallet.brahmawallet.model.CryptoCurrency;
 import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
+import io.brahmaos.wallet.brahmawallet.service.MainService;
 import io.brahmaos.wallet.util.BLog;
 import rx.Completable;
 import rx.Observable;
@@ -65,6 +68,7 @@ public class AccountViewModel extends AndroidViewModel {
     private final MediatorLiveData<List<TokenEntity>> mObservableTokens;
     private final MediatorLiveData<List<AccountAssets>> mObservableAssets;
     private List<AccountAssets> assetsList = new ArrayList<>();
+    private final MediatorLiveData<List<CryptoCurrency>> mObservableCryptoCurrencies;
 
     public AccountViewModel(Application application) {
         super(application);
@@ -72,30 +76,21 @@ public class AccountViewModel extends AndroidViewModel {
         mObservableAccounts = new MediatorLiveData<>();
         mObservableTokens = new MediatorLiveData<>();
         mObservableAssets = new MediatorLiveData<>();
+        mObservableCryptoCurrencies = new MediatorLiveData<>();
         // set by default null, until we get data from the database.
         mObservableAccounts.setValue(null);
         mObservableTokens.setValue(null);
         mObservableAssets.setValue(null);
+        mObservableCryptoCurrencies.setValue(null);
 
         LiveData<List<AccountEntity>> accounts = ((WalletApp) application).getRepository()
                 .getAccounts();
 
         // observe the changes of the accounts from the database and forward them
         mObservableAccounts.addSource(accounts, value -> {
+            BLog.i("view model", "get account list");
             mObservableAccounts.setValue(value);
             getTotalAssets();
-        });
-
-        LiveData<List<TokenEntity>> tokens = ((WalletApp) application).getRepository()
-                .getTokens();
-
-        // observe the changes of the accounts from the database and forward them
-        mObservableTokens.addSource(tokens, new android.arch.lifecycle.Observer<List<TokenEntity>>() {
-            @Override
-            public void onChanged(@Nullable List<TokenEntity> value) {
-                mObservableTokens.setValue(value);
-                getTotalAssets();
-            }
         });
     }
 
@@ -214,6 +209,20 @@ public class AccountViewModel extends AndroidViewModel {
     }
 
     public LiveData<List<TokenEntity>> getTokens() {
+        if (mObservableTokens.getValue() == null ||
+                mObservableTokens.getValue().size() == 0) {
+            LiveData<List<TokenEntity>> tokens = ((WalletApp) getApplication()).getRepository()
+                    .getTokens();
+
+            // observe the changes of the accounts from the database and forward them
+            mObservableTokens.addSource(tokens, new android.arch.lifecycle.Observer<List<TokenEntity>>() {
+                @Override
+                public void onChanged(@Nullable List<TokenEntity> value) {
+                    mObservableTokens.setValue(value);
+                    getTotalAssets();
+                }
+            });
+        }
         return mObservableTokens;
     }
 
@@ -242,6 +251,8 @@ public class AccountViewModel extends AndroidViewModel {
         List<TokenEntity> tokens = mObservableTokens.getValue();
         if (accounts != null && accounts.size() > 0 && tokens != null && tokens.size() > 0) {
             BLog.i("view model", "get account assets success");
+            // init the assets
+            assetsList = new ArrayList<>();
             for (AccountEntity accountEntity : accounts) {
                 for (TokenEntity tokenEntity : tokens) {
                     getTokenAssets(accountEntity, tokenEntity);
@@ -338,7 +349,65 @@ public class AccountViewModel extends AndroidViewModel {
                     mObservableTokens.getValue().size();
             if (totalCount == assetsList.size()) {
                 mObservableAssets.postValue(assetsList);
+                MainService.getInstance().setAccountAssetsList(assetsList);
             }
         }
+    }
+
+    public LiveData<List<CryptoCurrency>> getCryptoCurrencies() {
+        if (mObservableCryptoCurrencies.getValue() == null ||
+                mObservableCryptoCurrencies.getValue().size() == 0) {
+            fetchCurrenciesFromNet();
+        }
+        return mObservableCryptoCurrencies;
+    }
+
+    private void fetchCurrenciesFromNet() {
+        Networks.getInstance().getMarketApi()
+                .getCryptoCurrencies(BrahmaConst.DEFAULT_CURRENCY_START,
+                        BrahmaConst.DEFAULT_CURRENCY_LIMIT, BrahmaConst.UNIT_PRICE_CNY)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<List<CryptoCurrency>>() {
+
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onNext(List<CryptoCurrency> apiRespResult) {
+                        // set the local params
+                        MainService.getInstance().loadCryptoCurrencies(apiRespResult);
+                        mObservableCryptoCurrencies.postValue(MainService.getInstance().getCryptoCurrencies());
+                    }
+                });
+
+        Networks.getInstance().getMarketApi()
+                .getCryptoCurrency(BrahmaConst.BRAHMAOS_TOKEN, BrahmaConst.UNIT_PRICE_CNY)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<List<CryptoCurrency>>() {
+
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onNext(List<CryptoCurrency> apiRespResult) {
+                        // set the local params
+                        MainService.getInstance().loadCryptoCurrencies(apiRespResult);
+                        mObservableCryptoCurrencies.postValue(MainService.getInstance().getCryptoCurrencies());
+                    }
+                });
     }
 }

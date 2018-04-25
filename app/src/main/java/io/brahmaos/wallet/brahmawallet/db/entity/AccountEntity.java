@@ -20,10 +20,12 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
+import java.io.Serializable;
+
 import io.brahmaos.wallet.brahmawallet.model.Account;
 
 @Entity(tableName = "accounts")
-public class AccountEntity implements Account {
+public class AccountEntity implements Account, Serializable {
     @PrimaryKey(autoGenerate = true)
     private int id;
     private String name;

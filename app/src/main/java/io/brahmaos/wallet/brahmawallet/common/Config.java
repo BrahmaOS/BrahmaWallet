@@ -84,7 +84,7 @@ public class Config {
                 "0xe94327d07fc17907b4db788e5adf2ed424addff6", R.drawable.icon_rep));
         tokenEntities.add(new TokenEntity(0, "TEST", "TEST",
                 "0xc4543b456F98347Cc990A9e9DC59591Eb0b18D94", R.drawable.icon_eth));
-        tokenEntities.add(new TokenEntity(0, "TESTADP", "TESTADP",
+        tokenEntities.add(new TokenEntity(0, "BrahmaOS", "BrahmaOS",
                 "0xc4fAEC4705d73570e6297dC71E72F66102D70Cd5", R.drawable.icon_eth));
     }
 

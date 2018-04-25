@@ -20,14 +20,20 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
+import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
+import io.brahmaos.wallet.brahmawallet.model.AccountAssets;
+import io.brahmaos.wallet.brahmawallet.model.CryptoCurrency;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
+import io.brahmaos.wallet.brahmawallet.service.MainService;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
@@ -45,6 +51,8 @@ public class AccountsActivity extends BaseActivity {
 
     private AccountViewModel mViewModel;
     private List<AccountEntity> accounts = new ArrayList<>();
+    private List<AccountAssets> accountAssetsList = new ArrayList<>();
+    private List<CryptoCurrency> cryptoCurrencies = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +78,9 @@ public class AccountsActivity extends BaseActivity {
             }
             recyclerViewAccounts.getAdapter().notifyDataSetChanged();
         });
+
+        accountAssetsList = MainService.getInstance().getAccountAssetsList();
+        cryptoCurrencies = MainService.getInstance().getCryptoCurrencies();
     }
 
     @Override
@@ -129,6 +140,9 @@ public class AccountsActivity extends BaseActivity {
                         }
                     }
                 }
+                Intent intent = new Intent(AccountsActivity.this, AccountDetailActivity.class);
+                intent.putExtra(IntentParam.PARAM_ACCOUNT_INFO, account);
+                startActivity(intent);
             });
             return new ItemViewHolder(rootView);
         }
@@ -152,7 +166,19 @@ public class AccountsActivity extends BaseActivity {
             ImageManager.showAccountAvatar(AccountsActivity.this, holder.ivAccountAvatar, account);
             holder.tvAccountName.setText(account.getName());
             holder.tvAccountAddress.setText(CommonUtil.generateSimpleAddress(account.getAddress()));
-            holder.tvTotalAssets.setText("0");
+            BigDecimal totalAssets = BigDecimal.ZERO;
+            for (AccountAssets assets : accountAssetsList) {
+                if (assets.getAccountEntity().getAddress().equals(account.getAddress()) &&
+                        assets.getBalance().compareTo(BigInteger.ZERO) > 0) {
+                    for (CryptoCurrency currency : cryptoCurrencies) {
+                        if (currency.getName().toLowerCase().equals(assets.getTokenEntity().getName().toLowerCase())) {
+                            BigDecimal tokenValue = new BigDecimal(currency.getPriceCny()).multiply(new BigDecimal(CommonUtil.getAccountFromWei(assets.getBalance())));
+                            totalAssets = totalAssets.add(tokenValue);
+                        }
+                    }
+                }
+            }
+            holder.tvTotalAssets.setText(String.valueOf(totalAssets.setScale(2, BigDecimal.ROUND_HALF_UP)));
         }
 
         @Override

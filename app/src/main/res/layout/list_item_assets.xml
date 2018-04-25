@@ -29,8 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/space_normal"
             android:layout_toEndOf="@id/iv_token_icon"
-            android:textSize="@dimen/font_size_title"
-            android:text="ETH"/>
+            android:textSize="@dimen/font_size_title"/>
 
         <LinearLayout
             android:layout_width="wrap_content"

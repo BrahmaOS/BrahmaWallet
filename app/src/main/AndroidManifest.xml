@@ -41,7 +41,12 @@
             android:name=".ui.account.ImportAccountActivity"
             android:label="@string/title_activity_import_account"
             android:theme="@style/AppTheme" />
-        <activity android:name=".ui.token.TokensActivity"></activity>
+        <activity android:name=".ui.token.TokensActivity" />
+        <activity
+            android:name=".ui.account.AccountDetailActivity"
+            android:label="@string/title_activity_account_detail"
+            android:theme="@style/AppTheme"></activity>
+        <activity android:name=".ui.test.TestActivity" />
     </application>
 
 </manifest>
