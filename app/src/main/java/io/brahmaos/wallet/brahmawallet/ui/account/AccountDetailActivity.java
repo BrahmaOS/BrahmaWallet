@@ -1,6 +1,9 @@
 package io.brahmaos.wallet.brahmawallet.ui.account;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,7 +11,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.math.BigDecimal;
@@ -27,7 +32,9 @@ import io.brahmaos.wallet.brahmawallet.model.CryptoCurrency;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.service.MainService;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
+import io.brahmaos.wallet.brahmawallet.ui.transfer.TransferActivity;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
+import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
 
 public class AccountDetailActivity extends BaseActivity {
@@ -36,6 +43,8 @@ public class AccountDetailActivity extends BaseActivity {
     protected String tag() {
         return AccountDetailActivity.class.getName();
     }
+
+    public static final int REQ_CODE_TRANSFER = 10;
 
     // UI references.
     @BindView(R.id.assets_recycler)
@@ -48,6 +57,10 @@ public class AccountDetailActivity extends BaseActivity {
     TextView tvAccountAddress;
     @BindView(R.id.tv_total_assets)
     TextView tvTotalAssets;
+    @BindView(R.id.tv_copy_address)
+    TextView tvCopyAddress;
+    @BindView(R.id.layout_progress)
+    FrameLayout layoutProgress;
 
     private AccountEntity account;
     private AccountViewModel mViewModel;
@@ -66,7 +79,19 @@ public class AccountDetailActivity extends BaseActivity {
             finish();
         }
         initView();
-        initData();
+
+        mViewModel = ViewModelProviders.of(this).get(AccountViewModel.class);
+        cryptoCurrencies = MainService.getInstance().getCryptoCurrencies();
+
+        mViewModel.getTokens().observe(this, entities -> {
+            if (entities != null) {
+                tokenEntities = entities;
+                recyclerViewAssets.getAdapter().notifyDataSetChanged();
+            }
+        });
+        accountAssetsList = MainService.getInstance().getAccountAssetsList();
+
+        initAssets();
     }
 
     private void initView() {
@@ -81,20 +106,18 @@ public class AccountDetailActivity extends BaseActivity {
         // Solve the sliding lag problem
         recyclerViewAssets.setHasFixedSize(true);
         recyclerViewAssets.setNestedScrollingEnabled(false);
+
+        tvCopyAddress.setOnClickListener(v -> {
+            ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+            cm.setText(account.getAddress());
+            showLongToast(R.string.tip_success_copy_address);
+        });
     }
 
-    private void initData() {
-        mViewModel = ViewModelProviders.of(this).get(AccountViewModel.class);
-        mViewModel.getTokens().observe(this, entities -> {
-            if (entities != null) {
-                tokenEntities = entities;
-                recyclerViewAssets.getAdapter().notifyDataSetChanged();
-            }
-        });
-
-        accountAssetsList = MainService.getInstance().getAccountAssetsList();
-        cryptoCurrencies = MainService.getInstance().getCryptoCurrencies();
-
+    private void initAssets() {
+        if (accountAssetsList == null) {
+            accountAssetsList = new ArrayList<>();
+        }
         BigDecimal totalValue = BigDecimal.ZERO;
         for (AccountAssets assets : accountAssetsList) {
             if (assets.getAccountEntity().getAddress().equals(account.getAddress())) {
@@ -111,8 +134,34 @@ public class AccountDetailActivity extends BaseActivity {
                 }
             }
         }
-
         tvTotalAssets.setText(String.valueOf(totalValue.setScale(2, BigDecimal.ROUND_HALF_UP)));
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == REQ_CODE_TRANSFER) {
+            if (resultCode == RESULT_OK) {
+                BLog.i(tag(), "transfer success");
+                mViewModel.getAccounts().observe(this, accountEntities -> {
+                    BLog.i(tag(), "get account success");
+                });
+
+                mViewModel.getAssets().observe(this, (List<AccountAssets> accountAssets) -> {
+                    layoutProgress.setVisibility(View.VISIBLE);
+                    BLog.i(tag(), "get transfer after account assets");
+                    if (accountAssets != null) {
+                        layoutProgress.setVisibility(View.GONE);
+                        BLog.i(tag(), "get transfer after account assets, the assets is not null");
+                        accountAssetsList = accountAssets;
+                        initAssets();
+                        recyclerViewAssets.getAdapter().notifyDataSetChanged();
+                    }
+                });
+            }
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     /**
@@ -146,6 +195,14 @@ public class AccountDetailActivity extends BaseActivity {
             if (tokenEntity == null) {
                 return;
             }
+
+            holder.layoutAssets.setOnClickListener(v -> {
+                Intent intent = new Intent(AccountDetailActivity.this, TransferActivity.class);
+                intent.putExtra(IntentParam.PARAM_ACCOUNT_INFO, account);
+                intent.putExtra(IntentParam.PARAM_TOKEN_INFO, tokenEntity);
+                startActivityForResult(intent, REQ_CODE_TRANSFER);
+            });
+
             holder.tvTokenName.setText(tokenEntity.getShortName());
             ImageManager.showTokenIcon(AccountDetailActivity.this, holder.ivTokenIcon, tokenEntity.getAddress());
             BigInteger tokenCount = BigInteger.ZERO;
@@ -172,6 +229,7 @@ public class AccountDetailActivity extends BaseActivity {
 
         class ItemViewHolder extends RecyclerView.ViewHolder {
 
+            LinearLayout layoutAssets;
             ImageView ivTokenIcon;
             TextView tvTokenName;
             TextView tvTokenAccount;
@@ -179,6 +237,7 @@ public class AccountDetailActivity extends BaseActivity {
 
             ItemViewHolder(View itemView) {
                 super(itemView);
+                layoutAssets = itemView.findViewById(R.id.layout_assets);
                 ivTokenIcon = itemView.findViewById(R.id.iv_token_icon);
                 tvTokenName = itemView.findViewById(R.id.tv_token_name);
                 tvTokenAccount = itemView.findViewById(R.id.tv_token_count);

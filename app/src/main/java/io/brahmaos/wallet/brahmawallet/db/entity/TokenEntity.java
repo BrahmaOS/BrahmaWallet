@@ -22,10 +22,12 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
+import java.io.Serializable;
+
 import io.brahmaos.wallet.brahmawallet.R;
 
 @Entity(tableName = "tokens", indices = {@Index(value = {"address"}, unique = true)})
-public class TokenEntity {
+public class TokenEntity implements Serializable{
     @PrimaryKey(autoGenerate = true)
     private int id;
     private String name;

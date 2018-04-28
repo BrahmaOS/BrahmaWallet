@@ -39,7 +39,7 @@ public class Config {
 
     private void initTokens() {
         tokenEntities.add(new TokenEntity(0, "BrahmaOS", "BRM",
-                "0xd7732e3783b0047aa251928960063f863ad022d8", R.drawable.icon_brm));
+                "0xb958c57d1896823b8f4178a21e1bf6796371eac4", R.drawable.icon_brm));
         tokenEntities.add(new TokenEntity(0, "Ethereum", "ETH",
                 "", R.drawable.icon_eth));
         tokenEntities.add(new TokenEntity(0, "EOS", "EOS",
@@ -82,10 +82,8 @@ public class Config {
                 "0xb7cb1c96db6b22b0d3d9536e0108d062bd488f74", R.drawable.icon_wtc));
         tokenEntities.add(new TokenEntity(0, "REP", "REP",
                 "0xe94327d07fc17907b4db788e5adf2ed424addff6", R.drawable.icon_rep));
-        tokenEntities.add(new TokenEntity(0, "TEST", "TEST",
-                "0xc4543b456F98347Cc990A9e9DC59591Eb0b18D94", R.drawable.icon_eth));
-        tokenEntities.add(new TokenEntity(0, "BrahmaOS", "BrahmaOS",
-                "0xc4fAEC4705d73570e6297dC71E72F66102D70Cd5", R.drawable.icon_eth));
+        /*tokenEntities.add(new TokenEntity(0, "BrahmaOS", "BRM(TEST)",
+                "0xb958c57d1896823b8f4178a21e1bf6796371eac4", R.drawable.icon_eth));*/
     }
 
     public String getLocalKeystorePath() {

@@ -45,8 +45,12 @@
         <activity
             android:name=".ui.account.AccountDetailActivity"
             android:label="@string/title_activity_account_detail"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
         <activity android:name=".ui.test.TestActivity" />
+        <activity
+            android:name=".ui.transfer.TransferActivity"
+            android:label="@string/title_activity_transfer"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

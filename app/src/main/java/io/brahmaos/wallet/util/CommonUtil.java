@@ -18,6 +18,10 @@ public class CommonUtil {
     }
 
     public static String parseAccountContent(String value) {
-        return value.replaceAll("[\\t\\n\\r]", "");
+        return value.replaceAll("\\s*", "");
+    }
+
+    public static BigInteger convertFormWeiToEther(BigDecimal value) {
+        return value.multiply(new BigDecimal(Math.pow(10, 18))).toBigInteger();
     }
 }

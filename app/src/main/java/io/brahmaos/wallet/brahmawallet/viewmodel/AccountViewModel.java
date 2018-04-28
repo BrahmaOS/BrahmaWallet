@@ -32,10 +32,12 @@ import org.web3j.crypto.WalletFile;
 import org.web3j.protocol.ObjectMapperFactory;
 import org.web3j.protocol.core.methods.response.EthCall;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
+import org.web3j.protocol.exceptions.TransactionTimeoutException;
 import org.web3j.utils.Numeric;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
@@ -56,6 +58,7 @@ import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
 import io.brahmaos.wallet.brahmawallet.service.MainService;
 import io.brahmaos.wallet.util.BLog;
 import rx.Completable;
+import rx.CompletableSubscriber;
 import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
@@ -246,7 +249,7 @@ public class AccountViewModel extends AndroidViewModel {
     /*
      * Get all the token's assets for all accounts
      */
-    private void getTotalAssets() {
+    public void getTotalAssets() {
         List<AccountEntity> accounts = mObservableAccounts.getValue();
         List<TokenEntity> tokens = mObservableTokens.getValue();
         if (accounts != null && accounts.size() > 0 && tokens != null && tokens.size() > 0) {
@@ -409,5 +412,23 @@ public class AccountViewModel extends AndroidViewModel {
                         mObservableCryptoCurrencies.postValue(MainService.getInstance().getCryptoCurrencies());
                     }
                 });
+    }
+
+    public Observable<Boolean> sendTransfer(AccountEntity account, TokenEntity token, String password,
+                                    String destinationAddress, BigDecimal amount) {
+        return Observable.create(e -> {
+            try {
+                if (token.getName().toLowerCase().equals(BrahmaConst.ETHEREUM)) {
+                    BrahmaWeb3jService.getInstance().sendTransferEth(account, password, destinationAddress, amount);
+                } else {
+                    BrahmaWeb3jService.getInstance().sendTransfer(account, token, password, destinationAddress, amount);
+                }
+                e.onNext(Boolean.TRUE);
+            } catch (IOException | CipherException | TransactionTimeoutException | InterruptedException e1) {
+                e1.printStackTrace();
+                e.onError(e1);
+            }
+            e.onCompleted();
+        });
     }
 }

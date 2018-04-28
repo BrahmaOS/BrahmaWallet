@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.math.BigDecimal;
@@ -31,16 +32,20 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
+import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 import io.brahmaos.wallet.brahmawallet.model.AccountAssets;
 import io.brahmaos.wallet.brahmawallet.model.CryptoCurrency;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
+import io.brahmaos.wallet.brahmawallet.service.MainService;
+import io.brahmaos.wallet.brahmawallet.ui.account.AccountDetailActivity;
 import io.brahmaos.wallet.brahmawallet.ui.account.AccountsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.account.CreateAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.account.ImportAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.test.TestActivity;
 import io.brahmaos.wallet.brahmawallet.ui.token.TokensActivity;
+import io.brahmaos.wallet.brahmawallet.ui.transfer.TransferActivity;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
@@ -51,6 +56,8 @@ public class MainActivity extends AppCompatActivity
     protected String tag() {
         return MainActivity.class.getName();
     }
+
+    public static int REQ_CODE_TRANSFER = 10;
 
     @BindView(R.id.layout_new_account)
     ConstraintLayout createAccountLayout;
@@ -79,6 +86,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drawer);
         ButterKnife.bind(this);
+        mViewModel = ViewModelProviders.of(this).get(AccountViewModel.class);
         initView();
         initData();
     }
@@ -93,6 +101,14 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // get the latest assets
+                mViewModel.getTotalAssets();
+            }
+        });
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerViewAssets.setLayoutManager(layoutManager);
@@ -121,7 +137,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initData() {
-        mViewModel = ViewModelProviders.of(this).get(AccountViewModel.class);
         mViewModel.getAccounts().observe(this, accountEntities -> {
             cacheAccounts = accountEntities;
             checkContentShow();
@@ -153,6 +168,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        cacheAssets = MainService.getInstance().getAccountAssetsList();
+        showAssetsCurrency();
+    }
+
+    @Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
@@ -170,11 +192,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         if (item.getItemId() == R.id.menu_accounts) {
             if (cacheAccounts != null && cacheAccounts.size() > 0) {
@@ -182,7 +199,6 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -192,19 +208,14 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            Intent intent = new Intent(this, TestActivity.class);
+        if (id == R.id.nav_accounts) {
+            Intent intent = new Intent(this, AccountsActivity.class);
             startActivity(intent);
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_settings) {
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_help) {
 
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_info) {
 
         }
 
@@ -256,6 +267,21 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == REQ_CODE_TRANSFER) {
+            if (resultCode == RESULT_OK) {
+                BLog.i(tag(), "transfer success");
+                // get the latest assets
+                mViewModel.getTotalAssets();
+                swipeRefreshLayout.setRefreshing(true);
+            }
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
     /**
      * list item account
      */
@@ -265,9 +291,6 @@ public class MainActivity extends AppCompatActivity
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_assets, parent, false);
-            rootView.setOnClickListener(v -> {
-
-            });
             return new AssetsRecyclerAdapter.ItemViewHolder(rootView);
         }
 
@@ -287,6 +310,11 @@ public class MainActivity extends AppCompatActivity
             if (tokenEntity == null) {
                 return;
             }
+            holder.layoutAssets.setOnClickListener(v -> {
+                Intent intent = new Intent(MainActivity.this, TransferActivity.class);
+                intent.putExtra(IntentParam.PARAM_TOKEN_INFO, tokenEntity);
+                startActivityForResult(intent, REQ_CODE_TRANSFER);
+            });
             holder.tvTokenName.setText(tokenEntity.getShortName());
             ImageManager.showTokenIcon(MainActivity.this, holder.ivTokenIcon, tokenEntity.getAddress());
             BigInteger tokenCount = BigInteger.ZERO;
@@ -312,6 +340,7 @@ public class MainActivity extends AppCompatActivity
 
         class ItemViewHolder extends RecyclerView.ViewHolder {
 
+            LinearLayout layoutAssets;
             ImageView ivTokenIcon;
             TextView tvTokenName;
             TextView tvTokenAccount;
@@ -319,6 +348,7 @@ public class MainActivity extends AppCompatActivity
 
             ItemViewHolder(View itemView) {
                 super(itemView);
+                layoutAssets = itemView.findViewById(R.id.layout_assets);
                 ivTokenIcon = itemView.findViewById(R.id.iv_token_icon);
                 tvTokenName = itemView.findViewById(R.id.tv_token_name);
                 tvTokenAccount = itemView.findViewById(R.id.tv_token_count);

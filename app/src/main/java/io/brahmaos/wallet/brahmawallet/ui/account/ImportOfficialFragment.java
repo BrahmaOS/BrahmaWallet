@@ -127,7 +127,7 @@ public class ImportOfficialFragment extends Fragment {
         // Check for a valid keystore.
         if (TextUtils.isEmpty(officialKeystore)) {
             focusView = etKeystore;
-            Toast.makeText(getActivity(), R.string.error_field_required, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.error_field_required, Toast.LENGTH_LONG).show();
             cancel = true;
         }
 
@@ -202,10 +202,10 @@ public class ImportOfficialFragment extends Fragment {
                             @Override
                             public void onNext(Boolean flag) {
                                 if (flag) {
-                                    Toast.makeText(getContext(), R.string.success_import_account, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getContext(), R.string.success_import_account, Toast.LENGTH_LONG).show();
                                     getActivity().finish();
                                 } else {
-                                    Toast.makeText(getContext(), R.string.error_import_keystore, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getContext(), R.string.error_import_keystore, Toast.LENGTH_LONG).show();
                                     mProgressBar.setVisibility(View.GONE);
                                     etKeystore.requestFocus();
                                     btnImportAccount.setEnabled(true);
@@ -215,7 +215,7 @@ public class ImportOfficialFragment extends Fragment {
                             @Override
                             public void onError(Throwable e) {
                                 e.printStackTrace();
-                                Toast.makeText(getContext(), R.string.error_import_keystore, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), R.string.error_import_keystore, Toast.LENGTH_LONG).show();
                                 mProgressBar.setVisibility(View.GONE);
                                 etKeystore.requestFocus();
                                 btnImportAccount.setEnabled(true);
@@ -228,7 +228,7 @@ public class ImportOfficialFragment extends Fragment {
                         });
             } else {
                 BLog.e(tag(), "the error keystore about address");
-                Toast.makeText(getContext(), R.string.error_account_address, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.error_account_address, Toast.LENGTH_LONG).show();
                 btnImportAccount.setEnabled(true);
                 etKeystore.requestFocus();
                 mProgressBar.setVisibility(View.GONE);
@@ -236,7 +236,7 @@ public class ImportOfficialFragment extends Fragment {
 
         } catch (IOException e) {
             e.printStackTrace();
-            Toast.makeText(getActivity(), R.string.error_keystore, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.error_keystore, Toast.LENGTH_LONG).show();
             btnImportAccount.setEnabled(true);
             etKeystore.requestFocus();
             mProgressBar.setVisibility(View.GONE);

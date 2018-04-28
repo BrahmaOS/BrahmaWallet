@@ -21,6 +21,12 @@ android {
             }
         }
     }
+
+    // ignore lint error
+    lintOptions {
+        abortOnError false
+    }
+
     buildTypes {
         debug {
             minifyEnabled false

@@ -194,7 +194,7 @@ public class ImportPrivateKeyFragment extends Fragment {
                                 etPrivateKey.requestFocus();
                                 btnImportAccount.setEnabled(true);
                             } else {
-                                Toast.makeText(getContext(), R.string.error_import_private_key, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), R.string.error_import_private_key, Toast.LENGTH_LONG).show();
                                 mProgressBar.setVisibility(View.GONE);
                                 etPrivateKey.requestFocus();
                                 btnImportAccount.setEnabled(true);
@@ -204,7 +204,7 @@ public class ImportPrivateKeyFragment extends Fragment {
                         @Override
                         public void onError(Throwable e) {
                             e.printStackTrace();
-                            Toast.makeText(getContext(), R.string.error_import_private_key, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), R.string.error_import_private_key, Toast.LENGTH_LONG).show();
                             mProgressBar.setVisibility(View.GONE);
                             etPrivateKey.requestFocus();
                             btnImportAccount.setEnabled(true);
@@ -217,7 +217,7 @@ public class ImportPrivateKeyFragment extends Fragment {
                     });
 
         } else {
-            Toast.makeText(getContext(), R.string.error_private_key, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.error_private_key, Toast.LENGTH_LONG).show();
             mProgressBar.setVisibility(View.GONE);
             etPrivateKey.requestFocus();
             btnImportAccount.setEnabled(true);

@@ -23,7 +23,7 @@ public class SplashActivity extends BaseActivity {
     }
 
     // display time length
-    private static final int DISPLAY_LEN = 1000;
+    private static final int DISPLAY_LEN = 2000;
 
     private AccountViewModel mViewModel;
 

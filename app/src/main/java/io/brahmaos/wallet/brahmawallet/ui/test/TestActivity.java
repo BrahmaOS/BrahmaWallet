@@ -81,7 +81,7 @@ public class TestActivity extends Activity {
 
         final String destinationAddress = "0x5c0525e7e4af221c41a991128eeee64a83026ec0";
         final String currentWalletAddress = "0x76e1ff3d7be7ff088366056f051a9241e0535f7e";
-        final String contractAddress = "0x511253935b664db2f78fb1f9aa844ab4d37cc106";
+        final String contractAddress = "0x6c41cD8Ef9E1B6e90b3497674092030F39Eb271d";
 
         Credentials credentials = null;
         try {
@@ -98,28 +98,24 @@ public class TestActivity extends Activity {
         task = new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] objects) {
-                /*try {
+                try {
                     // FIXME: Request some Ether for the Rinkeby test network at https://www.rinkeby.io/#faucet
                     BLog.i(tag, "Sending 1 ETHER ");
 
                     TransactionReceipt transferReceipt = Transfer.sendFunds(
                             web3, finalCredentials,
-                            "0xa0aef994f99594f92b4dcad85e0c6b1178766a8f",  // you can put any address here
-                            BigDecimal.ONE, Convert.Unit.ETHER)  // 1 wei = 10^-18 Ether
-                            .send();
+                            destinationAddress,  // you can put any address here
+                            new BigDecimal(500), Convert.Unit.KWEI)  // 1 wei = 10^-18 Ether
+                            ;
                     BLog.i(tag, "Transaction complete, view it at https://rinkeby.etherscan.io/tx/"
                             + transferReceipt.getTransactionHash());
                 } catch (IOException e) {
                     e.printStackTrace();
-                } catch (CipherException e) {
-                    e.printStackTrace();
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (TransactionException e) {
                     e.printStackTrace();
                 } catch (Exception e) {
                     e.printStackTrace();
-                }*/
+                }
                 return true;
             }
         };
@@ -176,7 +172,7 @@ public class TestActivity extends Activity {
 
                     Function function = new Function(
                             "transfer",
-                            Arrays.<Type>asList(new Address(currentWalletAddress),
+                            Arrays.<Type>asList(new Address(destinationAddress),
                                     new Uint256((long) (128 * Math.pow(10, 18)))),
                             Collections.<TypeReference<?>>emptyList());
                     String encodedFunction = FunctionEncoder.encode(function);

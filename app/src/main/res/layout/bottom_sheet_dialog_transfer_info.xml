@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="@dimen/space_large"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text="@string/title_transfer_request"
+                android:paddingTop="@dimen/space_normal"
+                android:paddingBottom="@dimen/space_small"
+                android:textColor="@color/color_primary_text"
+                android:textSize="@dimen/font_size_subheading"/>
+
+            <ImageView
+                android:id="@+id/iv_close_dialog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_small"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_close"/>
+        </FrameLayout>
+
+        <include layout="@layout/horizontal_divider"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/space_normal"
+            android:paddingEnd="@dimen/space_normal"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/space_normal"
+                android:paddingBottom="@dimen/space_normal"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/space_smaller"
+                    android:textColor="@color/color_hint_text"
+                    android:text="@string/pay_to_address"/>
+                <TextView
+                    android:id="@+id/tv_pay_to_address"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+            <include layout="@layout/horizontal_divider"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/space_normal"
+                android:paddingBottom="@dimen/space_normal"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/space_smaller"
+                    android:textColor="@color/color_hint_text"
+                    android:text="@string/pay_by_address"/>
+                <TextView
+                    android:id="@+id/tv_pay_by_address"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <include layout="@layout/horizontal_divider"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/space_normal"
+                android:paddingBottom="@dimen/space_normal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/color_hint_text"
+                    android:text="@string/fees"/>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="viewEnd"
+                        android:textSize="@dimen/font_size_subheading"
+                        android:text="@string/prompt_total_gas"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/prompt_total_gas_desc"
+                        android:textSize="@dimen/font_size_caption"
+                        android:textColor="@color/color_hint_text"/>
+                </LinearLayout>
+            </RelativeLayout>
+
+            <include layout="@layout/horizontal_divider"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/space_normal"
+                android:paddingBottom="@dimen/space_normal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/color_hint_text"
+                    android:text="@string/prompt_amount" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_alignParentEnd="true">
+                    <TextView
+                        android:id="@+id/tv_dialog_transfer_amount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/space_smaller"
+                        android:textSize="@dimen/font_size_title"
+                        android:textColor="@color/color_primary_text"/>
+                    <TextView
+                        android:id="@+id/tv_dialog_transfer_token"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/font_size_title"
+                        android:textColor="@color/color_primary_text"/>
+                </LinearLayout>
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/btn_commit_transfer"
+                style="@style/ButtonSingle"
+                android:layout_marginTop="@dimen/space_normal"
+                android:text="@string/action_confirm"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</android.support.v4.widget.NestedScrollView>

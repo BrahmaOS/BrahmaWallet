@@ -90,7 +90,7 @@ public abstract class BaseActivity extends AppCompatActivity {
      * set toolbar title
      */
     protected void setToolbarTitle(String title) {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         if (toolbar != null) {
             toolbar.setTitle(title);
         }
