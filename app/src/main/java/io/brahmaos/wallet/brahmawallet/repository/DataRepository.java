@@ -90,4 +90,8 @@ public class DataRepository {
     public void createToken(TokenEntity token) {
         mDatabase.tokenDao().insertToken(token);
     }
+
+    public void deleteToken(String address) {
+        mDatabase.tokenDao().deleteToken(address);
+    }
 }

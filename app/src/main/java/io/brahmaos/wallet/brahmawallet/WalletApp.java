@@ -21,6 +21,7 @@ import android.app.Application;
 import io.brahmaos.wallet.brahmawallet.common.Config;
 import io.brahmaos.wallet.brahmawallet.db.database.WalletDatabase;
 import io.brahmaos.wallet.brahmawallet.repository.DataRepository;
+import io.brahmaos.wallet.brahmawallet.service.MainService;
 import io.brahmaos.wallet.util.BLog;
 
 /**
@@ -31,7 +32,7 @@ public class WalletApp extends Application {
     public void onCreate() {
         super.onCreate();
         WalletDatabase.getInstance(getApplicationContext());
-
+        MainService.getInstance().init(getApplicationContext());
         // init the config
         Config.getInstance().init(getApplicationContext());
     }

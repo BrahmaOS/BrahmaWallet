@@ -18,6 +18,7 @@ package io.brahmaos.wallet.brahmawallet.db.dao;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
+import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 
@@ -36,6 +37,9 @@ public interface TokenDao {
 
     @Insert
     void insertToken(TokenEntity token);
+
+    @Query("delete from tokens where address = :address")
+    void deleteToken(String address);
 
     @Query("select * from tokens where id = :tokenId")
     LiveData<TokenEntity> loadToken(int tokenId);

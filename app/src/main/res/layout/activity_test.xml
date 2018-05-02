@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="io.brahmaos.wallet.brahmawallet.ui.MainActivity">
+
+    <TextView
+        android:id="@+id/sample_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hello World!"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_create_wallet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="create wallet"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_check_wallet_file"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:text="check wallet files"
+        app:layout_constraintEnd_toEndOf="@+id/btn_create_wallet"
+        app:layout_constraintStart_toStartOf="@+id/btn_create_wallet"
+        app:layout_constraintTop_toBottomOf="@+id/btn_create_wallet" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <Button
+        android:id="@+id/button5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="64dp"
+        android:text="Wallet Button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guideline6" />
+
+    <Button
+        android:id="@+id/button7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button"
+        app:layout_constraintBottom_toBottomOf="@+id/button5"
+        app:layout_constraintStart_toStartOf="@+id/guideline6" />
+
+    <Button
+        android:id="@+id/btn_check_accounts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:text="check accounts"
+        app:layout_constraintEnd_toEndOf="@+id/btn_check_wallet_file"
+        app:layout_constraintStart_toStartOf="@+id/btn_check_wallet_file"
+        app:layout_constraintTop_toBottomOf="@+id/btn_check_wallet_file" />
+
+    <Button
+        android:id="@+id/btn_check_balance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:text="check balance"
+        app:layout_constraintEnd_toEndOf="@+id/btn_check_accounts"
+        app:layout_constraintStart_toStartOf="@+id/btn_check_accounts"
+        app:layout_constraintTop_toBottomOf="@+id/btn_check_accounts" />
+
+    <Button
+        android:id="@+id/btn_transaction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:text="transaction"
+        app:layout_constraintEnd_toEndOf="@+id/btn_check_balance"
+        app:layout_constraintStart_toStartOf="@+id/btn_check_balance"
+        app:layout_constraintTop_toBottomOf="@+id/btn_check_balance" />
+
+    <Button
+        android:id="@+id/btn_smart_contract"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:text="smart contract"
+        app:layout_constraintEnd_toEndOf="@+id/btn_transaction"
+        app:layout_constraintStart_toStartOf="@+id/btn_transaction"
+        app:layout_constraintTop_toBottomOf="@+id/btn_transaction" />
+
+    <Button
+        android:id="@+id/btn_smart_contract_transaction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:text="smart contract transaction"
+        app:layout_constraintEnd_toEndOf="@+id/btn_smart_contract"
+        app:layout_constraintStart_toStartOf="@+id/btn_smart_contract"
+        app:layout_constraintTop_toBottomOf="@+id/btn_smart_contract" />
+
+</android.support.constraint.ConstraintLayout>

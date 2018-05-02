@@ -33,10 +33,10 @@ import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
+import io.brahmaos.wallet.util.CommonUtil;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class ImportPrivateKeyFragment extends Fragment {
     protected String tag() {
@@ -121,7 +121,7 @@ public class ImportPrivateKeyFragment extends Fragment {
         etRepeatPassword.setError(null);
 
         // Store values at the time of the create account.
-        String privateKey = etPrivateKey.getText().toString().trim();
+        String privateKey = CommonUtil.parseAccountContent(etPrivateKey.getText().toString().trim());
         String name = etAccountName.getText().toString().trim();
         String password = etPassword.getText().toString();
         String repeatPassword = etRepeatPassword.getText().toString();
@@ -180,11 +180,6 @@ public class ImportPrivateKeyFragment extends Fragment {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<String>() {
                         @Override
-                        public void onSubscribe(Disposable d) {
-
-                        }
-
-                        @Override
                         public void onNext(String address) {
                             if (address != null && WalletUtils.isValidAddress(address)) {
                                 Toast.makeText(getContext(), R.string.success_import_account, Toast.LENGTH_SHORT).show();
@@ -199,7 +194,7 @@ public class ImportPrivateKeyFragment extends Fragment {
                                 etPrivateKey.requestFocus();
                                 btnImportAccount.setEnabled(true);
                             } else {
-                                Toast.makeText(getContext(), R.string.error_import_private_key, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), R.string.error_import_private_key, Toast.LENGTH_LONG).show();
                                 mProgressBar.setVisibility(View.GONE);
                                 etPrivateKey.requestFocus();
                                 btnImportAccount.setEnabled(true);
@@ -209,20 +204,20 @@ public class ImportPrivateKeyFragment extends Fragment {
                         @Override
                         public void onError(Throwable e) {
                             e.printStackTrace();
-                            Toast.makeText(getContext(), R.string.error_import_private_key, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), R.string.error_import_private_key, Toast.LENGTH_LONG).show();
                             mProgressBar.setVisibility(View.GONE);
                             etPrivateKey.requestFocus();
                             btnImportAccount.setEnabled(true);
                         }
 
                         @Override
-                        public void onComplete() {
+                        public void onCompleted() {
 
                         }
                     });
 
         } else {
-            Toast.makeText(getContext(), R.string.error_private_key, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.error_private_key, Toast.LENGTH_LONG).show();
             mProgressBar.setVisibility(View.GONE);
             etPrivateKey.requestFocus();
             btnImportAccount.setEnabled(true);
