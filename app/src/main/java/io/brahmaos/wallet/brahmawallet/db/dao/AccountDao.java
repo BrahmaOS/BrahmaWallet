@@ -41,4 +41,13 @@ public interface AccountDao {
 
     @Query("select * from accounts where id = :accountId")
     AccountEntity loadAccountSync(int accountId);
+
+    @Query("update accounts set name = :accountName where id = :accountId")
+    void changeAccountName(int accountId, String accountName);
+
+    @Query("update accounts set filename = :filename where id = :accountId")
+    void changeAccountFilename(int accountId, String filename);
+
+    @Query("delete from accounts where id = :accountId")
+    void deleteAccount(int accountId);
 }

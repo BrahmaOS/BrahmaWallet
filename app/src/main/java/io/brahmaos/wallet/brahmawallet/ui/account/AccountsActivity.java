@@ -1,11 +1,10 @@
 package io.brahmaos.wallet.brahmawallet.ui.account;
 
+import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -35,6 +34,7 @@ import io.brahmaos.wallet.brahmawallet.model.CryptoCurrency;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.service.MainService;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
+import io.brahmaos.wallet.brahmawallet.view.CustomProgressDialog;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
@@ -45,9 +45,12 @@ public class AccountsActivity extends BaseActivity {
         return AccountsActivity.class.getName();
     }
 
+    public static final int REQ_IMPORT_ACCOUNT = 20;
+
     // UI references.
     @BindView(R.id.accounts_recycler)
     RecyclerView recyclerViewAccounts;
+    private CustomProgressDialog progressDialog;
 
     private AccountViewModel mViewModel;
     private List<AccountEntity> accounts = new ArrayList<>();
@@ -71,12 +74,13 @@ public class AccountsActivity extends BaseActivity {
         recyclerViewAccounts.setAdapter(new AccountRecyclerAdapter());
 
         mViewModel.getAccounts().observe(this, accountEntities -> {
-            if (accountEntities == null) {
+            if (accountEntities == null || accountEntities.size() < 1) {
                 accounts = new ArrayList<>();
+                finish();
             } else {
                 accounts = accountEntities;
+                recyclerViewAccounts.getAdapter().notifyDataSetChanged();
             }
-            recyclerViewAccounts.getAdapter().notifyDataSetChanged();
         });
 
         accountAssetsList = MainService.getInstance().getAccountAssetsList();
@@ -98,7 +102,7 @@ public class AccountsActivity extends BaseActivity {
             return true;
         } else if (id == R.id.menu_import_account) {
             Intent intent = new Intent(this, ImportAccountActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, REQ_IMPORT_ACCOUNT);
             return true;
         } else if (id == android.R.id.home) {
             finish();
@@ -106,6 +110,34 @@ public class AccountsActivity extends BaseActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == REQ_IMPORT_ACCOUNT) {
+            if (resultCode == RESULT_OK) {
+                progressDialog = new CustomProgressDialog(this, R.style.CustomProgressDialogStyle, getString(R.string.sync));
+                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                progressDialog.setCancelable(false);
+                //progressDialog.show();
+                BLog.i(tag(), "import account success");
+                mViewModel.getTokens().observe(this, tokenEntities -> {
+                    BLog.i(tag(), "get all tokens for get total account assets");
+                });
+                mViewModel.getAssets().observe(this, (List<AccountAssets> accountAssets) -> {
+                    BLog.i(tag(), "the assets length is: " + accountAssets);
+                    if (accountAssets != null && accountAssets.size() > 0) {
+                        BLog.i(tag(), "the assets length is: " + accountAssets.size());
+                        progressDialog.cancel();
+                        accountAssetsList = accountAssets;
+                        recyclerViewAccounts.getAdapter().notifyDataSetChanged();
+                    }
+                });
+            }
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     /**
@@ -140,8 +172,8 @@ public class AccountsActivity extends BaseActivity {
                         }
                     }
                 }
-                Intent intent = new Intent(AccountsActivity.this, AccountDetailActivity.class);
-                intent.putExtra(IntentParam.PARAM_ACCOUNT_INFO, account);
+                Intent intent = new Intent(AccountsActivity.this, AccountAssetsActivity.class);
+                intent.putExtra(IntentParam.PARAM_ACCOUNT_ID, account.getId());
                 startActivity(intent);
             });
             return new ItemViewHolder(rootView);

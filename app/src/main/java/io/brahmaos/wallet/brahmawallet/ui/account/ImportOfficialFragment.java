@@ -1,6 +1,9 @@
 package io.brahmaos.wallet.brahmawallet.ui.account;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -9,6 +12,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -26,6 +30,7 @@ import java.util.List;
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
+import io.brahmaos.wallet.brahmawallet.view.CustomProgressDialog;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
@@ -49,7 +54,7 @@ public class ImportOfficialFragment extends Fragment {
     private EditText etRepeatPassword;
     private Button btnImportAccount;
     private CheckBox checkBoxReadProtocol;
-    private View mProgressBar;
+    private CustomProgressDialog customProgressDialog;
 
     public static ImportOfficialFragment newInstance(int page) {
         Bundle args = new Bundle();
@@ -105,7 +110,6 @@ public class ImportOfficialFragment extends Fragment {
         checkBoxReadProtocol.setOnCheckedChangeListener((buttonView, isChecked) -> btnImportAccount.setEnabled(isChecked));
 
         btnImportAccount.setOnClickListener(view -> importOfficialAccount());
-        mProgressBar = parentView.findViewById(R.id.import_progress);
     }
 
     private void importOfficialAccount() {
@@ -193,7 +197,12 @@ public class ImportOfficialFragment extends Fragment {
                 }
             }
 
-            mProgressBar.setVisibility(View.VISIBLE);
+            customProgressDialog = new CustomProgressDialog(getActivity(),
+                    R.style.CustomProgressDialogStyle,
+                    getString(R.string.progress_import_account));
+            customProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            customProgressDialog.setCancelable(false);
+            customProgressDialog.show();
             if (WalletUtils.isValidAddress(address)) {
                 mViewModel.importAccount(walletFile, password, name)
                         .subscribeOn(Schedulers.io())
@@ -201,12 +210,16 @@ public class ImportOfficialFragment extends Fragment {
                         .subscribe(new Observer<Boolean>() {
                             @Override
                             public void onNext(Boolean flag) {
+                                customProgressDialog.cancel();
                                 if (flag) {
+                                    // hide soft input board
+                                    getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
                                     Toast.makeText(getContext(), R.string.success_import_account, Toast.LENGTH_LONG).show();
+                                    Intent intent = new Intent();
+                                    getActivity().setResult(Activity.RESULT_OK, intent);
                                     getActivity().finish();
                                 } else {
                                     Toast.makeText(getContext(), R.string.error_import_keystore, Toast.LENGTH_LONG).show();
-                                    mProgressBar.setVisibility(View.GONE);
                                     etKeystore.requestFocus();
                                     btnImportAccount.setEnabled(true);
                                 }
@@ -216,7 +229,7 @@ public class ImportOfficialFragment extends Fragment {
                             public void onError(Throwable e) {
                                 e.printStackTrace();
                                 Toast.makeText(getContext(), R.string.error_import_keystore, Toast.LENGTH_LONG).show();
-                                mProgressBar.setVisibility(View.GONE);
+                                customProgressDialog.cancel();
                                 etKeystore.requestFocus();
                                 btnImportAccount.setEnabled(true);
                             }
@@ -231,7 +244,7 @@ public class ImportOfficialFragment extends Fragment {
                 Toast.makeText(getContext(), R.string.error_account_address, Toast.LENGTH_LONG).show();
                 btnImportAccount.setEnabled(true);
                 etKeystore.requestFocus();
-                mProgressBar.setVisibility(View.GONE);
+                customProgressDialog.cancel();
             }
 
         } catch (IOException e) {
@@ -239,7 +252,7 @@ public class ImportOfficialFragment extends Fragment {
             Toast.makeText(getActivity(), R.string.error_keystore, Toast.LENGTH_LONG).show();
             btnImportAccount.setEnabled(true);
             etKeystore.requestFocus();
-            mProgressBar.setVisibility(View.GONE);
+            customProgressDialog.cancel();
         }
     }
 }

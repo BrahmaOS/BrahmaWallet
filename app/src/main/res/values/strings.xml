@@ -8,6 +8,8 @@
     <string name="title_wallets">Wallets</string>
     <string name="title_markets">Markets</string>
     <string name="title_profile">Profile</string>
+    <string name="copy">Copy</string>
+    <string name="delete">Delete</string>
 
     <string name="title_brahma_wallet">Brahma Wallet</string>
     <string name="brahma_wallet_desc">Your smart digital wallet</string>
@@ -32,8 +34,45 @@
 
     <!-- Strings related to accounts -->
     <string name="title_accounts">Accounts</string>
+    <string name="title_account_assets">Account Assets</string>
     <string name="title_account_detail">Account Detail</string>
+    <string name="title_account_change_name">Change Name</string>
+    <string name="title_account_change_password">Change Password</string>
     <string name="action_copy_address">Copy Address</string>
+    <string name="title_dialog_export_keystore">Export Keystore</string>
+    <string name="title_dialog_export_private_key">Export Private Key</string>
+
+    <string name="export_keystore_tip_1">Store offline. Never put it on internet.</string>
+    <string name="export_keystore_tip_2">Don\'t transfer via internet Tools.</string>
+    <string name="export_private_key_tip_1">
+        Warning: Export plain private key is very dangerous.
+    </string>
+    <string name="delete_account_tip">
+        Caution! This operation cannot be revoked!
+    </string>
+
+    <string name="action_change_account_name">Change Name</string>
+    <string name="action_change_password">Change Password</string>
+    <string name="action_export_private_key">Export Private Key</string>
+    <string name="action_export_keystore">Export Keystore</string>
+    <string name="action_delete_account">Delete Account</string>
+
+    <string name="success_change_account_name">Change account name success!</string>
+    <string name="error_change_account_name">Change account name error!!!</string>
+    <string name="success_change_password">Change password success!</string>
+    <string name="error_change_password">Change password error!!!</string>
+    <string name="error_current_password">Error Password!!!</string>
+    <string name="success_delete_account">Success delete account.</string>
+    <string name="error_delete_account">Error delete account!!!</string>
+
+    <string name="prompt_current_password">Current Password</string>
+    <string name="prompt_new_password">New Password</string>
+    <string name="tip_reset_password">Forget account password? You can reset password by using private key import.</string>
+
+    <!-- Strings related to progress -->
+    <string name="sync">sync…</string>
+    <string name="progress_create_account">create…</string>
+    <string name="progress_import_account">import…</string>
 
     <!-- Strings related to create wallet -->
     <string name="prompt_account_name">Name</string>
@@ -44,7 +83,7 @@
     <string name="tip_create_account_one">&#8226;&#160;&#160;Password strength is critical to guard your account</string>
     <string name="tip_create_account_two">&#8226;&#160;&#160;BrahmaWallet can\'t recover the password, please backup cautiously</string>
     <string name="error_incorrect_name">The name is taken</string>
-    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_invalid_password">This password is too simple!</string>
     <string name="error_incorrect_password">Password is not match</string>
     <string name="error_field_required">This field is required</string>
     <string name="success_create_account">Create account success!</string>
@@ -66,6 +105,7 @@
     <string name="title_activity_import_account">Import Account</string>
     <string name="import_official_editor_hint">keystore content</string>
     <string name="import_private_key_hint">private key</string>
+    <string name="action_save">save</string>
 
     <!-- Strings related to tokens -->
     <string name="title_tokens">Tokens</string>
@@ -78,8 +118,7 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_account_detail">AccountDetailActivity</string>
     <string name="title_activity_transfer">TransferActivity</string>
-    <string name="tip_success_copy_address">Success copy content to clipboard</string>
-
+    <string name="tip_success_copy">Success copy content to clipboard!</string>
 
     <!-- Strings related to transfer -->
     <string name="action_transfer">Transfer</string>
@@ -100,4 +139,15 @@
     <string name="tip_error_transfer">Transfer failed!</string>
     <string name="prompt_total_gas">0.000400000 ETH</string>
     <string name="prompt_total_gas_desc">≈ Gas (20000) * Gas Price(20gwei)</string>
+    <string name="title_activity_test_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="title_activity_account_change_password">Sign in</string>
 </resources>
