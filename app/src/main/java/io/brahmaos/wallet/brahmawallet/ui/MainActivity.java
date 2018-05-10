@@ -39,7 +39,6 @@ import io.brahmaos.wallet.brahmawallet.model.AccountAssets;
 import io.brahmaos.wallet.brahmawallet.model.CryptoCurrency;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.service.MainService;
-import io.brahmaos.wallet.brahmawallet.ui.account.AccountDetailActivity;
 import io.brahmaos.wallet.brahmawallet.ui.account.AccountsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.account.CreateAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.account.ImportAccountActivity;
@@ -144,6 +143,7 @@ public class MainActivity extends AppCompatActivity
 
         mViewModel.getTokens().observe(this, tokenEntities -> {
             if (tokenEntities != null) {
+                swipeRefreshLayout.setRefreshing(true);
                 tvTokenCategories.setText(String.valueOf(tokenEntities.size()));
                 cacheTokens = tokenEntities;
                 recyclerViewAssets.getAdapter().notifyDataSetChanged();
@@ -216,7 +216,8 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_help) {
 
         } else if (id == R.id.nav_info) {
-
+            Intent intent = new Intent(this, TestActivity.class);
+            startActivity(intent);
         }
 
         drawer.closeDrawer(GravityCompat.START);
@@ -232,8 +233,8 @@ public class MainActivity extends AppCompatActivity
             BLog.e(tag(), "the account is null");
             createAccountLayout.setVisibility(View.VISIBLE);
             swipeRefreshLayout.setVisibility(View.GONE);
-
         } else {
+            swipeRefreshLayout.setRefreshing(true);
             BLog.e(tag(), "the account size is: " + cacheAccounts.size());
             createAccountLayout.setVisibility(View.GONE);
             swipeRefreshLayout.setVisibility(View.VISIBLE);

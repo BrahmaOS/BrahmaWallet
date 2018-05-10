@@ -55,4 +55,11 @@
         <item name="android:background">@drawable/btn_bg</item>
     </style>
 
+    <!-- custom progress dialog -->
+    <style name="CustomProgressDialogStyle" parent="@style/Theme.AppCompat.Dialog">
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="colorAccent">#BBC0C0C0</item>
+    </style>
+
 </resources>

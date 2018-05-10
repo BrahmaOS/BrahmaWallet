@@ -1,6 +1,7 @@
 package io.brahmaos.wallet.brahmawallet.ui.account;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
+import io.brahmaos.wallet.brahmawallet.view.CustomProgressDialog;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
 import rx.android.schedulers.AndroidSchedulers;
@@ -39,13 +41,12 @@ public class CreateAccountActivity extends BaseActivity {
     Button btnCreateAccount;
     @BindView(R.id.btn_import_account)
     TextView tvImportAccount;
-    @BindView(R.id.create_progress)
-    View mProgressBar;
     @BindView(R.id.checkbox_read_protocol)
     CheckBox checkBoxReadProtocol;
     @BindView(R.id.layout_create_account_form)
     View formCreateAccount;
 
+    private CustomProgressDialog customProgressDialog;
     private AccountViewModel mViewModel;
     private List<AccountEntity> accounts;
 
@@ -144,27 +145,29 @@ public class CreateAccountActivity extends BaseActivity {
             btnCreateAccount.setEnabled(true);
             return;
         }
-
-        mProgressBar.setVisibility(View.VISIBLE);
+        customProgressDialog = new CustomProgressDialog(this, R.style.CustomProgressDialogStyle, getString(R.string.progress_create_account));
+        customProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        customProgressDialog.setCancelable(false);
+        customProgressDialog.show();
         try {
             mViewModel.createAccount(name, password)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(() -> {
-                                mProgressBar.setVisibility(View.GONE);
+                                customProgressDialog.cancel();
                                 showLongToast(R.string.success_create_account);
                                 finish();
                             },
                             throwable -> {
                                 BLog.e(tag(), "Unable to create account", throwable);
-                                mProgressBar.setVisibility(View.GONE);
+                                customProgressDialog.cancel();
                                 btnCreateAccount.setEnabled(true);
                                 showLongToast(R.string.error_create_account);
                             });
         } catch (Exception e) {
             e.printStackTrace();
             BLog.e(tag(), e.getMessage());
-            mProgressBar.setVisibility(View.GONE);
+            customProgressDialog.cancel();
             btnCreateAccount.setEnabled(true);
             showLongToast(R.string.error_create_account);
         }

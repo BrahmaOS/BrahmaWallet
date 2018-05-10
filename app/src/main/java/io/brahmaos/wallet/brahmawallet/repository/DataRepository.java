@@ -76,6 +76,22 @@ public class DataRepository {
         mDatabase.accountDao().insertAccount(account);
     }
 
+    public void changeAccountName(int accountId, String name) {
+        mDatabase.accountDao().changeAccountName(accountId, name);
+    }
+
+    public void deleteAccount(int accountId) {
+        mDatabase.accountDao().deleteAccount(accountId);
+    }
+
+    public void changeAccountFilename(int accountId, String filename) {
+        mDatabase.accountDao().changeAccountFilename(accountId, filename);
+    }
+
+    public LiveData<AccountEntity> getAccountById(int accountId) {
+        return mDatabase.accountDao().loadAccount(accountId);
+    }
+
     /**
      *  process the tokens
      */

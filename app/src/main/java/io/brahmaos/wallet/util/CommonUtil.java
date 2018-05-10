@@ -24,4 +24,8 @@ public class CommonUtil {
     public static BigInteger convertFormWeiToEther(BigDecimal value) {
         return value.multiply(new BigDecimal(Math.pow(10, 18))).toBigInteger();
     }
+
+    public static boolean isPasswordValid(String password) {
+        return password.length() > 4;
+    }
 }

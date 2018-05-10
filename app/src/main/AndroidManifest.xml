@@ -43,14 +43,19 @@
             android:theme="@style/AppTheme" />
         <activity android:name=".ui.token.TokensActivity" />
         <activity
-            android:name=".ui.account.AccountDetailActivity"
+            android:name=".ui.account.AccountAssetsActivity"
             android:label="@string/title_activity_account_detail"
             android:theme="@style/AppTheme" />
         <activity android:name=".ui.test.TestActivity" />
         <activity
             android:name=".ui.transfer.TransferActivity"
             android:label="@string/title_activity_transfer"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
+        <activity android:name=".ui.account.AccountDetailActivity" />
+        <activity android:name=".ui.account.ChangeAccountNameActivity" />
+        <activity
+            android:name=".ui.account.AccountChangePasswordActivity"
+            android:label="@string/title_activity_account_change_password"></activity>
     </application>
 
 </manifest>

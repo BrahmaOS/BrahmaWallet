@@ -35,6 +35,7 @@ import org.web3j.utils.Convert;
 import org.web3j.utils.Numeric;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -49,6 +50,7 @@ import io.brahmaos.wallet.brahmawallet.BuildConfig;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 import io.brahmaos.wallet.util.BLog;
+import rx.Observable;
 import rx.Subscription;
 
 public class BrahmaWeb3jService extends BaseService{
@@ -70,12 +72,6 @@ public class BrahmaWeb3jService extends BaseService{
             throws CipherException, InvalidAlgorithmParameterException,
             NoSuchAlgorithmException, NoSuchProviderException, IOException {
         return WalletUtils.generateLightNewWalletFile(password, destinationDirectory);
-    }
-
-    public String generateFullNewWalletFile(String password, File destinationDirectory)
-            throws CipherException, InvalidAlgorithmParameterException,
-            NoSuchAlgorithmException, NoSuchProviderException, IOException {
-        return WalletUtils.generateFullNewWalletFile(password, destinationDirectory);
     }
 
     public String getWalletAddress(String password, String filePath)
@@ -159,5 +155,56 @@ public class BrahmaWeb3jService extends BaseService{
         }
         String transactionHash = transactionResponse.getTransactionHash();
         BLog.i(tag(), "===> transactionHash: " + transactionHash);
+    }
+
+    public Observable<String> getPrivateKeyByPassword(String fileName, String password) {
+        return Observable.create(e -> {
+            try {
+                Credentials credentials = WalletUtils.loadCredentials(
+                        password, context.getFilesDir() + "/" +  fileName);
+                BigInteger privateKey = credentials.getEcKeyPair().getPrivateKey();
+                BLog.e("viewModel", "the private key is:" + privateKey.toString(16));
+                if (WalletUtils.isValidPrivateKey(privateKey.toString(16))) {
+                    e.onNext(privateKey.toString(16));
+                } else {
+                    e.onNext("");
+                }
+            } catch (IOException | CipherException e1) {
+                e1.printStackTrace();
+                e.onError(e1);
+            }
+            e.onCompleted();
+        });
+    }
+
+    public boolean isValidPrivateKey(String privateKey) {
+        return WalletUtils.isValidPrivateKey(privateKey);
+    }
+
+    public Observable<String> getKeystore(String fileName, String password) {
+        return Observable.create(e -> {
+            try {
+                Credentials credentials = WalletUtils.loadCredentials(
+                        password, context.getFilesDir() + "/" +  fileName);
+                BigInteger privateKey = credentials.getEcKeyPair().getPrivateKey();
+                BLog.e("viewModel", "the private key is:" + privateKey.toString(16));
+                if (WalletUtils.isValidPrivateKey(privateKey.toString(16))) {
+                    File file = new File(context.getFilesDir() + "/" +  fileName);
+                    FileInputStream fis = new FileInputStream(file);
+                    int length = fis.available();
+                    byte [] buffer = new byte[length];
+                    fis.read(buffer);
+                    String keystore = new String(buffer);
+                    fis.close();
+                    e.onNext(keystore);
+                } else {
+                    e.onNext("");
+                }
+            } catch (IOException | CipherException e1) {
+                e1.printStackTrace();
+                e.onError(e1);
+            }
+            e.onCompleted();
+        });
     }
 }

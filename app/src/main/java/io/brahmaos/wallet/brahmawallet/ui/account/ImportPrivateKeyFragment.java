@@ -1,7 +1,10 @@
 package io.brahmaos.wallet.brahmawallet.ui.account;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,6 +13,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -31,6 +35,7 @@ import java.util.List;
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
+import io.brahmaos.wallet.brahmawallet.view.CustomProgressDialog;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
@@ -54,7 +59,7 @@ public class ImportPrivateKeyFragment extends Fragment {
     private EditText etRepeatPassword;
     private Button btnImportAccount;
     private CheckBox checkBoxReadProtocol;
-    private View mProgressBar;
+    private CustomProgressDialog customProgressDialog;
 
     public static ImportPrivateKeyFragment newInstance(int page) {
         Bundle args = new Bundle();
@@ -110,7 +115,6 @@ public class ImportPrivateKeyFragment extends Fragment {
         checkBoxReadProtocol.setOnCheckedChangeListener((buttonView, isChecked) -> btnImportAccount.setEnabled(isChecked));
 
         btnImportAccount.setOnClickListener(view -> importOfficialAccount());
-        mProgressBar = parentView.findViewById(R.id.import_progress);
     }
 
     private void importOfficialAccount() {
@@ -174,18 +178,27 @@ public class ImportPrivateKeyFragment extends Fragment {
         // check the private key valid
         if (WalletUtils.isValidPrivateKey(privateKey)) {
 
-            mProgressBar.setVisibility(View.VISIBLE);
+            customProgressDialog = new CustomProgressDialog(getActivity(),
+                    R.style.CustomProgressDialogStyle,
+                    getString(R.string.progress_import_account));
+            customProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            customProgressDialog.setCancelable(false);
+            customProgressDialog.show();
             mViewModel.importAccountWithPrivateKey(privateKey, password, name)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<String>() {
                         @Override
                         public void onNext(String address) {
+                            customProgressDialog.cancel();
                             if (address != null && WalletUtils.isValidAddress(address)) {
                                 Toast.makeText(getContext(), R.string.success_import_account, Toast.LENGTH_SHORT).show();
+                                // hide soft input board
+                                getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+                                Intent intent = new Intent();
+                                getActivity().setResult(Activity.RESULT_OK, intent);
                                 getActivity().finish();
                             } else if (address != null && address.length() == 0) {
-                                mProgressBar.setVisibility(View.GONE);
                                 AlertDialog dialogTip = new AlertDialog.Builder(getContext())
                                         .setMessage(R.string.error_account_exists)
                                         .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel())
@@ -195,7 +208,6 @@ public class ImportPrivateKeyFragment extends Fragment {
                                 btnImportAccount.setEnabled(true);
                             } else {
                                 Toast.makeText(getContext(), R.string.error_import_private_key, Toast.LENGTH_LONG).show();
-                                mProgressBar.setVisibility(View.GONE);
                                 etPrivateKey.requestFocus();
                                 btnImportAccount.setEnabled(true);
                             }
@@ -205,7 +217,7 @@ public class ImportPrivateKeyFragment extends Fragment {
                         public void onError(Throwable e) {
                             e.printStackTrace();
                             Toast.makeText(getContext(), R.string.error_import_private_key, Toast.LENGTH_LONG).show();
-                            mProgressBar.setVisibility(View.GONE);
+                            customProgressDialog.cancel();
                             etPrivateKey.requestFocus();
                             btnImportAccount.setEnabled(true);
                         }
@@ -218,7 +230,7 @@ public class ImportPrivateKeyFragment extends Fragment {
 
         } else {
             Toast.makeText(getContext(), R.string.error_private_key, Toast.LENGTH_LONG).show();
-            mProgressBar.setVisibility(View.GONE);
+            customProgressDialog.cancel();
             etPrivateKey.requestFocus();
             btnImportAccount.setEnabled(true);
         }

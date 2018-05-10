@@ -118,14 +118,5 @@
                 android:textStyle="bold" />
         </LinearLayout>
     </ScrollView>
-    <!-- create progress -->
-    <ProgressBar
-        android:id="@+id/import_progress"
-        style="?android:attr/progressBarStyle"
-        android:layout_gravity="center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:visibility="gone" />
 </android.support.design.widget.CoordinatorLayout>
 
