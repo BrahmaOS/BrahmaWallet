@@ -20,7 +20,9 @@
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
+                app:titleTextAppearance="@style/ToolbarTitleText"
                 android:layout_height="?attr/actionBarSize"
+                app:title="@string/title_activity_create_account"
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
 
         </android.support.design.widget.AppBarLayout>

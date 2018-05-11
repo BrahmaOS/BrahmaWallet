@@ -17,12 +17,17 @@
 package io.brahmaos.wallet.brahmawallet;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.os.Build;
 
-import io.brahmaos.wallet.brahmawallet.common.Config;
+import java.util.Locale;
+
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.db.database.WalletDatabase;
 import io.brahmaos.wallet.brahmawallet.repository.DataRepository;
 import io.brahmaos.wallet.brahmawallet.service.MainService;
-import io.brahmaos.wallet.util.BLog;
 
 /**
  * Android Application class. Used for accessing singletons.
@@ -34,7 +39,7 @@ public class WalletApp extends Application {
         WalletDatabase.getInstance(getApplicationContext());
         MainService.getInstance().init(getApplicationContext());
         // init the config
-        Config.getInstance().init(getApplicationContext());
+        BrahmaConfig.getInstance().init(getApplicationContext());
     }
 
     public WalletDatabase getDatabase() {

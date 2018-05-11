@@ -7,27 +7,22 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import org.web3j.crypto.CipherException;
-import org.web3j.crypto.WalletUtils;
-import org.web3j.protocol.Web3jService;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.BlockingDeque;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,7 +35,6 @@ import io.brahmaos.wallet.brahmawallet.model.AccountAssets;
 import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.service.MainService;
-import io.brahmaos.wallet.brahmawallet.ui.account.ImportAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.view.CustomStatusView;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
@@ -98,15 +92,13 @@ public class TransferActivity extends BaseActivity {
 
     private void initView() {
         String tokenShortName = mToken.getShortName();
-        setToolbarTitle(getString(R.string.action_transfer) + getString(R.string.blank_space)
-                + tokenShortName);
         Toolbar toolbar = findViewById(R.id.toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
             ActionBar ab = getSupportActionBar();
             if (ab != null) {
-                ab.setTitle(getString(R.string.action_transfer) + getString(R.string.blank_space)
-                        + tokenShortName);
+                ab.setTitle(tokenShortName + getString(R.string.blank_space) +
+                        getString(R.string.action_transfer));
             }
         }
 
@@ -146,13 +138,10 @@ public class TransferActivity extends BaseActivity {
                 ImageManager.showAccountAvatar(this, accountItemView.ivAccountAvatar, account);
                 accountItemView.tvAccountAddress.setText(CommonUtil.generateSimpleAddress(account.getAddress()));
 
-                accountItemView.layoutAccountItem.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        alertDialog.cancel();
-                        mAccount = account;
-                        showAccountInfo(account);
-                    }
+                accountItemView.layoutAccountItem.setOnClickListener(v1 -> {
+                    alertDialog.cancel();
+                    mAccount = account;
+                    showAccountInfo(account);
                 });
 
                 if (mAccounts.indexOf(account) == mAccounts.size() - 1) {
@@ -275,75 +264,74 @@ public class TransferActivity extends BaseActivity {
         tvTransferToken.setText(mToken.getShortName());
 
         LinearLayout layoutTransferInfo = view.findViewById(R.id.layout_transfer_info);
-        FrameLayout layoutTransferStatus = view.findViewById(R.id.layout_transfer_status);
+        LinearLayout layoutTransferStatus = view.findViewById(R.id.layout_transfer_status);
         CustomStatusView customStatusView = view.findViewById(R.id.as_status);
-
+        TextView tvTransferStatus = view.findViewById(R.id.tv_transfer_status);
         Button confirmBtn = view.findViewById(R.id.btn_commit_transfer);
         BigDecimal finalAmount = amount;
-        confirmBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final View dialogView = getLayoutInflater().inflate(R.layout.dialog_account_password, null);
+        confirmBtn.setOnClickListener(v -> {
+            final View dialogView = getLayoutInflater().inflate(R.layout.dialog_account_password, null);
 
-                AlertDialog passwordDialog = new AlertDialog.Builder(TransferActivity.this)
-                        .setView(dialogView)
-                        .setCancelable(false)
-                        .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel())
-                        .setPositiveButton(R.string.ok, (dialog, which) -> {
-                            dialog.cancel();
-                            // show transfer progress
-                            layoutTransferStatus.setVisibility(View.VISIBLE);
-                            customStatusView.loadLoading();
-                            String password = ((EditText) dialogView.findViewById(R.id.et_password)).getText().toString();
-                            mViewModel.sendTransfer(mAccount, mToken, password, receiverAddress, finalAmount)
-                                    .subscribeOn(Schedulers.io())
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe(new Observer<Boolean>() {
-                                        @Override
-                                        public void onNext(Boolean flag) {
-                                            if (flag) {
-                                                BLog.i(tag(), "the transfer success");
-                                                customStatusView.loadSuccess();
-                                                new Handler().postDelayed(new Runnable() {
-                                                    public void run() {
-                                                        transferInfoDialog.cancel();
-                                                        Intent intent = new Intent();
-                                                        setResult(Activity.RESULT_OK, intent);
-                                                        finish();
-                                                    }
-                                                }, 1200);
+            AlertDialog passwordDialog = new AlertDialog.Builder(TransferActivity.this)
+                    .setView(dialogView)
+                    .setCancelable(false)
+                    .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel())
+                    .setPositiveButton(R.string.ok, (dialog, which) -> {
+                        dialog.cancel();
+                        // show transfer progress
+                        layoutTransferStatus.setVisibility(View.VISIBLE);
+                        customStatusView.loadLoading();
+                        String password = ((EditText) dialogView.findViewById(R.id.et_password)).getText().toString();
+                        BrahmaWeb3jService.getInstance().sendTransfer(mAccount, mToken, password, receiverAddress, finalAmount)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(new Observer<Integer>() {
+                                    @Override
+                                    public void onNext(Integer flag) {
+                                        if (flag == 10) {
+                                            tvTransferStatus.setText(R.string.progress_transfer_success);
+                                            BLog.i(tag(), "the transfer success");
+                                            customStatusView.loadSuccess();
+                                            new Handler().postDelayed(() -> {
+                                                transferInfoDialog.cancel();
+                                                Intent intent = new Intent();
+                                                setResult(Activity.RESULT_OK, intent);
+                                                finish();
+                                            }, 1200);
+                                        } else if (flag == 1) {
+                                            tvTransferStatus.setText(R.string.progress_verify_account);
+                                        } else if (flag == 2) {
+                                            tvTransferStatus.setText(R.string.progress_send_request);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onError(Throwable e) {
+                                        e.printStackTrace();
+                                        customStatusView.loadFailure();
+                                        tvTransferStatus.setText(R.string.progress_transfer_fail);
+                                        new Handler().postDelayed(() -> {
+                                            layoutTransferStatus.setVisibility(View.GONE);
+                                            int resId = R.string.tip_error_transfer;
+                                            if (e instanceof CipherException) {
+                                                resId = R.string.tip_error_password;
                                             }
-                                        }
+                                            new AlertDialog.Builder(TransferActivity.this)
+                                                    .setMessage(resId)
+                                                    .setNegativeButton(R.string.ok, (dialog1, which1) -> dialog1.cancel())
+                                                    .create().show();
+                                        }, 1500);
 
-                                        @Override
-                                        public void onError(Throwable e) {
-                                            e.printStackTrace();
-                                            customStatusView.loadFailure();
-                                            new Handler().postDelayed(new Runnable() {
-                                                public void run() {
-                                                    layoutTransferStatus.setVisibility(View.GONE);
-                                                    int resId = R.string.tip_error_transfer;
-                                                    if (e instanceof CipherException) {
-                                                        resId = R.string.tip_error_password;
-                                                    }
-                                                    new AlertDialog.Builder(TransferActivity.this)
-                                                            .setMessage(resId)
-                                                            .setNegativeButton(R.string.ok, (dialog, which) -> dialog.cancel())
-                                                            .create().show();
-                                                }
-                                            }, 1500);
+                                        BLog.i(tag(), "the transfer failed");
+                                    }
 
-                                            BLog.i(tag(), "the transfer failed");
-                                        }
-
-                                        @Override
-                                        public void onCompleted() {
-                                        }
-                                    });
-                            })
-                        .create();
-                passwordDialog.show();
-            }
+                                    @Override
+                                    public void onCompleted() {
+                                    }
+                                });
+                        })
+                    .create();
+            passwordDialog.show();
         });
     }
 

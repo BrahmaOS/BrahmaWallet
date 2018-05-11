@@ -21,4 +21,12 @@ public class BrahmaConst {
     public static final BigInteger DEFAULT_GAS_PRICE = BigInteger.valueOf(20000000000L);
     public static final BigDecimal DEFAULT_FEE = BigDecimal.valueOf(0.000400000);
 
+    public static final String MAINNET_URL = "https://mainnet.infura.io/Gy3Csyt4bzKIGsctm3g0";
+    public static final String ROPSTEN_TEST_URL = "https://ropsten.infura.io/Gy3Csyt4bzKIGsctm3g0";
+    public static final String INFURANET_TEST_URL = "https://infuranet.infura.io/Gy3Csyt4bzKIGsctm3g0";
+    public static final String KOVAN_TEST_URL = "https://kovan.infura.io/Gy3Csyt4bzKIGsctm3g0";
+    public static final String RINKEBY_TEST_URL = "https://rinkeby.infura.io/Gy3Csyt4bzKIGsctm3g0";
+
+    public static final String LANGUAGE_ENGLISH = "1";
+    public static final String LANGUAGE_CHINESE = "2";
 }

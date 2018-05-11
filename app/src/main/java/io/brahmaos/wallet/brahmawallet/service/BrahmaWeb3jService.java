@@ -47,6 +47,8 @@ import java.util.Collections;
 import java.util.List;
 
 import io.brahmaos.wallet.brahmawallet.BuildConfig;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 import io.brahmaos.wallet.util.BLog;
@@ -58,9 +60,6 @@ public class BrahmaWeb3jService extends BaseService{
     protected String tag() {
         return BrahmaWeb3jService.class.getName();
     }
-
-    final Web3j web3 = Web3jFactory.build(
-            new HttpService(BuildConfig.NETWORK_BASE_URL));
 
     // singleton
     private static BrahmaWeb3jService instance = new BrahmaWeb3jService();
@@ -94,10 +93,14 @@ public class BrahmaWeb3jService extends BaseService{
     }
 
     public Request<?, EthGetBalance> getEthBalance(AccountEntity account) {
+        Web3j web3 = Web3jFactory.build(
+                new HttpService(BrahmaConfig.getInstance().getNetworkUrl()));
         return web3.ethGetBalance(account.getAddress(), DefaultBlockParameterName.LATEST);
     }
 
     public Request<?, EthCall> getTokenBalance(AccountEntity account, TokenEntity token) {
+        Web3j web3 = Web3jFactory.build(
+                new HttpService(BrahmaConfig.getInstance().getNetworkUrl()));
         Function function = new Function(
                 "balanceOf",
                 Arrays.asList(new Address(account.getAddress())),  // Solidity Types in smart contract functions
@@ -115,10 +118,15 @@ public class BrahmaWeb3jService extends BaseService{
                 WalletUtils.isValidAddress(address);
     }
 
+    /*
+     * transfer eth
+     */
     public void sendTransferEth(AccountEntity account, String password,
                                 String destinationAddress, BigDecimal amount)
             throws IOException, CipherException,
             TransactionTimeoutException, InterruptedException {
+        Web3j web3 = Web3jFactory.build(
+                new HttpService(BrahmaConfig.getInstance().getNetworkUrl()));
         BLog.i(tag(), "Sending ETHER ");
         Credentials credentials = WalletUtils.loadCredentials(
                 password, context.getFilesDir() + "/" +  account.getFilename());
@@ -130,11 +138,16 @@ public class BrahmaWeb3jService extends BaseService{
                 + transferReceipt.getTransactionHash());
     }
 
-    public void sendTransfer(AccountEntity account, TokenEntity token, String password,
-                                String destinationAddress, BigDecimal amount)
+    /**
+     *  transfer erc20 token
+     */
+    public void sendTransferToken(AccountEntity account, TokenEntity token, String password,
+                                  String destinationAddress, BigDecimal amount)
             throws IOException, CipherException,
             TransactionTimeoutException, InterruptedException {
         BLog.i(tag(), "Sending Token ");
+        Web3j web3 = Web3jFactory.build(
+                new HttpService(BrahmaConfig.getInstance().getNetworkUrl()));
         Credentials credentials = WalletUtils.loadCredentials(
                 password, context.getFilesDir() + "/" +  account.getFilename());
         BLog.i(tag(), "load credential success");
@@ -155,6 +168,57 @@ public class BrahmaWeb3jService extends BaseService{
         }
         String transactionHash = transactionResponse.getTransactionHash();
         BLog.i(tag(), "===> transactionHash: " + transactionHash);
+    }
+
+    /**
+     * Initiate a transaction request and
+     * issue different events at different stages of the transaction,
+     * for example: verifying the account, sending request
+     * @return 1: verifying the account 2: sending request 10: transfer success
+     */
+    public Observable<Integer> sendTransfer(AccountEntity account, TokenEntity token, String password,
+                                            String destinationAddress, BigDecimal amount) {
+        return Observable.create(e -> {
+            try {
+                e.onNext(1);
+                Web3j web3 = Web3jFactory.build(
+                        new HttpService(BrahmaConfig.getInstance().getNetworkUrl()));
+                Credentials credentials = WalletUtils.loadCredentials(
+                        password, context.getFilesDir() + "/" +  account.getFilename());
+                BLog.i(tag(), "load credential success");
+                e.onNext(2);
+                if (token.getName().toLowerCase().equals(BrahmaConst.ETHEREUM)) {
+                    TransactionReceipt transferReceipt = Transfer.sendFunds(
+                            web3, credentials, destinationAddress, amount,
+                            Convert.Unit.ETHER);
+                    BLog.i(tag(), "Transaction complete, view it at https://rinkeby.etherscan.io/tx/"
+                            + transferReceipt.getTransactionHash());
+                } else {
+                    Function function = new Function(
+                            "transfer",
+                            Arrays.<Type>asList(new Address(destinationAddress),
+                                    new Uint256(amount.multiply(new BigDecimal(Math.pow(10, 18))).toBigInteger())),
+                            Collections.<TypeReference<?>>emptyList());
+                    String encodedFunction = FunctionEncoder.encode(function);
+
+                    RawTransactionManager txManager = new RawTransactionManager(web3, credentials);
+                    EthSendTransaction transactionResponse = txManager.sendTransaction(
+                            ManagedTransaction.GAS_PRICE, Contract.GAS_LIMIT, token.getAddress(), encodedFunction, BigInteger.ZERO);
+
+                    if (transactionResponse.hasError()) {
+                        throw new RuntimeException("Error processing transaction request: "
+                                + transactionResponse.getError().getMessage());
+                    }
+                    String transactionHash = transactionResponse.getTransactionHash();
+                    BLog.i(tag(), "===> transactionHash: " + transactionHash);
+                }
+                e.onNext(10);
+            } catch (IOException | CipherException | TransactionTimeoutException | InterruptedException e1) {
+                e1.printStackTrace();
+                e.onError(e1);
+            }
+            e.onCompleted();
+        });
     }
 
     public Observable<String> getPrivateKeyByPassword(String fileName, String password) {

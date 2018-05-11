@@ -9,10 +9,9 @@ android {
         minSdkVersion 23
         targetSdkVersion 27
         versionCode 1
-        versionName "1.0.0"
+        versionName "0.1.0"
         multiDexEnabled true
 
-        buildConfigField("String", "NETWORK_BASE_URL", "\"${NETWORK_BASE_URL}\"")
         buildConfigField("String", "MARKET_API_URL", "\"${MARKET_API_URL}\"")
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
@@ -27,6 +26,22 @@ android {
         abortOnError false
     }
 
+    signingConfigs {
+        release {
+            storeFile file("brahmawallet.keystore")
+            storePassword "brahma#123"
+            keyAlias "brahmawallet.keystore"
+            keyPassword "brahma#123"
+        }
+
+        debug {
+            storeFile file("brahmawallet.keystore")
+            storePassword "brahma#123"
+            keyAlias "brahmawallet.keystore"
+            keyPassword "brahma#123"
+        }
+    }
+
     buildTypes {
         debug {
             minifyEnabled false
@@ -37,6 +52,7 @@ android {
             minifyEnabled false
             buildConfigField "boolean", "LOG_DEBUG", "false"
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     externalNativeBuild {

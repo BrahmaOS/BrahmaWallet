@@ -12,9 +12,9 @@ public class CommonUtil {
         return simpleName;
     }
 
-    public static double getAccountFromWei(BigInteger value) {
+    public static BigDecimal getAccountFromWei(BigInteger value) {
         BigDecimal bigDecimal = new BigDecimal(value);
-        return bigDecimal.divide(new BigDecimal(Math.pow(10, 18)), 4, BigDecimal.ROUND_HALF_UP).doubleValue() ;
+        return bigDecimal.divide(new BigDecimal(Math.pow(10, 18)), 4, BigDecimal.ROUND_HALF_UP);
     }
 
     public static String parseAccountContent(String value) {

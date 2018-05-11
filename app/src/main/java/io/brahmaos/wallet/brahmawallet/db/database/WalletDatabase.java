@@ -73,7 +73,7 @@ public abstract class WalletDatabase extends RoomDatabase {
                         // Check whether the database already exists after first create database
                         sInstance.updateDatabaseCreated(appContext);
                         db.execSQL("INSERT INTO tokens (name, address, shortName, icon) " +
-                                "values (\"BrahmaOS\", \"0xb958c57d1896823b8f4178a21e1bf6796371eac4\", \"BRM\", "
+                                "values (\"BrahmaOS\", \"0xd7732e3783b0047aa251928960063f863ad022d8\", \"BRM\", "
                                 + R.drawable.icon_brm + ")");
                         db.execSQL("INSERT INTO tokens (name, address, shortName, icon) " +
                                 "values (\"Ethereum\", \"\", \"ETH\", "
