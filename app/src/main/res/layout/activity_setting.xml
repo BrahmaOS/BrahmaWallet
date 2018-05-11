@@ -20,18 +20,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:titleTextAppearance="@style/ToolbarTitleText"
-                app:title="@string/title_accounts"
+                app:title="@string/title_setting"
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
 
         </android.support.design.widget.AppBarLayout>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/accounts_recycler"
+        <fragment
+            android:id="@+id/fragment_setting"
+            android:name="io.brahmaos.wallet.brahmawallet.ui.setting.SettingFragment"
             android:layout_marginTop="@dimen/height_toolbar"
-            android:paddingTop="@dimen/space_unit"
-            android:paddingBottom="@dimen/space_unit"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="match_parent">
+        </fragment>
+
     </android.support.design.widget.CoordinatorLayout>
 </android.support.v4.widget.DrawerLayout>
 

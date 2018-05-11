@@ -2,10 +2,16 @@ package io.brahmaos.wallet.brahmawallet.common;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.os.Build;
+import android.os.LocaleList;
 import android.preference.PreferenceManager;
+import android.util.DisplayMetrics;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
@@ -14,32 +20,43 @@ import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
  * the project common config
  */
 
-public class Config {
+public class BrahmaConfig {
 
-    private static Config instance = new Config();
-    public static Config getInstance() {
+    private static BrahmaConfig instance = new BrahmaConfig();
+    public static BrahmaConfig getInstance() {
         return instance;
     }
 
+    private Context context;
     private SharedPreferences sharedPref = null;
     private static final String FIRST_OPEN_APP_FLAG = "new.first.open.app.flag";
+    private static final String KEY_ASSETS_VISIBLE = "assets.visible";
 
     // first user app, show the guide
     private boolean firstOpenAppFlag = true;
+    private String networkUrl;
+    private String languageLocale;
+    private boolean assetsVisible = true;
 
-    public String localKeystorePath;
+    private String localKeystorePath;
     private List<TokenEntity> tokenEntities = new ArrayList<>();
 
-    public boolean init(Context context) {
+    public void init(Context context) {
+        this.context = context;
         sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         localKeystorePath = context.getFilesDir().toString();
+        networkUrl = sharedPref.getString(context.getString(R.string.key_network_url), BrahmaConst.MAINNET_URL);
+        languageLocale = sharedPref.getString(context.getString(R.string.key_wallet_language), null);
+        assetsVisible = sharedPref.getBoolean(KEY_ASSETS_VISIBLE, true);
+        initLocale();
         initTokens();
-        return true;
     }
 
     private void initTokens() {
+        /*tokenEntities.add(new TokenEntity(0, "BrahmaOS", "BRM",
+                "0xb958c57d1896823b8f4178a21e1bf6796371eac4", R.drawable.icon_brm));*/
         tokenEntities.add(new TokenEntity(0, "BrahmaOS", "BRM",
-                "0xb958c57d1896823b8f4178a21e1bf6796371eac4", R.drawable.icon_brm));
+                "0xd7732e3783b0047aa251928960063f863ad022d8", R.drawable.icon_brm));
         tokenEntities.add(new TokenEntity(0, "Ethereum", "ETH",
                 "", R.drawable.icon_eth));
         tokenEntities.add(new TokenEntity(0, "EOS", "EOS",
@@ -92,5 +109,84 @@ public class Config {
 
     public List<TokenEntity> getTokenEntities() {
         return tokenEntities;
+    }
+
+    public String getNetworkUrl() {
+        return networkUrl;
+    }
+
+    public void setNetworkUrl(String networkUrl) {
+        this.networkUrl = networkUrl;
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(context.getString(R.string.key_network_url), networkUrl);
+        editor.apply();
+    }
+
+    public String getLanguageLocale() {
+        return languageLocale;
+    }
+
+    public void setLanguageLocale(String languageLocale) {
+        this.languageLocale = languageLocale;
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(context.getString(R.string.key_wallet_language), languageLocale);
+        editor.apply();
+    }
+
+    public void initLocale() {
+        Resources resources = context.getResources();
+        DisplayMetrics dm = resources.getDisplayMetrics();
+        Configuration config = resources.getConfiguration();
+        Locale newLocale = Locale.getDefault();
+        if (languageLocale == null) {
+            if (newLocale.getLanguage().equals("zh")) {
+                languageLocale = BrahmaConst.LANGUAGE_CHINESE;
+            } else {
+                languageLocale = BrahmaConst.LANGUAGE_ENGLISH;
+            }
+        }
+        if (languageLocale.equals(BrahmaConst.LANGUAGE_CHINESE)) {
+            newLocale = Locale.CHINESE;
+        } else {
+            newLocale = Locale.ENGLISH;
+        }
+        config.setLocale(newLocale);
+        resources.updateConfiguration(config, dm);
+
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(context.getString(R.string.key_wallet_language), languageLocale);
+        editor.apply();
+    }
+
+    public void setLocale() {
+        Resources resources = context.getResources();
+        DisplayMetrics dm = resources.getDisplayMetrics();
+        Configuration config = resources.getConfiguration();
+        Locale newLocale = Locale.getDefault();
+        if (languageLocale == null) {
+            if (newLocale.getLanguage().equals("zh")) {
+                languageLocale = BrahmaConst.LANGUAGE_CHINESE;
+            } else {
+                languageLocale = BrahmaConst.LANGUAGE_ENGLISH;
+            }
+        }
+        if (languageLocale.equals(BrahmaConst.LANGUAGE_CHINESE)) {
+            newLocale = Locale.CHINESE;
+        } else {
+            newLocale = Locale.ENGLISH;
+        }
+        config.setLocale(newLocale);
+        resources.updateConfiguration(config, dm);
+    }
+
+    public boolean isAssetsVisible() {
+        return assetsVisible;
+    }
+
+    public void setAssetsVisible(boolean assetsVisible) {
+        this.assetsVisible = assetsVisible;
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putBoolean(KEY_ASSETS_VISIBLE, assetsVisible);
+        editor.apply();
     }
 }

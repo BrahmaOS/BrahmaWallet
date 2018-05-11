@@ -109,7 +109,8 @@ public class ImportAccountActivity extends BaseActivity {
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         final int PAGE_COUNT = 2;
-        private String tabTitles[] = new String[]{"Official", "Private Key"};
+        private String tabTitles[] = new String[]{getString(R.string.title_tab_import_keystore),
+                getString(R.string.title_tab_import_private_key)};
         private Fragment mCurrentFragment;
         private Context context;
 

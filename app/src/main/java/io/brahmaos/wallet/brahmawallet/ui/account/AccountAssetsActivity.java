@@ -146,7 +146,7 @@ public class AccountAssetsActivity extends BaseActivity {
                         if (cryptoCurrency.getName().toLowerCase()
                                 .equals(assets.getTokenEntity().getName().toLowerCase())) {
                             BigDecimal value = new BigDecimal(cryptoCurrency.getPriceCny())
-                                    .multiply(new BigDecimal(CommonUtil.getAccountFromWei(assets.getBalance())));
+                                    .multiply(CommonUtil.getAccountFromWei(assets.getBalance()));
                             totalValue = totalValue.add(value);
                             break;
                         }
@@ -238,7 +238,7 @@ public class AccountAssetsActivity extends BaseActivity {
             BigDecimal tokenValue = BigDecimal.ZERO;
             for (CryptoCurrency cryptoCurrency : cryptoCurrencies) {
                 if (cryptoCurrency.getName().toLowerCase().equals(tokenEntity.getName().toLowerCase())) {
-                    tokenValue = new BigDecimal(CommonUtil.getAccountFromWei(tokenCount)).multiply(new BigDecimal(cryptoCurrency.getPriceCny()));
+                    tokenValue = CommonUtil.getAccountFromWei(tokenCount).multiply(new BigDecimal(cryptoCurrency.getPriceCny()));
                 }
             }
             holder.tvTokenAssetsCount.setText(String.valueOf(tokenValue.setScale(2, BigDecimal.ROUND_HALF_UP)));

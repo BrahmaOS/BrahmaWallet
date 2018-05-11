@@ -1,0 +1,191 @@
+<resources>
+    <string name="app_name">梵钱包</string>
+    <string name="cancel">取消</string>
+    <string name="confirm">确认</string>
+    <string name="quit">退出</string>
+    <string name="ok">好的</string>
+    <string name="copy">复制</string>
+    <string name="delete">删除</string>
+
+    <string name="title_brahma_wallet">梵钱包</string>
+    <string name="brahma_wallet_desc">您的数字智能钱包</string>
+    <string name="title_activity_create_account">创建账号</string>
+    <string name="total_assets">总资产(CNY)</string>
+    <string name="assets_class">资产类别</string>
+    <string name="asymptotic">≈</string>
+    <string name="blank_space">&#160;</string>
+
+    <string name="action_next">下一步</string>
+    <string name="action_confirm">确认</string>
+
+    <!-- Drawer menu -->
+    <string name="nav_menu_other">其余</string>
+    <string name="nav_menu_setting">设置</string>
+    <string name="nav_menu_help">帮助</string>
+    <string name="nav_menu_info">关于</string>
+
+    <!-- Strings related to dialog -->
+    <string name="dialog_title_quit_import">退出导入?</string>
+    <string name="dialog_content_quit_import">  </string>
+
+    <!-- Strings related to accounts -->
+    <string name="title_accounts">账号</string>
+    <string name="title_account_assets">账号资产</string>
+    <string name="title_account_detail">账号详情</string>
+    <string name="title_account_change_name">更改账号名</string>
+    <string name="title_account_change_password">更改密码</string>
+    <string name="action_copy_address">复制地址</string>
+    <string name="title_dialog_export_keystore">导出Keystore</string>
+    <string name="title_dialog_export_private_key">导出私钥</string>
+
+    <string name="export_keystore_tip_1">离线保存，切勿保存到邮箱、网盘、聊天工具等，非常危险。</string>
+    <string name="export_keystore_tip_2">请勿通过网络工具传输Keystore文件。</string>
+    <string name="export_private_key_tip_1">
+        安全告警: 私钥未经加密，导出存在风险.
+    </string>
+    <string name="delete_account_tip">
+        请谨慎! 此操作无法撤销!
+    </string>
+
+    <string name="action_change_account_name">更改账号名</string>
+    <string name="action_change_password">更改密码</string>
+    <string name="action_export_private_key">导出私钥</string>
+    <string name="action_export_keystore">导出Keystore</string>
+    <string name="action_delete_account">删除账号</string>
+
+    <string name="success_change_account_name">删除账号成功!</string>
+    <string name="error_change_account_name">删除账号失败!!!</string>
+    <string name="success_change_password">更改密码成功!</string>
+    <string name="error_change_password">更改密码失败!!!</string>
+    <string name="error_current_password">错误的密码!!!</string>
+    <string name="success_delete_account">删除账号成功.</string>
+    <string name="error_delete_account">删除账号失败!!!</string>
+
+    <string name="prompt_current_password">当前密码</string>
+    <string name="prompt_new_password">新密码</string>
+    <string name="tip_reset_password">忘记密码? 导入私钥可重置密码.</string>
+
+    <!-- Strings related to progress -->
+    <string name="sync">同步中…</string>
+    <string name="progress_create_account">创建中…</string>
+    <string name="progress_import_account">导入中…</string>
+    <string name="progress_transfer_success">转账成功</string>
+    <string name="progress_transfer_fail">转账失败</string>
+    <string name="progress_verify_account">验证账号</string>
+    <string name="progress_send_request">转账中…</string>
+
+    <!-- Strings related to create wallet -->
+    <string name="prompt_account_name">账号名</string>
+    <string name="prompt_password">密码</string>
+    <string name="prompt_repeat_password">重复密码</string>
+    <string name="action_agree">同意</string>
+    <string name="project_protocol">&#160;服务及隐私条款</string>
+    <string name="tip_create_account_one">&#8226;&#160;&#160;密码用于保护私钥和交易授权，强度非常重要。</string>
+    <string name="tip_create_account_two">&#8226;&#160;&#160;钱包不存储密码，也无法帮您找回，请务必牢记！</string>
+    <string name="error_incorrect_name">账号名已占用</string>
+    <string name="error_invalid_password">密码太简单!</string>
+    <string name="error_incorrect_password">两次输入的密码不匹配</string>
+    <string name="error_field_required">必填字段</string>
+    <string name="success_create_account">创建账号成功!</string>
+    <string name="error_create_account">创建账号失败!</string>
+
+    <string name="error_account_exists">账号已存在! 请检查输入内容.</string>
+    <string name="error_account_address">错误的账号地址!</string>
+    <string name="success_import_account">导入账号成功!</string>
+    <string name="error_import_keystore">导入账号失败! 请检查输入内容.</string>
+    <string name="error_import_private_key">导入账号失败! 请检查输入内容.</string>
+    <string name="error_keystore">错误的keystore文件!</string>
+    <string name="error_private_key">错误的私钥!</string>
+
+    <string name="title_tab_import_keystore">官方文件</string>
+    <string name="title_tab_import_private_key">私钥</string>
+
+    <!-- menu list -->
+    <string name="menu_accounts">账号</string>
+    <string name="action_create_account">创建账号</string>
+    <string name="action_import_account">导入账号</string>
+
+    <string name="title_activity_import_account">导入账号</string>
+    <string name="import_official_editor_hint">keystore内容</string>
+    <string name="import_private_key_hint">私钥</string>
+    <string name="action_save">保存</string>
+
+    <!-- Strings related to tokens -->
+    <string name="title_tokens">资产</string>
+    <string name="navigation_drawer_open">打开侧边栏</string>
+    <string name="navigation_drawer_close">关闭侧标栏</string>
+    <string name="nav_header_desc">导航栏头部</string>
+    <string name="action_settings">设置</string>
+    <string name="title_activity_account_detail">AccountDetailActivity</string>
+    <string name="title_activity_transfer">TransferActivity</string>
+    <string name="tip_success_copy">已复制到粘贴板!</string>
+
+    <!-- Strings related to transfer -->
+    <string name="action_transfer">转账</string>
+    <string name="title_transfer_request">转账详情</string>
+    <string name="action_change_account">切换账号</string>
+    <string name="prompt_receiver_address">收款地址</string>
+    <string name="prompt_amount">金额</string>
+    <string name="prompt_remark">备注</string>
+    <string name="title_dialog_choose_account">选择账号</string>
+    <string name="tip_error_address">提示: 地址一般为0x开头的42位字符</string>
+    <string name="tip_same_address">地址不能为自己</string>
+    <string name="tip_invalid_amount">请填写正确的金额</string>
+    <string name="tip_insufficient_eth">ETH不足</string>
+    <string name="pay_to_address">收款地址</string>
+    <string name="pay_by_address">付款账号</string>
+    <string name="fees">矿工费</string>
+    <string name="tip_error_password">转账失败！请检查密码！.</string>
+    <string name="tip_error_transfer">转账失败!</string>
+    <string name="prompt_total_gas">0.000400000 ETH</string>
+    <string name="prompt_total_gas_desc">≈ Gas (20000) * Gas Price(20gwei)</string>
+
+    <!-- Strings related to login -->
+    <string name="title_activity_account_change_password">更改密码</string>
+    <string name="title_activity_settings">设置</string>
+
+    <!-- Strings related to Settings -->
+    <string name="title_setting">设置</string>
+
+    <string name="pref_title_net_list">网络</string>
+    <string-array name="pref_net_list_titles">
+        <item>Mainnet</item>
+        <item>Ropsten(测试网络)</item>
+        <item>INFURAnet(测试网络)</item>
+        <item>Kovan(测试网络)</item>
+        <item>Rinkeby(测试网络)</item>
+    </string-array>
+    <string-array name="pref_net_list_values">
+        <item>https://mainnet.infura.io/Gy3Csyt4bzKIGsctm3g0</item>
+        <item>https://ropsten.infura.io/Gy3Csyt4bzKIGsctm3g0</item>
+        <item>https://infuranet.infura.io/Gy3Csyt4bzKIGsctm3g0</item>
+        <item>https://kovan.infura.io/Gy3Csyt4bzKIGsctm3g0</item>
+        <item>https://rinkeby.infura.io/Gy3Csyt4bzKIGsctm3g0</item>
+    </string-array>
+
+    <string name="pref_title_language">语言偏好设置</string>
+    <string-array name="pref_language_list_titles">
+        <item>English</item>
+        <item>简体中文</item>
+    </string-array>
+    <string-array name="pref_language_list_values">
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string name="pref_title_currency_unit">Currency Unit</string>
+    <string-array name="pref_currency_unit_list_titles">
+        <item>USD</item>
+        <item>CNY</item>
+    </string-array>
+    <string-array name="pref_currency_unit_list_values">
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <!-- share -->
+    <string name="key_network_url">ethereum.network.url</string>
+    <string name="key_wallet_language">wallet.language</string>
+    <string name="key_wallet_currency_unit">wallet.currency.unit</string>
+
+</resources>

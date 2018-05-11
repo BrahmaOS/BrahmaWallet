@@ -18,7 +18,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
-import io.brahmaos.wallet.brahmawallet.common.Config;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
@@ -41,7 +41,7 @@ public class TokensActivity extends BaseActivity {
 
     private AccountViewModel mViewModel;
     private List<TokenEntity> chooseTokes = new ArrayList<>();
-    private List<TokenEntity> allTokens = Config.getInstance().getTokenEntities();
+    private List<TokenEntity> allTokens = BrahmaConfig.getInstance().getTokenEntities();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

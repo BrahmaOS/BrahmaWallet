@@ -10,7 +10,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -32,6 +31,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
@@ -42,6 +42,8 @@ import io.brahmaos.wallet.brahmawallet.service.MainService;
 import io.brahmaos.wallet.brahmawallet.ui.account.AccountsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.account.CreateAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.account.ImportAccountActivity;
+import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
+import io.brahmaos.wallet.brahmawallet.ui.setting.SettingsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.test.TestActivity;
 import io.brahmaos.wallet.brahmawallet.ui.token.TokensActivity;
 import io.brahmaos.wallet.brahmawallet.ui.transfer.TransferActivity;
@@ -50,8 +52,9 @@ import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
 
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    @Override
     protected String tag() {
         return MainActivity.class.getName();
     }
@@ -62,8 +65,12 @@ public class MainActivity extends AppCompatActivity
     ConstraintLayout createAccountLayout;
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout swipeRefreshLayout;
+    @BindView(R.id.tv_appro_equal)
+    TextView tvApproEqual;
     @BindView(R.id.tv_total_assets)
     TextView tvTotalAssets;
+    @BindView(R.id.iv_assets_visibility)
+    ImageView ivAssetsVisible;
     @BindView(R.id.tv_assets_categories_num)
     TextView tvTokenCategories;
     @BindView(R.id.assets_recycler)
@@ -93,7 +100,7 @@ public class MainActivity extends AppCompatActivity
     private void initView() {
         swipeRefreshLayout.setColorSchemeResources(R.color.master);
         swipeRefreshLayout.setRefreshing(true);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -101,12 +108,9 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                // get the latest assets
-                mViewModel.getTotalAssets();
-            }
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            // get the latest assets
+            mViewModel.getTotalAssets();
         });
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -132,6 +136,15 @@ public class MainActivity extends AppCompatActivity
         importAccountBtn.setOnClickListener(v -> {
             Intent intent = new Intent(this, ImportAccountActivity.class);
             startActivity(intent);
+        });
+
+        ivAssetsVisible.setOnClickListener(v -> {
+            if (BrahmaConfig.getInstance().isAssetsVisible()) {
+                BrahmaConfig.getInstance().setAssetsVisible(false);
+            } else {
+                BrahmaConfig.getInstance().setAssetsVisible(true);
+            }
+            showAssetsCurrency();
         });
     }
 
@@ -163,6 +176,7 @@ public class MainActivity extends AppCompatActivity
             if (cryptoCurrencies != null) {
                 cacheCryptoCurrencies = cryptoCurrencies;
                 showAssetsCurrency();
+                recyclerViewAssets.getAdapter().notifyDataSetChanged();
             }
         });
     }
@@ -170,8 +184,26 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
+        BLog.e(tag(), "onStart");
         cacheAssets = MainService.getInstance().getAccountAssetsList();
         showAssetsCurrency();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        BLog.e(tag(), "onNewIntent");
+        boolean changeNetworkFlag = intent.getBooleanExtra(IntentParam.FLAG_CHANGE_NETWORK, false);
+        boolean changeLanguageFlag = intent.getBooleanExtra(IntentParam.FLAG_CHANGE_LANGUAGE, false);
+        // change network type
+        if (changeNetworkFlag) {
+            MainService.getInstance().setAccountAssetsList(new ArrayList<>());
+            swipeRefreshLayout.setRefreshing(true);
+            mViewModel.getTotalAssets();
+        }
+        // change language; if change language, then recreate the activity to reload the resource.
+        if (changeLanguageFlag) {
+            this.recreate();
+        }
     }
 
     @Override
@@ -204,7 +236,7 @@ public class MainActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -212,12 +244,13 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(this, AccountsActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_settings) {
-
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_help) {
 
         } else if (id == R.id.nav_info) {
-            Intent intent = new Intent(this, TestActivity.class);
-            startActivity(intent);
+            /*Intent intent = new Intent(this, TestActivity.class);
+            startActivity(intent);*/
         }
 
         drawer.closeDrawer(GravityCompat.START);
@@ -256,7 +289,7 @@ public class MainActivity extends AppCompatActivity
                         if (cryptoCurrency.getName().toLowerCase()
                                 .equals(accountAssets.getTokenEntity().getName().toLowerCase())) {
                             BigDecimal value = new BigDecimal(cryptoCurrency.getPriceCny())
-                                    .multiply(new BigDecimal(CommonUtil.getAccountFromWei(accountAssets.getBalance())));
+                                    .multiply(CommonUtil.getAccountFromWei(accountAssets.getBalance()));
                             totalValue = totalValue.add(value);
                             break;
                         }
@@ -264,7 +297,15 @@ public class MainActivity extends AppCompatActivity
                 }
             }
             swipeRefreshLayout.setRefreshing(false);
-            tvTotalAssets.setText(String.valueOf(totalValue.setScale(2, BigDecimal.ROUND_HALF_UP)));
+            if (BrahmaConfig.getInstance().isAssetsVisible()) {
+                tvTotalAssets.setText(String.valueOf(totalValue.setScale(2, BigDecimal.ROUND_HALF_UP)));
+                tvApproEqual.setText(R.string.asymptotic);
+                ivAssetsVisible.setImageResource(R.drawable.ic_open_eye);
+            } else {
+                tvTotalAssets.setText("******");
+                tvApproEqual.setText("");
+                ivAssetsVisible.setImageResource(R.drawable.ic_close_eye);
+            }
         }
     }
 
@@ -324,14 +365,21 @@ public class MainActivity extends AppCompatActivity
                     tokenCount = tokenCount.add(accountAssets.getBalance());
                 }
             }
-            holder.tvTokenAccount.setText(String.valueOf(CommonUtil.getAccountFromWei(tokenCount)));
-            BigDecimal tokenValue = BigDecimal.ZERO;
-            for (CryptoCurrency cryptoCurrency : cacheCryptoCurrencies) {
-                if (cryptoCurrency.getName().toLowerCase().equals(tokenEntity.getName().toLowerCase())) {
-                    tokenValue = new BigDecimal(CommonUtil.getAccountFromWei(tokenCount)).multiply(new BigDecimal(cryptoCurrency.getPriceCny()));
+            if (BrahmaConfig.getInstance().isAssetsVisible()) {
+                holder.tvTokenApproEqual.setText(R.string.asymptotic);
+                holder.tvTokenAccount.setText(String.valueOf(CommonUtil.getAccountFromWei(tokenCount)));
+                BigDecimal tokenValue = BigDecimal.ZERO;
+                for (CryptoCurrency cryptoCurrency : cacheCryptoCurrencies) {
+                    if (cryptoCurrency.getName().toLowerCase().equals(tokenEntity.getName().toLowerCase())) {
+                        tokenValue = CommonUtil.getAccountFromWei(tokenCount).multiply(new BigDecimal(cryptoCurrency.getPriceCny()));
+                    }
                 }
+                holder.tvTokenAssetsCount.setText(String.valueOf(tokenValue.setScale(2, BigDecimal.ROUND_HALF_UP)));
+            } else {
+                holder.tvTokenApproEqual.setText("");
+                holder.tvTokenAccount.setText("****");
+                holder.tvTokenAssetsCount.setText("********");
             }
-            holder.tvTokenAssetsCount.setText(String.valueOf(tokenValue.setScale(2, BigDecimal.ROUND_HALF_UP)));
         }
 
         @Override
@@ -345,6 +393,7 @@ public class MainActivity extends AppCompatActivity
             ImageView ivTokenIcon;
             TextView tvTokenName;
             TextView tvTokenAccount;
+            TextView tvTokenApproEqual;
             TextView tvTokenAssetsCount;
 
             ItemViewHolder(View itemView) {
@@ -353,6 +402,7 @@ public class MainActivity extends AppCompatActivity
                 ivTokenIcon = itemView.findViewById(R.id.iv_token_icon);
                 tvTokenName = itemView.findViewById(R.id.tv_token_name);
                 tvTokenAccount = itemView.findViewById(R.id.tv_token_count);
+                tvTokenApproEqual = itemView.findViewById(R.id.tv_token_appro_equal);
                 tvTokenAssetsCount = itemView.findViewById(R.id.tv_token_assets_count);
             }
         }

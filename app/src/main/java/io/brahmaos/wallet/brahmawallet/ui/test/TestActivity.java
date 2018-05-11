@@ -47,6 +47,7 @@ import java.util.Collections;
 
 import io.brahmaos.wallet.brahmawallet.BuildConfig;
 import io.brahmaos.wallet.brahmawallet.R;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.ui.MainActivity;
 import io.brahmaos.wallet.contracts.SOT;
 import io.brahmaos.wallet.util.BLog;
@@ -77,7 +78,7 @@ public class TestActivity extends Activity {
         tv.setText("hello");
 
         final Web3j web3 = Web3jFactory.build(
-                new HttpService(BuildConfig.NETWORK_BASE_URL)); // defaults to http://localhost:8545/
+                new HttpService(BrahmaConfig.getInstance().getNetworkUrl())); // defaults to http://localhost:8545/
 
         final String destinationAddress = "0x5c0525e7e4af221c41a991128eeee64a83026ec0";
         final String currentWalletAddress = "0x76e1ff3d7be7ff088366056f051a9241e0535f7e";

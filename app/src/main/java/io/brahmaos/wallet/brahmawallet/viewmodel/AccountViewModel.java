@@ -421,28 +421,8 @@ public class AccountViewModel extends AndroidViewModel {
                 });
     }
 
-    public Observable<Boolean> sendTransfer(AccountEntity account, TokenEntity token, String password,
-                                    String destinationAddress, BigDecimal amount) {
-        return Observable.create(e -> {
-            try {
-                if (token.getName().toLowerCase().equals(BrahmaConst.ETHEREUM)) {
-                    BrahmaWeb3jService.getInstance().sendTransferEth(account, password, destinationAddress, amount);
-                } else {
-                    BrahmaWeb3jService.getInstance().sendTransfer(account, token, password, destinationAddress, amount);
-                }
-                e.onNext(Boolean.TRUE);
-            } catch (IOException | CipherException | TransactionTimeoutException | InterruptedException e1) {
-                e1.printStackTrace();
-                e.onError(e1);
-            }
-            e.onCompleted();
-        });
-    }
-
     public Completable changeAccountName(int accountId, String newName) {
-        return Completable.fromAction(() -> {
-            ((WalletApp) getApplication()).getRepository().changeAccountName(accountId, newName);
-        });
+        return Completable.fromAction(() -> ((WalletApp) getApplication()).getRepository().changeAccountName(accountId, newName));
     }
 
     /*
@@ -474,8 +454,6 @@ public class AccountViewModel extends AndroidViewModel {
     }
 
     public Completable deleteAccount(int accountId) {
-        return Completable.fromAction(() -> {
-            ((WalletApp) getApplication()).getRepository().deleteAccount(accountId);
-        });
+        return Completable.fromAction(() -> ((WalletApp) getApplication()).getRepository().deleteAccount(accountId));
     }
 }

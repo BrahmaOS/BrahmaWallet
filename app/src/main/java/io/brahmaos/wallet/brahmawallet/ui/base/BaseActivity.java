@@ -1,6 +1,10 @@
 package io.brahmaos.wallet.brahmawallet.ui.base;
 
+import android.content.Context;
+import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.LocaleList;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -8,8 +12,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.util.Locale;
+
 import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.util.BLog;
 
 
@@ -19,6 +27,22 @@ import io.brahmaos.wallet.util.BLog;
 public abstract class BaseActivity extends AppCompatActivity {
 
     protected abstract String tag();
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Configuration config = newBase.getResources().getConfiguration();
+
+            Locale newLocale = Locale.ENGLISH;
+            if (BrahmaConfig.getInstance().getLanguageLocale()
+                    .equals(BrahmaConst.LANGUAGE_CHINESE)) {
+                newLocale = Locale.CHINESE;
+            }
+            config.setLocale(newLocale);
+            newBase = newBase.createConfigurationContext(config);
+        }
+        super.attachBaseContext(newBase);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

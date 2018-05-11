@@ -39,13 +39,13 @@
 
             <Button
                 android:id="@+id/btn_create_account"
-                style="@style/RoundButtonSingle"
+                style="@style/MainButtonSingle"
                 android:layout_marginTop="@dimen/space_larger"
                 android:text="@string/action_create_account" />
 
             <Button
                 android:id="@+id/btn_import_account"
-                style="@style/RoundButtonSingle"
+                style="@style/MainButtonSingle"
                 android:layout_marginTop="@dimen/space_larger"
                 android:layout_marginBottom="@dimen/space_larger"
                 android:text="@string/action_import_account" />
@@ -83,27 +83,33 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:paddingTop="@dimen/space_normal"
                         android:layout_gravity="center"
                         android:orientation="horizontal">
                         <TextView
+                            android:id="@+id/tv_appro_equal"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textAlignment="center"
-                            android:layout_marginTop="@dimen/space_normal"
                             android:textColor="@color/white"
                             android:textSize="@dimen/font_size_display1"
-                            android:textStyle="italic|bold"
                             android:paddingEnd="@dimen/space_smaller"
                             android:text="@string/asymptotic"/>
                         <TextView
+                            android:visibility="visible"
                             android:id="@+id/tv_total_assets"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textAlignment="center"
-                            android:layout_marginTop="@dimen/space_normal"
                             android:textColor="@color/white"
-                            android:textSize="@dimen/font_size_display1"
-                            android:textStyle="italic|bold"/>
+                            android:textSize="@dimen/font_size_display1"/>
+                        <ImageView
+                            android:id="@+id/iv_assets_visibility"
+                            android:layout_marginStart="@dimen/space_small"
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_gravity="center_vertical"
+                            android:src="@drawable/ic_open_eye"/>
                     </LinearLayout>
                     <RelativeLayout
                         android:layout_width="match_parent"

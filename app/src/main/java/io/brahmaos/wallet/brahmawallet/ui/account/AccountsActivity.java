@@ -204,7 +204,7 @@ public class AccountsActivity extends BaseActivity {
                         assets.getBalance().compareTo(BigInteger.ZERO) > 0) {
                     for (CryptoCurrency currency : cryptoCurrencies) {
                         if (currency.getName().toLowerCase().equals(assets.getTokenEntity().getName().toLowerCase())) {
-                            BigDecimal tokenValue = new BigDecimal(currency.getPriceCny()).multiply(new BigDecimal(CommonUtil.getAccountFromWei(assets.getBalance())));
+                            BigDecimal tokenValue = new BigDecimal(currency.getPriceCny()).multiply(CommonUtil.getAccountFromWei(assets.getBalance()));
                             totalAssets = totalAssets.add(tokenValue);
                         }
                     }
