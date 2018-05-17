@@ -1,11 +1,15 @@
 package io.brahmaos.wallet.brahmawallet.ui.base;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.LocaleList;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -19,6 +23,7 @@ import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.util.BLog;
+import io.brahmaos.wallet.util.PermissionUtil;
 
 
 /**
@@ -84,7 +89,28 @@ public abstract class BaseActivity extends AppCompatActivity {
         showLongToast(getString(res));
     }
 
+    // Request camera permission
+    public void requestCameraScanPermission() {
+        PermissionUtil.requestMultiPermissions(this, PermissionUtil.CAMERA_PERMISSIONS, PermissionUtil.CODE_CAMERA_SCAN);
+    }
+
     public void handleCameraScanPermission() {}
+
+    /**
+     * Callback received when a permissions request has been completed.
+     */
+    @Override
+    public void onRequestPermissionsResult(final int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode == PermissionUtil.CODE_CAMERA_SCAN) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                    == PackageManager.PERMISSION_GRANTED) {
+                handleCameraScanPermission();
+            } else {
+                PermissionUtil.openSettingActivity(this, getString(R.string.tip_camera_permission));
+            }
+        }
+    }
 
     // show navigation backup action icon
     protected void showNavBackBtn() {

@@ -1,15 +1,25 @@
 package io.brahmaos.wallet.brahmawallet.ui.transfer;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.design.widget.BottomSheetDialog;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,6 +28,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.web3j.crypto.CipherException;
+import org.web3j.protocol.exceptions.TransactionTimeoutException;
+import org.web3j.utils.Convert;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -29,6 +41,7 @@ import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
+import io.brahmaos.wallet.brahmawallet.common.ReqCode;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 import io.brahmaos.wallet.brahmawallet.model.AccountAssets;
@@ -36,6 +49,8 @@ import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.service.MainService;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
+import io.brahmaos.wallet.brahmawallet.ui.common.barcode.CaptureActivity;
+import io.brahmaos.wallet.brahmawallet.ui.common.barcode.Intents;
 import io.brahmaos.wallet.brahmawallet.view.CustomStatusView;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
@@ -68,6 +83,10 @@ public class TransferActivity extends BaseActivity {
     EditText etAmount;
     @BindView(R.id.et_remark)
     EditText etRemark;
+    @BindView(R.id.et_gas_price)
+    EditText etGasPrice;
+    @BindView(R.id.et_gas_limit)
+    EditText etGasLimit;
 
     private AccountEntity mAccount;
     private TokenEntity mToken;
@@ -152,9 +171,63 @@ public class TransferActivity extends BaseActivity {
             }
         });
 
+        etGasPrice.setText(String.valueOf(BrahmaConst.DEFAULT_GAS_PRICE));
+        etGasLimit.setText(String.valueOf(BrahmaConst.DEFAULT_GAS_LIMIT));
         btnShowTransfer.setOnClickListener(v -> {
             showTransferInfo();
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_scan, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.menu_scan) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestCameraScanPermission();
+            } else {
+                scanAddressCode();
+            }
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void scanAddressCode() {
+        Intent intent = new Intent(this, CaptureActivity.class);
+        intent.putExtra(Intents.Scan.PROMPT_MESSAGE, "");
+        startActivityForResult(intent, ReqCode.SCAN_QR_CODE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        BLog.d(tag(), "requestCode: " + requestCode + "  ;resultCode" + resultCode);
+        if (requestCode == ReqCode.SCAN_QR_CODE) {
+            if (resultCode == RESULT_OK) {
+                if (data != null) {
+                    String qrCode = data.getStringExtra(Intents.Scan.RESULT);
+                    if (qrCode != null && qrCode.length() > 0) {
+                        etReceiverAddress.setText(qrCode);
+                    } else {
+                        showLongToast(R.string.tip_scan_code_failed);
+                    }
+                }
+            }
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void handleCameraScanPermission() {
+        scanAddressCode();
     }
 
     private class AccountItemView {
@@ -176,6 +249,8 @@ public class TransferActivity extends BaseActivity {
         String transferAmount = etAmount.getText().toString().trim();
         String remark = etRemark.getText().toString().trim();
         BigDecimal amount = BigDecimal.ZERO;
+        String gasPriceStr = etGasPrice.getText().toString().trim();
+        String gasLimitStr = etGasLimit.getText().toString().trim();
 
         String tips = "";
         boolean cancel = false;
@@ -185,6 +260,16 @@ public class TransferActivity extends BaseActivity {
         }
         if (!cancel && receiverAddress.equals(mAccount.getAddress())) {
             tips = getString(R.string.tip_same_address);
+            cancel = true;
+        }
+
+        if (!cancel && gasPriceStr.length() < 1) {
+            tips = getString(R.string.tip_invalid_gas_price);
+            cancel = true;
+        }
+
+        if (!cancel && gasLimitStr.length() < 1) {
+            tips = getString(R.string.tip_invalid_gas_limit);
             cancel = true;
         }
 
@@ -240,6 +325,9 @@ public class TransferActivity extends BaseActivity {
             return;
         }
 
+        BigInteger gasPrice = new BigInteger(gasPriceStr);
+        BigInteger gasLimit = new BigInteger(gasLimitStr);
+
         final BottomSheetDialog transferInfoDialog = new BottomSheetDialog(this);
         View view = getLayoutInflater().inflate(R.layout.bottom_sheet_dialog_transfer_info, null);
         transferInfoDialog.setContentView(view);
@@ -256,6 +344,14 @@ public class TransferActivity extends BaseActivity {
 
         TextView tvDialogPayByAddress = view.findViewById(R.id.tv_pay_by_address);
         tvDialogPayByAddress.setText(CommonUtil.generateSimpleAddress(mAccount.getAddress()));
+
+        TextView tvGasPrice = view.findViewById(R.id.tv_gas_price);
+        tvGasPrice.setText(gasPriceStr);
+        TextView tvGasLimit = view.findViewById(R.id.tv_gas_limit);
+        tvGasLimit.setText(gasLimitStr);
+        TextView tvGasValue = view.findViewById(R.id.tv_gas_value);
+        BigDecimal gasValue = Convert.fromWei(Convert.toWei(new BigDecimal(gasLimit.multiply(gasPrice)), Convert.Unit.GWEI), Convert.Unit.ETHER);
+        tvGasValue.setText(gasValue.setScale(9, BigDecimal.ROUND_HALF_UP).toString());
 
         TextView tvTransferAmount = view.findViewById(R.id.tv_dialog_transfer_amount);
         tvTransferAmount.setText(String.valueOf(amount));
@@ -282,7 +378,8 @@ public class TransferActivity extends BaseActivity {
                         layoutTransferStatus.setVisibility(View.VISIBLE);
                         customStatusView.loadLoading();
                         String password = ((EditText) dialogView.findViewById(R.id.et_password)).getText().toString();
-                        BrahmaWeb3jService.getInstance().sendTransfer(mAccount, mToken, password, receiverAddress, finalAmount)
+                        BrahmaWeb3jService.getInstance().sendTransfer(mAccount, mToken, password, receiverAddress,
+                                finalAmount, gasPrice, gasLimit, remark)
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(new Observer<Integer>() {
@@ -315,6 +412,8 @@ public class TransferActivity extends BaseActivity {
                                             int resId = R.string.tip_error_transfer;
                                             if (e instanceof CipherException) {
                                                 resId = R.string.tip_error_password;
+                                            } else if (e instanceof TransactionTimeoutException) {
+                                                resId = R.string.tip_error_net;
                                             }
                                             new AlertDialog.Builder(TransferActivity.this)
                                                     .setMessage(resId)

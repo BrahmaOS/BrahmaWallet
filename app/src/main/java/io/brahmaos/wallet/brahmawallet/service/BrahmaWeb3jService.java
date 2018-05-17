@@ -56,6 +56,9 @@ import rx.Observable;
 import rx.Subscription;
 
 public class BrahmaWeb3jService extends BaseService{
+    private static final int SLEEP_DURATION = 10000;
+    private static final int ATTEMPTS = 40;
+
     @Override
     protected String tag() {
         return BrahmaWeb3jService.class.getName();
@@ -177,7 +180,8 @@ public class BrahmaWeb3jService extends BaseService{
      * @return 1: verifying the account 2: sending request 10: transfer success
      */
     public Observable<Integer> sendTransfer(AccountEntity account, TokenEntity token, String password,
-                                            String destinationAddress, BigDecimal amount) {
+                                            String destinationAddress, BigDecimal amount,
+                                            BigInteger gasPrice, BigInteger gasLimit, String remark) {
         return Observable.create(e -> {
             try {
                 e.onNext(1);
@@ -187,10 +191,38 @@ public class BrahmaWeb3jService extends BaseService{
                         password, context.getFilesDir() + "/" +  account.getFilename());
                 BLog.i(tag(), "load credential success");
                 e.onNext(2);
+                BigDecimal gasPriceWei = Convert.toWei(new BigDecimal(gasPrice), Convert.Unit.GWEI);
                 if (token.getName().toLowerCase().equals(BrahmaConst.ETHEREUM)) {
-                    TransactionReceipt transferReceipt = Transfer.sendFunds(
-                            web3, credentials, destinationAddress, amount,
-                            Convert.Unit.ETHER);
+                    RawTransactionManager txManager = new RawTransactionManager(web3, credentials);
+                    EthSendTransaction transactionResponse = txManager.sendTransaction(gasPriceWei.toBigIntegerExact(),
+                            gasLimit, destinationAddress, Numeric.toHexString(remark.getBytes()), Convert.toWei(amount, Convert.Unit.ETHER).toBigInteger());
+                    if (transactionResponse.hasError()) {
+                        throw new RuntimeException("Error processing transaction request: "
+                                + transactionResponse.getError().getMessage());
+                    }
+
+                    BLog.i(tag(), "remark: "
+                            + remark + "; hex remark:" + Numeric.toHexString(remark.getBytes()));
+
+                    String transactionHash = transactionResponse.getTransactionHash();
+                    BLog.i(tag(), "Transaction begin, view it at https://rinkeby.etherscan.io/tx/"
+                            + transactionHash);
+
+                    TransactionReceipt transferReceipt = sendTransactionReceiptRequest(web3, transactionHash);
+                    for (int i = 0; i < ATTEMPTS; i++) {
+                        if (transferReceipt == null) {
+                            Thread.sleep(SLEEP_DURATION);
+                            transferReceipt = sendTransactionReceiptRequest(web3, transactionHash);
+                        } else {
+                            break;
+                        }
+                    }
+                    if (transferReceipt == null) {
+                        throw new TransactionTimeoutException("Transaction receipt was not generated after "
+                                + ((SLEEP_DURATION * ATTEMPTS) / 1000
+                                + " seconds for transaction: " + transactionHash));
+                    }
+
                     BLog.i(tag(), "Transaction complete, view it at https://rinkeby.etherscan.io/tx/"
                             + transferReceipt.getTransactionHash());
                 } else {
@@ -203,7 +235,7 @@ public class BrahmaWeb3jService extends BaseService{
 
                     RawTransactionManager txManager = new RawTransactionManager(web3, credentials);
                     EthSendTransaction transactionResponse = txManager.sendTransaction(
-                            ManagedTransaction.GAS_PRICE, Contract.GAS_LIMIT, token.getAddress(), encodedFunction, BigInteger.ZERO);
+                            gasPriceWei.toBigIntegerExact(), gasLimit, token.getAddress(), encodedFunction, BigInteger.ZERO);
 
                     if (transactionResponse.hasError()) {
                         throw new RuntimeException("Error processing transaction request: "
@@ -219,6 +251,18 @@ public class BrahmaWeb3jService extends BaseService{
             }
             e.onCompleted();
         });
+    }
+
+    private TransactionReceipt sendTransactionReceiptRequest(
+            Web3j web3j, String transactionHash) throws IOException {
+        EthGetTransactionReceipt transactionReceipt =
+                web3j.ethGetTransactionReceipt(transactionHash).send();
+        if (transactionReceipt.hasError()) {
+            throw new RuntimeException("Error processing request: "
+                    + transactionReceipt.getError().getMessage());
+        }
+
+        return transactionReceipt.getTransactionReceipt();
     }
 
     public Observable<String> getPrivateKeyByPassword(String fileName, String password) {

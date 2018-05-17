@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "io.brahmaos.wallet.brahmawallet"
-        minSdkVersion 23
+        minSdkVersion 21
         targetSdkVersion 27
         versionCode 1
         versionName "0.1.0"
@@ -89,6 +89,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
     implementation 'com.squareup.retrofit2:converter-jackson:2.3.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.8.1'
+    implementation 'com.google.zxing:core:3.3.2'
 
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
     implementation 'com.github.bumptech.glide:glide:4.7.1'

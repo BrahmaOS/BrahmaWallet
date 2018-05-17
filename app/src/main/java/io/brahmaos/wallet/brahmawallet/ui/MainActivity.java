@@ -67,6 +67,8 @@ public class MainActivity extends BaseActivity
     SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.tv_appro_equal)
     TextView tvApproEqual;
+    @BindView(R.id.tv_test_network)
+    TextView tvTestNetwork;
     @BindView(R.id.tv_total_assets)
     TextView tvTotalAssets;
     @BindView(R.id.iv_assets_visibility)
@@ -111,6 +113,10 @@ public class MainActivity extends BaseActivity
         swipeRefreshLayout.setOnRefreshListener(() -> {
             // get the latest assets
             mViewModel.getTotalAssets();
+            // get Currencies
+            if (cacheCryptoCurrencies == null || cacheCryptoCurrencies.size() == 0) {
+                mViewModel.fetchCurrenciesFromNet();
+            }
         });
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -146,6 +152,19 @@ public class MainActivity extends BaseActivity
             }
             showAssetsCurrency();
         });
+
+        changeNetwork();
+    }
+
+    private void changeNetwork() {
+        String networkUrl = BrahmaConfig.getInstance().getNetworkUrl();
+        String networkName = CommonUtil.generateNetworkName(networkUrl);
+        if (networkName.equals("Mainnet") || networkName.length() < 1) {
+            tvTestNetwork.setVisibility(View.GONE);
+        } else {
+            tvTestNetwork.setVisibility(View.VISIBLE);
+            tvTestNetwork.setText(networkName);
+        }
     }
 
     private void initData() {
@@ -173,10 +192,13 @@ public class MainActivity extends BaseActivity
 
         mViewModel.getCryptoCurrencies().observe(this, (List<CryptoCurrency> cryptoCurrencies) -> {
             BLog.i(tag(), "get crypto currencies");
-            if (cryptoCurrencies != null) {
+            if (cryptoCurrencies != null && cryptoCurrencies.size() > 0) {
                 cacheCryptoCurrencies = cryptoCurrencies;
                 showAssetsCurrency();
                 recyclerViewAssets.getAdapter().notifyDataSetChanged();
+            } else if (cryptoCurrencies == null) {
+                swipeRefreshLayout.setRefreshing(false);
+                showLongToast(R.string.error_network);
             }
         });
     }
@@ -184,7 +206,6 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onStart() {
         super.onStart();
-        BLog.e(tag(), "onStart");
         cacheAssets = MainService.getInstance().getAccountAssetsList();
         showAssetsCurrency();
     }
@@ -199,6 +220,8 @@ public class MainActivity extends BaseActivity
             MainService.getInstance().setAccountAssetsList(new ArrayList<>());
             swipeRefreshLayout.setRefreshing(true);
             mViewModel.getTotalAssets();
+
+            changeNetwork();
         }
         // change language; if change language, then recreate the activity to reload the resource.
         if (changeLanguageFlag) {
@@ -278,13 +301,12 @@ public class MainActivity extends BaseActivity
      * Display the number of tokens and the corresponding legal currency value
      */
     private void showAssetsCurrency() {
-        if (cacheAssets.size() == cacheAccounts.size() * cacheTokens.size() &&
-                cacheCryptoCurrencies != null && cacheCryptoCurrencies.size() > 0) {
+        if (cacheAssets.size() == cacheAccounts.size() * cacheTokens.size()) {
             recyclerViewAssets.getAdapter().notifyDataSetChanged();
 
             BigDecimal totalValue = BigDecimal.ZERO;
             for (AccountAssets accountAssets : cacheAssets) {
-                if (accountAssets.getBalance().compareTo(BigInteger.ZERO) > 0) {
+                if (accountAssets.getBalance().compareTo(BigInteger.ZERO) > 0 && cacheCryptoCurrencies != null) {
                     for (CryptoCurrency cryptoCurrency : cacheCryptoCurrencies) {
                         if (cryptoCurrency.getName().toLowerCase()
                                 .equals(accountAssets.getTokenEntity().getName().toLowerCase())) {
@@ -369,9 +391,11 @@ public class MainActivity extends BaseActivity
                 holder.tvTokenApproEqual.setText(R.string.asymptotic);
                 holder.tvTokenAccount.setText(String.valueOf(CommonUtil.getAccountFromWei(tokenCount)));
                 BigDecimal tokenValue = BigDecimal.ZERO;
-                for (CryptoCurrency cryptoCurrency : cacheCryptoCurrencies) {
-                    if (cryptoCurrency.getName().toLowerCase().equals(tokenEntity.getName().toLowerCase())) {
-                        tokenValue = CommonUtil.getAccountFromWei(tokenCount).multiply(new BigDecimal(cryptoCurrency.getPriceCny()));
+                if (cacheCryptoCurrencies != null && cacheCryptoCurrencies.size() > 0) {
+                    for (CryptoCurrency cryptoCurrency : cacheCryptoCurrencies) {
+                        if (cryptoCurrency.getName().toLowerCase().equals(tokenEntity.getName().toLowerCase())) {
+                            tokenValue = CommonUtil.getAccountFromWei(tokenCount).multiply(new BigDecimal(cryptoCurrency.getPriceCny()));
+                        }
                     }
                 }
                 holder.tvTokenAssetsCount.setText(String.valueOf(tokenValue.setScale(2, BigDecimal.ROUND_HALF_UP)));

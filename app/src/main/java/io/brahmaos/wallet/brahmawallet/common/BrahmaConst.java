@@ -17,8 +17,9 @@ public class BrahmaConst {
 
     public static final String BRAHMAOS_TOKEN = "brahmaos";
     public static final String ETHEREUM = "ethereum";
-    public static final BigInteger DEFAULT_GAS_LIMIT = BigInteger.valueOf(21000);
-    public static final BigInteger DEFAULT_GAS_PRICE = BigInteger.valueOf(20000000000L);
+    public static final int DEFAULT_GAS_LIMIT = 200000;
+    // unit Gwei
+    public static final int DEFAULT_GAS_PRICE = 20;
     public static final BigDecimal DEFAULT_FEE = BigDecimal.valueOf(0.000400000);
 
     public static final String MAINNET_URL = "https://mainnet.infura.io/Gy3Csyt4bzKIGsctm3g0";

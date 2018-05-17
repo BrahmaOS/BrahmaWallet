@@ -14,6 +14,7 @@
     <string name="assets_class">资产类别</string>
     <string name="asymptotic">≈</string>
     <string name="blank_space">&#160;</string>
+    <string name="error_network">网络异常!</string>
 
     <string name="action_next">下一步</string>
     <string name="action_confirm">确认</string>
@@ -131,14 +132,19 @@
     <string name="tip_error_address">提示: 地址一般为0x开头的42位字符</string>
     <string name="tip_same_address">地址不能为自己</string>
     <string name="tip_invalid_amount">请填写正确的金额</string>
+    <string name="tip_invalid_gas_price">请填写gas price. 通常为 20 Gwei。</string>
+    <string name="tip_invalid_gas_limit">请填写gas limit，通常为 200000。</string>
     <string name="tip_insufficient_eth">ETH不足</string>
     <string name="pay_to_address">收款地址</string>
     <string name="pay_by_address">付款账号</string>
     <string name="fees">矿工费</string>
     <string name="tip_error_password">转账失败！请检查密码！.</string>
+    <string name="tip_error_net">网络连接超时!</string>
     <string name="tip_error_transfer">转账失败!</string>
     <string name="prompt_total_gas">0.000400000 ETH</string>
     <string name="prompt_total_gas_desc">≈ Gas (20000) * Gas Price(20gwei)</string>
+    <string name="action_go_settings">前往设置</string>
+    <string name="tip_camera_permission">您还没有对相机进行授权，请前往设置页面授权</string>
 
     <!-- Strings related to login -->
     <string name="title_activity_account_change_password">更改密码</string>
@@ -188,4 +194,10 @@
     <string name="key_wallet_language">wallet.language</string>
     <string name="key_wallet_currency_unit">wallet.currency.unit</string>
 
+    <!-- strings about address code -->
+    <string name="title_address_qrcode">账号地址</string>
+
+    <!-- scan -->
+    <string name="title_capture_code">扫码</string>
+    <string name="tip_scan_code_failed">扫码失败</string>
 </resources>

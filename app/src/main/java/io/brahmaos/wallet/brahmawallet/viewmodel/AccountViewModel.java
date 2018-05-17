@@ -84,7 +84,7 @@ public class AccountViewModel extends AndroidViewModel {
         mObservableAccounts.setValue(null);
         mObservableTokens.setValue(null);
         mObservableAssets.setValue(null);
-        mObservableCryptoCurrencies.setValue(null);
+        mObservableCryptoCurrencies.setValue(new ArrayList<>());
 
         LiveData<List<AccountEntity>> accounts = ((WalletApp) application).getRepository()
                 .getAccounts();
@@ -326,7 +326,7 @@ public class AccountViewModel extends AndroidViewModel {
                         public void onNext(EthCall ethCall) {
                             if (ethCall != null && ethCall.getValue() != null) {
                                 BLog.i("view model", "the " + account.getName() + "'s " +
-                                        tokenEntity.getName() + " balance is " + Numeric.decodeQuantity(ethCall.getValue()));
+                                        tokenEntity.getName() + " balance is " + ethCall.getValue());
                                 AccountAssets assets = new AccountAssets(account, tokenEntity, Numeric.decodeQuantity(ethCall.getValue()));
                                 checkTokenAsset(assets);
                             } else {
@@ -338,7 +338,6 @@ public class AccountViewModel extends AndroidViewModel {
                         }
                     });
         }
-
     }
 
     /*
@@ -372,7 +371,7 @@ public class AccountViewModel extends AndroidViewModel {
         return mObservableCryptoCurrencies;
     }
 
-    private void fetchCurrenciesFromNet() {
+    public void fetchCurrenciesFromNet() {
         Networks.getInstance().getMarketApi()
                 .getCryptoCurrencies(BrahmaConst.DEFAULT_CURRENCY_START,
                         BrahmaConst.DEFAULT_CURRENCY_LIMIT, BrahmaConst.UNIT_PRICE_CNY)
@@ -387,6 +386,7 @@ public class AccountViewModel extends AndroidViewModel {
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
+                        mObservableCryptoCurrencies.postValue(null);
                     }
 
                     @Override
@@ -410,6 +410,7 @@ public class AccountViewModel extends AndroidViewModel {
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
+                        mObservableCryptoCurrencies.postValue(null);
                     }
 
                     @Override

@@ -61,6 +61,17 @@
         <item name="android:background">@drawable/btn_bg</item>
     </style>
 
+    <!-- single gray button -->
+    <style name="ButtonGraySingle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:textSize">@dimen/font_size_body</item>
+        <item name="android:textColor">@color/gray_btn_text</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:background">@drawable/btn_gray_bg</item>
+    </style>
+
     <!-- single button -->
     <style name="MainButtonSingle">
         <item name="android:layout_width">match_parent</item>

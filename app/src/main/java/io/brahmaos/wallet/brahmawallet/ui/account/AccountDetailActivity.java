@@ -101,6 +101,13 @@ public class AccountDetailActivity extends BaseActivity {
         ImageManager.showAccountAvatar(this, ivAccountAvatar, account);
         tvAccountName.setText(account.getName());
         tvAccountAddress.setText(CommonUtil.generateSimpleAddress(account.getAddress()));
+
+        layoutAccountAddress.setOnClickListener(v -> {
+            Intent intent = new Intent(AccountDetailActivity.this, AddressQrcodeActivity.class);
+            intent.putExtra(IntentParam.PARAM_ACCOUNT_INFO, account);
+            startActivity(intent);
+        });
+
         tvChangeAccountName.setOnClickListener(v -> {
             Intent intent = new Intent(this, ChangeAccountNameActivity.class);
             intent.putExtra(IntentParam.PARAM_ACCOUNT_ID, account.getId());
