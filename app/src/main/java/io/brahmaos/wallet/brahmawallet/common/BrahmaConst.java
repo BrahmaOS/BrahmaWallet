@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class BrahmaConst {
 
     public static final int DEFAULT_CURRENCY_START = 0;
-    public static final int DEFAULT_CURRENCY_LIMIT = 2;
+    public static final int DEFAULT_CURRENCY_LIMIT = 20;
     public static final String UNIT_PRICE_CNY = "CNY";
     public static final String UNIT_PRICE_USD = "USD";
 

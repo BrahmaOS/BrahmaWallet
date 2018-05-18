@@ -21,8 +21,10 @@
         android:padding="@dimen/space_normal"
         android:orientation="vertical">
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/light_yellow_bg"
+            android:padding="@dimen/space_smaller"
             android:text="@string/export_private_key_tip_1"/>
         <TextView
             android:id="@+id/tv_dialog_private_key"

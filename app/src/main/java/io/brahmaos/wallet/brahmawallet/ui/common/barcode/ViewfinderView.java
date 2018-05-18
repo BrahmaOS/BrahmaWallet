@@ -118,7 +118,7 @@ public final class ViewfinderView extends View {
         canvas.drawRect(0, frame.bottom + 1, width, height, paint);
 
         if (resultBitmap == null) {
-            paint.setColor(Color.GREEN);
+            paint.setColor(getResources().getColor(R.color.colorAccent));
             canvas.drawRect(frame.left, frame.top, frame.left + ScreenRate,
                     frame.top + CORNER_WIDTH, paint);
             canvas.drawRect(frame.left, frame.top, frame.left + CORNER_WIDTH, frame.top
@@ -141,7 +141,7 @@ public final class ViewfinderView extends View {
                 slideTop = frame.top;
             }
             Paint linePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            linePaint.setColor(getResources().getColor(R.color.light_green));
+            linePaint.setColor(getResources().getColor(R.color.colorAccent));
             canvas.drawRect(frame.left + MIDDLE_LINE_PADDING, slideTop - MIDDLE_LINE_WIDTH/2, frame.right - MIDDLE_LINE_PADDING,slideTop + MIDDLE_LINE_WIDTH/2, linePaint);
 
             Collection<ResultPoint> currentPossible = possibleResultPoints;

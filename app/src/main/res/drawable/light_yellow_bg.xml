@@ -5,8 +5,5 @@
         android:topRightRadius="@dimen/block_corner"
         android:bottomLeftRadius="@dimen/block_corner"
         android:bottomRightRadius="@dimen/block_corner"/>
-    <stroke
-        android:width="1dip"
-        android:color="@color/color_test_network" />
-    <solid android:color="@color/color_transparent"/>
+    <solid android:color="#FBEFD6"/>
 </shape>

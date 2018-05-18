@@ -40,7 +40,12 @@
     <string name="title_dialog_export_private_key">Export Private Key</string>
 
     <string name="export_keystore_tip_1">Store offline. Never put it on internet.</string>
-    <string name="export_keystore_tip_2">Don\'t transfer via internet Tools.</string>
+    <string name="export_keystore_tip_2">
+        Don\'t transfer via internet Tools.
+    </string>
+    <string name="export_keystore_tip_3">
+        Don\'t screenshot.Don\'t take screenshot or photos to store account information.
+    </string>
     <string name="export_private_key_tip_1">
         Warning: Export plain private key is very dangerous.
     </string>
@@ -269,4 +274,19 @@
     <string name="title_capture_code">Scan</string>
     <string name="tip_scan_code_failed">Scan code failed!</string>
     <string name="action_scan">Scan</string>
+    <string name="title_activity_account_backup">AccountBackupActivity</string>
+
+    <!-- string about account backup -->
+    <string name="title_account_backup">Backup Account</string>
+    <string name="tip_backup_account">Please backup your account now!</string>
+    <string name="desc_backup_account_one">
+        The account is your blockchain account which is total different from website or app account and it is cryptographic based.
+    </string>
+    <string name="desc_backup_account_two">
+        You need to double check the account is being backup properly in case of any assets loss.
+    </string>
+    <string name="desc_backup_account_three">
+        We suggest you backup keystore, then test with tiny ethers until you feel confidence.
+    </string>
+    <string name="btn_backup_now">Backup Now</string>
 </resources>

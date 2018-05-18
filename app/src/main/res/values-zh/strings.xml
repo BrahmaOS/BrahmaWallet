@@ -41,6 +41,9 @@
 
     <string name="export_keystore_tip_1">离线保存，切勿保存到邮箱、网盘、聊天工具等，非常危险。</string>
     <string name="export_keystore_tip_2">请勿通过网络工具传输Keystore文件。</string>
+    <string name="export_keystore_tip_3">
+        请勿截图。勿用截图或拍照的方式保存keystore文件。
+    </string>
     <string name="export_private_key_tip_1">
         安全告警: 私钥未经加密，导出存在风险.
     </string>
@@ -200,4 +203,18 @@
     <!-- scan -->
     <string name="title_capture_code">扫码</string>
     <string name="tip_scan_code_failed">扫码失败</string>
+
+    <!-- string about account backup -->
+    <string name="title_account_backup">备份</string>
+    <string name="tip_backup_account">请立即备份您的账号!</string>
+    <string name="desc_backup_account_one">
+        区块链账号不同于传统的网站账号或应用账号，它是基于密码学的去中心化账号系统。
+    </string>
+    <string name="desc_backup_account_two">
+        您必须自己保管好钱包的私钥和交易密码，任何意外发生都会导致资产丢失。
+    </string>
+    <string name="desc_backup_account_three">
+        我们建议您备份keystore文件，再打入小额测试，最后开始使用。
+    </string>
+    <string name="btn_backup_now">立即备份</string>
 </resources>

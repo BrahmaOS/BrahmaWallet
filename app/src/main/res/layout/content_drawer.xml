@@ -70,7 +70,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="136dp"
-                    android:background="@drawable/home_header_bg"
+                    android:background="@drawable/home_header_bg1"
                     android:orientation="vertical">
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -100,7 +100,7 @@
                             android:paddingBottom="2dp"
                             android:paddingStart="@dimen/space_unit"
                             android:paddingEnd="@dimen/space_unit"
-                            android:textColor="@color/color_danger"/>
+                            android:textColor="@color/color_test_network"/>
                     </RelativeLayout>
 
                     <LinearLayout

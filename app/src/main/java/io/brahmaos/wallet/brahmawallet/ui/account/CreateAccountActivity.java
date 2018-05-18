@@ -17,6 +17,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
+import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.view.CustomProgressDialog;
@@ -156,6 +157,10 @@ public class CreateAccountActivity extends BaseActivity {
                     .subscribe(() -> {
                                 customProgressDialog.cancel();
                                 showLongToast(R.string.success_create_account);
+                                Intent intent = new Intent(CreateAccountActivity.this,
+                                        AccountBackupActivity.class);
+                                intent.putExtra(IntentParam.PARAM_ACCOUNT_NAME, name);
+                                startActivity(intent);
                                 finish();
                             },
                             throwable -> {
