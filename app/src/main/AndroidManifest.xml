@@ -61,6 +61,7 @@
             android:name=".ui.account.AccountBackupActivity"
             android:label="@string/title_activity_account_backup"
             android:theme="@style/AppTheme"></activity>
+        <activity android:name=".ui.token.TokenSearchActivity"/>
     </application>
 
 </manifest>

@@ -15,11 +15,10 @@
         android:paddingEnd="@dimen/space_normal">
         <ImageView
             android:id="@+id/iv_token_icon"
-            android:background="@drawable/icon_circle_bg"
             android:layout_centerVertical="true"
             android:layout_width="@dimen/icon_normal_size"
             android:layout_height="@dimen/icon_normal_size"
-            android:padding="@dimen/space_smaller"
+            android:padding="6dp"
             android:src="@drawable/ic_logo"/>
 
         <TextView

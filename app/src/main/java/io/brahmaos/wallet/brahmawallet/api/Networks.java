@@ -11,6 +11,7 @@ import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
 import io.brahmaos.wallet.brahmawallet.BuildConfig;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.util.BLog;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
@@ -68,9 +69,29 @@ public class Networks {
         return marketApi;
     }
 
+    // ipfs
+    private IpfsApi ipfsApi;
+    public IpfsApi getIpfsApi() {
+        if (ipfsApi == null) {
+            ipfsApi = ipfsConfigRetrofit(IpfsApi.class, false);
+        }
+        return ipfsApi;
+    }
+
     private <T> T configRetrofit(Class<T> service, boolean isAddCommonParam) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BuildConfig.MARKET_API_URL)
+                .client(configClient(isAddCommonParam))
+                .addConverterFactory(JacksonConverterFactory.create(mapper))
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .build();
+
+        return retrofit.create(service);
+    }
+
+    private <T> T ipfsConfigRetrofit(Class<T> service, boolean isAddCommonParam) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BrahmaConst.IPFS_BASE_URL)
                 .client(configClient(isAddCommonParam))
                 .addConverterFactory(JacksonConverterFactory.create(mapper))
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())

@@ -32,7 +32,6 @@ import org.web3j.crypto.WalletFile;
 import org.web3j.protocol.ObjectMapperFactory;
 import org.web3j.protocol.core.methods.response.EthCall;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
-import org.web3j.protocol.exceptions.TransactionTimeoutException;
 import org.web3j.utils.Numeric;
 
 import java.io.File;
@@ -51,6 +50,7 @@ import io.brahmaos.wallet.brahmawallet.WalletApp;
 import io.brahmaos.wallet.brahmawallet.api.Networks;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
+import io.brahmaos.wallet.brahmawallet.db.entity.AllTokenEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 import io.brahmaos.wallet.brahmawallet.model.AccountAssets;
 import io.brahmaos.wallet.brahmawallet.model.CryptoCurrency;
@@ -456,5 +456,39 @@ public class AccountViewModel extends AndroidViewModel {
 
     public Completable deleteAccount(int accountId) {
         return Completable.fromAction(() -> ((WalletApp) getApplication()).getRepository().deleteAccount(accountId));
+    }
+
+    public LiveData<List<AllTokenEntity>> getAllTokens() {
+        return ((WalletApp) getApplication()).getRepository().getAllTokens();
+    }
+
+    public LiveData<List<AllTokenEntity>> getShowTokens() {
+        return ((WalletApp) getApplication()).getRepository().getShowTokens();
+    }
+
+    public LiveData<List<AllTokenEntity>> queryAllTokens(String param) {
+        return ((WalletApp) getApplication()).getRepository().queryAllTokens(param);
+    }
+
+    public Completable showAllToken(TokenEntity tokenEntity, AllTokenEntity allTokenEntity) {
+        return Completable.fromAction(() -> {
+            ((WalletApp) getApplication()).getRepository().createToken(tokenEntity);
+            ((WalletApp) getApplication()).getRepository().showAllToken(allTokenEntity);
+        });
+    }
+
+    public Completable hideAllToken(TokenEntity tokenEntity, AllTokenEntity allTokenEntity) {
+        return Completable.fromAction(() -> {
+            ((WalletApp) getApplication()).getRepository().deleteToken(tokenEntity.getAddress());
+            ((WalletApp) getApplication()).getRepository().hideAllToken(allTokenEntity);
+        });
+    }
+
+    public Observable<List<AllTokenEntity>> queryAllTokensSync(String param) {
+        return Observable.create(e -> {
+            List<AllTokenEntity> allTokenEntities = ((WalletApp) getApplication()).getRepository().queryAllTokensSync(param);
+            e.onNext(allTokenEntities);
+            e.onCompleted();
+        });
     }
 }

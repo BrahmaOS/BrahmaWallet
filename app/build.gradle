@@ -80,7 +80,7 @@ dependencies {
     // fix the OOM error for web3j-3.x.x
     implementation 'org.web3j:core-android:2.2.1'
     implementation 'com.lambdaworks:scrypt:1.4.0'
-    //compile('org.web3j:core:3.3.1-android')
+    // implementation 'org.web3j:core:3.3.1-android'
     implementation 'com.orhanobut:logger:1.15'
     implementation 'io.reactivex:rxandroid:1.2.1'
     implementation 'com.android.support:multidex:1.0.3'

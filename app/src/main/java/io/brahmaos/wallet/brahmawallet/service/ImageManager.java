@@ -9,6 +9,7 @@ import java.util.List;
 
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 
@@ -49,14 +50,19 @@ public class ImageManager {
     /*
      * Avatar of token
      */
-    public static void showTokenIcon(Context Context, ImageView iv, String address) {
-        List<TokenEntity> allTokens = BrahmaConfig.getInstance().getTokenEntities();
-        for (TokenEntity tokenEntity : allTokens) {
-            if (tokenEntity.getAddress().equals(address)) {
-                Glide.with(Context)
-                        .load(tokenEntity.getIcon())
-                        .into(iv);
-            }
+    public static void showTokenIcon(Context Context, ImageView iv, String avatar, String tokenName) {
+        if (tokenName.toLowerCase().equals(BrahmaConst.BRAHMAOS_TOKEN)) {
+            Glide.with(Context)
+                    .load(R.drawable.icon_brm)
+                    .into(iv);
+        } else if (tokenName.toLowerCase().equals(BrahmaConst.ETHEREUM)) {
+            Glide.with(Context)
+                    .load(R.drawable.icon_eth)
+                    .into(iv);
+        } else {
+            Glide.with(Context)
+                    .load(BrahmaConst.IPFS_BASE_URL + BrahmaConst.IPFS_PREFIX + avatar)
+                    .into(iv);
         }
     }
 

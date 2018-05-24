@@ -1,19 +1,30 @@
 package io.brahmaos.wallet.brahmawallet.ui.token;
 
+import android.app.SearchManager;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Intent;
+import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import org.web3j.crypto.WalletUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,30 +39,44 @@ import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
+import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class TokensActivity extends BaseActivity {
+public class TokenSearchActivity extends BaseActivity {
 
     @Override
     protected String tag() {
-        return TokensActivity.class.getName();
+        return TokenSearchActivity.class.getName();
     }
 
     // UI references.
     @BindView(R.id.tokens_recycler)
     RecyclerView recyclerViewTokens;
+    @BindView(R.id.layout_no_result)
+    LinearLayout layoutNoResult;
+    @BindView(R.id.layout_default)
+    LinearLayout layoutDefault;
 
     private AccountViewModel mViewModel;
     private List<TokenEntity> chooseTokes = null;
     private List<AllTokenEntity> allTokens = new ArrayList<>();
+    private String currentData = "";
+
+    private SearchView.SearchAutoComplete searchAutoComplete;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tokens);
+        setContentView(R.layout.activity_token_search);
         ButterKnife.bind(this);
         showNavBackBtn();
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            toolbar.setTitle("");
+        }
+
         mViewModel = ViewModelProviders.of(this).get(AccountViewModel.class);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -64,37 +89,97 @@ public class TokensActivity extends BaseActivity {
             } else {
                 chooseTokes = tokenEntities;
             }
-            refreshTokenList();
         });
-        mViewModel.getShowTokens().observe(this, allTokenEntities -> {
-            if (allTokenEntities != null) {
-                BLog.i(tag(), "the length is:" + allTokenEntities.size());
-                allTokens = allTokenEntities;
-            }
-            refreshTokenList();
-        });
-    }
-
-    private void refreshTokenList() {
-        if (chooseTokes != null || allTokens.size() > 0) {
-            recyclerViewTokens.getAdapter().notifyDataSetChanged();
-        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_search, menu);
-        return true;
+        getMenuInflater().inflate(R.menu.menu_search_token, menu);
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchAutoComplete = searchView.findViewById(R.id.search_src_text);
+        searchView.onActionViewExpanded();
+        searchView.setMaxWidth(30000);
+        searchView.setQueryHint(getString(R.string.prompt_search_token));
+
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                recyclerViewTokens.setVisibility(View.GONE);
+                layoutNoResult.setVisibility(View.GONE);
+                layoutDefault.setVisibility(View.VISIBLE);
+                return false;
+            }
+        });
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                if (s.length() > 0) {
+                    queryTokens(s);
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                /*currentData = s;
+                if (delayRun != null) {
+                    handler.removeCallbacks(delayRun);
+                }
+                handler.postDelayed(delayRun, 1000);*/
+
+                return false;
+            }
+
+        });
+
+        return super.onCreateOptionsMenu(menu);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        //noinspection SimplifiableIfStatement
-        if (item.getItemId() == R.id.menu_search) {
-            Intent intent = new Intent(this, TokenSearchActivity.class);
-            startActivity(intent);
+    private Handler handler = new Handler();
+
+    private Runnable delayRun = new Runnable() {
+        @Override
+        public void run() {
+            String inputStr = searchAutoComplete.getText().toString();
+            if (inputStr.equals(currentData) && inputStr.length() > 0) {
+                queryTokens(inputStr);
+            }
         }
-        return super.onOptionsItemSelected(item);
+    };
+
+    private void queryTokens(String param) {
+        mViewModel.queryAllTokensSync("%" + param + "%")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<List<AllTokenEntity>>() {
+                    @Override
+                    public void onNext(List<AllTokenEntity> allTokenEntities) {
+                        if (allTokenEntities == null || allTokenEntities.size() <= 0) {
+                            recyclerViewTokens.setVisibility(View.GONE);
+                            layoutNoResult.setVisibility(View.VISIBLE);
+                            layoutDefault.setVisibility(View.GONE);
+                        } else {
+                            recyclerViewTokens.setVisibility(View.VISIBLE);
+                            layoutNoResult.setVisibility(View.GONE);
+                            layoutDefault.setVisibility(View.GONE);
+                            allTokens = allTokenEntities;
+                            // When change database, don't need refresh page
+                            recyclerViewTokens.getAdapter().notifyDataSetChanged();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                        BLog.i(tag(), "the param is: " + param);
+                    }
+                });
+
     }
 
     /**
@@ -105,7 +190,7 @@ public class TokensActivity extends BaseActivity {
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_token, parent, false);
+            View rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_token_search, parent, false);
             rootView.setOnClickListener(v -> {
 
             });
@@ -136,15 +221,15 @@ public class TokensActivity extends BaseActivity {
             if (token.getShortName().equals("ETH")) {
                 holder.tvTokenAddress.setVisibility(View.GONE);
                 holder.switchToken.setVisibility(View.GONE);
-                ImageManager.showTokenIcon(TokensActivity.this, holder.ivTokenAvatar, R.drawable.icon_eth);
+                ImageManager.showTokenIcon(TokenSearchActivity.this, holder.ivTokenAvatar, R.drawable.icon_eth);
             } else if (token.getShortName().equals("BRM")) {
                 holder.tvTokenAddress.setVisibility(View.VISIBLE);
                 holder.switchToken.setVisibility(View.GONE);
-                ImageManager.showTokenIcon(TokensActivity.this, holder.ivTokenAvatar, R.drawable.icon_brm);
+                ImageManager.showTokenIcon(TokenSearchActivity.this, holder.ivTokenAvatar, R.drawable.icon_brm);
             } else {
                 holder.tvTokenAddress.setVisibility(View.VISIBLE);
                 holder.switchToken.setVisibility(View.VISIBLE);
-                ImageManager.showTokenIcon(TokensActivity.this, holder.ivTokenAvatar, token.getAvatar(), token.getName());
+                ImageManager.showTokenIcon(TokenSearchActivity.this, holder.ivTokenAvatar, token.getAvatar(), token.getName());
 
                 // Determine if the token is selected
                 boolean checked = false;

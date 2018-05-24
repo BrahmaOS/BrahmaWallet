@@ -99,7 +99,7 @@ public class TestActivity extends Activity {
         task = new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] objects) {
-                try {
+                /*try {
                     // FIXME: Request some Ether for the Rinkeby test network at https://www.rinkeby.io/#faucet
                     BLog.i(tag, "Sending 1 ETHER ");
 
@@ -116,7 +116,7 @@ public class TestActivity extends Activity {
                     e.printStackTrace();
                 } catch (Exception e) {
                     e.printStackTrace();
-                }
+                }*/
                 return true;
             }
         };

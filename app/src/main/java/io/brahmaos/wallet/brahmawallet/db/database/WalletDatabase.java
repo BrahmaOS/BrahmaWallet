@@ -30,12 +30,14 @@ import android.support.annotation.NonNull;
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.db.converter.DateConverter;
 import io.brahmaos.wallet.brahmawallet.db.dao.AccountDao;
+import io.brahmaos.wallet.brahmawallet.db.dao.AllTokenDao;
 import io.brahmaos.wallet.brahmawallet.db.dao.TokenDao;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
+import io.brahmaos.wallet.brahmawallet.db.entity.AllTokenEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 
 
-@Database(entities = {AccountEntity.class, TokenEntity.class}, version = 2, exportSchema = false)
+@Database(entities = {AccountEntity.class, TokenEntity.class, AllTokenEntity.class}, version = 3, exportSchema = false)
 @TypeConverters(DateConverter.class)
 public abstract class WalletDatabase extends RoomDatabase {
 
@@ -45,6 +47,7 @@ public abstract class WalletDatabase extends RoomDatabase {
 
     public abstract AccountDao accountDao();
     public abstract TokenDao tokenDao();
+    public abstract AllTokenDao allTokenDao();
 
     private final MutableLiveData<Boolean> mIsDatabaseCreated = new MutableLiveData<>();
 
@@ -72,12 +75,12 @@ public abstract class WalletDatabase extends RoomDatabase {
                         super.onCreate(db);
                         // Check whether the database already exists after first create database
                         sInstance.updateDatabaseCreated(appContext);
-                        db.execSQL("INSERT INTO tokens (name, address, shortName, icon) " +
+                        db.execSQL("INSERT INTO tokens (name, address, shortName, avatar) " +
                                 "values (\"BrahmaOS\", \"0xd7732e3783b0047aa251928960063f863ad022d8\", \"BRM\", "
-                                + R.drawable.icon_brm + ")");
-                        db.execSQL("INSERT INTO tokens (name, address, shortName, icon) " +
+                                + String.valueOf(R.drawable.icon_brm) + ")");
+                        db.execSQL("INSERT INTO tokens (name, address, shortName, avatar) " +
                                 "values (\"Ethereum\", \"\", \"ETH\", "
-                                + R.drawable.icon_eth + ")");
+                                + String.valueOf(R.drawable.icon_eth) + ")");
                     }
 
                     @Override
@@ -87,7 +90,8 @@ public abstract class WalletDatabase extends RoomDatabase {
                         sInstance.updateDatabaseCreated(appContext);
                     }
                 })
-                .addMigrations(MIGRATION_1_2).build();
+                .addMigrations(MIGRATION_1_2)
+                .addMigrations(MIGRATION_2_3).build();
     }
 
     private static final Migration MIGRATION_1_2 = new Migration(1, 2) {
@@ -102,6 +106,17 @@ public abstract class WalletDatabase extends RoomDatabase {
             database.execSQL("INSERT INTO tokens (name, address, shortName, icon) " +
                     "values (\"Ethereum\", \"\", \"ETH\", "
                     + R.drawable.icon_eth + ")");
+        }
+    };
+
+    private static final Migration MIGRATION_2_3 = new Migration(2, 3) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE tokens ADD COLUMN avatar TEXT");
+            database.execSQL("UPDATE tokens SET avatar = icon");
+            database.execSQL("CREATE TABLE `all_tokens` (`id` INTEGER not null, "
+                    + "`name` TEXT, `address` TEXT unique, `shortName` TEXT, `avatar` TEXT, " +
+                    "PRIMARY KEY(`id`))");
         }
     };
 

@@ -127,6 +127,10 @@
     <string name="title_activity_account_detail">AccountDetailActivity</string>
     <string name="title_activity_transfer">TransferActivity</string>
     <string name="tip_success_copy">Success copy content to clipboard!</string>
+    <string name="action_search">Search</string>
+    <string name="prompt_search_token">Token name</string>
+    <string name="tip_search_token">Please input token name</string>
+    <string name="no_result">No Result</string>
 
     <!-- Strings related to transfer -->
     <string name="action_transfer">Transfer</string>

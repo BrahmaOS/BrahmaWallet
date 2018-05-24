@@ -226,7 +226,7 @@ public class AccountAssetsActivity extends BaseActivity {
             });
 
             holder.tvTokenName.setText(tokenEntity.getShortName());
-            ImageManager.showTokenIcon(AccountAssetsActivity.this, holder.ivTokenIcon, tokenEntity.getAddress());
+            ImageManager.showTokenIcon(AccountAssetsActivity.this, holder.ivTokenIcon, tokenEntity.getAvatar(), tokenEntity.getName());
             BigInteger tokenCount = BigInteger.ZERO;
             for (AccountAssets accountAssets : accountAssetsList) {
                 if (accountAssets.getTokenEntity().getAddress().equals(tokenEntity.getAddress()) &&

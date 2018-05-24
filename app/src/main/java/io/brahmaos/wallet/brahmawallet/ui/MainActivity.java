@@ -168,6 +168,8 @@ public class MainActivity extends BaseActivity
     }
 
     private void initData() {
+        MainService.getInstance().getTokenList();
+
         mViewModel.getAccounts().observe(this, accountEntities -> {
             cacheAccounts = accountEntities;
             checkContentShow();
@@ -380,7 +382,7 @@ public class MainActivity extends BaseActivity
                 startActivityForResult(intent, REQ_CODE_TRANSFER);
             });
             holder.tvTokenName.setText(tokenEntity.getShortName());
-            ImageManager.showTokenIcon(MainActivity.this, holder.ivTokenIcon, tokenEntity.getAddress());
+            ImageManager.showTokenIcon(MainActivity.this, holder.ivTokenIcon, tokenEntity.getAvatar(), tokenEntity.getName());
             BigInteger tokenCount = BigInteger.ZERO;
             for (AccountAssets accountAssets : cacheAssets) {
                 if (accountAssets.getTokenEntity().getAddress().equals(tokenEntity.getAddress())) {

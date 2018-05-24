@@ -23,29 +23,27 @@ import android.arch.persistence.room.PrimaryKey;
 
 import java.io.Serializable;
 
-@Entity(tableName = "tokens", indices = {@Index(value = {"address"}, unique = true)})
-public class TokenEntity implements Serializable{
+@Entity(tableName = "all_tokens", indices = {@Index(value = {"address"}, unique = true)})
+public class AllTokenEntity implements Serializable{
     @PrimaryKey(autoGenerate = true)
     private int id;
     private String name;
     private String shortName;
-
     private String address;
-    // deprecated, Please use avatar
-    private Integer icon;
     private String avatar;
+    private int showFlag;
 
-    public TokenEntity() {
+    public AllTokenEntity() {
     }
 
     @Ignore
-    public TokenEntity(int id, String name, String shortName, String address, Integer icon, String avatar) {
+    public AllTokenEntity(int id, String name, String shortName, String address, String avatar, int showFlag) {
         this.id = id;
         this.name = name;
         this.shortName = shortName;
         this.address = address;
-        this.icon = icon;
         this.avatar = avatar;
+        this.showFlag = showFlag;
     }
 
     public int getId() {
@@ -80,14 +78,6 @@ public class TokenEntity implements Serializable{
         this.address = address;
     }
 
-    public Integer getIcon() {
-        return icon;
-    }
-
-    public void setIcon(Integer icon) {
-        this.icon = icon;
-    }
-
     public String getAvatar() {
         return avatar;
     }
@@ -96,15 +86,23 @@ public class TokenEntity implements Serializable{
         this.avatar = avatar;
     }
 
+    public int getShowFlag() {
+        return showFlag;
+    }
+
+    public void setShowFlag(int showFlag) {
+        this.showFlag = showFlag;
+    }
+
     @Override
     public String toString() {
-        return "TokenEntity{" +
+        return "AllTokenEntity{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", shortName='" + shortName + '\'' +
                 ", address='" + address + '\'' +
-                ", icon=" + icon +
                 ", avatar='" + avatar + '\'' +
+                ", showFlag=" + showFlag +
                 '}';
     }
 }

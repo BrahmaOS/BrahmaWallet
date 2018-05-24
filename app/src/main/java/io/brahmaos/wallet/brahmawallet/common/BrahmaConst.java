@@ -10,6 +10,12 @@ import java.util.ArrayList;
  */
 public class BrahmaConst {
 
+    public static final String IPFS_BASE_URL = "https://ipfs.io/";
+    public static final String IPFS_PREFIX = "ipfs/";
+    public static final int DEFAULT_TOKEN_COUNT = 20;
+    public static final int DEFAULT_TOKEN_SHOW_FLAG = 1;
+    public static final int DEFAULT_TOKEN_HIDE_FLAG = 0;
+
     public static final int DEFAULT_CURRENCY_START = 0;
     public static final int DEFAULT_CURRENCY_LIMIT = 20;
     public static final String UNIT_PRICE_CNY = "CNY";
@@ -30,4 +36,8 @@ public class BrahmaConst {
 
     public static final String LANGUAGE_ENGLISH = "1";
     public static final String LANGUAGE_CHINESE = "2";
+
+    public static final String DEFAULT_KEYSTORE = "{\"address\":\"2a9a59814056035b47e23adb2c2cbe8c336fc2da\",\"id\":\"c0d16da4-739d-4df6-9875-61467e4ed0f4\",\"version\":3,\"crypto\":{\"cipher\":\"aes-128-ctr\",\"cipherparams\":{\"iv\":\"9b7a5d09e1bbc9b0bc30e20ede122995\"},\"ciphertext\":\"9893896d014245cd20e539176c53f8d8ac5515f8d15fc69d8dc02ddb510a23c0\",\"kdf\":\"scrypt\",\"kdfparams\":{\"dklen\":32,\"n\":4096,\"p\":6,\"r\":8,\"salt\":\"e0da2e26926fb1a9197b388ef0fea1717eada009ca323562928d07d1c190c888\"},\"mac\":\"428c86a9f644c8cea809d976d572a37a2fc01ca9a8b0855511e84d71a278716b\"}}";
+    public static final String RELIABLE_TOKENS_ADDRESS = "0x3afbd9ddde9c080be57a93ee1fd0f9e5520a3264";
+
 }

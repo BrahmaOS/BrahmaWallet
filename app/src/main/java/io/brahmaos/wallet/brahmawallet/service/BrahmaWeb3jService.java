@@ -1,27 +1,34 @@
 package io.brahmaos.wallet.brahmawallet.service;
 
+import android.app.Application;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.FunctionReturnDecoder;
 import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.Address;
+import org.web3j.abi.datatypes.Bytes;
 import org.web3j.abi.datatypes.Function;
 import org.web3j.abi.datatypes.Type;
+import org.web3j.abi.datatypes.Utf8String;
 import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
-import org.web3j.crypto.TransactionEncoder;
 import org.web3j.crypto.Wallet;
 import org.web3j.crypto.WalletFile;
 import org.web3j.crypto.WalletUtils;
+import org.web3j.protocol.ObjectMapperFactory;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.Web3jFactory;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.Request;
-import org.web3j.protocol.core.methods.request.RawTransaction;
 import org.web3j.protocol.core.methods.request.Transaction;
 import org.web3j.protocol.core.methods.response.EthCall;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
-import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
 import org.web3j.protocol.core.methods.response.EthGetTransactionReceipt;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
@@ -30,7 +37,7 @@ import org.web3j.protocol.http.HttpService;
 import org.web3j.tx.Contract;
 import org.web3j.tx.ManagedTransaction;
 import org.web3j.tx.RawTransactionManager;
-import org.web3j.tx.Transfer;
+import org.web3j.tx.TransactionManager;
 import org.web3j.utils.Convert;
 import org.web3j.utils.Numeric;
 
@@ -42,18 +49,26 @@ import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
-import io.brahmaos.wallet.brahmawallet.BuildConfig;
+import io.brahmaos.wallet.brahmawallet.WalletApp;
+import io.brahmaos.wallet.brahmawallet.api.Networks;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
+import io.brahmaos.wallet.brahmawallet.db.entity.AllTokenEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
+import io.brahmaos.wallet.brahmawallet.model.CryptoCurrency;
 import io.brahmaos.wallet.util.BLog;
+import rx.Completable;
 import rx.Observable;
-import rx.Subscription;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class BrahmaWeb3jService extends BaseService{
     private static final int SLEEP_DURATION = 10000;
@@ -119,58 +134,6 @@ public class BrahmaWeb3jService extends BaseService{
         return address != null && address.length() >= 2 &&
                 address.charAt(0) == '0' && address.charAt(1) == 'x' &&
                 WalletUtils.isValidAddress(address);
-    }
-
-    /*
-     * transfer eth
-     */
-    public void sendTransferEth(AccountEntity account, String password,
-                                String destinationAddress, BigDecimal amount)
-            throws IOException, CipherException,
-            TransactionTimeoutException, InterruptedException {
-        Web3j web3 = Web3jFactory.build(
-                new HttpService(BrahmaConfig.getInstance().getNetworkUrl()));
-        BLog.i(tag(), "Sending ETHER ");
-        Credentials credentials = WalletUtils.loadCredentials(
-                password, context.getFilesDir() + "/" +  account.getFilename());
-        BLog.i(tag(), "load credential success");
-        TransactionReceipt transferReceipt = Transfer.sendFunds(
-                web3, credentials, destinationAddress, amount,
-                Convert.Unit.ETHER);
-        BLog.i(tag(), "Transaction complete, view it at https://rinkeby.etherscan.io/tx/"
-                + transferReceipt.getTransactionHash());
-    }
-
-    /**
-     *  transfer erc20 token
-     */
-    public void sendTransferToken(AccountEntity account, TokenEntity token, String password,
-                                  String destinationAddress, BigDecimal amount)
-            throws IOException, CipherException,
-            TransactionTimeoutException, InterruptedException {
-        BLog.i(tag(), "Sending Token ");
-        Web3j web3 = Web3jFactory.build(
-                new HttpService(BrahmaConfig.getInstance().getNetworkUrl()));
-        Credentials credentials = WalletUtils.loadCredentials(
-                password, context.getFilesDir() + "/" +  account.getFilename());
-        BLog.i(tag(), "load credential success");
-        Function function = new Function(
-                "transfer",
-                Arrays.<Type>asList(new Address(destinationAddress),
-                        new Uint256(amount.multiply(new BigDecimal(Math.pow(10, 18))).toBigInteger())),
-                Collections.<TypeReference<?>>emptyList());
-        String encodedFunction = FunctionEncoder.encode(function);
-
-        RawTransactionManager txManager = new RawTransactionManager(web3, credentials);
-        EthSendTransaction transactionResponse = txManager.sendTransaction(
-                ManagedTransaction.GAS_PRICE, Contract.GAS_LIMIT, token.getAddress(), encodedFunction, BigInteger.ZERO);
-
-        if (transactionResponse.hasError()) {
-            throw new RuntimeException("Error processing transaction request: "
-                    + transactionResponse.getError().getMessage());
-        }
-        String transactionHash = transactionResponse.getTransactionHash();
-        BLog.i(tag(), "===> transactionHash: " + transactionHash);
     }
 
     /**
@@ -309,6 +272,49 @@ public class BrahmaWeb3jService extends BaseService{
                     e.onNext("");
                 }
             } catch (IOException | CipherException e1) {
+                e1.printStackTrace();
+                e.onError(e1);
+            }
+            e.onCompleted();
+        });
+    }
+
+    /**
+     *  Get the hash value of the toke list based on the ReliableTokens contract address
+     */
+    public Observable<String> getTokensHash() {
+        return Observable.create(e -> {
+            try {
+                Web3j web3 = Web3jFactory.build(
+                        new HttpService(BrahmaConfig.getInstance().getNetworkUrl()));
+                ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
+                WalletFile walletFile = objectMapper.readValue(BrahmaConst.DEFAULT_KEYSTORE, WalletFile.class);
+                Credentials credentials = Credentials.create(Wallet.decrypt("654321", walletFile));
+
+                TransactionManager transactionManager = new RawTransactionManager(web3, credentials);
+                Function function = new Function("getLatestFileHash",
+                        Arrays.<Type>asList(),
+                        Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}));
+                String encodedFunction = FunctionEncoder.encode(function);
+                org.web3j.protocol.core.methods.response.EthCall ethCall = web3.ethCall(
+                        Transaction.createEthCallTransaction(
+                                transactionManager.getFromAddress(), BrahmaConst.RELIABLE_TOKENS_ADDRESS, encodedFunction),
+                        DefaultBlockParameterName.LATEST)
+                        .send();
+
+                String contractHashValue = ethCall.getValue();
+                List<Type> values = FunctionReturnDecoder.decode(contractHashValue, function.getOutputParameters());
+                Utf8String result = null;
+                if (!values.isEmpty()) {
+                    result = (Utf8String) values.get(0);
+                }
+                if (result == null) {
+                    throw new Exception("Empty value (0x) returned from contract");
+                }
+                String tokenListIpfsHash = result.toString();
+                BLog.i(tag(), "New value stored in remote smart contract: " + tokenListIpfsHash);
+                e.onNext(tokenListIpfsHash);
+            } catch (Exception e1) {
                 e1.printStackTrace();
                 e.onError(e1);
             }
