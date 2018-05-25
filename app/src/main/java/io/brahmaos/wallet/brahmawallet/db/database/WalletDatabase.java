@@ -115,8 +115,9 @@ public abstract class WalletDatabase extends RoomDatabase {
             database.execSQL("ALTER TABLE tokens ADD COLUMN avatar TEXT");
             database.execSQL("UPDATE tokens SET avatar = icon");
             database.execSQL("CREATE TABLE `all_tokens` (`id` INTEGER not null, "
-                    + "`name` TEXT, `address` TEXT unique, `shortName` TEXT, `avatar` TEXT, `showFlag` INTEGER," +
+                    + "`name` TEXT, `address` TEXT unique, `shortName` TEXT, `avatar` TEXT, `showFlag` INTEGER not null," +
                     "PRIMARY KEY(`id`))");
+            database.execSQL("CREATE UNIQUE INDEX `index_all_tokens_address` on `all_tokens` (`address`);");
         }
     };
 

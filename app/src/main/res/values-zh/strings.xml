@@ -123,6 +123,10 @@
     <string name="title_activity_account_detail">AccountDetailActivity</string>
     <string name="title_activity_transfer">TransferActivity</string>
     <string name="tip_success_copy">已复制到粘贴板!</string>
+    <string name="action_search">搜索</string>
+    <string name="prompt_search_token">Token名称</string>
+    <string name="tip_search_token">请输入token名称</string>
+    <string name="no_result">没有结果</string>
 
     <!-- Strings related to transfer -->
     <string name="action_transfer">转账</string>
@@ -217,4 +221,14 @@
         我们建议您备份keystore文件，再打入小额测试，最后开始使用。
     </string>
     <string name="btn_backup_now">立即备份</string>
+
+    <!-- string about us -->
+    <string name="title_about_us">关于</string>
+    <string name="about_current_version">当前版本： </string>
+    <string name="desc_wallet">
+        梵钱包是一款完全开源、去中心化的移动端轻钱包，梵钱包旨为用户提供一款安全放心、简单易用的数字资产钱包应用。
+    </string>
+    <string name="about_privacy_policy">隐私条款</string>
+    <string name="about_service_perms">服务协议</string>
+    <string name="about_check_updates">检查更新</string>
 </resources>

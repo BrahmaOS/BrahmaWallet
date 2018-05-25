@@ -125,6 +125,10 @@
     <string name="title_activity_account_detail">AccountDetailActivity</string>
     <string name="title_activity_transfer">TransferActivity</string>
     <string name="tip_success_copy">Success copy content to clipboard!</string>
+    <string name="action_search">Search</string>
+    <string name="prompt_search_token">Token name</string>
+    <string name="tip_search_token">Please input token name</string>
+    <string name="no_result">No Result</string>
 
     <!-- Strings related to transfer -->
     <string name="action_transfer">Transfer</string>
@@ -221,4 +225,14 @@
         We suggest you backup keystore, then test with tiny ethers until you feel confidence.
     </string>
     <string name="btn_backup_now">Backup Now</string>
+
+    <!-- string about us -->
+    <string name="title_about_us">About</string>
+    <string name="about_current_version">Current Version: </string>
+    <string name="desc_wallet">
+        Brahma Wallet is a fully open source, decentralized mobile light wallet. It is designed to provide users with a secure, easy-to-use digital asset wallet application.
+    </string>
+    <string name="about_privacy_policy">Privacy Policy</string>
+    <string name="about_service_perms">Terms of Service</string>
+    <string name="about_check_updates">Check for updates</string>
 </resources>

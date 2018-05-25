@@ -43,6 +43,7 @@ import io.brahmaos.wallet.brahmawallet.ui.account.AccountsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.account.CreateAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.account.ImportAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
+import io.brahmaos.wallet.brahmawallet.ui.setting.AboutActivity;
 import io.brahmaos.wallet.brahmawallet.ui.setting.SettingsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.test.TestActivity;
 import io.brahmaos.wallet.brahmawallet.ui.token.TokensActivity;
@@ -274,8 +275,8 @@ public class MainActivity extends BaseActivity
         } else if (id == R.id.nav_help) {
 
         } else if (id == R.id.nav_info) {
-            /*Intent intent = new Intent(this, TestActivity.class);
-            startActivity(intent);*/
+            Intent intent = new Intent(this, AboutActivity.class);
+            startActivity(intent);
         }
 
         drawer.closeDrawer(GravityCompat.START);

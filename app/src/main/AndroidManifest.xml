@@ -60,8 +60,12 @@
         <activity
             android:name=".ui.account.AccountBackupActivity"
             android:label="@string/title_activity_account_backup"
+            android:theme="@style/AppTheme" />
+        <activity android:name=".ui.token.TokenSearchActivity" />
+        <activity
+            android:name=".ui.setting.AboutActivity"
+            android:label="@string/title_activity_about"
             android:theme="@style/AppTheme"></activity>
-        <activity android:name=".ui.token.TokenSearchActivity"/>
     </application>
 
 </manifest>

@@ -26,6 +26,7 @@
     <dimen name="space_larger">32dp</dimen>
     <dimen name="space_largest">40dp</dimen>
 
+    <dimen name="icon_large_size">56dp</dimen>
     <dimen name="icon_normal_size">40dp</dimen>
     <dimen name="toolbar_icon_size">24dp</dimen>
     <dimen name="icon_small_size">16dp</dimen>
