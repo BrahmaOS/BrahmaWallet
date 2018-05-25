@@ -76,7 +76,7 @@ public class TokensActivity extends BaseActivity {
     }
 
     private void refreshTokenList() {
-        if (chooseTokes != null || allTokens.size() > 0) {
+        if (chooseTokes != null && chooseTokes.size() > 0 && allTokens.size() > 0) {
             recyclerViewTokens.getAdapter().notifyDataSetChanged();
         }
     }
