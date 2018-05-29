@@ -43,6 +43,7 @@ import io.brahmaos.wallet.brahmawallet.ui.account.AccountsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.account.CreateAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.account.ImportAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
+import io.brahmaos.wallet.brahmawallet.ui.setting.AboutActivity;
 import io.brahmaos.wallet.brahmawallet.ui.setting.SettingsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.test.TestActivity;
 import io.brahmaos.wallet.brahmawallet.ui.token.TokensActivity;
@@ -67,6 +68,8 @@ public class MainActivity extends BaseActivity
     SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.tv_appro_equal)
     TextView tvApproEqual;
+    @BindView(R.id.tv_test_network)
+    TextView tvTestNetwork;
     @BindView(R.id.tv_total_assets)
     TextView tvTotalAssets;
     @BindView(R.id.iv_assets_visibility)
@@ -111,6 +114,10 @@ public class MainActivity extends BaseActivity
         swipeRefreshLayout.setOnRefreshListener(() -> {
             // get the latest assets
             mViewModel.getTotalAssets();
+            // get Currencies
+            if (cacheCryptoCurrencies == null || cacheCryptoCurrencies.size() == 0) {
+                mViewModel.fetchCurrenciesFromNet();
+            }
         });
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -146,9 +153,24 @@ public class MainActivity extends BaseActivity
             }
             showAssetsCurrency();
         });
+
+        changeNetwork();
+    }
+
+    private void changeNetwork() {
+        String networkUrl = BrahmaConfig.getInstance().getNetworkUrl();
+        String networkName = CommonUtil.generateNetworkName(networkUrl);
+        if (networkName.equals("Mainnet") || networkName.length() < 1) {
+            tvTestNetwork.setVisibility(View.GONE);
+        } else {
+            tvTestNetwork.setVisibility(View.VISIBLE);
+            tvTestNetwork.setText(networkName);
+        }
     }
 
     private void initData() {
+        MainService.getInstance().getTokenList();
+
         mViewModel.getAccounts().observe(this, accountEntities -> {
             cacheAccounts = accountEntities;
             checkContentShow();
@@ -173,10 +195,13 @@ public class MainActivity extends BaseActivity
 
         mViewModel.getCryptoCurrencies().observe(this, (List<CryptoCurrency> cryptoCurrencies) -> {
             BLog.i(tag(), "get crypto currencies");
-            if (cryptoCurrencies != null) {
+            if (cryptoCurrencies != null && cryptoCurrencies.size() > 0) {
                 cacheCryptoCurrencies = cryptoCurrencies;
                 showAssetsCurrency();
                 recyclerViewAssets.getAdapter().notifyDataSetChanged();
+            } else if (cryptoCurrencies == null) {
+                swipeRefreshLayout.setRefreshing(false);
+                showLongToast(R.string.error_network);
             }
         });
     }
@@ -184,7 +209,6 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onStart() {
         super.onStart();
-        BLog.e(tag(), "onStart");
         cacheAssets = MainService.getInstance().getAccountAssetsList();
         showAssetsCurrency();
     }
@@ -199,6 +223,8 @@ public class MainActivity extends BaseActivity
             MainService.getInstance().setAccountAssetsList(new ArrayList<>());
             swipeRefreshLayout.setRefreshing(true);
             mViewModel.getTotalAssets();
+
+            changeNetwork();
         }
         // change language; if change language, then recreate the activity to reload the resource.
         if (changeLanguageFlag) {
@@ -249,8 +275,8 @@ public class MainActivity extends BaseActivity
         } else if (id == R.id.nav_help) {
 
         } else if (id == R.id.nav_info) {
-            /*Intent intent = new Intent(this, TestActivity.class);
-            startActivity(intent);*/
+            Intent intent = new Intent(this, AboutActivity.class);
+            startActivity(intent);
         }
 
         drawer.closeDrawer(GravityCompat.START);
@@ -278,13 +304,12 @@ public class MainActivity extends BaseActivity
      * Display the number of tokens and the corresponding legal currency value
      */
     private void showAssetsCurrency() {
-        if (cacheAssets.size() == cacheAccounts.size() * cacheTokens.size() &&
-                cacheCryptoCurrencies != null && cacheCryptoCurrencies.size() > 0) {
+        if (cacheAssets.size() == cacheAccounts.size() * cacheTokens.size()) {
             recyclerViewAssets.getAdapter().notifyDataSetChanged();
 
             BigDecimal totalValue = BigDecimal.ZERO;
             for (AccountAssets accountAssets : cacheAssets) {
-                if (accountAssets.getBalance().compareTo(BigInteger.ZERO) > 0) {
+                if (accountAssets.getBalance().compareTo(BigInteger.ZERO) > 0 && cacheCryptoCurrencies != null) {
                     for (CryptoCurrency cryptoCurrency : cacheCryptoCurrencies) {
                         if (cryptoCurrency.getName().toLowerCase()
                                 .equals(accountAssets.getTokenEntity().getName().toLowerCase())) {
@@ -358,7 +383,7 @@ public class MainActivity extends BaseActivity
                 startActivityForResult(intent, REQ_CODE_TRANSFER);
             });
             holder.tvTokenName.setText(tokenEntity.getShortName());
-            ImageManager.showTokenIcon(MainActivity.this, holder.ivTokenIcon, tokenEntity.getAddress());
+            ImageManager.showTokenIcon(MainActivity.this, holder.ivTokenIcon, tokenEntity.getAvatar(), tokenEntity.getName());
             BigInteger tokenCount = BigInteger.ZERO;
             for (AccountAssets accountAssets : cacheAssets) {
                 if (accountAssets.getTokenEntity().getAddress().equals(tokenEntity.getAddress())) {
@@ -369,9 +394,11 @@ public class MainActivity extends BaseActivity
                 holder.tvTokenApproEqual.setText(R.string.asymptotic);
                 holder.tvTokenAccount.setText(String.valueOf(CommonUtil.getAccountFromWei(tokenCount)));
                 BigDecimal tokenValue = BigDecimal.ZERO;
-                for (CryptoCurrency cryptoCurrency : cacheCryptoCurrencies) {
-                    if (cryptoCurrency.getName().toLowerCase().equals(tokenEntity.getName().toLowerCase())) {
-                        tokenValue = CommonUtil.getAccountFromWei(tokenCount).multiply(new BigDecimal(cryptoCurrency.getPriceCny()));
+                if (cacheCryptoCurrencies != null && cacheCryptoCurrencies.size() > 0) {
+                    for (CryptoCurrency cryptoCurrency : cacheCryptoCurrencies) {
+                        if (cryptoCurrency.getName().toLowerCase().equals(tokenEntity.getName().toLowerCase())) {
+                            tokenValue = CommonUtil.getAccountFromWei(tokenCount).multiply(new BigDecimal(cryptoCurrency.getPriceCny()));
+                        }
                     }
                 }
                 holder.tvTokenAssetsCount.setText(String.valueOf(tokenValue.setScale(2, BigDecimal.ROUND_HALF_UP)));

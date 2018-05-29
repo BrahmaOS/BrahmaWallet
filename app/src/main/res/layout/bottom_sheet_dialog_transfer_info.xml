@@ -101,18 +101,62 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:orientation="vertical">
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textAlignment="viewEnd"
-                            android:textSize="@dimen/font_size_subheading"
-                            android:text="@string/prompt_total_gas"/>
-                        <TextView
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/prompt_total_gas_desc"
-                            android:textSize="@dimen/font_size_caption"
-                            android:textColor="@color/color_hint_text"/>
+                            android:layout_gravity="end"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:id="@+id/tv_gas_value"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textAlignment="viewEnd"
+                                android:textSize="@dimen/font_size_subheading"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAlignment="viewEnd"
+                                android:textSize="@dimen/font_size_subheading"
+                                android:text=" ETH"/>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="≈ gas limit ("
+                                android:textSize="@dimen/font_size_caption"
+                                android:textColor="@color/color_hint_text"/>
+                            <TextView
+                                android:id="@+id/tv_gas_limit"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="200000"
+                                android:textSize="@dimen/font_size_caption"
+                                android:textColor="@color/color_hint_text"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text=") * gas price("
+                                android:textSize="@dimen/font_size_caption"
+                                android:textColor="@color/color_hint_text"/>
+                            <TextView
+                                android:id="@+id/tv_gas_price"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="20"
+                                android:textSize="@dimen/font_size_caption"
+                                android:textColor="@color/color_hint_text"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Gwei)"
+                                android:textSize="@dimen/font_size_caption"
+                                android:textColor="@color/color_hint_text"/>
+                        </LinearLayout>
+
                     </LinearLayout>
                 </RelativeLayout>
 

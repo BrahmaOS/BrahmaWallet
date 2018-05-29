@@ -7,8 +7,10 @@ import android.support.annotation.Nullable;
 
 import java.util.List;
 
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.db.database.WalletDatabase;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
+import io.brahmaos.wallet.brahmawallet.db.entity.AllTokenEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 import io.brahmaos.wallet.util.BLog;
 import rx.Completable;
@@ -109,5 +111,43 @@ public class DataRepository {
 
     public void deleteToken(String address) {
         mDatabase.tokenDao().deleteToken(address);
+    }
+
+    /**
+     *  process the all tokens,first delete all tokens.
+     */
+    public void insertAllTokens(List<AllTokenEntity> tokenEntities) {
+        mDatabase.allTokenDao().deleteAllToken();
+        mDatabase.allTokenDao().insertAll(tokenEntities);
+    }
+
+    public void deleteAllTokens() {
+        mDatabase.allTokenDao().deleteAllToken();
+    }
+
+    public LiveData<List<AllTokenEntity>> getShowTokens() {
+        return mDatabase.allTokenDao().loadShowTokens();
+    }
+
+    public LiveData<List<AllTokenEntity>> getAllTokens() {
+        return mDatabase.allTokenDao().loadAllTokens();
+    }
+
+    public LiveData<List<AllTokenEntity>> queryAllTokens(String param) {
+        return mDatabase.allTokenDao().queryToken(param);
+    }
+
+    public List<AllTokenEntity> queryAllTokensSync(String param) {
+        return mDatabase.allTokenDao().queryTokenSync(param);
+    }
+
+    public void showAllToken(AllTokenEntity allTokenEntity) {
+        mDatabase.allTokenDao().updateTokenShowFlag(allTokenEntity.getAddress(),
+                BrahmaConst.DEFAULT_TOKEN_SHOW_FLAG);
+    }
+
+    public void hideAllToken(AllTokenEntity allTokenEntity) {
+        mDatabase.allTokenDao().updateTokenShowFlag(allTokenEntity.getAddress(),
+                BrahmaConst.DEFAULT_TOKEN_HIDE_FLAG);
     }
 }

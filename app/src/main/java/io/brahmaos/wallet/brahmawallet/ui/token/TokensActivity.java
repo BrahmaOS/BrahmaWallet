@@ -1,11 +1,14 @@
 package io.brahmaos.wallet.brahmawallet.ui.token;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -18,7 +21,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
-import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
+import io.brahmaos.wallet.brahmawallet.db.entity.AllTokenEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
@@ -40,8 +43,8 @@ public class TokensActivity extends BaseActivity {
     RecyclerView recyclerViewTokens;
 
     private AccountViewModel mViewModel;
-    private List<TokenEntity> chooseTokes = new ArrayList<>();
-    private List<TokenEntity> allTokens = BrahmaConfig.getInstance().getTokenEntities();
+    private List<TokenEntity> chooseTokes = null;
+    private List<AllTokenEntity> allTokens = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +64,37 @@ public class TokensActivity extends BaseActivity {
             } else {
                 chooseTokes = tokenEntities;
             }
+            refreshTokenList();
         });
+        mViewModel.getShowTokens().observe(this, allTokenEntities -> {
+            if (allTokenEntities != null) {
+                BLog.i(tag(), "the length is:" + allTokenEntities.size());
+                allTokens = allTokenEntities;
+            }
+            refreshTokenList();
+        });
+    }
+
+    private void refreshTokenList() {
+        if (chooseTokes != null && chooseTokes.size() > 0 && allTokens.size() > 0) {
+            recyclerViewTokens.getAdapter().notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_search, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        //noinspection SimplifiableIfStatement
+        if (item.getItemId() == R.id.menu_search) {
+            Intent intent = new Intent(this, TokenSearchActivity.class);
+            startActivity(intent);
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -83,7 +116,7 @@ public class TokensActivity extends BaseActivity {
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             if (holder instanceof TokenRecyclerAdapter.ItemViewHolder) {
                 TokenRecyclerAdapter.ItemViewHolder itemViewHolder = (TokenRecyclerAdapter.ItemViewHolder) holder;
-                TokenEntity tokenEntity = allTokens.get(position);
+                AllTokenEntity tokenEntity = allTokens.get(position);
                 setData(itemViewHolder, tokenEntity);
             }
         }
@@ -91,11 +124,11 @@ public class TokensActivity extends BaseActivity {
         /**
          * set account view
          */
-        private void setData(TokenRecyclerAdapter.ItemViewHolder holder, final TokenEntity token) {
+        private void setData(TokenRecyclerAdapter.ItemViewHolder holder, final AllTokenEntity token) {
             if (token == null) {
                 return ;
             }
-            ImageManager.showTokenIcon(TokensActivity.this, holder.ivTokenAvatar, token.getIcon());
+
             holder.tvTokenShoreName.setText(token.getShortName());
             holder.tvTokenAddress.setText(CommonUtil.generateSimpleAddress(token.getAddress()));
             holder.tvTokenName.setText(token.getName());
@@ -103,12 +136,15 @@ public class TokensActivity extends BaseActivity {
             if (token.getShortName().equals("ETH")) {
                 holder.tvTokenAddress.setVisibility(View.GONE);
                 holder.switchToken.setVisibility(View.GONE);
+                ImageManager.showTokenIcon(TokensActivity.this, holder.ivTokenAvatar, R.drawable.icon_eth);
             } else if (token.getShortName().equals("BRM")) {
                 holder.tvTokenAddress.setVisibility(View.VISIBLE);
                 holder.switchToken.setVisibility(View.GONE);
+                ImageManager.showTokenIcon(TokensActivity.this, holder.ivTokenAvatar, R.drawable.icon_brm);
             } else {
                 holder.tvTokenAddress.setVisibility(View.VISIBLE);
                 holder.switchToken.setVisibility(View.VISIBLE);
+                ImageManager.showTokenIcon(TokensActivity.this, holder.ivTokenAvatar, token.getAvatar(), token.getName());
 
                 // Determine if the token is selected
                 boolean checked = false;
@@ -120,11 +156,16 @@ public class TokensActivity extends BaseActivity {
                         }
                     }
                 }
+                TokenEntity currentToken = new TokenEntity();
+                currentToken.setAddress(token.getAddress());
+                currentToken.setName(token.getName());
+                currentToken.setShortName(token.getShortName());
+                currentToken.setAvatar(token.getAvatar());
                 holder.switchToken.setOnCheckedChangeListener(null);
                 holder.switchToken.setChecked(checked);
                 holder.switchToken.setOnCheckedChangeListener((buttonView, isChecked) -> {
                     if (isChecked) {
-                        mViewModel.checkToken(token).subscribeOn(Schedulers.io())
+                        mViewModel.checkToken(currentToken).subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(() -> {
                                             BLog.e(tag(), "Success to check token:" + token.getName());
@@ -133,7 +174,7 @@ public class TokensActivity extends BaseActivity {
                                             BLog.e(tag(), "Unable to check token", throwable);
                                         });
                     } else {
-                        mViewModel.uncheckToken(token).subscribeOn(Schedulers.io())
+                        mViewModel.uncheckToken(currentToken).subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(() -> {
                                             BLog.e(tag(), "Success to uncheck token" + token.getName());

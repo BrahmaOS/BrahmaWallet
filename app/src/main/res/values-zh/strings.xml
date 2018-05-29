@@ -14,6 +14,7 @@
     <string name="assets_class">资产类别</string>
     <string name="asymptotic">≈</string>
     <string name="blank_space">&#160;</string>
+    <string name="error_network">网络异常!</string>
 
     <string name="action_next">下一步</string>
     <string name="action_confirm">确认</string>
@@ -40,6 +41,9 @@
 
     <string name="export_keystore_tip_1">离线保存，切勿保存到邮箱、网盘、聊天工具等，非常危险。</string>
     <string name="export_keystore_tip_2">请勿通过网络工具传输Keystore文件。</string>
+    <string name="export_keystore_tip_3">
+        请勿截图。勿用截图或拍照的方式保存keystore文件。
+    </string>
     <string name="export_private_key_tip_1">
         安全告警: 私钥未经加密，导出存在风险.
     </string>
@@ -119,6 +123,10 @@
     <string name="title_activity_account_detail">AccountDetailActivity</string>
     <string name="title_activity_transfer">TransferActivity</string>
     <string name="tip_success_copy">已复制到粘贴板!</string>
+    <string name="action_search">搜索</string>
+    <string name="prompt_search_token">Token名称</string>
+    <string name="tip_search_token">请输入token名称</string>
+    <string name="no_result">没有结果</string>
 
     <!-- Strings related to transfer -->
     <string name="action_transfer">转账</string>
@@ -131,14 +139,19 @@
     <string name="tip_error_address">提示: 地址一般为0x开头的42位字符</string>
     <string name="tip_same_address">地址不能为自己</string>
     <string name="tip_invalid_amount">请填写正确的金额</string>
+    <string name="tip_invalid_gas_price">请填写gas price. 通常为 20 Gwei。</string>
+    <string name="tip_invalid_gas_limit">请填写gas limit，通常为 200000。</string>
     <string name="tip_insufficient_eth">ETH不足</string>
     <string name="pay_to_address">收款地址</string>
     <string name="pay_by_address">付款账号</string>
     <string name="fees">矿工费</string>
     <string name="tip_error_password">转账失败！请检查密码！.</string>
+    <string name="tip_error_net">网络连接超时!</string>
     <string name="tip_error_transfer">转账失败!</string>
     <string name="prompt_total_gas">0.000400000 ETH</string>
     <string name="prompt_total_gas_desc">≈ Gas (20000) * Gas Price(20gwei)</string>
+    <string name="action_go_settings">前往设置</string>
+    <string name="tip_camera_permission">您还没有对相机进行授权，请前往设置页面授权</string>
 
     <!-- Strings related to login -->
     <string name="title_activity_account_change_password">更改密码</string>
@@ -188,4 +201,34 @@
     <string name="key_wallet_language">wallet.language</string>
     <string name="key_wallet_currency_unit">wallet.currency.unit</string>
 
+    <!-- strings about address code -->
+    <string name="title_address_qrcode">账号地址</string>
+
+    <!-- scan -->
+    <string name="title_capture_code">扫码</string>
+    <string name="tip_scan_code_failed">扫码失败</string>
+
+    <!-- string about account backup -->
+    <string name="title_account_backup">备份</string>
+    <string name="tip_backup_account">请立即备份您的账号!</string>
+    <string name="desc_backup_account_one">
+        区块链账号不同于传统的网站账号或应用账号，它是基于密码学的去中心化账号系统。
+    </string>
+    <string name="desc_backup_account_two">
+        您必须自己保管好钱包的私钥和交易密码，任何意外发生都会导致资产丢失。
+    </string>
+    <string name="desc_backup_account_three">
+        我们建议您备份keystore文件，再打入小额测试，最后开始使用。
+    </string>
+    <string name="btn_backup_now">立即备份</string>
+
+    <!-- string about us -->
+    <string name="title_about_us">关于</string>
+    <string name="about_current_version">当前版本： </string>
+    <string name="desc_wallet">
+        梵钱包是一款完全开源、去中心化的移动端轻钱包，梵钱包旨为用户提供一款安全放心、简单易用的数字资产钱包应用。
+    </string>
+    <string name="about_privacy_policy">隐私条款</string>
+    <string name="about_service_perms">服务协议</string>
+    <string name="about_check_updates">检查更新</string>
 </resources>

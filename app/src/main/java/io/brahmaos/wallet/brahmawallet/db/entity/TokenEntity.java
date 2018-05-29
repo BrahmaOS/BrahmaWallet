@@ -16,15 +16,12 @@
 
 package io.brahmaos.wallet.brahmawallet.db.entity;
 
-import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
 import java.io.Serializable;
-
-import io.brahmaos.wallet.brahmawallet.R;
 
 @Entity(tableName = "tokens", indices = {@Index(value = {"address"}, unique = true)})
 public class TokenEntity implements Serializable{
@@ -34,18 +31,21 @@ public class TokenEntity implements Serializable{
     private String shortName;
 
     private String address;
+    // deprecated, Please use avatar
     private Integer icon;
+    private String avatar;
 
     public TokenEntity() {
     }
 
     @Ignore
-    public TokenEntity(int id, String name, String shortName, String address, Integer icon) {
+    public TokenEntity(int id, String name, String shortName, String address, Integer icon, String avatar) {
         this.id = id;
         this.name = name;
         this.shortName = shortName;
         this.address = address;
         this.icon = icon;
+        this.avatar = avatar;
     }
 
     public int getId() {
@@ -88,6 +88,14 @@ public class TokenEntity implements Serializable{
         this.icon = icon;
     }
 
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
     @Override
     public String toString() {
         return "TokenEntity{" +
@@ -96,6 +104,7 @@ public class TokenEntity implements Serializable{
                 ", shortName='" + shortName + '\'' +
                 ", address='" + address + '\'' +
                 ", icon=" + icon +
+                ", avatar='" + avatar + '\'' +
                 '}';
     }
 }

@@ -14,6 +14,7 @@
     <string name="assets_class">Assets Class</string>
     <string name="asymptotic">≈</string>
     <string name="blank_space">&#160;</string>
+    <string name="error_network">Network connect error!</string>
 
     <string name="action_next">Next</string>
     <string name="action_confirm">Confirm</string>
@@ -40,6 +41,9 @@
 
     <string name="export_keystore_tip_1">Store offline. Never put it on internet.</string>
     <string name="export_keystore_tip_2">Don\'t transfer via internet Tools.</string>
+    <string name="export_keystore_tip_3">
+        Don\'t screenshot.Don\'t take screenshot or photos to store account information.
+    </string>
     <string name="export_private_key_tip_1">
         Warning: Export plain private key is very dangerous.
     </string>
@@ -121,6 +125,10 @@
     <string name="title_activity_account_detail">AccountDetailActivity</string>
     <string name="title_activity_transfer">TransferActivity</string>
     <string name="tip_success_copy">Success copy content to clipboard!</string>
+    <string name="action_search">Search</string>
+    <string name="prompt_search_token">Token name</string>
+    <string name="tip_search_token">Please input token name</string>
+    <string name="no_result">No Result</string>
 
     <!-- Strings related to transfer -->
     <string name="action_transfer">Transfer</string>
@@ -133,6 +141,8 @@
     <string name="tip_error_address">Tips: The correct address is generally 42 characters start with 0x</string>
     <string name="tip_same_address">The address can not be yourself</string>
     <string name="tip_invalid_amount">Invalid Amount</string>
+    <string name="tip_invalid_gas_price">Invalid gas price. Default 20 Gwei.</string>
+    <string name="tip_invalid_gas_limit">Invalid gas limit. Default 200000.</string>
     <string name="tip_insufficient_eth">Insufficient ETH</string>
     <string name="pay_to_address">Pay to</string>
     <string name="pay_by_address">Pay by</string>
@@ -142,6 +152,8 @@
     <string name="prompt_total_gas">0.000400000 ETH</string>
     <string name="prompt_total_gas_desc">≈ Gas (20000) * Gas Price(20gwei)</string>
     <string name="title_activity_test_login">Sign in</string>
+    <string name="action_go_settings">Go Settings</string>
+    <string name="tip_camera_permission">You have not authorized the camera yet. Please go to the settings page.</string>
 
     <!-- Strings related to login -->
     <string name="title_activity_account_change_password">Change Password</string>
@@ -188,70 +200,39 @@
         <item>2</item>
     </string-array>
 
-    <!-- Example settings for Data & Sync -->
-    <string name="pref_header_data_sync">Data &amp; sync</string>
-
-    <string name="pref_title_sync_frequency">Sync frequency</string>
-    <string-array name="pref_sync_frequency_titles">
-        <item>15 minutes</item>
-        <item>30 minutes</item>
-        <item>1 hour</item>
-        <item>3 hours</item>
-        <item>6 hours</item>
-        <item>Never</item>
-    </string-array>
-    <string-array name="pref_sync_frequency_values">
-        <item>15</item>
-        <item>30</item>
-        <item>60</item>
-        <item>180</item>
-        <item>360</item>
-        <item>-1</item>
-    </string-array>
-
-    <string-array name="list_preference_entries">
-        <item>Entry 1</item>
-        <item>Entry 2</item>
-        <item>Entry 3</item>
-    </string-array>
-
-    <string-array name="list_preference_entry_values">
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
-
-    <string-array name="multi_select_list_preference_default_value" />
-
-    <string name="pref_title_system_sync_settings">System sync settings</string>
-
-    <!-- Example settings for Notifications -->
-    <string name="pref_header_notifications">Notifications</string>
-
-    <string name="pref_title_new_message_notifications">New message notifications</string>
-
-    <string name="pref_title_ringtone">Ringtone</string>
-    <string name="pref_ringtone_silent">Silent</string>
-
-    <string name="pref_title_vibrate">Vibrate</string>
-
     <!-- share -->
     <string name="key_network_url">ethereum.network.url</string>
     <string name="key_wallet_language">wallet.language</string>
     <string name="key_wallet_currency_unit">wallet.currency.unit</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- strings about address code -->
+    <string name="title_address_qrcode">Address Code</string>
 
-    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
-    <string-array name="pref_example_list_titles">
-        <item>Always</item>
-        <item>When possible</item>
-        <item>Never</item>
-    </string-array>
-    <string-array name="pref_example_list_values">
-        <item>1</item>
-        <item>0</item>
-        <item>-1</item>
-    </string-array>
+    <!-- scan -->
+    <string name="title_capture_code">Scan</string>
+    <string name="tip_scan_code_failed">Scan code failed!</string>
+
+    <!-- string about account backup -->
+    <string name="title_account_backup">Backup Account</string>
+    <string name="tip_backup_account">Please backup your account now!</string>
+    <string name="desc_backup_account_one">
+        The account is your blockchain account which is total different from website or app account and it is cryptographic based.
+    </string>
+    <string name="desc_backup_account_two">
+        You need to double check the account is being backup properly in case of any assets loss.
+    </string>
+    <string name="desc_backup_account_three">
+        We suggest you backup keystore, then test with tiny ethers until you feel confidence.
+    </string>
+    <string name="btn_backup_now">Backup Now</string>
+
+    <!-- string about us -->
+    <string name="title_about_us">About</string>
+    <string name="about_current_version">Current Version: </string>
+    <string name="desc_wallet">
+        Brahma Wallet is a fully open source, decentralized mobile light wallet. It is designed to provide users with a secure, easy-to-use digital asset wallet application.
+    </string>
+    <string name="about_privacy_policy">Privacy Policy</string>
+    <string name="about_service_perms">Terms of Service</string>
+    <string name="about_check_updates">Check for updates</string>
 </resources>

@@ -69,17 +69,40 @@
                 android:orientation="vertical">
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/master"
+                    android:layout_height="136dp"
+                    android:background="@drawable/home_header_bg1"
                     android:orientation="vertical">
-                    <TextView
+                    <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textAlignment="center"
-                        android:layout_marginTop="@dimen/space_smaller"
-                        android:textSize="@dimen/font_size_subheading"
-                        android:textColor="@color/white"
-                        android:text="@string/total_assets"/>
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginTop="@dimen/space_smaller">
+                        <TextView
+                            android:id="@+id/tv_title_assets"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:layout_centerVertical="true"
+                            android:textAlignment="center"
+                            android:textSize="@dimen/font_size_subheading"
+                            android:textColor="@color/white"
+                            android:text="@string/total_assets"/>
+                        <TextView
+                            android:id="@+id/tv_test_network"
+                            android:layout_toEndOf="@id/tv_title_assets"
+                            android:layout_marginStart="@dimen/space_smaller"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignBottom="@id/tv_title_assets"
+                            android:background="@drawable/test_network_bg"
+                            android:textSize="@dimen/font_size_test_network"
+                            android:paddingTop="2dp"
+                            android:paddingBottom="2dp"
+                            android:paddingStart="@dimen/space_unit"
+                            android:paddingEnd="@dimen/space_unit"
+                            android:textColor="@color/color_test_network"/>
+                    </RelativeLayout>
+
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

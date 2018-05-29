@@ -30,6 +30,7 @@
             android:layout_marginTop="@dimen/height_toolbar"
             android:layout_width="match_parent"
             android:background="@color/main_bg"
+            app:tabIndicatorColor="@color/colorPrimary"
             app:tabSelectedTextColor="@color/colorPrimary"
             android:layout_height="48dp" />
         <android.support.v4.view.ViewPager
