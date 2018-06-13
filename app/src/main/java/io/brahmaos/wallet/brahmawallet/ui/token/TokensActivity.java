@@ -150,7 +150,7 @@ public class TokensActivity extends BaseActivity {
                 boolean checked = false;
                 if (chooseTokes != null && chooseTokes.size() > 0) {
                     for (TokenEntity tokenEntity : chooseTokes) {
-                        if (tokenEntity.getAddress().equals(token.getAddress())) {
+                        if (tokenEntity.getAddress().toLowerCase().equals(token.getAddress().toLowerCase())) {
                             checked = true;
                             break;
                         }

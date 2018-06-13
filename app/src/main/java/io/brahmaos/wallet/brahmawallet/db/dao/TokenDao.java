@@ -38,7 +38,7 @@ public interface TokenDao {
     @Insert
     void insertToken(TokenEntity token);
 
-    @Query("delete from tokens where address = :address")
+    @Query("delete from tokens where LOWER(address) = LOWER(:address)")
     void deleteToken(String address);
 
     @Query("select * from tokens where id = :tokenId")

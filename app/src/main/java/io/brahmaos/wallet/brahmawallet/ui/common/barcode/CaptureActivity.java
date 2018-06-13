@@ -121,19 +121,19 @@ public class CaptureActivity extends BaseActivity implements SurfaceHolder.Callb
         layoutParams.setMargins((windowWidth - buttonWidth) / 2, scanHeight + topOffset + CommonUtil.dip2px(this, getResources().getDimension(R.dimen.space_normal)), 0, 0);
         setTorchBtn.setLayoutParams(layoutParams);
         if (cameraManager.getTorch()) {
-            setTorchBtn.setText("关闭闪光灯");
+            setTorchBtn.setText(getString(R.string.close_slash));
         } else {
-            setTorchBtn.setText("开启闪光灯");
+            setTorchBtn.setText(getString(R.string.open_slash));
         }
         setTorchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (cameraManager.getTorch()) {
                     cameraManager.setTorch(false);
-                    setTorchBtn.setText("开启闪光灯");
+                    setTorchBtn.setText(getString(R.string.open_slash));
                 } else {
                     cameraManager.setTorch(true);
-                    setTorchBtn.setText("关闭闪光灯");
+                    setTorchBtn.setText(getString(R.string.close_slash));
                 }
             }
         });

@@ -5,4 +5,5 @@ package io.brahmaos.wallet.brahmawallet.common;
  */
 public class ReqCode {
     public static final int SCAN_QR_CODE = 101;
+    public static final int CHOOSE_TRANSFER_CONTACT = 102;
 }

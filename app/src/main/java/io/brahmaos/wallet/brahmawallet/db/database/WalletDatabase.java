@@ -25,19 +25,22 @@ import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
 import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.db.converter.DateConverter;
 import io.brahmaos.wallet.brahmawallet.db.dao.AccountDao;
 import io.brahmaos.wallet.brahmawallet.db.dao.AllTokenDao;
+import io.brahmaos.wallet.brahmawallet.db.dao.ContactDao;
 import io.brahmaos.wallet.brahmawallet.db.dao.TokenDao;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.AllTokenEntity;
+import io.brahmaos.wallet.brahmawallet.db.entity.ContactEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 
 
-@Database(entities = {AccountEntity.class, TokenEntity.class, AllTokenEntity.class}, version = 3, exportSchema = false)
+@Database(entities = {AccountEntity.class, TokenEntity.class, AllTokenEntity.class, ContactEntity.class}, version = 4, exportSchema = false)
 @TypeConverters(DateConverter.class)
 public abstract class WalletDatabase extends RoomDatabase {
 
@@ -48,6 +51,7 @@ public abstract class WalletDatabase extends RoomDatabase {
     public abstract AccountDao accountDao();
     public abstract TokenDao tokenDao();
     public abstract AllTokenDao allTokenDao();
+    public abstract ContactDao contactDao();
 
     private final MutableLiveData<Boolean> mIsDatabaseCreated = new MutableLiveData<>();
 
@@ -91,7 +95,9 @@ public abstract class WalletDatabase extends RoomDatabase {
                     }
                 })
                 .addMigrations(MIGRATION_1_2)
-                .addMigrations(MIGRATION_2_3).build();
+                .addMigrations(MIGRATION_2_3)
+                .addMigrations(MIGRATION_3_4)
+                .build();
     }
 
     private static final Migration MIGRATION_1_2 = new Migration(1, 2) {
@@ -118,6 +124,15 @@ public abstract class WalletDatabase extends RoomDatabase {
                     + "`name` TEXT, `address` TEXT unique, `shortName` TEXT, `avatar` TEXT, `showFlag` INTEGER not null," +
                     "PRIMARY KEY(`id`))");
             database.execSQL("CREATE UNIQUE INDEX `index_all_tokens_address` on `all_tokens` (`address`);");
+        }
+    };
+
+    private static final Migration MIGRATION_3_4 = new Migration(3, 4) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("CREATE TABLE `contacts` (`id` INTEGER not null, "
+                    + "`familyName` TEXT, `name` TEXT, `address` TEXT, `avatar` TEXT, `remark` TEXT," +
+                    "PRIMARY KEY(`id`))");
         }
     };
 

@@ -82,21 +82,34 @@
                         android:text="@string/action_change_account"/>
                 </RelativeLayout>
 
-                <android.support.design.widget.TextInputLayout
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:theme="@style/customEditTextLineColor"
-                    android:layout_marginTop="@dimen/space_smaller"
-                    app:hintTextAppearance="@style/customEditTextHint">
-                    <EditText
-                        android:id="@+id/et_receiver_address"
+                    android:layout_height="wrap_content">
+                    <android.support.design.widget.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/prompt_receiver_address"
-                        android:maxLines="2"
-                        android:textSize="@dimen/font_size_body"
-                        android:inputType="text"/>
-                </android.support.design.widget.TextInputLayout>
+                        android:theme="@style/customEditTextLineColor"
+                        android:layout_marginTop="@dimen/space_smaller"
+                        app:hintTextAppearance="@style/customEditTextHint">
+                        <EditText
+                            android:id="@+id/et_receiver_address"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/prompt_receiver_address"
+                            android:maxLines="2"
+                            android:paddingEnd="@dimen/icon_normal_size"
+                            android:textSize="@dimen/font_size_body"
+                            android:inputType="text"/>
+                    </android.support.design.widget.TextInputLayout>
+                    <ImageView
+                        android:id="@+id/iv_contacts"
+                        android:layout_width="@dimen/icon_normal_size"
+                        android:layout_height="@dimen/icon_normal_size"
+                        android:padding="10dp"
+                        android:layout_marginBottom="@dimen/space_unit"
+                        android:layout_gravity="end|bottom"
+                        android:src="@drawable/icon_contacts"/>
+                </FrameLayout>
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"

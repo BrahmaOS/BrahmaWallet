@@ -18,6 +18,9 @@
 
     <string name="action_next">Next</string>
     <string name="action_confirm">Confirm</string>
+    <string name="action_add">Add</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_delete">Delete</string>
 
     <!-- Drawer menu -->
     <string name="nav_menu_other">Other</string>
@@ -85,7 +88,9 @@
     <string name="prompt_password">Password</string>
     <string name="prompt_repeat_password">Repeat password</string>
     <string name="action_agree">Agree on</string>
-    <string name="project_protocol">&#160;Terms of Service and Privacy Policy</string>
+    <string name="service_agreement">&#160;Service Agreement&#160;</string>
+    <string name="protocol_and">and</string>
+    <string name="privacy_policy">&#160;Privacy Policy</string>
     <string name="tip_create_account_one">&#8226;&#160;&#160;Password strength is critical to guard your account</string>
     <string name="tip_create_account_two">&#8226;&#160;&#160;BrahmaWallet can\'t recover the password, please backup cautiously</string>
     <string name="error_incorrect_name">The name is taken</string>
@@ -108,6 +113,7 @@
 
     <!-- menu list -->
     <string name="menu_accounts">Accounts</string>
+    <string name="menu_contacts">Contacts</string>
     <string name="action_create_account">Create Account</string>
     <string name="action_import_account">Import Account</string>
 
@@ -215,6 +221,8 @@
     <string name="title_address_qrcode">Address Code</string>
 
     <!-- scan -->
+    <string name="open_slash">Open Flash</string>
+    <string name="close_slash">Close Flash</string>
     <string name="bookmark_picker_name">Bookmarks</string>
     <string name="button_add_calendar">Add to calendar</string>
     <string name="button_add_contact">Add contact</string>
@@ -304,4 +312,30 @@
     <string name="about_privacy_policy">Privacy Policy</string>
     <string name="about_service_perms">Terms of Service</string>
     <string name="about_check_updates">Check for updates</string>
+
+    <!-- privacy policy -->
+    <string name="title_activity_privacy_policy">Brahma Wallet Privacy Policy</string>
+    <string name="title_service_terms">Brahma Wallet Service Agreement</string>
+
+    <!-- string about contacts -->
+    <string name="title_contacts">Contacts</string>
+    <string name="title_choose_contact">Choose Contact</string>
+    <string name="title_add_contact">Add Contact</string>
+    <string name="title_my_accounts">My Accounts</string>
+    <string name="prompt_contact_first_name">First Name</string>
+    <string name="prompt_contact_last_name">Last Name</string>
+    <string name="prompt_contact_address">Address</string>
+    <string name="success_create_contact">Add contact success!</string>
+    <string name="error_create_contact">Add contact error! please try again!</string>
+    <string name="delete_contact_tip">Do you want to delete this contact?ked!</string>
+    <string name="success_delete_contact">Success delete contact.</string>
+    <string name="error_delete_contact">Error delete contact!!!</string>
+    <string name="title_contact_detail">Contact Detail</string>
+    <string name="contact_address">Contact Address</string>
+    <string name="contact_remark">Remark</string>
+    <string name="menu_edit_contact">Edit Contact</string>
+    <string name="menu_delete_contact">Delete Contact</string>
+    <string name="title_edit_contact">Edit Contact</string>
+    <string name="success_edit_contact">Edit contact success!</string>
+    <string name="error_edit_contact">Edit contact error! please try again!</string>
 </resources>

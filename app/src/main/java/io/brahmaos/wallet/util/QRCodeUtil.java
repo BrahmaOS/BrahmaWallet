@@ -67,6 +67,57 @@ public class QRCodeUtil {
     }
 
     /**
+     * Generate qrcode Bitmap
+     *
+     * @param content   the content
+     * @param widthPix  image width
+     * @param heightPix image height
+     * @param logoBm    the center logo (allow to be null)
+     * @return Generate qr code and save the file is successful
+     */
+    public static Bitmap createQRImageTransparentBg(String content, int widthPix, int heightPix, Bitmap logoBm) {
+        try {
+            if (content == null || "".equals(content) || content.length() < 1) {
+                return null;
+            }
+
+            // set config params
+            Map<EncodeHintType, Object> hints = new HashMap<>();
+            hints.put(EncodeHintType.CHARACTER_SET, "utf-8");
+            //Error Correction Level
+            hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
+            hints.put(EncodeHintType.MARGIN, 0); //default is 4
+
+            BitMatrix bitMatrix = new QRCodeWriter().encode(content, BarcodeFormat.QR_CODE, widthPix, heightPix, hints);
+            int[] pixels = new int[widthPix * heightPix];
+            for (int y = 0; y < heightPix; y++) {
+                for (int x = 0; x < widthPix; x++) {
+                    if (bitMatrix.get(x, y)) {
+                        pixels[y * widthPix + x] = 0xff000000;
+                    } else {
+                        // the background color
+                        pixels[y * widthPix + x] = 0xffffffff;
+                    }
+                }
+            }
+
+            Bitmap bitmap = Bitmap.createBitmap(widthPix, heightPix, Bitmap.Config.ARGB_8888);
+            bitmap.setPixels(pixels, 0, widthPix, 0, 0, widthPix, heightPix);
+
+            if (logoBm != null) {
+                bitmap = addLogo(bitmap, logoBm);
+            }
+
+            return bitmap;
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+
+    /**
      * Add logo in the qrcode image
      */
     private static Bitmap addLogo(Bitmap src, Bitmap logo) {

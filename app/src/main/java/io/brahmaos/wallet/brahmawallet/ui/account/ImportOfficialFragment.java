@@ -16,6 +16,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,6 +31,8 @@ import java.util.List;
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
+import io.brahmaos.wallet.brahmawallet.ui.setting.PrivacyPolicyActivity;
+import io.brahmaos.wallet.brahmawallet.ui.setting.ServiceTermsActivity;
 import io.brahmaos.wallet.brahmawallet.view.CustomProgressDialog;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
@@ -55,6 +58,8 @@ public class ImportOfficialFragment extends Fragment {
     private Button btnImportAccount;
     private CheckBox checkBoxReadProtocol;
     private CustomProgressDialog customProgressDialog;
+    private TextView tvService;
+    private TextView tvPrivacyPolicy;
 
     public static ImportOfficialFragment newInstance(int page) {
         Bundle args = new Bundle();
@@ -108,8 +113,19 @@ public class ImportOfficialFragment extends Fragment {
         btnImportAccount = parentView.findViewById(R.id.btn_import_keystore);
         checkBoxReadProtocol= parentView.findViewById(R.id.checkbox_read_protocol);
         checkBoxReadProtocol.setOnCheckedChangeListener((buttonView, isChecked) -> btnImportAccount.setEnabled(isChecked));
-
         btnImportAccount.setOnClickListener(view -> importOfficialAccount());
+
+        tvService = parentView.findViewById(R.id.service_tv);
+        tvService.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), ServiceTermsActivity.class);
+            startActivity(intent);
+        });
+
+        tvPrivacyPolicy = parentView.findViewById(R.id.privacy_policy_tv);
+        tvPrivacyPolicy.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), PrivacyPolicyActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void importOfficialAccount() {
@@ -252,7 +268,9 @@ public class ImportOfficialFragment extends Fragment {
             Toast.makeText(getActivity(), R.string.error_keystore, Toast.LENGTH_LONG).show();
             btnImportAccount.setEnabled(true);
             etKeystore.requestFocus();
-            customProgressDialog.cancel();
+            if (customProgressDialog != null) {
+                customProgressDialog.cancel();
+            }
         }
     }
 }
