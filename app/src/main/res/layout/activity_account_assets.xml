@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -40,7 +41,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/list_item_bg"
-                    android:padding="@dimen/space_normal"
+                    android:paddingStart="@dimen/space_normal"
+                    android:paddingEnd="@dimen/space_normal"
+                    android:paddingTop="@dimen/space_large"
+                    android:paddingBottom="@dimen/space_large"
                     android:focusable="true">
                     <ImageView
                         android:id="@+id/iv_account_avatar"
@@ -49,68 +53,88 @@
                         android:layout_width="@dimen/icon_normal_size"
                         android:layout_height="@dimen/icon_normal_size"
                         android:padding="@dimen/space_smaller"/>
-                    <LinearLayout
-                        android:layout_toEndOf="@id/iv_account_avatar"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/space_normal"
-                        android:orientation="vertical">
-                        <TextView
-                            android:id="@+id/tv_account_name"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="@dimen/font_size_subheading"
-                            android:textColor="@color/black"/>
-                        <TextView
-                            android:id="@+id/tv_account_address"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/space_unit"/>
-                    </LinearLayout>
-
                     <TextView
-                        android:id="@+id/tv_copy_address"
-                        android:visibility="visible"
+                        android:id="@+id/tv_account_name"
+                        android:layout_toEndOf="@id/iv_account_avatar"
+                        android:layout_marginStart="@dimen/space_normal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textSize="@dimen/font_size_subheading"
+                        android:textColor="@color/black"
+                        tools:ignore="RelativeOverlap" />
+                    <TextView
+                        android:id="@+id/tv_account_address"
+                        android:layout_below="@id/tv_account_name"
+                        android:layout_alignStart="@id/tv_account_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/color_hint_text"
+                        android:layout_marginTop="@dimen/space_unit"/>
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_keyboard_arrow_right"
                         android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:textAlignment="center"
-                        android:textColor="@color/master"
-                        android:textSize="@dimen/font_size_body"
-                        android:text="@string/action_copy_address"/>
+                        android:layout_centerVertical="true"/>
                 </RelativeLayout>
                 <include layout="@layout/horizontal_divider"/>
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
-                    android:paddingStart="@dimen/space_normal"
+                    android:paddingStart="72dp"
                     android:paddingEnd="@dimen/space_normal"
-                    android:paddingTop="@dimen/space_smaller"
-                    android:paddingBottom="@dimen/space_smaller"
-                    android:orientation="horizontal">
+                    android:paddingTop="@dimen/space_small"
+                    android:paddingBottom="@dimen/space_small">
                     <TextView
                         android:id="@+id/tv_total_assets_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="@dimen/font_size_subheading"
+                        android:layout_centerVertical="true"
+                        android:textColor="@color/color_hint_text"
                         android:text="@string/total_assets"/>
                     <TextView
+                        android:id="@+id/left_brackets"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="@dimen/font_size_subheading"
-                        android:textStyle="italic|bold"
-                        android:paddingStart="@dimen/space_unit"
-                        android:paddingEnd="@dimen/space_unit"
-                        android:text="@string/asymptotic"/>
+                        android:layout_toEndOf="@id/tv_total_assets_desc"
+                        android:layout_centerVertical="true"
+                        android:textColor="@color/color_hint_text"
+                        android:layout_marginStart="@dimen/space_unit"
+                        android:text="("/>
+                    <TextView
+                        android:id="@+id/tv_money_unit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toEndOf="@id/left_brackets"
+                        android:layout_centerVertical="true"
+                        android:textColor="@color/color_hint_text"
+                        android:text="@string/unit_cny"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toEndOf="@id/tv_money_unit"
+                        android:layout_centerVertical="true"
+                        android:textColor="@color/color_hint_text"
+                        android:text=")"/>
                     <TextView
                         android:id="@+id/tv_total_assets"
+                        android:layout_alignParentEnd="true"
+                        android:textColor="@color/color_primary_text"
+                        android:textSize="@dimen/font_size_subtitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="@dimen/font_size_subheading"
-                        android:textStyle="italic|bold"/>
-                </LinearLayout>
+                        android:text="0"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toStartOf="@id/tv_total_assets"
+                        android:layout_marginEnd="@dimen/space_smaller"
+                        android:layout_centerVertical="true"
+                        android:textColor="@color/color_hint_text"
+                        android:text="@string/asymptotic"/>
+                </RelativeLayout>
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/assets_recycler"
                     android:layout_marginTop="@dimen/space_large"

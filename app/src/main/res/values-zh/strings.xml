@@ -10,7 +10,7 @@
     <string name="title_brahma_wallet">梵钱包</string>
     <string name="brahma_wallet_desc">您的数字智能钱包</string>
     <string name="title_activity_create_account">创建账号</string>
-    <string name="total_assets">总资产(CNY)</string>
+    <string name="total_assets">总资产</string>
     <string name="assets_class">资产类别</string>
     <string name="asymptotic">≈</string>
     <string name="blank_space">&#160;</string>

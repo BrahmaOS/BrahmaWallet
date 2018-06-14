@@ -6,11 +6,13 @@
     <string name="ok">OK</string>
     <string name="copy">Copy</string>
     <string name="delete">Delete</string>
+    <string name="unit_cny">CNY</string>
+    <string name="unit_usd">USD</string>
 
     <string name="title_brahma_wallet">Wallet</string>
     <string name="brahma_wallet_desc">Your smart digital wallet</string>
     <string name="title_activity_create_account">Create Account</string>
-    <string name="total_assets">Total Assets(CNY)</string>
+    <string name="total_assets">Total Assets</string>
     <string name="assets_class">Assets Class</string>
     <string name="asymptotic">≈</string>
     <string name="blank_space">&#160;</string>

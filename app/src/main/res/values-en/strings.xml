@@ -10,7 +10,7 @@
     <string name="title_brahma_wallet">Brahma Wallet</string>
     <string name="brahma_wallet_desc">Your smart digital wallet</string>
     <string name="title_activity_create_account">Create Account</string>
-    <string name="total_assets">Total Assets(CNY)</string>
+    <string name="total_assets">Total Assets</string>
     <string name="assets_class">Assets Class</string>
     <string name="asymptotic">≈</string>
     <string name="blank_space">&#160;</string>

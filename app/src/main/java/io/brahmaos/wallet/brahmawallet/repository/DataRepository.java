@@ -102,6 +102,10 @@ public class DataRepository {
         return mObservableTokens;
     }
 
+    public List<TokenEntity> queryChosenTokensSync() {
+        return mDatabase.tokenDao().loadAllTokensSync();
+    }
+
     public LiveData<TokenEntity> loadToken(final int tokenId) {
         return mDatabase.tokenDao().loadToken(tokenId);
     }

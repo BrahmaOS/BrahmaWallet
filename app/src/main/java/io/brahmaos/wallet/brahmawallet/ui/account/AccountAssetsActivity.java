@@ -2,8 +2,6 @@ package io.brahmaos.wallet.brahmawallet.ui.account;
 
 import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,7 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -62,8 +59,6 @@ public class AccountAssetsActivity extends BaseActivity {
     TextView tvAccountAddress;
     @BindView(R.id.tv_total_assets)
     TextView tvTotalAssets;
-    @BindView(R.id.tv_copy_address)
-    TextView tvCopyAddress;
 
     private int accountId;
     private AccountEntity account;
@@ -120,12 +115,6 @@ public class AccountAssetsActivity extends BaseActivity {
         ImageManager.showAccountAvatar(AccountAssetsActivity.this, ivAccountAvatar, account);
         tvAccountName.setText(account.getName());
         tvAccountAddress.setText(CommonUtil.generateSimpleAddress(account.getAddress()));
-
-        tvCopyAddress.setOnClickListener(v -> {
-            ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-            cm.setText(account.getAddress());
-            showLongToast(R.string.tip_success_copy);
-        });
 
         mLayoutAccountInfo.setOnClickListener(v -> {
             Intent intent = new Intent(this, AccountDetailActivity.class);
@@ -226,6 +215,7 @@ public class AccountAssetsActivity extends BaseActivity {
             });
 
             holder.tvTokenName.setText(tokenEntity.getShortName());
+            holder.tvTokenFullName.setText(tokenEntity.getName());
             ImageManager.showTokenIcon(AccountAssetsActivity.this, holder.ivTokenIcon, tokenEntity.getAvatar(), tokenEntity.getName());
             BigInteger tokenCount = BigInteger.ZERO;
             for (AccountAssets accountAssets : accountAssetsList) {
@@ -239,6 +229,8 @@ public class AccountAssetsActivity extends BaseActivity {
             for (CryptoCurrency cryptoCurrency : cryptoCurrencies) {
                 if (cryptoCurrency.getName().toLowerCase().equals(tokenEntity.getName().toLowerCase())) {
                     tokenValue = CommonUtil.getAccountFromWei(tokenCount).multiply(new BigDecimal(cryptoCurrency.getPriceCny()));
+                    holder.tvTokenPrice.setText(String.valueOf(new BigDecimal(cryptoCurrency.getPriceCny()).setScale(2, BigDecimal.ROUND_HALF_UP)));
+                    break;
                 }
             }
             holder.tvTokenAssetsCount.setText(String.valueOf(tokenValue.setScale(2, BigDecimal.ROUND_HALF_UP)));
@@ -254,6 +246,8 @@ public class AccountAssetsActivity extends BaseActivity {
             LinearLayout layoutAssets;
             ImageView ivTokenIcon;
             TextView tvTokenName;
+            TextView tvTokenFullName;
+            TextView tvTokenPrice;
             TextView tvTokenAccount;
             TextView tvTokenAssetsCount;
 
@@ -264,6 +258,8 @@ public class AccountAssetsActivity extends BaseActivity {
                 tvTokenName = itemView.findViewById(R.id.tv_token_name);
                 tvTokenAccount = itemView.findViewById(R.id.tv_token_count);
                 tvTokenAssetsCount = itemView.findViewById(R.id.tv_token_assets_count);
+                tvTokenFullName = itemView.findViewById(R.id.tv_token_full_name);
+                tvTokenPrice = itemView.findViewById(R.id.tv_token_price);
             }
         }
     }

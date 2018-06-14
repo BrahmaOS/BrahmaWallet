@@ -32,6 +32,9 @@ public interface TokenDao {
     @Query("SELECT * FROM tokens")
     LiveData<List<TokenEntity>> loadAllTokens();
 
+    @Query("SELECT * FROM tokens")
+    List<TokenEntity> loadAllTokensSync();
+
     @Insert
     void insertAll(List<TokenEntity> tokens);
 

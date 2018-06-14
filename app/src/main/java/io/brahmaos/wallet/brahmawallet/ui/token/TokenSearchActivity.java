@@ -1,30 +1,21 @@
 package io.brahmaos.wallet.brahmawallet.ui.token;
 
-import android.app.SearchManager;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
-
-import org.web3j.crypto.WalletUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,14 +92,11 @@ public class TokenSearchActivity extends BaseActivity {
         searchView.setMaxWidth(30000);
         searchView.setQueryHint(getString(R.string.prompt_search_token));
 
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                recyclerViewTokens.setVisibility(View.GONE);
-                layoutNoResult.setVisibility(View.GONE);
-                layoutDefault.setVisibility(View.VISIBLE);
-                return false;
-            }
+        searchView.setOnCloseListener(() -> {
+            recyclerViewTokens.setVisibility(View.GONE);
+            layoutNoResult.setVisibility(View.GONE);
+            layoutDefault.setVisibility(View.VISIBLE);
+            return false;
         });
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

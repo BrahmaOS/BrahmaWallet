@@ -5,32 +5,86 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:paddingTop="@dimen/space_small"
-        android:paddingBottom="@dimen/space_small"
+        android:background="@drawable/list_item_bg"
+        android:paddingBottom="20dp"
+        android:paddingEnd="@dimen/space_normal"
         android:paddingStart="@dimen/space_normal"
-        android:paddingEnd="@dimen/space_normal">
+        android:paddingTop="20dp">
+
         <ImageView
             android:id="@+id/iv_token_icon"
-            android:layout_centerVertical="true"
             android:layout_width="@dimen/icon_normal_size"
             android:layout_height="@dimen/icon_normal_size"
-            android:padding="6dp"
-            android:src="@drawable/ic_logo"/>
+            android:layout_centerVertical="true"
+            android:padding="4dp"
+            android:src="@drawable/ic_logo" />
 
         <TextView
             android:id="@+id/tv_token_name"
-            android:textAlignment="center"
-            android:layout_centerVertical="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/space_normal"
             android:layout_toEndOf="@id/iv_token_icon"
-            android:textColor="@color/color_summary"
-            android:textSize="@dimen/font_size_subtitle"/>
+            android:text="BRM"
+            android:textColor="@color/color_primary_text"
+            android:textSize="@dimen/font_size_subtitle" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_smaller"
+            android:layout_toEndOf="@id/tv_token_name"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/font_size_subheading"
+                android:textColor="@color/color_hint_text"
+                android:text="("/>
+            <TextView
+                android:id="@+id/tv_token_full_name"
+                android:layout_width="wrap_content"
+                android:maxEms="5"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:textSize="@dimen/font_size_subtitle"
+                android:textColor="@color/color_hint_text"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/font_size_subheading"
+                android:textColor="@color/color_hint_text"
+                android:text=")"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@id/tv_token_name"
+            android:layout_below="@id/tv_token_name"
+            android:layout_marginTop="@dimen/space_unit"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/space_unit"
+                android:text="@string/asymptotic"
+                android:textColor="@color/color_hint_text" />
+
+            <TextView
+                android:id="@+id/tv_token_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textColor="@color/color_hint_text" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -38,31 +92,34 @@
             android:layout_alignParentEnd="true"
             android:gravity="end"
             android:orientation="vertical">
+
             <TextView
                 android:id="@+id/tv_token_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/color_primary_text"
-                android:textSize="@dimen/font_size_title"
-                android:text="0"/>
+                android:textSize="@dimen/font_size_title"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_unit"
                 android:orientation="horizontal">
+
                 <TextView
                     android:id="@+id/tv_token_appro_equal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingEnd="@dimen/space_unit"
-                    android:textColor="@color/color_caption"
-                    android:text="@string/asymptotic"/>
+                    android:layout_marginEnd="@dimen/space_unit"
+                    android:text="@string/asymptotic"
+                    android:textColor="@color/color_hint_text" />
+
                 <TextView
                     android:id="@+id/tv_token_assets_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/color_caption"
-                    android:text="0"/>
+                    android:text="0"
+                    android:textColor="@color/color_hint_text" />
             </LinearLayout>
 
         </LinearLayout>

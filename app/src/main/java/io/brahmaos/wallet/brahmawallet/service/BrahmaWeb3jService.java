@@ -28,6 +28,7 @@ import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.Request;
 import org.web3j.protocol.core.methods.request.Transaction;
 import org.web3j.protocol.core.methods.response.EthCall;
+import org.web3j.protocol.core.methods.response.EthGasPrice;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
 import org.web3j.protocol.core.methods.response.EthGetTransactionReceipt;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
@@ -144,7 +145,7 @@ public class BrahmaWeb3jService extends BaseService{
      */
     public Observable<Integer> sendTransfer(AccountEntity account, TokenEntity token, String password,
                                             String destinationAddress, BigDecimal amount,
-                                            BigInteger gasPrice, BigInteger gasLimit, String remark) {
+                                            BigDecimal gasPrice, BigInteger gasLimit, String remark) {
         return Observable.create(e -> {
             try {
                 e.onNext(1);
@@ -154,7 +155,7 @@ public class BrahmaWeb3jService extends BaseService{
                         password, context.getFilesDir() + "/" +  account.getFilename());
                 BLog.i(tag(), "load credential success");
                 e.onNext(2);
-                BigDecimal gasPriceWei = Convert.toWei(new BigDecimal(gasPrice), Convert.Unit.GWEI);
+                BigDecimal gasPriceWei = Convert.toWei(gasPrice, Convert.Unit.GWEI);
                 if (token.getName().toLowerCase().equals(BrahmaConst.ETHEREUM)) {
                     RawTransactionManager txManager = new RawTransactionManager(web3, credentials);
                     EthSendTransaction transactionResponse = txManager.sendTransaction(gasPriceWei.toBigIntegerExact(),
@@ -315,6 +316,24 @@ public class BrahmaWeb3jService extends BaseService{
                 BLog.i(tag(), "New value stored in remote smart contract: " + tokenListIpfsHash);
                 e.onNext(tokenListIpfsHash);
             } catch (Exception e1) {
+                e1.printStackTrace();
+                e.onError(e1);
+            }
+            e.onCompleted();
+        });
+    }
+
+    /**
+     * get gas price
+     */
+    public Observable<BigInteger> getGasPrice() {
+        return Observable.create(e -> {
+            try {
+                Web3j web3j = Web3jFactory.build(
+                        new HttpService(BrahmaConfig.getInstance().getNetworkUrl()));
+                EthGasPrice ethGasPrice = web3j.ethGasPrice().send();
+                e.onNext(ethGasPrice.getGasPrice());
+            } catch (IOException e1) {
                 e1.printStackTrace();
                 e.onError(e1);
             }

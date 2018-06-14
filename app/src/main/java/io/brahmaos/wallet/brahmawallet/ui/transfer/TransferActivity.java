@@ -172,11 +172,37 @@ public class TransferActivity extends BaseActivity {
         etGasPrice.setText(String.valueOf(BrahmaConst.DEFAULT_GAS_PRICE));
         etGasLimit.setText(String.valueOf(BrahmaConst.DEFAULT_GAS_LIMIT));
         btnShowTransfer.setOnClickListener(v -> showTransferInfo());
+        getGasPrice();
 
         ivContacts.setOnClickListener(v -> {
             Intent intent = new Intent(TransferActivity.this, ChooseContactActivity.class);
             startActivityForResult(intent, ReqCode.CHOOSE_TRANSFER_CONTACT);
         });
+    }
+
+    public void getGasPrice() {
+        BrahmaWeb3jService.getInstance()
+                .getGasPrice()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<BigInteger>() {
+                    @Override
+                    public void onNext(BigInteger gasPrice) {
+                        BLog.d(tag(), "the gas price is: " + String.valueOf(gasPrice));
+                        BigDecimal gasPriceGwei = Convert.fromWei(new BigDecimal(gasPrice), Convert.Unit.GWEI);
+                        etGasPrice.setText(String.valueOf(gasPriceGwei));
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onCompleted() {
+
+                    }
+                });
     }
 
     @Override
@@ -335,7 +361,7 @@ public class TransferActivity extends BaseActivity {
             return;
         }
 
-        BigInteger gasPrice = new BigInteger(gasPriceStr);
+        BigDecimal gasPrice = new BigDecimal(gasPriceStr);
         BigInteger gasLimit = new BigInteger(gasLimitStr);
 
         final BottomSheetDialog transferInfoDialog = new BottomSheetDialog(this);
@@ -360,7 +386,7 @@ public class TransferActivity extends BaseActivity {
         TextView tvGasLimit = view.findViewById(R.id.tv_gas_limit);
         tvGasLimit.setText(gasLimitStr);
         TextView tvGasValue = view.findViewById(R.id.tv_gas_value);
-        BigDecimal gasValue = Convert.fromWei(Convert.toWei(new BigDecimal(gasLimit.multiply(gasPrice)), Convert.Unit.GWEI), Convert.Unit.ETHER);
+        BigDecimal gasValue = Convert.fromWei(Convert.toWei(new BigDecimal(gasLimit).multiply(gasPrice), Convert.Unit.GWEI), Convert.Unit.ETHER);
         tvGasValue.setText(gasValue.setScale(9, BigDecimal.ROUND_HALF_UP).toString());
 
         TextView tvTransferAmount = view.findViewById(R.id.tv_dialog_transfer_amount);

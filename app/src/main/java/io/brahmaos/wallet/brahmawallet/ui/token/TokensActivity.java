@@ -28,6 +28,7 @@ import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
+import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -45,6 +46,9 @@ public class TokensActivity extends BaseActivity {
     private AccountViewModel mViewModel;
     private List<TokenEntity> chooseTokes = null;
     private List<AllTokenEntity> allTokens = new ArrayList<>();
+    // test rinkerby token
+    private AllTokenEntity testToken = new AllTokenEntity(0, "BrahmaOS", "BRM(TEST)",
+                                          "0xb958c57d1896823b8f4178a21e1bf6796371eac4", "", 1);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,21 +62,43 @@ public class TokensActivity extends BaseActivity {
         recyclerViewTokens.setLayoutManager(layoutManager);
         recyclerViewTokens.setAdapter(new TokenRecyclerAdapter());
 
-        mViewModel.getTokens().observe(this, tokenEntities -> {
-            if (tokenEntities == null) {
-                chooseTokes = new ArrayList<>();
-            } else {
-                chooseTokes = tokenEntities;
-            }
-            refreshTokenList();
-        });
         mViewModel.getShowTokens().observe(this, allTokenEntities -> {
             if (allTokenEntities != null) {
                 BLog.i(tag(), "the length is:" + allTokenEntities.size());
                 allTokens = allTokenEntities;
+                //allTokens.add(testToken);
             }
             refreshTokenList();
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mViewModel.getChosenTokens()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<List<TokenEntity>>() {
+                    @Override
+                    public void onNext(List<TokenEntity> tokenEntities) {
+                        if (tokenEntities == null) {
+                            chooseTokes = new ArrayList<>();
+                        } else {
+                            chooseTokes = tokenEntities;
+                        }
+                        refreshTokenList();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onCompleted() {
+
+                    }
+                });
     }
 
     private void refreshTokenList() {
