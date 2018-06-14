@@ -1,7 +1,16 @@
-# wallet
-A secure and native wallet for brahma os.
+# Brahma Wallet
+
+Brahma Wallet is a decentralized, secure and light wallet for brahma os, and support android.
+
+## Features
+
+- **Wallet account management**.
+- Token assets(Now only support Ethereum ERC20 token) management.
+- **Transaction management**.
+- **Contact management**: you can set an wallet account for your contacts, when you select a contact at the time of transfer, the recipient of transfer is automatically set, this reduces the risk of transfer errors.
 
 ## Building
+
 To build everything from source, simply checkout the source and build using gradle on the build system you need.
 
  - JDK 1.8
@@ -31,7 +40,7 @@ cd wallet
 Linux/Mac type:
 
 ```
-./gradlew build
+./gradle build
 ```
 
 Windows type:
