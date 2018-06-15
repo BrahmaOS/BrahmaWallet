@@ -65,7 +65,20 @@
         <activity
             android:name=".ui.setting.AboutActivity"
             android:label="@string/title_activity_about"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ui.setting.PrivacyPolicyActivity"
+            android:label="@string/title_activity_privacy_policy"
+            android:theme="@style/AppTheme" />
+        <activity android:name=".ui.contact.ContactsActivity" />
+        <activity
+            android:name=".ui.contact.AddContactActivity"
+            android:label="@string/title_add_contact"
+            android:theme="@style/AppTheme" />
+        <activity android:name=".ui.contact.ChooseContactActivity" />
+        <activity android:name=".ui.contact.ContactDetailActivity" />
+        <activity android:name=".ui.contact.EditContactActivity" />
+        <activity android:name=".ui.setting.ServiceTermsActivity"></activity>
     </application>
 
 </manifest>

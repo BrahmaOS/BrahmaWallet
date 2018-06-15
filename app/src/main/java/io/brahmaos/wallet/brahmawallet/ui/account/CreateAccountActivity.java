@@ -1,6 +1,5 @@
 package io.brahmaos.wallet.brahmawallet.ui.account;
 
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -20,6 +19,8 @@ import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
+import io.brahmaos.wallet.brahmawallet.ui.setting.PrivacyPolicyActivity;
+import io.brahmaos.wallet.brahmawallet.ui.setting.ServiceTermsActivity;
 import io.brahmaos.wallet.brahmawallet.view.CustomProgressDialog;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
@@ -46,6 +47,10 @@ public class CreateAccountActivity extends BaseActivity {
     CheckBox checkBoxReadProtocol;
     @BindView(R.id.layout_create_account_form)
     View formCreateAccount;
+    @BindView(R.id.service_tv)
+    TextView tvServiceAgreement;
+    @BindView(R.id.privacy_policy_tv)
+    TextView tvPrivacyPolicy;
 
     private CustomProgressDialog customProgressDialog;
     private AccountViewModel mViewModel;
@@ -82,6 +87,16 @@ public class CreateAccountActivity extends BaseActivity {
 
         tvImportAccount.setOnClickListener(v -> {
             Intent intent = new Intent(CreateAccountActivity.this, ImportAccountActivity.class);
+            startActivity(intent);
+        });
+
+        tvServiceAgreement.setOnClickListener(v -> {
+            Intent intent = new Intent(CreateAccountActivity.this, ServiceTermsActivity.class);
+            startActivity(intent);
+        });
+
+        tvPrivacyPolicy.setOnClickListener(v -> {
+            Intent intent = new Intent(CreateAccountActivity.this, PrivacyPolicyActivity.class);
             startActivity(intent);
         });
     }

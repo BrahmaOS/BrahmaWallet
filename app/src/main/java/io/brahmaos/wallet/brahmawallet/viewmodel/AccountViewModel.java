@@ -491,4 +491,12 @@ public class AccountViewModel extends AndroidViewModel {
             e.onCompleted();
         });
     }
+
+    public Observable<List<TokenEntity>> getChosenTokens() {
+        return Observable.create(e -> {
+            List<TokenEntity> allChosenTokens = ((WalletApp) getApplication()).getRepository().queryChosenTokensSync();
+            e.onNext(allChosenTokens);
+            e.onCompleted();
+        });
+    }
 }

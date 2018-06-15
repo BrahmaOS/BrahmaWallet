@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +44,7 @@ import io.brahmaos.wallet.brahmawallet.ui.account.AccountsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.account.CreateAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.account.ImportAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
+import io.brahmaos.wallet.brahmawallet.ui.contact.ContactsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.setting.AboutActivity;
 import io.brahmaos.wallet.brahmawallet.ui.setting.SettingsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.test.TestActivity;
@@ -269,6 +271,9 @@ public class MainActivity extends BaseActivity
         if (id == R.id.nav_accounts) {
             Intent intent = new Intent(this, AccountsActivity.class);
             startActivity(intent);
+        } else if (id == R.id.nav_contacts) {
+            Intent intent = new Intent(this, ContactsActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
@@ -383,10 +388,11 @@ public class MainActivity extends BaseActivity
                 startActivityForResult(intent, REQ_CODE_TRANSFER);
             });
             holder.tvTokenName.setText(tokenEntity.getShortName());
+            holder.tvTokenFullName.setText(tokenEntity.getName());
             ImageManager.showTokenIcon(MainActivity.this, holder.ivTokenIcon, tokenEntity.getAvatar(), tokenEntity.getName());
             BigInteger tokenCount = BigInteger.ZERO;
             for (AccountAssets accountAssets : cacheAssets) {
-                if (accountAssets.getTokenEntity().getAddress().equals(tokenEntity.getAddress())) {
+                if (accountAssets.getTokenEntity().getAddress().toLowerCase().equals(tokenEntity.getAddress().toLowerCase())) {
                     tokenCount = tokenCount.add(accountAssets.getBalance());
                 }
             }
@@ -398,6 +404,8 @@ public class MainActivity extends BaseActivity
                     for (CryptoCurrency cryptoCurrency : cacheCryptoCurrencies) {
                         if (cryptoCurrency.getName().toLowerCase().equals(tokenEntity.getName().toLowerCase())) {
                             tokenValue = CommonUtil.getAccountFromWei(tokenCount).multiply(new BigDecimal(cryptoCurrency.getPriceCny()));
+                            holder.tvTokenPrice.setText(String.valueOf(new BigDecimal(cryptoCurrency.getPriceCny()).setScale(2, BigDecimal.ROUND_HALF_UP)));
+                            break;
                         }
                     }
                 }
@@ -419,6 +427,8 @@ public class MainActivity extends BaseActivity
             LinearLayout layoutAssets;
             ImageView ivTokenIcon;
             TextView tvTokenName;
+            TextView tvTokenFullName;
+            TextView tvTokenPrice;
             TextView tvTokenAccount;
             TextView tvTokenApproEqual;
             TextView tvTokenAssetsCount;
@@ -431,6 +441,8 @@ public class MainActivity extends BaseActivity
                 tvTokenAccount = itemView.findViewById(R.id.tv_token_count);
                 tvTokenApproEqual = itemView.findViewById(R.id.tv_token_appro_equal);
                 tvTokenAssetsCount = itemView.findViewById(R.id.tv_token_assets_count);
+                tvTokenFullName = itemView.findViewById(R.id.tv_token_full_name);
+                tvTokenPrice = itemView.findViewById(R.id.tv_token_price);
             }
         }
     }

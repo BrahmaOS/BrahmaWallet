@@ -60,9 +60,15 @@ public class ImageManager {
                     .load(R.drawable.icon_eth)
                     .into(iv);
         } else {
-            Glide.with(Context)
-                    .load(BrahmaConst.IPFS_BASE_URL + BrahmaConst.IPFS_PREFIX + avatar)
-                    .into(iv);
+            try {
+                Glide.with(Context)
+                        .load(Integer.valueOf(avatar))
+                        .into(iv);
+            } catch (Exception e) {
+                Glide.with(Context)
+                        .load(BrahmaConst.IPFS_BASE_URL + BrahmaConst.IPFS_PREFIX + avatar)
+                        .into(iv);
+            }
         }
     }
 

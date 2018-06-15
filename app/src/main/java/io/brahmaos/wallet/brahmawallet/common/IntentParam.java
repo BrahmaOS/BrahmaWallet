@@ -11,4 +11,6 @@ public class IntentParam {
     public static final String PARAM_TOKEN_INFO = "token-info";
     public static final String FLAG_CHANGE_NETWORK = "change-network";
     public static final String FLAG_CHANGE_LANGUAGE = "change-language";
+    public static final String PARAM_CONTACT_ADDRESS = "contact-address";
+    public static final String PARAM_CONTACT_ID = "contact-id";
 }

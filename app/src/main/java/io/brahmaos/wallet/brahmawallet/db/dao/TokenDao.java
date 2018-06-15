@@ -32,13 +32,16 @@ public interface TokenDao {
     @Query("SELECT * FROM tokens")
     LiveData<List<TokenEntity>> loadAllTokens();
 
+    @Query("SELECT * FROM tokens")
+    List<TokenEntity> loadAllTokensSync();
+
     @Insert
     void insertAll(List<TokenEntity> tokens);
 
     @Insert
     void insertToken(TokenEntity token);
 
-    @Query("delete from tokens where address = :address")
+    @Query("delete from tokens where LOWER(address) = LOWER(:address)")
     void deleteToken(String address);
 
     @Query("select * from tokens where id = :tokenId")

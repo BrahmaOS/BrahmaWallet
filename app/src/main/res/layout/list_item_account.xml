@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:paddingTop="@dimen/space_unit"
+    android:paddingTop="@dimen/space_smaller"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -12,8 +12,9 @@
         app:cardElevation="@dimen/space_unit"
         app:cardUseCompatPadding="true"
         app:contentPadding="@dimen/space_normal"
-        android:layout_marginStart="@dimen/space_unit"
-        android:layout_marginEnd="@dimen/space_unit"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:layout_marginStart="@dimen/space_smaller"
+        android:layout_marginEnd="@dimen/space_smaller"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -43,36 +44,74 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/font_size_subheading"
-                        android:textColor="@color/black"/>
+                        android:textColor="@color/color_primary_text"/>
                     <TextView
                         android:id="@+id/tv_account_address"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textColor="@color/color_hint_text"
                         android:layout_marginTop="@dimen/space_unit"/>
                 </LinearLayout>
             </LinearLayout>
             <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_marginTop="@dimen/space_small"
+                android:layout_marginBottom="@dimen/space_smaller"
+                android:layout_height="1px"
+                android:background="@color/horizontal_divider"/>
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_small"
-                android:orientation="horizontal">
+                android:layout_marginStart="56dp">
                 <TextView
                     android:id="@+id/tv_total_assets_desc"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/color_hint_text"
                     android:text="@string/total_assets"/>
+                <TextView
+                    android:id="@+id/left_brackets"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/tv_total_assets_desc"
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/color_hint_text"
+                    android:layout_marginStart="@dimen/space_unit"
+                    android:text="("/>
+                <TextView
+                    android:id="@+id/tv_money_unit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/left_brackets"
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/color_hint_text"
+                    android:text="@string/unit_cny"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingStart="@dimen/space_smaller"
-                    android:paddingEnd="@dimen/space_unit"
+                    android:layout_toEndOf="@id/tv_money_unit"
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/color_hint_text"
+                    android:text=")"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toStartOf="@id/tv_total_assets"
+                    android:layout_marginEnd="@dimen/space_smaller"
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/color_hint_text"
                     android:text="@string/asymptotic"/>
                 <TextView
                     android:id="@+id/tv_total_assets"
+                    android:layout_alignParentEnd="true"
+                    android:textColor="@color/color_primary_text"
+                    android:textSize="@dimen/font_size_subtitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"/>
-            </LinearLayout>
+            </RelativeLayout>
 
         </LinearLayout>
 

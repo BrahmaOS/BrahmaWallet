@@ -2,16 +2,11 @@ package io.brahmaos.wallet.brahmawallet.ui.transfer;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
@@ -51,6 +46,7 @@ import io.brahmaos.wallet.brahmawallet.service.MainService;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.ui.common.barcode.CaptureActivity;
 import io.brahmaos.wallet.brahmawallet.ui.common.barcode.Intents;
+import io.brahmaos.wallet.brahmawallet.ui.contact.ChooseContactActivity;
 import io.brahmaos.wallet.brahmawallet.view.CustomStatusView;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
@@ -87,6 +83,8 @@ public class TransferActivity extends BaseActivity {
     EditText etGasPrice;
     @BindView(R.id.et_gas_limit)
     EditText etGasLimit;
+    @BindView(R.id.iv_contacts)
+    ImageView ivContacts;
 
     private AccountEntity mAccount;
     private TokenEntity mToken;
@@ -173,9 +171,38 @@ public class TransferActivity extends BaseActivity {
 
         etGasPrice.setText(String.valueOf(BrahmaConst.DEFAULT_GAS_PRICE));
         etGasLimit.setText(String.valueOf(BrahmaConst.DEFAULT_GAS_LIMIT));
-        btnShowTransfer.setOnClickListener(v -> {
-            showTransferInfo();
+        btnShowTransfer.setOnClickListener(v -> showTransferInfo());
+        getGasPrice();
+
+        ivContacts.setOnClickListener(v -> {
+            Intent intent = new Intent(TransferActivity.this, ChooseContactActivity.class);
+            startActivityForResult(intent, ReqCode.CHOOSE_TRANSFER_CONTACT);
         });
+    }
+
+    public void getGasPrice() {
+        BrahmaWeb3jService.getInstance()
+                .getGasPrice()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<BigInteger>() {
+                    @Override
+                    public void onNext(BigInteger gasPrice) {
+                        BLog.d(tag(), "the gas price is: " + String.valueOf(gasPrice));
+                        BigDecimal gasPriceGwei = Convert.fromWei(new BigDecimal(gasPrice), Convert.Unit.GWEI);
+                        etGasPrice.setText(String.valueOf(gasPriceGwei));
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onCompleted() {
+
+                    }
+                });
     }
 
     @Override
@@ -217,6 +244,15 @@ public class TransferActivity extends BaseActivity {
                         etReceiverAddress.setText(qrCode);
                     } else {
                         showLongToast(R.string.tip_scan_code_failed);
+                    }
+                }
+            }
+        } else if (requestCode == ReqCode.CHOOSE_TRANSFER_CONTACT) {
+            if (resultCode == RESULT_OK) {
+                if (data != null) {
+                    String address = data.getStringExtra(IntentParam.PARAM_CONTACT_ADDRESS);
+                    if (address != null && address.length() > 0) {
+                        etReceiverAddress.setText(address);
                     }
                 }
             }
@@ -325,7 +361,7 @@ public class TransferActivity extends BaseActivity {
             return;
         }
 
-        BigInteger gasPrice = new BigInteger(gasPriceStr);
+        BigDecimal gasPrice = new BigDecimal(gasPriceStr);
         BigInteger gasLimit = new BigInteger(gasLimitStr);
 
         final BottomSheetDialog transferInfoDialog = new BottomSheetDialog(this);
@@ -350,7 +386,7 @@ public class TransferActivity extends BaseActivity {
         TextView tvGasLimit = view.findViewById(R.id.tv_gas_limit);
         tvGasLimit.setText(gasLimitStr);
         TextView tvGasValue = view.findViewById(R.id.tv_gas_value);
-        BigDecimal gasValue = Convert.fromWei(Convert.toWei(new BigDecimal(gasLimit.multiply(gasPrice)), Convert.Unit.GWEI), Convert.Unit.ETHER);
+        BigDecimal gasValue = Convert.fromWei(Convert.toWei(new BigDecimal(gasLimit).multiply(gasPrice), Convert.Unit.GWEI), Convert.Unit.ETHER);
         tvGasValue.setText(gasValue.setScale(9, BigDecimal.ROUND_HALF_UP).toString());
 
         TextView tvTransferAmount = view.findViewById(R.id.tv_dialog_transfer_amount);

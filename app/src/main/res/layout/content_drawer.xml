@@ -77,23 +77,46 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginTop="@dimen/space_smaller">
-                        <TextView
-                            android:id="@+id/tv_title_assets"
+                        <LinearLayout
+                            android:id="@+id/layout_title_assets"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerHorizontal="true"
                             android:layout_centerVertical="true"
-                            android:textAlignment="center"
-                            android:textSize="@dimen/font_size_subheading"
-                            android:textColor="@color/white"
-                            android:text="@string/total_assets"/>
+                            android:orientation="horizontal">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAlignment="center"
+                                android:textSize="@dimen/font_size_subheading"
+                                android:textColor="@color/white"
+                                android:text="@string/total_assets"/>
+                            <TextView
+                                android:id="@+id/left_brackets"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/space_unit"
+                                android:textColor="@color/white"
+                                android:text="("/>
+                            <TextView
+                                android:id="@+id/tv_money_unit"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/white"
+                                android:text="@string/unit_cny"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/white"
+                                android:text=")"/>
+                        </LinearLayout>
                         <TextView
                             android:id="@+id/tv_test_network"
-                            android:layout_toEndOf="@id/tv_title_assets"
+                            android:layout_toEndOf="@id/layout_title_assets"
                             android:layout_marginStart="@dimen/space_smaller"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignBottom="@id/tv_title_assets"
+                            android:layout_alignBottom="@id/layout_title_assets"
                             android:background="@drawable/test_network_bg"
                             android:textSize="@dimen/font_size_test_network"
                             android:paddingTop="2dp"

@@ -109,11 +109,24 @@
                         android:text="@string/action_agree"/>
                     <TextView
                         android:clickable="true"
-                        android:id="@+id/protocol_tv"
+                        android:id="@+id/service_tv"
                         android:textColor="@color/master"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/project_protocol"/>
+                        android:text="@string/service_agreement"
+                        android:focusable="true" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/protocol_and"/>
+                    <TextView
+                        android:clickable="true"
+                        android:id="@+id/privacy_policy_tv"
+                        android:textColor="@color/master"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/privacy_policy"
+                        android:focusable="true" />
                 </LinearLayout>
 
                 <Button

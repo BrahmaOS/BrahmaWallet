@@ -65,21 +65,6 @@ public class SettingFragment extends PreferenceFragment {
             startActivity(intent);
             return true;
         });
-
-        /*findPreference("three").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                Toast.makeText(getActivity(), "再点一下试试", Toast.LENGTH_SHORT).show();
-                return true;
-            }
-        });
-        findPreference("four").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                Toast.makeText(getActivity(), "试试就试试", Toast.LENGTH_SHORT).show();
-                return true;
-            }
-        });*/
     }
 
     /**

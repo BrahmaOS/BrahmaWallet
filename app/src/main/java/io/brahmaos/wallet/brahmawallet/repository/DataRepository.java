@@ -11,6 +11,7 @@ import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.db.database.WalletDatabase;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.AllTokenEntity;
+import io.brahmaos.wallet.brahmawallet.db.entity.ContactEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 import io.brahmaos.wallet.util.BLog;
 import rx.Completable;
@@ -101,6 +102,10 @@ public class DataRepository {
         return mObservableTokens;
     }
 
+    public List<TokenEntity> queryChosenTokensSync() {
+        return mDatabase.tokenDao().loadAllTokensSync();
+    }
+
     public LiveData<TokenEntity> loadToken(final int tokenId) {
         return mDatabase.tokenDao().loadToken(tokenId);
     }
@@ -150,4 +155,27 @@ public class DataRepository {
         mDatabase.allTokenDao().updateTokenShowFlag(allTokenEntity.getAddress(),
                 BrahmaConst.DEFAULT_TOKEN_HIDE_FLAG);
     }
+
+    public LiveData<List<ContactEntity>> loadAllContact() {
+        return mDatabase.contactDao().loadAllContacts();
+    }
+
+    public void insertContact(ContactEntity contact) {
+        mDatabase.contactDao().insertContact(contact);
+    }
+
+    public void deleteContact(int contactId) {
+        mDatabase.contactDao().deleteContact(contactId);
+    }
+
+    public LiveData<ContactEntity> getContactById(int contactId) {
+        return mDatabase.contactDao().loadContact(contactId);
+    }
+
+    public void updateContact(int contactId, ContactEntity contact) {
+        mDatabase.contactDao().changeContact(contactId, contact.getFamilyName(),
+                contact.getName(), contact.getAddress(), contact.getAvatar(),
+                contact.getRemark());
+    }
+
 }
