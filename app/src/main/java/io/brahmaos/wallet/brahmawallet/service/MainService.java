@@ -11,6 +11,7 @@ import io.brahmaos.wallet.brahmawallet.WalletApp;
 import io.brahmaos.wallet.brahmawallet.api.Networks;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
+import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.AllTokenEntity;
 import io.brahmaos.wallet.brahmawallet.model.AccountAssets;
 import io.brahmaos.wallet.brahmawallet.model.CryptoCurrency;
@@ -41,6 +42,7 @@ public class MainService extends BaseService{
 
     private List<CryptoCurrency> cryptoCurrencies = new ArrayList<>();
     private List<AccountAssets> accountAssetsList = new ArrayList<>();
+    private AccountEntity newMnemonicAccount = new AccountEntity();
 
     public List<CryptoCurrency> getCryptoCurrencies() {
         return cryptoCurrencies;
@@ -56,6 +58,14 @@ public class MainService extends BaseService{
 
     public void setAccountAssetsList(List<AccountAssets> accountAssetsList) {
         this.accountAssetsList = accountAssetsList;
+    }
+
+    public AccountEntity getNewMnemonicAccount() {
+        return newMnemonicAccount;
+    }
+
+    public void setNewMnemonicAccount(AccountEntity newMnemonicAccount) {
+        this.newMnemonicAccount = newMnemonicAccount;
     }
 
     public void loadCryptoCurrencies(List<CryptoCurrency> currencies) {

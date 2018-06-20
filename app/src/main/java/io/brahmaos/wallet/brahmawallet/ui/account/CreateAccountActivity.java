@@ -166,7 +166,7 @@ public class CreateAccountActivity extends BaseActivity {
         customProgressDialog.setCancelable(false);
         customProgressDialog.show();
         try {
-            mViewModel.createAccount(name, password)
+            mViewModel.createAccountWithMnemonic(name, password)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(() -> {

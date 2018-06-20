@@ -23,6 +23,7 @@
     <string name="action_add">Add</string>
     <string name="action_edit">Edit</string>
     <string name="action_delete">Delete</string>
+    <string name="action_finish">Finish</string>
 
     <!-- Drawer menu -->
     <string name="nav_menu_other">Other</string>
@@ -109,8 +110,11 @@
     <string name="error_import_private_key">Import account error! please check private key!</string>
     <string name="error_keystore">Error keystore!</string>
     <string name="error_private_key">Error private key!</string>
+    <string name="error_mnemonics">Error mnemonics!</string>
+    <string name="error_mnemonics_length">Wrong numbers of mnemonics!</string>
 
     <string name="title_tab_import_keystore">Official</string>
+    <string name="title_tab_import_mnemonic">Mnemonic</string>
     <string name="title_tab_import_private_key">Private Key</string>
 
     <!-- menu list -->
@@ -121,6 +125,7 @@
 
     <string name="title_activity_import_account">Import Account</string>
     <string name="import_official_editor_hint">keystore content</string>
+    <string name="import_mnemonics_hint">Please use space to separate mnemonic words.</string>
     <string name="import_private_key_hint">private key</string>
     <string name="action_save">save</string>
 
@@ -128,8 +133,6 @@
     <string name="title_tokens">Tokens</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_account_detail">AccountDetailActivity</string>
@@ -165,7 +168,6 @@
     <string name="tip_error_transfer">Transfer failed!</string>
     <string name="prompt_total_gas">0.000400000 ETH</string>
     <string name="prompt_total_gas_desc">≈ Gas (20000) * Gas Price(20gwei)</string>
-    <string name="title_activity_test_login">Sign in</string>
     <string name="action_go_settings">Go Settings</string>
     <string name="tip_camera_permission">You have not authorized the camera yet. Please go to the settings page.</string>
 
@@ -175,8 +177,6 @@
 
     <!-- Strings related to Settings -->
     <string name="title_setting">Settings</string>
-    <!-- Example General settings -->
-    <string name="pref_header_general">General</string>
 
     <string name="pref_title_net_list">Network</string>
     <string-array name="pref_net_list_titles">
@@ -300,10 +300,21 @@
         You need to double check the account is being backup properly in case of any assets loss.
     </string>
     <string name="desc_backup_account_three">
-        We suggest you backup keystore, then test with tiny ethers until you feel confidence.
+        We recommend that you immediately back up the mnemonic. We will not store your mnemonics, so if you do not back it up, you will not be able to back up the mnemonic the next time you enter the account, but you can still back up account using the keystore file or private key.
     </string>
     <string name="btn_backup_now">Backup Now</string>
-    <string name="title_activity_about">AboutActivity</string>
+    <string name="title_activity_about">About Us</string>
+    <string name="title_backup_mnemonic">Backup Mnemonics</string>
+    <string name="desc_backup_mnemonic_one">Please write down your mnemonics in the correct order and keep it in a secure location.</string>
+    <string name="desc_backup_mnemonic_two">On the next screen you will be asked to re-enter it in order to ensure accuracy.</string>
+    <string name="backup_mnemonic_warning">WARNING: Don\'t screenshot.</string>
+    <string name="title_confirm_mnemonic">Confirm Mnemonics</string>
+    <string name="desc_confirm_mnemonic">Please enter mnemonics to ensure you have an exact copy.</string>
+    <string name="tip_confirm_mnemonic">Please use space to separate mnemonic words.</string>
+    <string name="prompt_account_mnemonic">Mnemonic words.</string>
+    <string name="success_enter_mnemonic">Success!</string>
+    <string name="tip_backup_mnemonic">Keep your written copy private in a secure and safe location. This is a key, should you ever need to restore your account.</string>
+    <string name="backup_success">Backup Success</string>
 
     <!-- string about us -->
     <string name="title_about_us">About</string>

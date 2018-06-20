@@ -27,7 +27,7 @@ import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 
 @Dao
 public interface AccountDao {
-    @Query("SELECT * FROM accounts")
+    @Query("SELECT * FROM accounts order by id desc")
     LiveData<List<AccountEntity>> loadAllAccounts();
 
     @Insert

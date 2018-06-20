@@ -108,8 +108,9 @@ public class ImportAccountActivity extends BaseActivity {
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-        final int PAGE_COUNT = 2;
+        final int PAGE_COUNT = 3;
         private String tabTitles[] = new String[]{getString(R.string.title_tab_import_keystore),
+                getString(R.string.title_tab_import_mnemonic),
                 getString(R.string.title_tab_import_private_key)};
         private Fragment mCurrentFragment;
         private Context context;
@@ -124,6 +125,8 @@ public class ImportAccountActivity extends BaseActivity {
             // getItem is called to instantiate the fragment for the given page.
             if (position == 0) {
                 return ImportOfficialFragment.newInstance(position + 1);
+            } else if (position == 1) {
+                return ImportMnemonicsFragment.newInstance(position + 1);
             } else {
                 return ImportPrivateKeyFragment.newInstance(position + 1);
             }

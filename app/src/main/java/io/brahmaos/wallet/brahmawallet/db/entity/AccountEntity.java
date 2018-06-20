@@ -21,6 +21,7 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
 import java.io.Serializable;
+import java.util.List;
 
 import io.brahmaos.wallet.brahmawallet.model.Account;
 
@@ -31,6 +32,8 @@ public class AccountEntity implements Account, Serializable {
     private String name;
     private String address;
     private String filename;
+    @Ignore
+    List<String> mnemonics;
 
     @Override
     public int getId() {
@@ -68,6 +71,14 @@ public class AccountEntity implements Account, Serializable {
         this.filename = filename;
     }
 
+    public List<String> getMnemonics() {
+        return mnemonics;
+    }
+
+    public void setMnemonics(List<String> mnemonics) {
+        this.mnemonics = mnemonics;
+    }
+
     public AccountEntity() {
     }
 
@@ -94,6 +105,7 @@ public class AccountEntity implements Account, Serializable {
                 ", name='" + name + '\'' +
                 ", address='" + address + '\'' +
                 ", filename='" + filename + '\'' +
+                ", mnemonics=" + mnemonics +
                 '}';
     }
 }
