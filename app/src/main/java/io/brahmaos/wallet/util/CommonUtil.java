@@ -8,6 +8,10 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
 
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
+import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
+import io.brahmaos.wallet.brahmawallet.model.CryptoCurrency;
+
 public class CommonUtil {
     public static int MNEMONIC_WORD_LENGTH = 12;
 
@@ -79,5 +83,16 @@ public class CommonUtil {
     public static boolean isValidMnemonics(String mnemonics) {
         String[] mnemonicList = mnemonics.split(" ");
         return mnemonicList.length == MNEMONIC_WORD_LENGTH;
+    }
+
+    public static boolean cryptoCurrencyCompareToken(CryptoCurrency cryptoCurrency, TokenEntity token) {
+        if (cryptoCurrency.getName().toLowerCase().equals(BrahmaConst.ETHEREUM) &&
+                token.getName().toLowerCase().equals(BrahmaConst.ETHEREUM)) {
+            return true;
+        } else if (cryptoCurrency.getTokenAddress().toLowerCase().equals(token.getAddress().toLowerCase())) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

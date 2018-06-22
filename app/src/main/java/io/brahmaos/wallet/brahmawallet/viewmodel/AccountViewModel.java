@@ -79,7 +79,6 @@ public class AccountViewModel extends AndroidViewModel {
     private final MediatorLiveData<List<TokenEntity>> mObservableTokens;
     private final MediatorLiveData<List<AccountAssets>> mObservableAssets;
     private List<AccountAssets> assetsList = new ArrayList<>();
-    private final MediatorLiveData<List<CryptoCurrency>> mObservableCryptoCurrencies;
 
     public AccountViewModel(Application application) {
         super(application);
@@ -87,17 +86,16 @@ public class AccountViewModel extends AndroidViewModel {
         mObservableAccounts = new MediatorLiveData<>();
         mObservableTokens = new MediatorLiveData<>();
         mObservableAssets = new MediatorLiveData<>();
-        mObservableCryptoCurrencies = new MediatorLiveData<>();
         // set by default null, until we get data from the database.
         mObservableAccounts.setValue(null);
         mObservableTokens.setValue(null);
         mObservableAssets.setValue(null);
-        mObservableCryptoCurrencies.setValue(new ArrayList<>());
 
         LiveData<List<AccountEntity>> accounts = ((WalletApp) application).getRepository()
                 .getAccounts();
 
         // observe the changes of the accounts from the database and forward them
+        // When accounts change, reacquire the total assets.
         mObservableAccounts.addSource(accounts, value -> {
             BLog.i("view model", "get account list");
             mObservableAccounts.setValue(value);
@@ -110,12 +108,6 @@ public class AccountViewModel extends AndroidViewModel {
      */
     public LiveData<List<AccountEntity>> getAccounts() {
         return mObservableAccounts;
-    }
-
-    public Completable createAccount(AccountEntity account) {
-        return Completable.fromAction(() -> {
-            ((WalletApp) getApplication()).getRepository().createAccount(account);
-        });
     }
 
     public Completable createAccount(String name, String password) {
@@ -187,7 +179,7 @@ public class AccountViewModel extends AndroidViewModel {
     public Observable<Boolean> importAccount(WalletFile walletFile, String password, String name) {
         return Observable.create(e -> {
             try {
-                BLog.e("view model", "Observable thread is : " + Thread.currentThread().getName());
+                BLog.d("view model", "Observable thread is : " + Thread.currentThread().getName());
                 if (BrahmaWeb3jService.getInstance().isValidKeystore(walletFile, password)) {
                     // save keystore in local system
                     SimpleDateFormat dateFormat = new SimpleDateFormat("'UTC--'yyyy-MM-dd'T'HH-mm-ss.SSS'--'");
@@ -333,7 +325,8 @@ public class AccountViewModel extends AndroidViewModel {
             LiveData<List<TokenEntity>> tokens = ((WalletApp) getApplication()).getRepository()
                     .getTokens();
 
-            // observe the changes of the accounts from the database and forward them
+            // observe the changes of the tokens from the database and forward them
+            // When tokens change, reacquire the total assets.
             mObservableTokens.addSource(tokens, new android.arch.lifecycle.Observer<List<TokenEntity>>() {
                 @Override
                 public void onChanged(@Nullable List<TokenEntity> value) {
@@ -475,65 +468,6 @@ public class AccountViewModel extends AndroidViewModel {
         }
     }
 
-    public LiveData<List<CryptoCurrency>> getCryptoCurrencies() {
-        if (mObservableCryptoCurrencies.getValue() == null ||
-                mObservableCryptoCurrencies.getValue().size() == 0) {
-            fetchCurrenciesFromNet();
-        }
-        return mObservableCryptoCurrencies;
-    }
-
-    public void fetchCurrenciesFromNet() {
-        Networks.getInstance().getMarketApi()
-                .getCryptoCurrencies(BrahmaConst.DEFAULT_CURRENCY_START,
-                        BrahmaConst.DEFAULT_CURRENCY_LIMIT, BrahmaConst.UNIT_PRICE_CNY)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<List<CryptoCurrency>>() {
-
-                    @Override
-                    public void onCompleted() {
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        mObservableCryptoCurrencies.postValue(null);
-                    }
-
-                    @Override
-                    public void onNext(List<CryptoCurrency> apiRespResult) {
-                        // set the local params
-                        MainService.getInstance().loadCryptoCurrencies(apiRespResult);
-                        mObservableCryptoCurrencies.postValue(MainService.getInstance().getCryptoCurrencies());
-                    }
-                });
-
-        Networks.getInstance().getMarketApi()
-                .getCryptoCurrency(BrahmaConst.BRAHMAOS_TOKEN, BrahmaConst.UNIT_PRICE_CNY)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<List<CryptoCurrency>>() {
-
-                    @Override
-                    public void onCompleted() {
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        mObservableCryptoCurrencies.postValue(null);
-                    }
-
-                    @Override
-                    public void onNext(List<CryptoCurrency> apiRespResult) {
-                        // set the local params
-                        MainService.getInstance().loadCryptoCurrencies(apiRespResult);
-                        mObservableCryptoCurrencies.postValue(MainService.getInstance().getCryptoCurrencies());
-                    }
-                });
-    }
-
     public Completable changeAccountName(int accountId, String newName) {
         return Completable.fromAction(() -> ((WalletApp) getApplication()).getRepository().changeAccountName(accountId, newName));
     }
@@ -610,5 +544,9 @@ public class AccountViewModel extends AndroidViewModel {
             e.onNext(allChosenTokens);
             e.onCompleted();
         });
+    }
+
+    public LiveData<Integer> getAllTokensCount() {
+        return ((WalletApp) getApplication()).getRepository().getAllTokensCount();
     }
 }

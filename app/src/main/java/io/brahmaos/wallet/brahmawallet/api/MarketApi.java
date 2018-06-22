@@ -16,10 +16,14 @@ public interface MarketApi {
     /**
      * Get the currency of tokens
      */
-    @GET("/v1/ticker/")
-    Observable<List<CryptoCurrency>> getCryptoCurrencies(@Query("start") int start,
-                                                         @Query("limit") int limit,
-                                                         @Query("convert") String convertFormat);
+    @GET("/v1/eth/tokens/quotes/latest")
+    Observable<ApiRespResult> getCryptoCurrencies(@Query("symbols") String symbols);
+
+    /**
+     * Get all tokens
+     */
+    @GET("/assets/erc20-tokens.json")
+    Observable<List<List<Object>>> getAllTokens();
 
     /**
      * Get the currency of the specified tokens

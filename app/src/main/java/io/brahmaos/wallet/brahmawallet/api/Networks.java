@@ -50,9 +50,7 @@ public class Networks {
     }
 
     /**
-     * 服务初始化
-     *
-     * @return true 表示初始化成功，false 为初始化失败
+     * http cline init
      */
     public boolean init(Context ctx) {
         context = ctx;

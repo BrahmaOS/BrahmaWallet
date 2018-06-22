@@ -23,6 +23,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.web3j.protocol.ObjectMapperFactory;
+
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
@@ -32,6 +38,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
+import io.brahmaos.wallet.brahmawallet.api.ApiConst;
+import io.brahmaos.wallet.brahmawallet.api.ApiRespResult;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
@@ -53,6 +61,9 @@ import io.brahmaos.wallet.brahmawallet.ui.transfer.TransferActivity;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 
 public class MainActivity extends BaseActivity
@@ -117,9 +128,7 @@ public class MainActivity extends BaseActivity
             // get the latest assets
             mViewModel.getTotalAssets();
             // get Currencies
-            if (cacheCryptoCurrencies == null || cacheCryptoCurrencies.size() == 0) {
-                mViewModel.fetchCurrenciesFromNet();
-            }
+            getCryptoCurrents();
         });
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -171,8 +180,11 @@ public class MainActivity extends BaseActivity
     }
 
     private void initData() {
-        MainService.getInstance().getTokenList();
-
+        mViewModel.getAllTokensCount().observe(this, count -> {
+            if (count == null || count <= 0) {
+                MainService.getInstance().getTokenListByIPFS();
+            }
+        });
         mViewModel.getAccounts().observe(this, accountEntities -> {
             cacheAccounts = accountEntities;
             checkContentShow();
@@ -184,6 +196,8 @@ public class MainActivity extends BaseActivity
                 tvTokenCategories.setText(String.valueOf(tokenEntities.size()));
                 cacheTokens = tokenEntities;
                 recyclerViewAssets.getAdapter().notifyDataSetChanged();
+                // fetch crypto currents
+                getCryptoCurrents();
             }
         });
 
@@ -192,18 +206,6 @@ public class MainActivity extends BaseActivity
             if (accountAssets != null) {
                 cacheAssets = accountAssets;
                 showAssetsCurrency();
-            }
-        });
-
-        mViewModel.getCryptoCurrencies().observe(this, (List<CryptoCurrency> cryptoCurrencies) -> {
-            BLog.i(tag(), "get crypto currencies");
-            if (cryptoCurrencies != null && cryptoCurrencies.size() > 0) {
-                cacheCryptoCurrencies = cryptoCurrencies;
-                showAssetsCurrency();
-                recyclerViewAssets.getAdapter().notifyDataSetChanged();
-            } else if (cryptoCurrencies == null) {
-                swipeRefreshLayout.setRefreshing(false);
-                showLongToast(R.string.error_network);
             }
         });
     }
@@ -288,6 +290,40 @@ public class MainActivity extends BaseActivity
         return true;
     }
 
+    private void getCryptoCurrents() {
+        String symbols;
+        if (cacheTokens != null && cacheTokens.size() > 0) {
+            StringBuilder stringBuilder = new StringBuilder();
+            for (TokenEntity token : cacheTokens) {
+                stringBuilder.append(token.getShortName()).append(",");
+            }
+            symbols = stringBuilder.toString();
+        } else {
+            symbols = "ETH,BRM";
+        }
+        MainService.getInstance().fetchCurrenciesFromNet(symbols)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<List<CryptoCurrency>>() {
+
+                    @Override
+                    public void onCompleted() {
+                        cacheCryptoCurrencies = MainService.getInstance().getCryptoCurrencies();
+                        showAssetsCurrency();
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        throwable.printStackTrace();
+                    }
+
+                    @Override
+                    public void onNext(List<CryptoCurrency> apr) {
+
+                    }
+                });
+    }
+
     /**
      *  if account's length > 0, show the total assets;
      *  else show the create account.
@@ -316,8 +352,7 @@ public class MainActivity extends BaseActivity
             for (AccountAssets accountAssets : cacheAssets) {
                 if (accountAssets.getBalance().compareTo(BigInteger.ZERO) > 0 && cacheCryptoCurrencies != null) {
                     for (CryptoCurrency cryptoCurrency : cacheCryptoCurrencies) {
-                        if (cryptoCurrency.getName().toLowerCase()
-                                .equals(accountAssets.getTokenEntity().getName().toLowerCase())) {
+                        if (CommonUtil.cryptoCurrencyCompareToken(cryptoCurrency, accountAssets.getTokenEntity())) {
                             BigDecimal value = new BigDecimal(cryptoCurrency.getPriceCny())
                                     .multiply(CommonUtil.getAccountFromWei(accountAssets.getBalance()));
                             totalValue = totalValue.add(value);
@@ -403,7 +438,7 @@ public class MainActivity extends BaseActivity
                 BigDecimal tokenValue = BigDecimal.ZERO;
                 if (cacheCryptoCurrencies != null && cacheCryptoCurrencies.size() > 0) {
                     for (CryptoCurrency cryptoCurrency : cacheCryptoCurrencies) {
-                        if (cryptoCurrency.getName().toLowerCase().equals(tokenEntity.getName().toLowerCase())) {
+                        if (CommonUtil.cryptoCurrencyCompareToken(cryptoCurrency, tokenEntity)) {
                             tokenValue = CommonUtil.getAccountFromWei(tokenCount).multiply(new BigDecimal(cryptoCurrency.getPriceCny()));
                             holder.tvTokenPrice.setText(String.valueOf(new BigDecimal(cryptoCurrency.getPriceCny()).setScale(2, BigDecimal.ROUND_HALF_UP)));
                             break;

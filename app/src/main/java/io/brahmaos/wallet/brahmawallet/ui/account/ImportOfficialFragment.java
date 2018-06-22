@@ -54,7 +54,6 @@ public class ImportOfficialFragment extends Fragment {
     private EditText etKeystore;
     private EditText etAccountName;
     private EditText etPassword;
-    private EditText etRepeatPassword;
     private Button btnImportAccount;
     private CheckBox checkBoxReadProtocol;
     private CustomProgressDialog customProgressDialog;
@@ -109,7 +108,6 @@ public class ImportOfficialFragment extends Fragment {
         etKeystore = parentView.findViewById(R.id.et_official_json);
         etAccountName = parentView.findViewById(R.id.et_account_name);
         etPassword = parentView.findViewById(R.id.et_password);
-        etRepeatPassword = parentView.findViewById(R.id.et_repeat_password);
         btnImportAccount = parentView.findViewById(R.id.btn_import_keystore);
         checkBoxReadProtocol= parentView.findViewById(R.id.checkbox_read_protocol);
         checkBoxReadProtocol.setOnCheckedChangeListener((buttonView, isChecked) -> btnImportAccount.setEnabled(isChecked));
@@ -133,13 +131,11 @@ public class ImportOfficialFragment extends Fragment {
         // Reset errors.
         etAccountName.setError(null);
         etPassword.setError(null);
-        etRepeatPassword.setError(null);
 
         // Store values at the time of the create account.
         String officialKeystore = CommonUtil.parseAccountContent(etKeystore.getText().toString().trim());
         String name = etAccountName.getText().toString().trim();
         String password = etPassword.getText().toString();
-        String repeatPassword = etRepeatPassword.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -169,13 +165,6 @@ public class ImportOfficialFragment extends Fragment {
                 etAccountName.setError(getString(R.string.error_incorrect_name));
                 focusView = etAccountName;
             }
-        }
-
-        // Check for a valid password, if the user entered one.
-        if (!cancel && !password.equals(repeatPassword)) {
-            etPassword.setError(getString(R.string.error_incorrect_password));
-            focusView = etPassword;
-            cancel = true;
         }
 
         if (cancel) {

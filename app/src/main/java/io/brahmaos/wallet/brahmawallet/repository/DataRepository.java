@@ -156,6 +156,10 @@ public class DataRepository {
                 BrahmaConst.DEFAULT_TOKEN_HIDE_FLAG);
     }
 
+    public LiveData<Integer> getAllTokensCount() {
+        return mDatabase.allTokenDao().getAllTokensCount();
+    }
+
     public LiveData<List<ContactEntity>> loadAllContact() {
         return mDatabase.contactDao().loadAllContacts();
     }

@@ -66,23 +66,6 @@
 
             </android.support.design.widget.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:theme="@style/customEditTextLineColor"
-                app:hintTextAppearance="@style/customEditTextHint">
-
-                <EditText
-                    android:id="@+id/et_repeat_password"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/prompt_repeat_password"
-                    android:textSize="@dimen/font_size_subheading"
-                    android:inputType="textPassword"
-                    android:singleLine="true"/>
-
-            </android.support.design.widget.TextInputLayout>
-
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

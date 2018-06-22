@@ -17,17 +17,10 @@
 package io.brahmaos.wallet.brahmawallet;
 
 import android.app.Application;
-import android.content.Context;
-import android.content.res.Configuration;
-import android.content.res.Resources;
-import android.os.Build;
-
-import java.util.Locale;
 
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.db.database.WalletDatabase;
 import io.brahmaos.wallet.brahmawallet.repository.DataRepository;
-import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
 import io.brahmaos.wallet.brahmawallet.service.MainService;
 
 /**
