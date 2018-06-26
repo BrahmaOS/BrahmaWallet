@@ -9,7 +9,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 27
         versionCode 3
-        versionName "Venus (v0.3)"
+        versionName "Earth (v0.4)"
         multiDexEnabled true
 
         buildConfigField("String", "MARKET_API_URL", "\"${MARKET_API_URL}\"")

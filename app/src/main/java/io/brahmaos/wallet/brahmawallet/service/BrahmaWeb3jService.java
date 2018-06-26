@@ -72,7 +72,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class BrahmaWeb3jService extends BaseService{
-    private static final int SLEEP_DURATION = 10000;
+    private static final int SLEEP_DURATION = 5000;
     private static final int ATTEMPTS = 40;
 
     @Override

@@ -432,19 +432,19 @@ public class MainActivity extends BaseActivity
                     tokenCount = tokenCount.add(accountAssets.getBalance());
                 }
             }
+            BigDecimal tokenValue = BigDecimal.ZERO;
+            if (cacheCryptoCurrencies != null && cacheCryptoCurrencies.size() > 0) {
+                for (CryptoCurrency cryptoCurrency : cacheCryptoCurrencies) {
+                    if (CommonUtil.cryptoCurrencyCompareToken(cryptoCurrency, tokenEntity)) {
+                        tokenValue = CommonUtil.getAccountFromWei(tokenCount).multiply(new BigDecimal(cryptoCurrency.getPriceCny()));
+                        holder.tvTokenPrice.setText(String.valueOf(new BigDecimal(cryptoCurrency.getPriceCny()).setScale(2, BigDecimal.ROUND_HALF_UP)));
+                        break;
+                    }
+                }
+            }
             if (BrahmaConfig.getInstance().isAssetsVisible()) {
                 holder.tvTokenApproEqual.setText(R.string.asymptotic);
                 holder.tvTokenAccount.setText(String.valueOf(CommonUtil.getAccountFromWei(tokenCount)));
-                BigDecimal tokenValue = BigDecimal.ZERO;
-                if (cacheCryptoCurrencies != null && cacheCryptoCurrencies.size() > 0) {
-                    for (CryptoCurrency cryptoCurrency : cacheCryptoCurrencies) {
-                        if (CommonUtil.cryptoCurrencyCompareToken(cryptoCurrency, tokenEntity)) {
-                            tokenValue = CommonUtil.getAccountFromWei(tokenCount).multiply(new BigDecimal(cryptoCurrency.getPriceCny()));
-                            holder.tvTokenPrice.setText(String.valueOf(new BigDecimal(cryptoCurrency.getPriceCny()).setScale(2, BigDecimal.ROUND_HALF_UP)));
-                            break;
-                        }
-                    }
-                }
                 holder.tvTokenAssetsCount.setText(String.valueOf(tokenValue.setScale(2, BigDecimal.ROUND_HALF_UP)));
             } else {
                 holder.tvTokenApproEqual.setText("");
