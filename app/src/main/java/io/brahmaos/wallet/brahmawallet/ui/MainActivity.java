@@ -41,6 +41,7 @@ import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.api.ApiConst;
 import io.brahmaos.wallet.brahmawallet.api.ApiRespResult;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
@@ -83,6 +84,8 @@ public class MainActivity extends BaseActivity
     TextView tvApproEqual;
     @BindView(R.id.tv_test_network)
     TextView tvTestNetwork;
+    @BindView(R.id.tv_money_unit)
+    TextView tvCurrencyUnit;
     @BindView(R.id.tv_total_assets)
     TextView tvTotalAssets;
     @BindView(R.id.iv_assets_visibility)
@@ -138,6 +141,8 @@ public class MainActivity extends BaseActivity
         // Solve the sliding lag problem
         recyclerViewAssets.setHasFixedSize(true);
         recyclerViewAssets.setNestedScrollingEnabled(false);
+
+        tvCurrencyUnit.setText(BrahmaConfig.getInstance().getCurrencyUnit());
 
         ImageView ivChooseToken = findViewById(R.id.iv_choose_token);
         ivChooseToken.setOnClickListener(v -> {
@@ -222,6 +227,7 @@ public class MainActivity extends BaseActivity
         BLog.e(tag(), "onNewIntent");
         boolean changeNetworkFlag = intent.getBooleanExtra(IntentParam.FLAG_CHANGE_NETWORK, false);
         boolean changeLanguageFlag = intent.getBooleanExtra(IntentParam.FLAG_CHANGE_LANGUAGE, false);
+        boolean changeCurrencyUnit = intent.getBooleanExtra(IntentParam.FLAG_CHANGE_CURRENCY_UNIT, false);
         // change network type
         if (changeNetworkFlag) {
             MainService.getInstance().setAccountAssetsList(new ArrayList<>());
@@ -233,6 +239,12 @@ public class MainActivity extends BaseActivity
         // change language; if change language, then recreate the activity to reload the resource.
         if (changeLanguageFlag) {
             this.recreate();
+        }
+        // change currency unit
+        if (changeCurrencyUnit) {
+            tvCurrencyUnit.setText(BrahmaConfig.getInstance().getCurrencyUnit());
+            showAssetsCurrency();
+            recyclerViewAssets.getAdapter().notifyDataSetChanged();
         }
     }
 
@@ -353,7 +365,11 @@ public class MainActivity extends BaseActivity
                 if (accountAssets.getBalance().compareTo(BigInteger.ZERO) > 0 && cacheCryptoCurrencies != null) {
                     for (CryptoCurrency cryptoCurrency : cacheCryptoCurrencies) {
                         if (CommonUtil.cryptoCurrencyCompareToken(cryptoCurrency, accountAssets.getTokenEntity())) {
-                            BigDecimal value = new BigDecimal(cryptoCurrency.getPriceCny())
+                            double tokenPrice = cryptoCurrency.getPriceCny();
+                            if (BrahmaConfig.getInstance().getCurrencyUnit().equals(BrahmaConst.UNIT_PRICE_USD)) {
+                                tokenPrice = cryptoCurrency.getPriceUsd();
+                            }
+                            BigDecimal value = new BigDecimal(tokenPrice)
                                     .multiply(CommonUtil.getAccountFromWei(accountAssets.getBalance()));
                             totalValue = totalValue.add(value);
                             break;
@@ -436,8 +452,12 @@ public class MainActivity extends BaseActivity
             if (cacheCryptoCurrencies != null && cacheCryptoCurrencies.size() > 0) {
                 for (CryptoCurrency cryptoCurrency : cacheCryptoCurrencies) {
                     if (CommonUtil.cryptoCurrencyCompareToken(cryptoCurrency, tokenEntity)) {
-                        tokenValue = CommonUtil.getAccountFromWei(tokenCount).multiply(new BigDecimal(cryptoCurrency.getPriceCny()));
-                        holder.tvTokenPrice.setText(String.valueOf(new BigDecimal(cryptoCurrency.getPriceCny()).setScale(2, BigDecimal.ROUND_HALF_UP)));
+                        double tokenPrice = cryptoCurrency.getPriceCny();
+                        if (BrahmaConfig.getInstance().getCurrencyUnit().equals(BrahmaConst.UNIT_PRICE_USD)) {
+                            tokenPrice = cryptoCurrency.getPriceUsd();
+                        }
+                        tokenValue = CommonUtil.getAccountFromWei(tokenCount).multiply(new BigDecimal(tokenPrice));
+                        holder.tvTokenPrice.setText(String.valueOf(new BigDecimal(tokenPrice).setScale(3, BigDecimal.ROUND_HALF_UP)));
                         break;
                     }
                 }

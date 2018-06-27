@@ -16,8 +16,6 @@ public class BrahmaConst {
     public static final int DEFAULT_TOKEN_SHOW_FLAG = 1;
     public static final int DEFAULT_TOKEN_HIDE_FLAG = 0;
 
-    public static final int DEFAULT_CURRENCY_START = 0;
-    public static final int DEFAULT_CURRENCY_LIMIT = 20;
     public static final String UNIT_PRICE_CNY = "CNY";
     public static final String UNIT_PRICE_USD = "USD";
 

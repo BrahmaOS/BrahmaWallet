@@ -37,11 +37,11 @@ public class BrahmaConfig {
     private boolean firstOpenAppFlag = true;
     private String networkUrl;
     private String languageLocale;
+    private String currencyUnit;
     private boolean assetsVisible = true;
     private String tokenListHash;
 
     private String localKeystorePath;
-    private List<TokenEntity> tokenEntities = new ArrayList<>();
 
     public void init(Context context) {
         this.context = context;
@@ -49,6 +49,7 @@ public class BrahmaConfig {
         localKeystorePath = context.getFilesDir().toString();
         networkUrl = sharedPref.getString(context.getString(R.string.key_network_url), BrahmaConst.MAINNET_URL);
         languageLocale = sharedPref.getString(context.getString(R.string.key_wallet_language), null);
+        currencyUnit = sharedPref.getString(context.getString(R.string.key_wallet_currency_unit), null);
         assetsVisible = sharedPref.getBoolean(KEY_ASSETS_VISIBLE, true);
         tokenListHash = sharedPref.getString(KEY_TOKEN_LIST_HASH, "");
         initLocale();
@@ -56,10 +57,6 @@ public class BrahmaConfig {
 
     public String getLocalKeystorePath() {
         return localKeystorePath;
-    }
-
-    public List<TokenEntity> getTokenEntities() {
-        return tokenEntities;
     }
 
     public String getNetworkUrl() {
@@ -84,6 +81,17 @@ public class BrahmaConfig {
         editor.apply();
     }
 
+    public String getCurrencyUnit() {
+        return currencyUnit;
+    }
+
+    public void setCurrencyUnit(String currencyUnit) {
+        this.currencyUnit = currencyUnit;
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(context.getString(R.string.key_wallet_currency_unit), currencyUnit);
+        editor.apply();
+    }
+
     public void initLocale() {
         Resources resources = context.getResources();
         DisplayMetrics dm = resources.getDisplayMetrics();
@@ -104,8 +112,17 @@ public class BrahmaConfig {
         config.setLocale(newLocale);
         resources.updateConfiguration(config, dm);
 
+        if (currencyUnit == null) {
+            if (newLocale.equals(Locale.CHINESE)) {
+                currencyUnit = BrahmaConst.UNIT_PRICE_CNY;
+            } else {
+                currencyUnit = BrahmaConst.UNIT_PRICE_USD;
+            }
+        }
+
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(context.getString(R.string.key_wallet_language), languageLocale);
+        editor.putString(context.getString(R.string.key_wallet_currency_unit), currencyUnit);
         editor.apply();
     }
 
@@ -126,6 +143,7 @@ public class BrahmaConfig {
         } else {
             newLocale = Locale.ENGLISH;
         }
+
         config.setLocale(newLocale);
         resources.updateConfiguration(config, dm);
     }

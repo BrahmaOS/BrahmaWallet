@@ -173,7 +173,10 @@ public class AccountDetailActivity extends BaseActivity {
                             progressDialog.cancel();
                         }
                         if (keystore != null && keystore.length() > 0) {
-                            showKeystoreDialog(keystore);
+                            //showKeystoreDialog(keystore);
+                            Intent intent = new Intent(AccountDetailActivity.this, BackupKeystoreActivity.class);
+                            intent.putExtra(IntentParam.PARAM_OFFICIAL_KEYSTORE, keystore);
+                            startActivity(intent);
                         } else {
                             showPasswordErrorDialog();;
                         }

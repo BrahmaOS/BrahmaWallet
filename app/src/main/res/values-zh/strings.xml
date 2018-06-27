@@ -45,19 +45,41 @@
     <string name="title_dialog_export_keystore">导出Keystore</string>
     <string name="title_dialog_export_private_key">导出私钥</string>
 
-    <string name="export_keystore_tip_1">离线保存，切勿保存到邮箱、网盘、聊天工具等，非常危险。</string>
+    <string name="export_keystore_tip_1">
+        离线保存，复制Keystore文件到安全、离线的地方保存。切勿保存到邮箱、网盘、聊天工具等，非常危险。
+    </string>
     <string name="export_keystore_tip_2">
-        请勿通过网络工具传输Keystore文件。
+        请勿通过网络工具传输Keystore文件。建议离线设备通过扫描二维码的方式传输。
     </string>
     <string name="export_keystore_tip_3">
         请勿截图。勿用截图或拍照的方式保存keystore文件。
     </string>
+    <string name="keystore_qrcode_title_1">
+        仅供直接扫描
+    </string>
+    <string name="keystore_qrcode_tip_1">
+        二维码禁止保存、截图、拍照。仅供用户在安全环境下直接扫描来方便的导入钱包。
+    </string>
+    <string name="keystore_qrcode_title_2">
+        在安全环境下使用
+    </string>
+    <string name="keystore_qrcode_tip_2">
+        请在确保四周无人以及没有摄像头的情况下使用。二维码一旦被他人获取将造成不可挽回的损失。
+    </string>
     <string name="export_private_key_tip_1">
         安全告警: 私钥未经加密，导出存在风险.
     </string>
+    <string name="confirm_qr_code_show">
+        已确认周围无人和摄像头。
+    </string>
+    <string name="btn_show_qr_code">显示二维码</string>
     <string name="delete_account_tip">
         请谨慎! 此操作无法撤销!
     </string>
+    <string name="title_backup_keystore">导出Keystore</string>
+    <string name="title_tab_keystore">Keystore</string>
+    <string name="title_tab_qr_code">二维码</string>
+    <string name="action_copy_keystore">复制Keystore</string>
 
     <string name="action_change_account_name">更改账号名</string>
     <string name="action_change_password">更改密码</string>
@@ -204,14 +226,14 @@
         <item>2</item>
     </string-array>
 
-    <string name="pref_title_currency_unit">Currency Unit</string>
+    <string name="pref_title_currency_unit">货币单位</string>
     <string-array name="pref_currency_unit_list_titles">
         <item>USD</item>
         <item>CNY</item>
     </string-array>
     <string-array name="pref_currency_unit_list_values">
-        <item>1</item>
-        <item>2</item>
+        <item>USD</item>
+        <item>CNY</item>
     </string-array>
 
     <!-- share -->
