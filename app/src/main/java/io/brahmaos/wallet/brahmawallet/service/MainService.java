@@ -2,20 +2,29 @@ package io.brahmaos.wallet.brahmawallet.service;
 
 import android.content.Context;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.web3j.protocol.ObjectMapperFactory;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.BlockingDeque;
 
 import io.brahmaos.wallet.brahmawallet.WalletApp;
+import io.brahmaos.wallet.brahmawallet.api.ApiConst;
+import io.brahmaos.wallet.brahmawallet.api.ApiRespResult;
 import io.brahmaos.wallet.brahmawallet.api.Networks;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
+import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.AllTokenEntity;
 import io.brahmaos.wallet.brahmawallet.model.AccountAssets;
 import io.brahmaos.wallet.brahmawallet.model.CryptoCurrency;
 import io.brahmaos.wallet.util.BLog;
 import rx.Completable;
+import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -41,6 +50,7 @@ public class MainService extends BaseService{
 
     private List<CryptoCurrency> cryptoCurrencies = new ArrayList<>();
     private List<AccountAssets> accountAssetsList = new ArrayList<>();
+    private AccountEntity newMnemonicAccount = new AccountEntity();
 
     public List<CryptoCurrency> getCryptoCurrencies() {
         return cryptoCurrencies;
@@ -58,11 +68,19 @@ public class MainService extends BaseService{
         this.accountAssetsList = accountAssetsList;
     }
 
+    public AccountEntity getNewMnemonicAccount() {
+        return newMnemonicAccount;
+    }
+
+    public void setNewMnemonicAccount(AccountEntity newMnemonicAccount) {
+        this.newMnemonicAccount = newMnemonicAccount;
+    }
+
     public void loadCryptoCurrencies(List<CryptoCurrency> currencies) {
         if (currencies != null) {
             for (CryptoCurrency currency : currencies) {
                 for (CryptoCurrency localCurrency : cryptoCurrencies) {
-                    if (localCurrency.getId().equals(currency.getId())) {
+                    if (localCurrency.getTokenAddress().toLowerCase().equals(currency.getTokenAddress().toLowerCase())) {
                         cryptoCurrencies.remove(localCurrency);
                         break;
                     }
@@ -78,7 +96,10 @@ public class MainService extends BaseService{
         });
     }
 
-    public void getTokenList() {
+    /*
+     * Get all token list
+     */
+    public void getTokenListByIPFS() {
         BrahmaWeb3jService.getInstance()
                 .getTokensHash()
                 .subscribeOn(Schedulers.io())
@@ -158,5 +179,50 @@ public class MainService extends BaseService{
 
                     }
                 });
+    }
+
+    /*
+     * Fetch token price
+     */
+    public Observable<List<CryptoCurrency>> fetchCurrenciesFromNet(String symbols) {
+        return Observable.create(e -> {
+            Networks.getInstance().getMarketApi()
+                    .getCryptoCurrencies(symbols)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<ApiRespResult>() {
+
+                        @Override
+                        public void onCompleted() {
+                            BLog.d("MainService", "fetch currency complete");
+                            e.onCompleted();
+                        }
+
+                        @Override
+                        public void onError(Throwable throwable) {
+                            throwable.printStackTrace();
+                            BLog.d("MainService", "fetch currency on error");
+                            e.onError(throwable);
+                        }
+
+                        @Override
+                        public void onNext(ApiRespResult apr) {
+                            if (apr.getResult() == 0 && apr.getData().containsKey(ApiConst.PARAM_QUOTES)) {
+                                ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
+                                try {
+                                    List<CryptoCurrency> currencies = objectMapper.readValue(objectMapper.writeValueAsString(apr.getData().get(ApiConst.PARAM_QUOTES)), new TypeReference<List<CryptoCurrency>>() {});
+                                    loadCryptoCurrencies(currencies);
+                                    e.onNext(cryptoCurrencies);
+                                } catch (IOException e1) {
+                                    e1.printStackTrace();
+                                    e.onError(e1);
+                                }
+                            } else {
+                                BLog.e(tag(), "onError - " + apr.getResult());
+                                e.onNext(null);
+                            }
+                        }
+                    });
+        });
     }
 }

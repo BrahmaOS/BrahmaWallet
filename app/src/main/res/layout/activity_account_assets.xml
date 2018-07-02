@@ -103,18 +103,19 @@
                         android:textColor="@color/color_hint_text"
                         android:layout_marginStart="@dimen/space_unit"
                         android:text="("/>
+
                     <TextView
-                        android:id="@+id/tv_money_unit"
+                        android:id="@+id/tv_currency_unit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_toEndOf="@id/left_brackets"
                         android:layout_centerVertical="true"
-                        android:textColor="@color/color_hint_text"
-                        android:text="@string/unit_cny"/>
+                        android:layout_toEndOf="@id/left_brackets"
+                        android:text="@string/unit_cny"
+                        android:textColor="@color/color_hint_text" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_toEndOf="@id/tv_money_unit"
+                        android:layout_toEndOf="@id/tv_currency_unit"
                         android:layout_centerVertical="true"
                         android:textColor="@color/color_hint_text"
                         android:text=")"/>

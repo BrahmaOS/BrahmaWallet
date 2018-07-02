@@ -23,6 +23,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
@@ -59,6 +61,8 @@ public class AccountAssetsActivity extends BaseActivity {
     TextView tvAccountAddress;
     @BindView(R.id.tv_total_assets)
     TextView tvTotalAssets;
+    @BindView(R.id.tv_currency_unit)
+    TextView tvCurrencyUnit;
 
     private int accountId;
     private AccountEntity account;
@@ -77,6 +81,12 @@ public class AccountAssetsActivity extends BaseActivity {
         accountId = getIntent().getIntExtra(IntentParam.PARAM_ACCOUNT_ID, 0);
         if (accountId <= 0) {
             finish();
+        }
+        String currencyUnit = BrahmaConfig.getInstance().getCurrencyUnit();
+        if (currencyUnit != null) {
+            tvCurrencyUnit.setText(currencyUnit);
+        } else {
+            tvCurrencyUnit.setText(BrahmaConst.UNIT_PRICE_CNY);
         }
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerViewAssets.setLayoutManager(layoutManager);
@@ -132,9 +142,12 @@ public class AccountAssetsActivity extends BaseActivity {
             if (assets.getAccountEntity().getAddress().equals(account.getAddress())) {
                 if (assets.getBalance().compareTo(BigInteger.ZERO) > 0) {
                     for (CryptoCurrency cryptoCurrency : cryptoCurrencies) {
-                        if (cryptoCurrency.getName().toLowerCase()
-                                .equals(assets.getTokenEntity().getName().toLowerCase())) {
-                            BigDecimal value = new BigDecimal(cryptoCurrency.getPriceCny())
+                        if (CommonUtil.cryptoCurrencyCompareToken(cryptoCurrency, assets.getTokenEntity())) {
+                            double tokenPrice = cryptoCurrency.getPriceCny();
+                            if (BrahmaConfig.getInstance().getCurrencyUnit().equals(BrahmaConst.UNIT_PRICE_USD)) {
+                                tokenPrice = cryptoCurrency.getPriceUsd();
+                            }
+                            BigDecimal value = new BigDecimal(tokenPrice)
                                     .multiply(CommonUtil.getAccountFromWei(assets.getBalance()));
                             totalValue = totalValue.add(value);
                             break;
@@ -227,9 +240,13 @@ public class AccountAssetsActivity extends BaseActivity {
             holder.tvTokenAccount.setText(String.valueOf(CommonUtil.getAccountFromWei(tokenCount)));
             BigDecimal tokenValue = BigDecimal.ZERO;
             for (CryptoCurrency cryptoCurrency : cryptoCurrencies) {
-                if (cryptoCurrency.getName().toLowerCase().equals(tokenEntity.getName().toLowerCase())) {
-                    tokenValue = CommonUtil.getAccountFromWei(tokenCount).multiply(new BigDecimal(cryptoCurrency.getPriceCny()));
-                    holder.tvTokenPrice.setText(String.valueOf(new BigDecimal(cryptoCurrency.getPriceCny()).setScale(2, BigDecimal.ROUND_HALF_UP)));
+                if (CommonUtil.cryptoCurrencyCompareToken(cryptoCurrency, tokenEntity)) {
+                    double tokenPrice = cryptoCurrency.getPriceCny();
+                    if (BrahmaConfig.getInstance().getCurrencyUnit().equals(BrahmaConst.UNIT_PRICE_USD)) {
+                        tokenPrice = cryptoCurrency.getPriceUsd();
+                    }
+                    tokenValue = CommonUtil.getAccountFromWei(tokenCount).multiply(new BigDecimal(tokenPrice));
+                    holder.tvTokenPrice.setText(String.valueOf(new BigDecimal(tokenPrice).setScale(3, BigDecimal.ROUND_HALF_UP)));
                     break;
                 }
             }

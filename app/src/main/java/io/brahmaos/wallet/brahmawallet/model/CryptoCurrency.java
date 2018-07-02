@@ -11,19 +11,15 @@ public class CryptoCurrency implements Serializable {
     private String id;
     private String name;
     private String symbol;
-    private int rank;
-    @JsonProperty("price_usd")
+    @JsonProperty("usd_price")
     private double priceUsd;
     @JsonProperty("price_btc")
     private BigDecimal priceBtc;
-    @JsonProperty("percent_change_1h")
-    private double oneHourChange;
-    @JsonProperty("percent_change_24h")
-    private double oneDayChange;
-    @JsonProperty("percent_change_7d")
-    private double sevenDayChange;
-    @JsonProperty("price_cny")
+    @JsonProperty("cny_price")
     private double priceCny;
+    @JsonProperty("eth_token_addr")
+    private String tokenAddress;
+
 
     public String getId() {
         return id;
@@ -49,14 +45,6 @@ public class CryptoCurrency implements Serializable {
         this.symbol = symbol;
     }
 
-    public int getRank() {
-        return rank;
-    }
-
-    public void setRank(int rank) {
-        this.rank = rank;
-    }
-
     public double getPriceUsd() {
         return priceUsd;
     }
@@ -73,30 +61,6 @@ public class CryptoCurrency implements Serializable {
         this.priceBtc = priceBtc;
     }
 
-    public double getOneHourChange() {
-        return oneHourChange;
-    }
-
-    public void setOneHourChange(double oneHourChange) {
-        this.oneHourChange = oneHourChange;
-    }
-
-    public double getOneDayChange() {
-        return oneDayChange;
-    }
-
-    public void setOneDayChange(double oneDayChange) {
-        this.oneDayChange = oneDayChange;
-    }
-
-    public double getSevenDayChange() {
-        return sevenDayChange;
-    }
-
-    public void setSevenDayChange(double sevenDayChange) {
-        this.sevenDayChange = sevenDayChange;
-    }
-
     public double getPriceCny() {
         return priceCny;
     }
@@ -105,19 +69,24 @@ public class CryptoCurrency implements Serializable {
         this.priceCny = priceCny;
     }
 
+    public String getTokenAddress() {
+        return tokenAddress;
+    }
+
+    public void setTokenAddress(String tokenAddress) {
+        this.tokenAddress = tokenAddress;
+    }
+
     @Override
     public String toString() {
         return "CryptoCurrency{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", symbol='" + symbol + '\'' +
-                ", rank=" + rank +
                 ", priceUsd=" + priceUsd +
                 ", priceBtc=" + priceBtc +
-                ", oneHourChange=" + oneHourChange +
-                ", oneDayChange=" + oneDayChange +
-                ", sevenDayChange=" + sevenDayChange +
                 ", priceCny=" + priceCny +
+                ", tokenAddress='" + tokenAddress + '\'' +
                 '}';
     }
 }

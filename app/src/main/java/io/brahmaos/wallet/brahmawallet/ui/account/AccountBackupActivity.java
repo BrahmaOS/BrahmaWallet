@@ -1,5 +1,6 @@
 package io.brahmaos.wallet.brahmawallet.ui.account;
 
+import android.Manifest;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.model.Account;
+import io.brahmaos.wallet.brahmawallet.service.MainService;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 
@@ -41,10 +43,19 @@ public class AccountBackupActivity extends BaseActivity {
                 for (AccountEntity account : accountEntities) {
                     if (account.getName().equals(accountName)) {
                         button.setOnClickListener(v -> {
-                            Intent intent = new Intent(AccountBackupActivity.this,
-                                    AccountDetailActivity.class);
-                            intent.putExtra(IntentParam.PARAM_ACCOUNT_ID, account.getId());
-                            startActivity(intent);
+                            AccountEntity newAccount = MainService.getInstance().getNewMnemonicAccount();
+                            if (account.getAddress().toLowerCase().equals(newAccount.getAddress().toLowerCase()) &&
+                                    newAccount.getMnemonics() != null) {
+                                Intent intent = new Intent(AccountBackupActivity.this,
+                                        MnemonicBackupActivity.class);
+                                intent.putExtra(IntentParam.PARAM_ACCOUNT_ADDRESS, account.getAddress());
+                                startActivity(intent);
+                            } else {
+                                Intent intent = new Intent(AccountBackupActivity.this,
+                                        AccountDetailActivity.class);
+                                intent.putExtra(IntentParam.PARAM_ACCOUNT_ID, account.getId());
+                                startActivity(intent);
+                            }
                             finish();
                         });
                     }

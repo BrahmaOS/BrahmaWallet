@@ -9,7 +9,7 @@
     <color name="color_success">#03a44e</color>
     <color name="color_danger">#de0e26</color>
     <color name="color_test_network">#F8E71C</color>
-
+    <color name="color_info">#aa0336ff</color>
     <color name="color_primary_text">#da000000</color>
     <color name="color_secondary_text">#72000000</color>
     <color name="color_disabled_text">#64000000</color>

@@ -33,7 +33,6 @@ public class SettingFragment extends PreferenceFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         bindPreferenceSummaryToValue(findPreference(getString(R.string.key_network_url)));
-        //bindPreferenceSummaryToValue(findPreference(getString(R.string.key_wallet_language)));
 
         Preference networkUrl = findPreference(getString(R.string.key_network_url));
         networkUrl.setOnPreferenceChangeListener((preference, value) -> {
@@ -65,6 +64,23 @@ public class SettingFragment extends PreferenceFragment {
             startActivity(intent);
             return true;
         });
+
+        Preference currencyUnit = findPreference(getString(R.string.key_wallet_currency_unit));
+        currencyUnit.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
+        // Trigger the listener immediately with the preference's
+        // current value.
+        sBindPreferenceSummaryToValueListener.onPreferenceChange(currencyUnit,
+                PreferenceManager
+                        .getDefaultSharedPreferences(currencyUnit.getContext())
+                        .getString(currencyUnit.getKey(), BrahmaConfig.getInstance().getCurrencyUnit()));
+        currencyUnit.setOnPreferenceChangeListener((preference, value) -> {
+            BrahmaConfig.getInstance().setCurrencyUnit(value.toString());
+            bindPreferenceSummaryToValue(findPreference(getString(R.string.key_wallet_currency_unit)));
+            Intent intent = new Intent(getActivity(), MainActivity.class);
+            intent.putExtra(IntentParam.FLAG_CHANGE_CURRENCY_UNIT, true);
+            startActivity(intent);
+            return true;
+        });
     }
 
     /**
@@ -88,36 +104,14 @@ public class SettingFragment extends PreferenceFragment {
                                 ? listPreference.getEntries()[index]
                                 : null);
 
-            } else if (preference instanceof RingtonePreference) {
-                // For ringtone preferences, look up the correct display value
-                // using RingtoneManager.
-                if (TextUtils.isEmpty(stringValue)) {
-                    // Empty values correspond to 'silent' (no ringtone).
-                    preference.setSummary("silent");
-
-                } else {
-                    Ringtone ringtone = RingtoneManager.getRingtone(
-                            preference.getContext(), Uri.parse(stringValue));
-
-                    if (ringtone == null) {
-                        // Clear the summary if there was a lookup error.
-                        preference.setSummary(null);
-                    } else {
-                        // Set the summary to reflect the new ringtone display
-                        // name.
-                        String name = ringtone.getTitle(preference.getContext());
-                        preference.setSummary(name);
-                    }
-                }
-
             } else {
-                // For all other preferences, set the summary to the value's
-                // simple string representation.
                 preference.setSummary(stringValue);
             }
             return true;
         }
     };
+
+
 
     /**
      * Binds a preference's summary to its value. More specifically, when the

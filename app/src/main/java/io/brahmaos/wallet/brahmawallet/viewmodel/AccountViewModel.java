@@ -24,6 +24,12 @@ import android.support.annotation.Nullable;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.bitcoinj.crypto.ChildNumber;
+import org.bitcoinj.crypto.DeterministicKey;
+import org.bitcoinj.crypto.HDUtils;
+import org.bitcoinj.wallet.DeterministicKeyChain;
+import org.bitcoinj.wallet.DeterministicSeed;
+import org.bitcoinj.wallet.UnreadableWalletException;
 import org.spongycastle.util.encoders.Hex;
 import org.web3j.crypto.CipherException;
 import org.web3j.crypto.ECKeyPair;
@@ -41,6 +47,7 @@ import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -61,6 +68,7 @@ import rx.Completable;
 import rx.CompletableSubscriber;
 import rx.Observable;
 import rx.Observer;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -71,7 +79,6 @@ public class AccountViewModel extends AndroidViewModel {
     private final MediatorLiveData<List<TokenEntity>> mObservableTokens;
     private final MediatorLiveData<List<AccountAssets>> mObservableAssets;
     private List<AccountAssets> assetsList = new ArrayList<>();
-    private final MediatorLiveData<List<CryptoCurrency>> mObservableCryptoCurrencies;
 
     public AccountViewModel(Application application) {
         super(application);
@@ -79,17 +86,16 @@ public class AccountViewModel extends AndroidViewModel {
         mObservableAccounts = new MediatorLiveData<>();
         mObservableTokens = new MediatorLiveData<>();
         mObservableAssets = new MediatorLiveData<>();
-        mObservableCryptoCurrencies = new MediatorLiveData<>();
         // set by default null, until we get data from the database.
         mObservableAccounts.setValue(null);
         mObservableTokens.setValue(null);
         mObservableAssets.setValue(null);
-        mObservableCryptoCurrencies.setValue(new ArrayList<>());
 
         LiveData<List<AccountEntity>> accounts = ((WalletApp) application).getRepository()
                 .getAccounts();
 
         // observe the changes of the accounts from the database and forward them
+        // When accounts change, reacquire the total assets.
         mObservableAccounts.addSource(accounts, value -> {
             BLog.i("view model", "get account list");
             mObservableAccounts.setValue(value);
@@ -102,12 +108,6 @@ public class AccountViewModel extends AndroidViewModel {
      */
     public LiveData<List<AccountEntity>> getAccounts() {
         return mObservableAccounts;
-    }
-
-    public Completable createAccount(AccountEntity account) {
-        return Completable.fromAction(() -> {
-            ((WalletApp) getApplication()).getRepository().createAccount(account);
-        });
     }
 
     public Completable createAccount(String name, String password) {
@@ -129,10 +129,57 @@ public class AccountViewModel extends AndroidViewModel {
         });
     }
 
+    /**
+     * Generate ethereum account via mnemonics
+     */
+    public Completable createAccountWithMnemonic(String name, String password) {
+        return Completable.fromAction(() -> {
+            try {
+                String passphrase = "";
+                SecureRandom secureRandom = new SecureRandom();
+                long creationTimeSeconds = System.currentTimeMillis() / 1000;
+                DeterministicSeed deterministicSeed = new DeterministicSeed(secureRandom, 128, passphrase, creationTimeSeconds);
+                List<String> mnemonicCode = deterministicSeed.getMnemonicCode();
+
+                if (mnemonicCode != null && mnemonicCode.size() > 0) {
+                    StringBuilder mnemonicStr = new StringBuilder();
+                    for (String mnemonic : mnemonicCode) {
+                        mnemonicStr.append(mnemonic).append(" ");
+                    }
+                    long timeSeconds = System.currentTimeMillis() / 1000;
+                    DeterministicSeed seed = new DeterministicSeed(mnemonicStr.toString().trim(), null, "", timeSeconds);
+                    DeterministicKeyChain chain = DeterministicKeyChain.builder().seed(seed).build();
+                    List<ChildNumber> keyPath = HDUtils.parsePath("M/44H/60H/0H/0/0");
+                    DeterministicKey key = chain.getKeyByPath(keyPath, true);
+                    BigInteger privateKey = key.getPrivKey();
+                    // Web3j
+                    ECKeyPair ecKeyPair = ECKeyPair.create(privateKey);
+                    WalletFile walletFile = Wallet.createLight(password, ecKeyPair);
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("'UTC--'yyyy-MM-dd'T'HH-mm-ss.SSS'--'");
+                    String filename = dateFormat.format(new Date()) + walletFile.getAddress() + ".json";
+
+                    File destination = new File(getApplication().getFilesDir(), filename);
+                    ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
+                    objectMapper.writeValue(destination, walletFile);
+
+                    AccountEntity account = new AccountEntity();
+                    account.setName(name);
+                    account.setAddress(BrahmaWeb3jService.getInstance().prependHexPrefix(walletFile.getAddress()));
+                    account.setFilename(filename);
+                    account.setMnemonics(mnemonicCode);
+                    MainService.getInstance().setNewMnemonicAccount(account);
+                    ((WalletApp) getApplication()).getRepository().createAccount(account);
+                }
+            } catch (IOException | CipherException | UnreadableWalletException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
     public Observable<Boolean> importAccount(WalletFile walletFile, String password, String name) {
         return Observable.create(e -> {
             try {
-                BLog.e("view model", "Observable thread is : " + Thread.currentThread().getName());
+                BLog.d("view model", "Observable thread is : " + Thread.currentThread().getName());
                 if (BrahmaWeb3jService.getInstance().isValidKeystore(walletFile, password)) {
                     // save keystore in local system
                     SimpleDateFormat dateFormat = new SimpleDateFormat("'UTC--'yyyy-MM-dd'T'HH-mm-ss.SSS'--'");
@@ -211,6 +258,63 @@ public class AccountViewModel extends AndroidViewModel {
         });
     }
 
+    /*
+     * Due to the wallet file is generated by mnemonics,
+     * don't need to check private key;
+     * @result the account address,
+     * If an empty string is returned, the imported account already exists.
+     * If an exception is returned, an exception has occurred during processing.
+     */
+    public Observable<String> importAccountWithMnemonics(String mnemonics, String password, String name) {
+        return Observable.create((Subscriber<? super String> e) -> {
+            try {
+                long timeSeconds = System.currentTimeMillis() / 1000;
+                DeterministicSeed seed = new DeterministicSeed(mnemonics, null, "", timeSeconds);
+                DeterministicKeyChain chain = DeterministicKeyChain.builder().seed(seed).build();
+                List<ChildNumber> keyPath = HDUtils.parsePath("M/44H/60H/0H/0/0");
+                DeterministicKey key = chain.getKeyByPath(keyPath, true);
+                BigInteger privateKey = key.getPrivKey();
+                ECKeyPair ecKeyPair = ECKeyPair.create(privateKey);
+                WalletFile walletFile = Wallet.createLight(password, ecKeyPair);
+
+                String address = BrahmaWeb3jService.getInstance().prependHexPrefix(walletFile.getAddress());
+
+                // check the account address
+                List<AccountEntity> accounts = mObservableAccounts.getValue();
+                boolean cancel = false;
+                if (accounts != null && accounts.size() > 0) {
+                    for (AccountEntity accountEntity : accounts) {
+                        if (accountEntity.getAddress().equals(address)) {
+                            cancel = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (cancel) {
+                    e.onNext("");
+                } else {
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("'UTC--'yyyy-MM-dd'T'HH-mm-ss.SSS'--'");
+                    String filename = dateFormat.format(new Date()) + walletFile.getAddress() + ".json";
+                    File destination = new File(getApplication().getFilesDir(), filename);
+                    ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
+                    objectMapper.writeValue(destination, walletFile);
+
+                    AccountEntity account = new AccountEntity();
+                    account.setName(name);
+                    account.setAddress(BrahmaWeb3jService.getInstance().prependHexPrefix(walletFile.getAddress()));
+                    account.setFilename(filename);
+                    ((WalletApp) getApplication()).getRepository().createAccount(account);
+                    e.onNext(address);
+                }
+            } catch (CipherException | IOException | UnreadableWalletException e1) {
+                e1.printStackTrace();
+                e.onNext("exception");
+            }
+            e.onCompleted();
+        });
+    }
+
     public LiveData<AccountEntity> getAccountById(int accountId) {
         return ((WalletApp) getApplication()).getRepository().getAccountById(accountId);
     }
@@ -221,7 +325,8 @@ public class AccountViewModel extends AndroidViewModel {
             LiveData<List<TokenEntity>> tokens = ((WalletApp) getApplication()).getRepository()
                     .getTokens();
 
-            // observe the changes of the accounts from the database and forward them
+            // observe the changes of the tokens from the database and forward them
+            // When tokens change, reacquire the total assets.
             mObservableTokens.addSource(tokens, new android.arch.lifecycle.Observer<List<TokenEntity>>() {
                 @Override
                 public void onChanged(@Nullable List<TokenEntity> value) {
@@ -363,65 +468,6 @@ public class AccountViewModel extends AndroidViewModel {
         }
     }
 
-    public LiveData<List<CryptoCurrency>> getCryptoCurrencies() {
-        if (mObservableCryptoCurrencies.getValue() == null ||
-                mObservableCryptoCurrencies.getValue().size() == 0) {
-            fetchCurrenciesFromNet();
-        }
-        return mObservableCryptoCurrencies;
-    }
-
-    public void fetchCurrenciesFromNet() {
-        Networks.getInstance().getMarketApi()
-                .getCryptoCurrencies(BrahmaConst.DEFAULT_CURRENCY_START,
-                        BrahmaConst.DEFAULT_CURRENCY_LIMIT, BrahmaConst.UNIT_PRICE_CNY)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<List<CryptoCurrency>>() {
-
-                    @Override
-                    public void onCompleted() {
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        mObservableCryptoCurrencies.postValue(null);
-                    }
-
-                    @Override
-                    public void onNext(List<CryptoCurrency> apiRespResult) {
-                        // set the local params
-                        MainService.getInstance().loadCryptoCurrencies(apiRespResult);
-                        mObservableCryptoCurrencies.postValue(MainService.getInstance().getCryptoCurrencies());
-                    }
-                });
-
-        Networks.getInstance().getMarketApi()
-                .getCryptoCurrency(BrahmaConst.BRAHMAOS_TOKEN, BrahmaConst.UNIT_PRICE_CNY)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<List<CryptoCurrency>>() {
-
-                    @Override
-                    public void onCompleted() {
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        mObservableCryptoCurrencies.postValue(null);
-                    }
-
-                    @Override
-                    public void onNext(List<CryptoCurrency> apiRespResult) {
-                        // set the local params
-                        MainService.getInstance().loadCryptoCurrencies(apiRespResult);
-                        mObservableCryptoCurrencies.postValue(MainService.getInstance().getCryptoCurrencies());
-                    }
-                });
-    }
-
     public Completable changeAccountName(int accountId, String newName) {
         return Completable.fromAction(() -> ((WalletApp) getApplication()).getRepository().changeAccountName(accountId, newName));
     }
@@ -498,5 +544,9 @@ public class AccountViewModel extends AndroidViewModel {
             e.onNext(allChosenTokens);
             e.onCompleted();
         });
+    }
+
+    public LiveData<Integer> getAllTokensCount() {
+        return ((WalletApp) getApplication()).getRepository().getAllTokensCount();
     }
 }

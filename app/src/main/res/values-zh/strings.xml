@@ -6,6 +6,8 @@
     <string name="ok">好的</string>
     <string name="copy">复制</string>
     <string name="delete">删除</string>
+    <string name="unit_cny">CNY</string>
+    <string name="unit_usd">USD</string>
 
     <string name="title_brahma_wallet">梵钱包</string>
     <string name="brahma_wallet_desc">您的数字智能钱包</string>
@@ -18,6 +20,10 @@
 
     <string name="action_next">下一步</string>
     <string name="action_confirm">确认</string>
+    <string name="action_finish">完成</string>
+    <string name="action_add">新增</string>
+    <string name="action_edit">编辑</string>
+    <string name="action_delete">删除</string>
 
     <!-- Drawer menu -->
     <string name="nav_menu_other">其余</string>
@@ -39,17 +45,41 @@
     <string name="title_dialog_export_keystore">导出Keystore</string>
     <string name="title_dialog_export_private_key">导出私钥</string>
 
-    <string name="export_keystore_tip_1">离线保存，切勿保存到邮箱、网盘、聊天工具等，非常危险。</string>
-    <string name="export_keystore_tip_2">请勿通过网络工具传输Keystore文件。</string>
+    <string name="export_keystore_tip_1">
+        离线保存，复制Keystore文件到安全、离线的地方保存。切勿保存到邮箱、网盘、聊天工具等，非常危险。
+    </string>
+    <string name="export_keystore_tip_2">
+        请勿通过网络工具传输Keystore文件。建议离线设备通过扫描二维码的方式传输。
+    </string>
     <string name="export_keystore_tip_3">
         请勿截图。勿用截图或拍照的方式保存keystore文件。
+    </string>
+    <string name="keystore_qrcode_title_1">
+        仅供直接扫描
+    </string>
+    <string name="keystore_qrcode_tip_1">
+        二维码禁止保存、截图、拍照。仅供用户在安全环境下直接扫描来方便的导入钱包。
+    </string>
+    <string name="keystore_qrcode_title_2">
+        在安全环境下使用
+    </string>
+    <string name="keystore_qrcode_tip_2">
+        请在确保四周无人以及没有摄像头的情况下使用。二维码一旦被他人获取将造成不可挽回的损失。
     </string>
     <string name="export_private_key_tip_1">
         安全告警: 私钥未经加密，导出存在风险.
     </string>
+    <string name="confirm_qr_code_show">
+        已确认周围无人和摄像头。
+    </string>
+    <string name="btn_show_qr_code">显示二维码</string>
     <string name="delete_account_tip">
         请谨慎! 此操作无法撤销!
     </string>
+    <string name="title_backup_keystore">导出Keystore</string>
+    <string name="title_tab_keystore">Keystore</string>
+    <string name="title_tab_qr_code">二维码</string>
+    <string name="action_copy_keystore">复制Keystore</string>
 
     <string name="action_change_account_name">更改账号名</string>
     <string name="action_change_password">更改密码</string>
@@ -102,8 +132,11 @@
     <string name="error_import_private_key">导入账号失败! 请检查输入内容.</string>
     <string name="error_keystore">错误的keystore文件!</string>
     <string name="error_private_key">错误的私钥!</string>
+    <string name="error_mnemonics">错误的助记词!</string>
+    <string name="error_mnemonics_length">助记词长度不正确!</string>
 
     <string name="title_tab_import_keystore">官方文件</string>
+    <string name="title_tab_import_mnemonic">助记词</string>
     <string name="title_tab_import_private_key">私钥</string>
 
     <!-- menu list -->
@@ -114,6 +147,7 @@
 
     <string name="title_activity_import_account">导入账号</string>
     <string name="import_official_editor_hint">keystore内容</string>
+    <string name="import_mnemonics_hint">助记词，以空格隔开。</string>
     <string name="import_private_key_hint">私钥</string>
     <string name="action_save">保存</string>
 
@@ -155,6 +189,9 @@
     <string name="prompt_total_gas_desc">≈ Gas (20000) * Gas Price(20gwei)</string>
     <string name="action_go_settings">前往设置</string>
     <string name="tip_camera_permission">您还没有对相机进行授权，请前往设置页面授权</string>
+    <string name="prompt_gas_price">Gas Price</string>
+    <string name="prompt_gas_limit">Gas Limit</string>
+    <string name="unit_gas_price">Gwei</string>
 
     <!-- Strings related to login -->
     <string name="title_activity_account_change_password">更改密码</string>
@@ -189,14 +226,14 @@
         <item>2</item>
     </string-array>
 
-    <string name="pref_title_currency_unit">Currency Unit</string>
+    <string name="pref_title_currency_unit">货币单位</string>
     <string-array name="pref_currency_unit_list_titles">
         <item>USD</item>
         <item>CNY</item>
     </string-array>
     <string-array name="pref_currency_unit_list_values">
-        <item>1</item>
-        <item>2</item>
+        <item>USD</item>
+        <item>CNY</item>
     </string-array>
 
     <!-- share -->
@@ -221,9 +258,21 @@
         您必须自己保管好钱包的私钥和交易密码，任何意外发生都会导致资产丢失。
     </string>
     <string name="desc_backup_account_three">
-        我们建议您备份keystore文件，再打入小额测试，最后开始使用。
+        我们建议您立即备份 助记词 ，我们不会存储您的助记词，因此如果您不备份的话，下次进入账号时就无法备份助记词，但是您依然可以通过备份keystore文件或者私钥来备份账号。
     </string>
     <string name="btn_backup_now">立即备份</string>
+    <string name="desc_backup_mnemonic_one">请按正确的顺序抄写下助记词，并保存在一个安全的地方。</string>
+    <string name="desc_backup_mnemonic_two">下一步，请重新输入助记词已确保备份的正确性。</string>
+    <string name="title_activity_about">关于我们</string>
+    <string name="title_backup_mnemonic">备份助记词</string>
+    <string name="backup_mnemonic_warning">警告：不要截图。</string>
+    <string name="title_confirm_mnemonic">确认助记词</string>
+    <string name="desc_confirm_mnemonic">输入助记词，以确认你的备份助记词正确。</string>
+    <string name="tip_confirm_mnemonic">助记词之间以空格隔开。</string>
+    <string name="prompt_account_mnemonic">输入助记词</string>
+    <string name="success_enter_mnemonic">成功!</string>
+    <string name="tip_backup_mnemonic">助记词可以用于恢复钱包或者重置密码，请将备份放在只有你知道的安全地方。</string>
+    <string name="backup_success">备份助记词成功</string>
 
     <!-- string about us -->
     <string name="title_about_us">关于</string>

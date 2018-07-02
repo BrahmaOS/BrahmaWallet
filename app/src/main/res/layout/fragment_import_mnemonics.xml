@@ -16,7 +16,7 @@
             android:layout_height="wrap_content">
 
             <EditText
-                android:id="@+id/et_official_json"
+                android:id="@+id/et_mnemonic"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_normal"
@@ -27,8 +27,24 @@
                 android:gravity="start|top"
                 android:textSize="@dimen/font_size_subheading"
                 android:background="@drawable/editor_normal_bg"
-                android:hint="@string/import_official_editor_hint"
+                android:hint="@string/import_mnemonics_hint"
                 android:lineSpacingMultiplier="1.2"/>
+
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/spinner"/>
+
+            <LinearLayout
+                android:id="@+id/layout_divider"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/space_unit"
+                android:layout_marginBottom="@dimen/space_unit"
+                android:layout_marginStart="@dimen/space_unit"
+                android:layout_marginEnd="@dimen/space_unit"
+                android:background="@color/horizontal_divider"/>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -63,6 +79,23 @@
                     android:textSize="@dimen/font_size_subheading"
                     android:inputType="textPassword"
                     android:singleLine="true" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:theme="@style/customEditTextLineColor"
+                app:hintTextAppearance="@style/customEditTextHint">
+
+                <EditText
+                    android:id="@+id/et_repeat_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/prompt_repeat_password"
+                    android:textSize="@dimen/font_size_subheading"
+                    android:inputType="textPassword"
+                    android:singleLine="true"/>
 
             </android.support.design.widget.TextInputLayout>
 
@@ -105,7 +138,7 @@
             </LinearLayout>
 
             <Button
-                android:id="@+id/btn_import_keystore"
+                android:id="@+id/btn_import_mnemonics"
                 style="@style/ButtonSingle"
                 android:enabled="false"
                 android:layout_marginTop="@dimen/space_normal"

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.AppBarOverlay">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:titleTextAppearance="@style/ToolbarTitleText"
+                app:title="@string/title_confirm_mnemonic"
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+        </android.support.design.widget.AppBarLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@color/white"
+            android:paddingStart="@dimen/space_normal"
+            android:paddingEnd="@dimen/space_normal"
+            android:layout_marginTop="@dimen/height_toolbar">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_larger"
+                android:textSize="@dimen/font_size_subheading"
+                android:paddingStart="@dimen/space_small"
+                android:paddingEnd="@dimen/space_small"
+                android:textColor="@color/color_primary_text"
+                android:text="@string/desc_confirm_mnemonic"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_smaller"
+                android:textSize="@dimen/font_size_subheading"
+                android:paddingStart="@dimen/space_small"
+                android:paddingEnd="@dimen/space_small"
+                android:textColor="@color/color_primary_text"
+                android:text="@string/tip_confirm_mnemonic"/>
+
+            <EditText
+                android:id="@+id/et_account_mnemonic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_large"
+                android:layout_marginBottom="@dimen/space_normal"
+                android:padding="@dimen/space_small"
+                android:inputType="textMultiLine"
+                android:lines="4"
+                android:gravity="start|top"
+                android:textSize="@dimen/font_size_subheading"
+                android:background="@drawable/editor_normal_bg"
+                android:hint="@string/prompt_account_mnemonic"
+                android:lineSpacingMultiplier="1.2"/>
+            <LinearLayout
+                android:id="@+id/layout_backup_success"
+                android:visibility="invisible"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_marginTop="@dimen/space_normal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/space_small"
+                    android:paddingEnd="@dimen/space_small"
+                    android:textColor="@color/color_primary_text"
+                    android:text="@string/tip_backup_mnemonic"/>
+                <Button
+                    android:id="@+id/btn_finish"
+                    style="@style/ButtonSingle"
+                    android:layout_marginTop="@dimen/space_larger"
+                    android:text="@string/backup_success"/>
+            </LinearLayout>
+        </LinearLayout>
+    </android.support.design.widget.CoordinatorLayout>
+</android.support.v4.widget.DrawerLayout>
+

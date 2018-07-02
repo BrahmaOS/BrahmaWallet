@@ -39,7 +39,7 @@ public class ContactAdapter extends IndexableAdapter<ContactEntity> {
     @Override
     public void onBindContentViewHolder(RecyclerView.ViewHolder holder, ContactEntity entity) {
         ContentVH vh = (ContentVH) holder;
-        vh.tvName.setText(new StringBuilder().append(entity.getName()).append(entity.getFamilyName()).toString());
+        vh.tvName.setText(new StringBuilder().append(entity.getName()).append(" ").append(entity.getFamilyName()).toString());
         vh.tvAddress.setText(entity.getAddress());
     }
 

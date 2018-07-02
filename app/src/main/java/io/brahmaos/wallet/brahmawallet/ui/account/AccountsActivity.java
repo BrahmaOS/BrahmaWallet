@@ -27,6 +27,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.model.AccountAssets;
@@ -196,6 +198,12 @@ public class AccountsActivity extends BaseActivity {
                 return ;
             }
             ImageManager.showAccountAvatar(AccountsActivity.this, holder.ivAccountAvatar, account);
+            String currencyUnit = BrahmaConfig.getInstance().getCurrencyUnit();
+            if (currencyUnit != null) {
+                holder.tvCurrencyUnit.setText(currencyUnit);
+            } else {
+                holder.tvCurrencyUnit.setText(BrahmaConst.UNIT_PRICE_CNY);
+            }
             holder.tvAccountName.setText(account.getName());
             holder.tvAccountAddress.setText(CommonUtil.generateSimpleAddress(account.getAddress()));
             BigDecimal totalAssets = BigDecimal.ZERO;
@@ -203,8 +211,12 @@ public class AccountsActivity extends BaseActivity {
                 if (assets.getAccountEntity().getAddress().equals(account.getAddress()) &&
                         assets.getBalance().compareTo(BigInteger.ZERO) > 0) {
                     for (CryptoCurrency currency : cryptoCurrencies) {
-                        if (currency.getName().toLowerCase().equals(assets.getTokenEntity().getName().toLowerCase())) {
-                            BigDecimal tokenValue = new BigDecimal(currency.getPriceCny()).multiply(CommonUtil.getAccountFromWei(assets.getBalance()));
+                        if (CommonUtil.cryptoCurrencyCompareToken(currency, assets.getTokenEntity())) {
+                            double tokenPrice = currency.getPriceCny();
+                            if (BrahmaConfig.getInstance().getCurrencyUnit().equals(BrahmaConst.UNIT_PRICE_USD)) {
+                                tokenPrice = currency.getPriceUsd();
+                            }
+                            BigDecimal tokenValue = new BigDecimal(tokenPrice).multiply(CommonUtil.getAccountFromWei(assets.getBalance()));
                             totalAssets = totalAssets.add(tokenValue);
                         }
                     }
@@ -225,6 +237,7 @@ public class AccountsActivity extends BaseActivity {
             TextView tvAccountAddress;
             TextView tvTotalAssetsDesc;
             TextView tvTotalAssets;
+            TextView tvCurrencyUnit;
 
             ItemViewHolder(View itemView) {
                 super(itemView);
@@ -233,6 +246,7 @@ public class AccountsActivity extends BaseActivity {
                 tvAccountAddress = itemView.findViewById(R.id.tv_account_address);
                 tvTotalAssetsDesc = itemView.findViewById(R.id.tv_total_assets_desc);
                 tvTotalAssets = itemView.findViewById(R.id.tv_total_assets);
+                tvCurrencyUnit = itemView.findViewById(R.id.tv_currency_unit);
             }
         }
     }

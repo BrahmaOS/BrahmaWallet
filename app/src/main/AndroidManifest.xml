@@ -78,7 +78,10 @@
         <activity android:name=".ui.contact.ChooseContactActivity" />
         <activity android:name=".ui.contact.ContactDetailActivity" />
         <activity android:name=".ui.contact.EditContactActivity" />
-        <activity android:name=".ui.setting.ServiceTermsActivity"></activity>
+        <activity android:name=".ui.setting.ServiceTermsActivity" />
+        <activity android:name=".ui.account.MnemonicBackupActivity" />
+        <activity android:name=".ui.account.ConfirmMnemonicActivity"></activity>
+        <activity android:name=".ui.account.BackupKeystoreActivity" />
     </application>
 
 </manifest>

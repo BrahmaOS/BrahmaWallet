@@ -49,7 +49,7 @@ public class CaptureActivity extends BaseActivity implements SurfaceHolder.Callb
         return CaptureActivity.class.getName();
     }
 
-    private static final long DEFAULT_INTENT_RESULT_DURATION_MS = 1500L;
+    private static final long DEFAULT_INTENT_RESULT_DURATION_MS = 100L;
     private CameraManager cameraManager;
     private boolean hasSurface;
     private BeepManager beepManager;

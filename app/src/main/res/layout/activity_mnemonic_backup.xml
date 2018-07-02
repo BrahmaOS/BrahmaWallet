@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.AppBarOverlay">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:titleTextAppearance="@style/ToolbarTitleText"
+                app:title="@string/title_backup_mnemonic"
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@color/main_bg"
+            android:layout_marginTop="@dimen/height_toolbar">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_larger"
+                android:layout_marginStart="@dimen/space_normal"
+                android:layout_marginEnd="@dimen/space_normal"
+                android:textSize="@dimen/font_size_subheading"
+                android:textColor="@color/color_primary_text"
+                android:text="@string/desc_backup_mnemonic_one"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_smaller"
+                android:layout_marginStart="@dimen/space_normal"
+                android:layout_marginEnd="@dimen/space_normal"
+                android:textSize="@dimen/font_size_subheading"
+                android:textColor="@color/color_primary_text"
+                android:text="@string/desc_backup_mnemonic_two"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_large"
+                android:layout_marginStart="@dimen/space_normal"
+                android:layout_marginEnd="@dimen/space_normal"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="@dimen/toolbar_icon_size"
+                    android:layout_height="@dimen/toolbar_icon_size"
+                    android:src="@drawable/ic_warning"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_unit"
+                    android:textSize="@dimen/font_size_subheading"
+                    android:textColor="@color/color_danger"
+                    android:text="@string/backup_mnemonic_warning"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_normal"
+                android:layout_marginEnd="@dimen/space_normal"
+                android:layout_marginTop="@dimen/space_larger"
+                android:padding="@dimen/space_normal"
+                android:background="@drawable/light_yellow_bg"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/tv_account_mnemonics"
+                    android:textSize="@dimen/font_size_subtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+            <Button
+                android:id="@+id/btn_next"
+                style="@style/ButtonSingle"
+                android:layout_marginTop="@dimen/space_larger"
+                android:layout_marginStart="@dimen/space_normal"
+                android:layout_marginEnd="@dimen/space_normal"
+                android:text="@string/action_next"/>
+        </LinearLayout>
+    </android.support.design.widget.CoordinatorLayout>
+</android.support.v4.widget.DrawerLayout>
+

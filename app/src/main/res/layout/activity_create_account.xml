@@ -139,10 +139,11 @@
 
                 <TextView
                     android:id="@+id/btn_import_account"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAlignment="textEnd"
-                    android:padding="@dimen/space_normal"
+                    android:layout_gravity="end"
+                    android:layout_margin="@dimen/space_smaller"
+                    android:padding="@dimen/space_smaller"
                     android:textColor="@color/master"
                     android:textSize="@dimen/font_size_subheading"
                     android:text="@string/action_import_account"/>

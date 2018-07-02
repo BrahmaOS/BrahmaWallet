@@ -30,6 +30,9 @@ public interface AllTokenDao {
     @Query("SELECT * FROM all_tokens")
     LiveData<List<AllTokenEntity>> loadAllTokens();
 
+    @Query("SELECT count(*) FROM all_tokens")
+    LiveData<Integer> getAllTokensCount();
+
     @Query("SELECT * FROM all_tokens where showFlag = 1")
     LiveData<List<AllTokenEntity>> loadShowTokens();
 

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="mnemonic_path">
+        <item >M/44\'/60\'/0\'/0/0</item>
+    </string-array>
+</resources>

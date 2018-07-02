@@ -8,14 +8,13 @@
         android:positiveButtonText="@null"
         android:title="@string/pref_title_language" />
 
-    <!--<ListPreference
-        android:defaultValue="1"
+    <ListPreference
         android:entries="@array/pref_currency_unit_list_titles"
         android:entryValues="@array/pref_currency_unit_list_values"
         android:key="@string/key_wallet_currency_unit"
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
-        android:title="@string/pref_title_currency_unit" />-->
+        android:title="@string/pref_title_currency_unit" />
 
     <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
          dismiss it. -->

@@ -13,9 +13,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,29 +43,31 @@ import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class ImportOfficialFragment extends Fragment {
+public class ImportMnemonicsFragment extends Fragment {
     protected String tag() {
-        return ImportOfficialFragment.class.getName();
+        return ImportMnemonicsFragment.class.getName();
     }
 
-    public static final String ARG_PAGE = "OFFICIAL_KEYSTORE_PAGE";
+    public static final String ARG_PAGE = "MNEMONIC_PAGE";
     private AccountViewModel mViewModel;
     private List<AccountEntity> accounts;
 
     private View parentView;
-    private EditText etKeystore;
+    private EditText etMnemonic;
     private EditText etAccountName;
     private EditText etPassword;
+    private EditText etRepeatPassword;
     private Button btnImportAccount;
     private CheckBox checkBoxReadProtocol;
     private CustomProgressDialog customProgressDialog;
     private TextView tvService;
     private TextView tvPrivacyPolicy;
+    private Spinner spinner;
 
-    public static ImportOfficialFragment newInstance(int page) {
+    public static ImportMnemonicsFragment newInstance(int page) {
         Bundle args = new Bundle();
         args.putInt(ARG_PAGE, page);
-        ImportOfficialFragment pageFragment = new ImportOfficialFragment();
+        ImportMnemonicsFragment pageFragment = new ImportMnemonicsFragment();
         pageFragment.setArguments(args);
         return pageFragment;
     }
@@ -78,7 +82,7 @@ public class ImportOfficialFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         BLog.d(tag(), "onCreateView");
         if (parentView == null) {
-            parentView = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_import_official, container, false);
+            parentView = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_import_mnemonics, container, false);
             initView();
         } else {
             ViewGroup parent = (ViewGroup)parentView.getParent();
@@ -105,13 +109,19 @@ public class ImportOfficialFragment extends Fragment {
 
     private void initView() {
 
-        etKeystore = parentView.findViewById(R.id.et_official_json);
+        etMnemonic = parentView.findViewById(R.id.et_mnemonic);
         etAccountName = parentView.findViewById(R.id.et_account_name);
         etPassword = parentView.findViewById(R.id.et_password);
-        btnImportAccount = parentView.findViewById(R.id.btn_import_keystore);
+        etRepeatPassword = parentView.findViewById(R.id.et_repeat_password);
+        btnImportAccount = parentView.findViewById(R.id.btn_import_mnemonics);
         checkBoxReadProtocol= parentView.findViewById(R.id.checkbox_read_protocol);
         checkBoxReadProtocol.setOnCheckedChangeListener((buttonView, isChecked) -> btnImportAccount.setEnabled(isChecked));
-        btnImportAccount.setOnClickListener(view -> importOfficialAccount());
+        btnImportAccount.setOnClickListener(view -> importMnemonicAccount());
+        spinner = parentView.findViewById(R.id.spinner);
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(), R.array.mnemonic_path, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
 
         tvService = parentView.findViewById(R.id.service_tv);
         tvService.setOnClickListener(v -> {
@@ -126,23 +136,25 @@ public class ImportOfficialFragment extends Fragment {
         });
     }
 
-    private void importOfficialAccount() {
+    private void importMnemonicAccount() {
         btnImportAccount.setEnabled(false);
         // Reset errors.
         etAccountName.setError(null);
         etPassword.setError(null);
+        etRepeatPassword.setError(null);
 
         // Store values at the time of the create account.
-        String officialKeystore = CommonUtil.parseAccountContent(etKeystore.getText().toString().trim());
+        String mnemonics = etMnemonic.getText().toString().trim();
         String name = etAccountName.getText().toString().trim();
         String password = etPassword.getText().toString();
+        String repeatPassword = etRepeatPassword.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
-        // Check for a valid keystore.
-        if (TextUtils.isEmpty(officialKeystore)) {
-            focusView = etKeystore;
+        // Check for a valid mnemonics.
+        if (TextUtils.isEmpty(mnemonics)) {
+            focusView = etMnemonic;
             Toast.makeText(getActivity(), R.string.error_field_required, Toast.LENGTH_LONG).show();
             cancel = true;
         }
@@ -167,6 +179,13 @@ public class ImportOfficialFragment extends Fragment {
             }
         }
 
+        // Check for a valid password, if the user entered one.
+        if (!cancel && !password.equals(repeatPassword)) {
+            etPassword.setError(getString(R.string.error_incorrect_password));
+            focusView = etPassword;
+            cancel = true;
+        }
+
         if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
@@ -174,92 +193,63 @@ public class ImportOfficialFragment extends Fragment {
             btnImportAccount.setEnabled(true);
             return;
         }
-        BLog.i(tag(), "the password is:" + password);
-        try {
-            ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
-            WalletFile walletFile = objectMapper.readValue(officialKeystore, WalletFile.class);
-            String address = BrahmaWeb3jService.getInstance().prependHexPrefix(walletFile.getAddress());
-            BLog.i(tag(), "the address is :" + address);
 
-            // check the account address
-            if (accounts != null && accounts.size() > 0) {
-                for (AccountEntity accountEntity : accounts) {
-                    if (accountEntity.getAddress().equals(address)) {
-                        cancel = true;
-                        break;
-                    }
-                }
-                if (cancel) {
-                    // dialog show the account exists
-                    AlertDialog dialogTip = new AlertDialog.Builder(getActivity())
-                            .setMessage(R.string.error_account_exists)
-                            .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel())
-                            .create();
-                    dialogTip.show();
-                    etKeystore.requestFocus();
-                    btnImportAccount.setEnabled(true);
-                    return;
-                }
-            }
-
+        // check the private key valid
+        if (CommonUtil.isValidMnemonics(mnemonics)) {
             customProgressDialog = new CustomProgressDialog(getActivity(),
                     R.style.CustomProgressDialogStyle,
                     getString(R.string.progress_import_account));
             customProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             customProgressDialog.setCancelable(false);
             customProgressDialog.show();
-            if (WalletUtils.isValidAddress(address)) {
-                mViewModel.importAccount(walletFile, password, name)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Observer<Boolean>() {
-                            @Override
-                            public void onNext(Boolean flag) {
-                                customProgressDialog.cancel();
-                                if (flag) {
-                                    // hide soft input board
-                                    getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-                                    Toast.makeText(getContext(), R.string.success_import_account, Toast.LENGTH_LONG).show();
-                                    Intent intent = new Intent();
-                                    getActivity().setResult(Activity.RESULT_OK, intent);
-                                    getActivity().finish();
-                                } else {
-                                    Toast.makeText(getContext(), R.string.error_import_keystore, Toast.LENGTH_LONG).show();
-                                    etKeystore.requestFocus();
-                                    btnImportAccount.setEnabled(true);
-                                }
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                e.printStackTrace();
-                                Toast.makeText(getContext(), R.string.error_import_keystore, Toast.LENGTH_LONG).show();
-                                customProgressDialog.cancel();
-                                etKeystore.requestFocus();
+            mViewModel.importAccountWithMnemonics(mnemonics, password, name)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<String>() {
+                        @Override
+                        public void onNext(String address) {
+                            customProgressDialog.cancel();
+                            if (address != null && WalletUtils.isValidAddress(address)) {
+                                Toast.makeText(getContext(), R.string.success_import_account, Toast.LENGTH_SHORT).show();
+                                // hide soft input board
+                                getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+                                Intent intent = new Intent();
+                                getActivity().setResult(Activity.RESULT_OK, intent);
+                                getActivity().finish();
+                            } else if (address != null && address.length() == 0) {
+                                AlertDialog dialogTip = new AlertDialog.Builder(getContext())
+                                        .setMessage(R.string.error_account_exists)
+                                        .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel())
+                                        .create();
+                                dialogTip.show();
+                                etMnemonic.requestFocus();
+                                btnImportAccount.setEnabled(true);
+                            } else {
+                                Toast.makeText(getContext(), R.string.error_mnemonics, Toast.LENGTH_LONG).show();
+                                etMnemonic.requestFocus();
                                 btnImportAccount.setEnabled(true);
                             }
+                        }
 
-                            @Override
-                            public void onCompleted() {
+                        @Override
+                        public void onError(Throwable e) {
+                            e.printStackTrace();
+                            Toast.makeText(getContext(), R.string.error_mnemonics, Toast.LENGTH_LONG).show();
+                            customProgressDialog.cancel();
+                            etMnemonic.requestFocus();
+                            btnImportAccount.setEnabled(true);
+                        }
 
-                            }
-                        });
-            } else {
-                BLog.e(tag(), "the error keystore about address");
-                Toast.makeText(getContext(), R.string.error_account_address, Toast.LENGTH_LONG).show();
-                btnImportAccount.setEnabled(true);
-                etKeystore.requestFocus();
-                customProgressDialog.cancel();
-            }
+                        @Override
+                        public void onCompleted() {
 
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(getActivity(), R.string.error_keystore, Toast.LENGTH_LONG).show();
+                        }
+                    });
+
+        } else {
+            Toast.makeText(getContext(), R.string.error_mnemonics_length, Toast.LENGTH_LONG).show();
+            etMnemonic.requestFocus();
             btnImportAccount.setEnabled(true);
-            etKeystore.requestFocus();
-            if (customProgressDialog != null) {
-                customProgressDialog.cancel();
-            }
         }
     }
 }
