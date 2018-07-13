@@ -7,18 +7,29 @@ import android.os.Handler;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.web3j.protocol.ObjectMapperFactory;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import io.brahmaos.wallet.brahmawallet.R;
+import io.brahmaos.wallet.brahmawallet.api.ApiConst;
+import io.brahmaos.wallet.brahmawallet.api.ApiRespResult;
 import io.brahmaos.wallet.brahmawallet.api.Networks;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.db.entity.AllTokenEntity;
+import io.brahmaos.wallet.brahmawallet.model.TokensVersionInfo;
 import io.brahmaos.wallet.brahmawallet.service.MainService;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
+import io.brahmaos.wallet.util.CommonUtil;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -58,7 +69,9 @@ public class SplashActivity extends BaseActivity {
         super.onStart();
         // Get the account list to prevent the home page sloshing
         mViewModel.getAccounts().observe(this, accountEntities -> {
-
+            if (accountEntities != null && accountEntities.size() > 0) {
+                MainService.getInstance().setHaveAccount(true);
+            }
         });
 
         // If there is no token list at present, access the main page after getting
@@ -69,8 +82,7 @@ public class SplashActivity extends BaseActivity {
                 flagAllTokens = true;
                 jumpToMain();
             } else {
-                BLog.d(tag(), "the tokens count is: 0");
-                Networks.getInstance().getMarketApi()
+                Networks.getInstance().getWalletApi()
                         .getAllTokens()
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -122,7 +134,7 @@ public class SplashActivity extends BaseActivity {
                                                     jumpToMain();
                                                 },
                                                 throwable -> {
-                                                    BLog.e(tag(), "Unable to check token", throwable);
+                                                    BLog.e(tag(), "Unable to load token", throwable);
                                                     flagAllTokens = true;
                                                     jumpToMain();
                                                 });
@@ -151,10 +163,17 @@ public class SplashActivity extends BaseActivity {
     // main page
     private void jumpToMain() {
         if (flagCountdown && flagAllTokens) {
-            Intent intent = new Intent();
-            intent.setClass(SplashActivity.this, MainActivity.class);
-            startActivity(intent);
-            finish();
+            if (BrahmaConfig.getInstance().isTouchId() && CommonUtil.isFinger(this)) {
+                Intent intent = new Intent();
+                intent.setClass(SplashActivity.this, FingerActivity.class);
+                startActivity(intent);
+                finish();
+            } else {
+                Intent intent = new Intent();
+                intent.setClass(SplashActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
         }
     }
 }

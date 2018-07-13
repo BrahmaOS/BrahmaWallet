@@ -41,11 +41,17 @@ public class PermissionUtil {
 
     private static final String TAG = PermissionUtil.class.getSimpleName();
     public static final int CODE_CAMERA_SCAN = 10000;
+    public static final int CODE_EXTERNAL_STORAGE = 10001;
 
     public static final String PERMISSION_CAMERA = Manifest.permission.CAMERA;
+    public static final String PERMISSION_WRITE_EXTERNAL_STORAGE = Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
     public static final String[] CAMERA_PERMISSIONS = {
             PERMISSION_CAMERA
+    };
+
+    public static final String[] EXTERNAL_STORAGE_PERMISSIONS = {
+            PERMISSION_WRITE_EXTERNAL_STORAGE
     };
 
     /**

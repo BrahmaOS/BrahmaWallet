@@ -6,4 +6,7 @@ package io.brahmaos.wallet.brahmawallet.api;
 public class ApiConst {
 
     public static final String PARAM_QUOTES = "quotes";
+    public static final int OSTYPE_ANDROID = 0;
+    public static final String PARAM_VER_INFO = "v";
+    public static final int TOKEN_TYPE_ERC20 = 1;
 }

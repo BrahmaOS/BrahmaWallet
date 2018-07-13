@@ -10,6 +10,7 @@ import java.util.ArrayList;
  */
 public class BrahmaConst {
 
+    public static final int APP_ID = 1;
     public static final String IPFS_BASE_URL = "https://ipfs.io/";
     public static final String IPFS_PREFIX = "ipfs/";
     public static final int DEFAULT_TOKEN_COUNT = 20;

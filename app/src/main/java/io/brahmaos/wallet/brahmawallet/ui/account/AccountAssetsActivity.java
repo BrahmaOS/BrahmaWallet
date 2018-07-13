@@ -15,6 +15,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -241,9 +243,22 @@ public class AccountAssetsActivity extends BaseActivity {
             BigDecimal tokenValue = BigDecimal.ZERO;
             for (CryptoCurrency cryptoCurrency : cryptoCurrencies) {
                 if (CommonUtil.cryptoCurrencyCompareToken(cryptoCurrency, tokenEntity)) {
-                    double tokenPrice = cryptoCurrency.getPriceCny();
-                    if (BrahmaConfig.getInstance().getCurrencyUnit().equals(BrahmaConst.UNIT_PRICE_USD)) {
-                        tokenPrice = cryptoCurrency.getPriceUsd();
+                    double tokenPrice = cryptoCurrency.getPriceUsd();
+                    if (BrahmaConfig.getInstance().getCurrencyUnit().equals(BrahmaConst.UNIT_PRICE_CNY)) {
+                        tokenPrice = cryptoCurrency.getPriceCny();
+                        Glide.with(AccountAssetsActivity.this)
+                                .load(R.drawable.currency_cny)
+                                .into(holder.ivTokenPrice);
+                        Glide.with(AccountAssetsActivity.this)
+                                .load(R.drawable.currency_cny)
+                                .into(holder.ivTokenAssets);
+                    } else {
+                        Glide.with(AccountAssetsActivity.this)
+                                .load(R.drawable.currency_usd)
+                                .into(holder.ivTokenPrice);
+                        Glide.with(AccountAssetsActivity.this)
+                                .load(R.drawable.currency_usd)
+                                .into(holder.ivTokenAssets);
                     }
                     tokenValue = CommonUtil.getAccountFromWei(tokenCount).multiply(new BigDecimal(tokenPrice));
                     holder.tvTokenPrice.setText(String.valueOf(new BigDecimal(tokenPrice).setScale(3, BigDecimal.ROUND_HALF_UP)));
@@ -267,6 +282,8 @@ public class AccountAssetsActivity extends BaseActivity {
             TextView tvTokenPrice;
             TextView tvTokenAccount;
             TextView tvTokenAssetsCount;
+            ImageView ivTokenPrice;
+            ImageView ivTokenAssets;
 
             ItemViewHolder(View itemView) {
                 super(itemView);
@@ -277,6 +294,8 @@ public class AccountAssetsActivity extends BaseActivity {
                 tvTokenAssetsCount = itemView.findViewById(R.id.tv_token_assets_count);
                 tvTokenFullName = itemView.findViewById(R.id.tv_token_full_name);
                 tvTokenPrice = itemView.findViewById(R.id.tv_token_price);
+                ivTokenPrice = itemView.findViewById(R.id.iv_currency_unit);
+                ivTokenAssets = itemView.findViewById(R.id.iv_currency_amount);
             }
         }
     }

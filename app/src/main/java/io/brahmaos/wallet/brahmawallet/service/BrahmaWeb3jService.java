@@ -235,7 +235,6 @@ public class BrahmaWeb3jService extends BaseService{
                 Credentials credentials = WalletUtils.loadCredentials(
                         password, context.getFilesDir() + "/" +  fileName);
                 BigInteger privateKey = credentials.getEcKeyPair().getPrivateKey();
-                BLog.e("viewModel", "the private key is:" + privateKey.toString(16));
                 if (WalletUtils.isValidPrivateKey(privateKey.toString(16))) {
                     e.onNext(privateKey.toString(16));
                 } else {

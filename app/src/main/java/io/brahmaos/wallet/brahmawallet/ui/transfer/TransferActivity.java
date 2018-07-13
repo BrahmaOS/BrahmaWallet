@@ -141,7 +141,7 @@ public class TransferActivity extends BaseActivity {
             final AlertDialog alertDialog = builder.create();
             alertDialog.show();
 
-            LinearLayout layoutBabyList = dialogView.findViewById(R.id.layout_accounts);
+            LinearLayout layoutAccountList = dialogView.findViewById(R.id.layout_accounts);
 
             for (final AccountEntity account : mAccounts) {
                 final AccountItemView accountItemView = new AccountItemView();
@@ -165,7 +165,7 @@ public class TransferActivity extends BaseActivity {
                     accountItemView.layoutDivider.setVisibility(View.GONE);
                 }
 
-                layoutBabyList.addView(accountItemView.layoutAccountItem);
+                layoutAccountList.addView(accountItemView.layoutAccountItem);
             }
         });
 

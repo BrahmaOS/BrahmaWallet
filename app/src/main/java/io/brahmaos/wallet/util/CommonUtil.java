@@ -1,7 +1,13 @@
 package io.brahmaos.wallet.util;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.KeyguardManager;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.hardware.fingerprint.FingerprintManager;
+import android.os.Build;
+import android.support.v4.app.ActivityCompat;
 import android.util.DisplayMetrics;
 
 import java.math.BigDecimal;
@@ -92,6 +98,44 @@ public class CommonUtil {
         } else if (cryptoCurrency.getTokenAddress().toLowerCase().equals(token.getAddress().toLowerCase())) {
             return true;
         } else {
+            return false;
+        }
+    }
+
+    public static boolean isFinger(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            FingerprintManager manager = (FingerprintManager) context.getSystemService(Context.FINGERPRINT_SERVICE);
+            KeyguardManager mKeyManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
+                BLog.d("commonUtils", "no permission");
+                return false;
+            }
+            BLog.d("commonUtils", "have fingerprint permission");
+            if (manager == null || mKeyManager == null) {
+                return false;
+            }
+            // Is hardware detected fingerprint
+            if (!manager.isHardwareDetected()) {
+                BLog.d("commonUtils", "no hardware detected fingerprint");
+                return false;
+            }
+            BLog.d("commonUtils", "have hardware detected fingerprint");
+
+            //is open PIN
+            if (!mKeyManager.isKeyguardSecure()) {
+                BLog.d("commonUtils", "no PIN");
+                return false;
+            }
+            BLog.d("commonUtils", "have PIN");
+
+            //Is enrolled fingerprint
+            if (!manager.hasEnrolledFingerprints()) {
+                BLog.d("commonUtils", "no fingerprint");
+                return false;
+            }
+            BLog.i("commonUtils", "have fingerprint");
+            return true;
+        } else{
             return false;
         }
     }

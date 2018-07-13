@@ -13,11 +13,13 @@ import android.preference.RingtonePreference;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.Toast;
 
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.ui.MainActivity;
+import io.brahmaos.wallet.util.CommonUtil;
 
 /**
  * Activities that contain this fragment must implement the PreferenceFragment
@@ -79,6 +81,15 @@ public class SettingFragment extends PreferenceFragment {
             Intent intent = new Intent(getActivity(), MainActivity.class);
             intent.putExtra(IntentParam.FLAG_CHANGE_CURRENCY_UNIT, true);
             startActivity(intent);
+            return true;
+        });
+
+        Preference touchId = findPreference(getString(R.string.key_touch_id_switch));
+        if (!CommonUtil.isFinger(getActivity())) {
+            touchId.setEnabled(false);
+        }
+        touchId.setOnPreferenceChangeListener((preference, value) -> {
+            BrahmaConfig.getInstance().setTouchId((Boolean) value);
             return true;
         });
     }

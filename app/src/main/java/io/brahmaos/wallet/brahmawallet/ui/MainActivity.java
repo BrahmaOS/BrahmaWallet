@@ -1,11 +1,14 @@
 package io.brahmaos.wallet.brahmawallet.ui;
 
+import android.Manifest;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -13,6 +16,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,23 +27,18 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.bumptech.glide.Glide;
 
-import org.web3j.protocol.ObjectMapperFactory;
-
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
-import io.brahmaos.wallet.brahmawallet.api.ApiConst;
-import io.brahmaos.wallet.brahmawallet.api.ApiRespResult;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
@@ -47,8 +46,10 @@ import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 import io.brahmaos.wallet.brahmawallet.model.AccountAssets;
 import io.brahmaos.wallet.brahmawallet.model.CryptoCurrency;
+import io.brahmaos.wallet.brahmawallet.model.VersionInfo;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.service.MainService;
+import io.brahmaos.wallet.brahmawallet.service.VersionUpgradeService;
 import io.brahmaos.wallet.brahmawallet.ui.account.AccountsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.account.CreateAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.account.ImportAccountActivity;
@@ -56,19 +57,19 @@ import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.ui.contact.ContactsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.setting.AboutActivity;
 import io.brahmaos.wallet.brahmawallet.ui.setting.SettingsActivity;
-import io.brahmaos.wallet.brahmawallet.ui.test.TestActivity;
 import io.brahmaos.wallet.brahmawallet.ui.token.TokensActivity;
+import io.brahmaos.wallet.brahmawallet.ui.transfer.InstantExchangeActivity;
 import io.brahmaos.wallet.brahmawallet.ui.transfer.TransferActivity;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
+import io.brahmaos.wallet.util.PermissionUtil;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-
 public class MainActivity extends BaseActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, VersionUpgradeService.INewVerNotify {
     @Override
     protected String tag() {
         return MainActivity.class.getName();
@@ -105,13 +106,26 @@ public class MainActivity extends BaseActivity
     private List<TokenEntity> cacheTokens = new ArrayList<>();
     private List<AccountAssets> cacheAssets = new ArrayList<>();
     private List<CryptoCurrency> cacheCryptoCurrencies = new ArrayList<>();
+    private VersionInfo newVersionInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        BLog.i(tag(), "MainActivity onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drawer);
         ButterKnife.bind(this);
+        VersionUpgradeService.getInstance().checkVersion(this, true, this);
+        MainService.getInstance().getTokensLatestVersion();
+
+        if (MainService.getInstance().isHaveAccount()) {
+            createAccountLayout.setVisibility(View.GONE);
+            swipeRefreshLayout.setVisibility(View.VISIBLE);
+        } else {
+            createAccountLayout.setVisibility(View.VISIBLE);
+            swipeRefreshLayout.setVisibility(View.GONE);
+        }
         mViewModel = ViewModelProviders.of(this).get(AccountViewModel.class);
+
         initView();
         initData();
     }
@@ -216,13 +230,6 @@ public class MainActivity extends BaseActivity
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        cacheAssets = MainService.getInstance().getAccountAssetsList();
-        showAssetsCurrency();
-    }
-
-    @Override
     protected void onNewIntent(Intent intent) {
         BLog.e(tag(), "onNewIntent");
         boolean changeNetworkFlag = intent.getBooleanExtra(IntentParam.FLAG_CHANGE_NETWORK, false);
@@ -267,11 +274,9 @@ public class MainActivity extends BaseActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         //noinspection SimplifiableIfStatement
-        if (item.getItemId() == R.id.menu_accounts) {
-            if (cacheAccounts != null && cacheAccounts.size() > 0) {
-                Intent intent = new Intent(this, AccountsActivity.class);
-                startActivity(intent);
-            }
+        if (item.getItemId() == R.id.menu_instant_exchange) {
+            Intent intent = new Intent(this, InstantExchangeActivity.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -292,7 +297,8 @@ public class MainActivity extends BaseActivity
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_help) {
-
+            /*Intent intent = new Intent(this, FingerActivity.class);
+            startActivity(intent);*/
         } else if (id == R.id.nav_info) {
             Intent intent = new Intent(this, AboutActivity.class);
             startActivity(intent);
@@ -300,6 +306,26 @@ public class MainActivity extends BaseActivity
 
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void alreadyLatest() {
+
+    }
+
+    @Override
+    public void confirmUpdate(VersionInfo newVer) {
+        newVersionInfo = newVer;
+    }
+
+    @Override
+    public void cancelUpdate(VersionInfo newVer) {
+
+    }
+
+    @Override
+    public void handleExternalStoragePermission() {
+        VersionUpgradeService.getInstance().downloadApkFile(this, newVersionInfo, this);
     }
 
     private void getCryptoCurrents() {
@@ -400,6 +426,13 @@ public class MainActivity extends BaseActivity
                 mViewModel.getTotalAssets();
                 swipeRefreshLayout.setRefreshing(true);
             }
+        } else if (requestCode == PermissionUtil.CODE_EXTERNAL_STORAGE) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                handleExternalStoragePermission();
+            } else {
+                PermissionUtil.openSettingActivity(this, getString(R.string.tip_external_storage_permission));
+            }
         }
 
         super.onActivityResult(requestCode, resultCode, data);
@@ -452,9 +485,22 @@ public class MainActivity extends BaseActivity
             if (cacheCryptoCurrencies != null && cacheCryptoCurrencies.size() > 0) {
                 for (CryptoCurrency cryptoCurrency : cacheCryptoCurrencies) {
                     if (CommonUtil.cryptoCurrencyCompareToken(cryptoCurrency, tokenEntity)) {
-                        double tokenPrice = cryptoCurrency.getPriceCny();
-                        if (BrahmaConfig.getInstance().getCurrencyUnit().equals(BrahmaConst.UNIT_PRICE_USD)) {
-                            tokenPrice = cryptoCurrency.getPriceUsd();
+                        double tokenPrice = cryptoCurrency.getPriceUsd();
+                        if (BrahmaConfig.getInstance().getCurrencyUnit().equals(BrahmaConst.UNIT_PRICE_CNY)) {
+                            tokenPrice = cryptoCurrency.getPriceCny();
+                            Glide.with(MainActivity.this)
+                                    .load(R.drawable.currency_cny)
+                                    .into(holder.ivTokenPrice);
+                            Glide.with(MainActivity.this)
+                                    .load(R.drawable.currency_cny)
+                                    .into(holder.ivTokenAssets);
+                        } else {
+                            Glide.with(MainActivity.this)
+                                    .load(R.drawable.currency_usd)
+                                    .into(holder.ivTokenPrice);
+                            Glide.with(MainActivity.this)
+                                    .load(R.drawable.currency_usd)
+                                    .into(holder.ivTokenAssets);
                         }
                         tokenValue = CommonUtil.getAccountFromWei(tokenCount).multiply(new BigDecimal(tokenPrice));
                         holder.tvTokenPrice.setText(String.valueOf(new BigDecimal(tokenPrice).setScale(3, BigDecimal.ROUND_HALF_UP)));
@@ -488,6 +534,8 @@ public class MainActivity extends BaseActivity
             TextView tvTokenAccount;
             TextView tvTokenApproEqual;
             TextView tvTokenAssetsCount;
+            ImageView ivTokenPrice;
+            ImageView ivTokenAssets;
 
             ItemViewHolder(View itemView) {
                 super(itemView);
@@ -499,7 +547,29 @@ public class MainActivity extends BaseActivity
                 tvTokenAssetsCount = itemView.findViewById(R.id.tv_token_assets_count);
                 tvTokenFullName = itemView.findViewById(R.id.tv_token_full_name);
                 tvTokenPrice = itemView.findViewById(R.id.tv_token_price);
+                ivTokenPrice = itemView.findViewById(R.id.iv_currency_unit);
+                ivTokenAssets = itemView.findViewById(R.id.iv_currency_amount);
             }
         }
     }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
+            } else {
+                finish();
+                timerExit.schedule(timerTask, 500);
+            }
+        }
+        return false;
+    }
+    private Timer timerExit = new Timer();
+    private TimerTask timerTask = new TimerTask() {
+        @Override
+        public void run() {
+            System.exit(0);
+        }
+    };
 }

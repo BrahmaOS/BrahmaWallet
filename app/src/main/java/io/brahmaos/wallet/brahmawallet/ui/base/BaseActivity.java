@@ -94,7 +94,14 @@ public abstract class BaseActivity extends AppCompatActivity {
         PermissionUtil.requestMultiPermissions(this, PermissionUtil.CAMERA_PERMISSIONS, PermissionUtil.CODE_CAMERA_SCAN);
     }
 
+    // Request write external storage
+    public void requestExternalStorage() {
+        PermissionUtil.requestMultiPermissions(this, PermissionUtil.EXTERNAL_STORAGE_PERMISSIONS, PermissionUtil.CODE_EXTERNAL_STORAGE);
+    }
+
     public void handleCameraScanPermission() {}
+
+    public void handleExternalStoragePermission() {}
 
     /**
      * Callback received when a permissions request has been completed.
@@ -108,6 +115,13 @@ public abstract class BaseActivity extends AppCompatActivity {
                 handleCameraScanPermission();
             } else {
                 PermissionUtil.openSettingActivity(this, getString(R.string.tip_camera_permission));
+            }
+        } else if (requestCode == PermissionUtil.CODE_EXTERNAL_STORAGE) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                handleExternalStoragePermission();
+            } else {
+                PermissionUtil.openSettingActivity(this, getString(R.string.tip_external_storage_permission));
             }
         }
     }

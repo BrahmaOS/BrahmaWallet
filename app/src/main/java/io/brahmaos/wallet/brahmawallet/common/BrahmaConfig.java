@@ -32,6 +32,7 @@ public class BrahmaConfig {
     private static final String FIRST_OPEN_APP_FLAG = "new.first.open.app.flag";
     private static final String KEY_ASSETS_VISIBLE = "assets.visible";
     private static final String KEY_TOKEN_LIST_HASH = "token.list.hash";
+    private static final String KEY_TOKEN_LIST_VERSION = "token.list.version";
 
     // first user app, show the guide
     private boolean firstOpenAppFlag = true;
@@ -40,6 +41,8 @@ public class BrahmaConfig {
     private String currencyUnit;
     private boolean assetsVisible = true;
     private String tokenListHash;
+    private boolean touchId = false;
+    private int tokenListVersion = 0;
 
     private String localKeystorePath;
 
@@ -52,6 +55,8 @@ public class BrahmaConfig {
         currencyUnit = sharedPref.getString(context.getString(R.string.key_wallet_currency_unit), null);
         assetsVisible = sharedPref.getBoolean(KEY_ASSETS_VISIBLE, true);
         tokenListHash = sharedPref.getString(KEY_TOKEN_LIST_HASH, "");
+        touchId = sharedPref.getBoolean(context.getString(R.string.key_touch_id_switch), false);
+        tokenListVersion = sharedPref.getInt(KEY_TOKEN_LIST_VERSION, 0);
         initLocale();
     }
 
@@ -184,5 +189,27 @@ public class BrahmaConfig {
             serviceUrl = BrahmaConst.PRIVACY_POLICY_PATH_ZH;
         }
         return serviceUrl;
+    }
+
+    public boolean isTouchId() {
+        return touchId;
+    }
+
+    public void setTouchId(boolean touchId) {
+        this.touchId = touchId;
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putBoolean(context.getString(R.string.key_touch_id_switch), touchId);
+        editor.apply();
+    }
+
+    public int getTokenListVersion() {
+        return tokenListVersion;
+    }
+
+    public void setTokenListVersion(int tokenListVersion) {
+        this.tokenListVersion = tokenListVersion;
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(KEY_TOKEN_LIST_VERSION, tokenListVersion);
+        editor.apply();
     }
 }
