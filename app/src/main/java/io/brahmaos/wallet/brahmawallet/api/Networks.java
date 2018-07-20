@@ -6,28 +6,21 @@ import android.support.annotation.NonNull;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
 import io.brahmaos.wallet.brahmawallet.BuildConfig;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.util.BLog;
-import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
-import okio.Buffer;
 import okio.BufferedSource;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.jackson.JacksonConverterFactory;
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /**
  * new api access
@@ -58,13 +51,13 @@ public class Networks {
         return true;
     }
 
-    // coinmarketcap API
-    private MarketApi marketApi;
-    public MarketApi getMarketApi() {
-        if (marketApi == null) {
-            marketApi = configRetrofit(MarketApi.class, false);
+    // brahma wallet API
+    private WalletApi walletApi;
+    public WalletApi getWalletApi() {
+        if (walletApi == null) {
+            walletApi = configRetrofit(WalletApi.class, false);
         }
-        return marketApi;
+        return walletApi;
     }
 
     // ipfs
@@ -76,9 +69,18 @@ public class Networks {
         return ipfsApi;
     }
 
+    // kyper
+    private KyperApi kyperApi;
+    public KyperApi getKyperApi() {
+        if (kyperApi == null) {
+            kyperApi = kyperConfigRetrofit(KyperApi.class, false);
+        }
+        return kyperApi;
+    }
+
     private <T> T configRetrofit(Class<T> service, boolean isAddCommonParam) {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BuildConfig.MARKET_API_URL)
+                .baseUrl(BuildConfig.WALLET_API_URL)
                 .client(configClient(isAddCommonParam))
                 .addConverterFactory(JacksonConverterFactory.create(mapper))
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
@@ -90,6 +92,17 @@ public class Networks {
     private <T> T ipfsConfigRetrofit(Class<T> service, boolean isAddCommonParam) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BrahmaConst.IPFS_BASE_URL)
+                .client(configClient(isAddCommonParam))
+                .addConverterFactory(JacksonConverterFactory.create(mapper))
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .build();
+
+        return retrofit.create(service);
+    }
+
+    private <T> T kyperConfigRetrofit(Class<T> service, boolean isAddCommonParam) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BrahmaConst.KYBER_NETWORK_URL)
                 .client(configClient(isAddCommonParam))
                 .addConverterFactory(JacksonConverterFactory.create(mapper))
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())

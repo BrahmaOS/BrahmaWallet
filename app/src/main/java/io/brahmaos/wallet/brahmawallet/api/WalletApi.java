@@ -11,7 +11,7 @@ import rx.Observable;
 /**
  * coinmarketcap api
  */
-public interface MarketApi {
+public interface WalletApi {
 
     /**
      * Get the currency of tokens
@@ -31,4 +31,17 @@ public interface MarketApi {
     @GET("/v1/ticker/{id}/")
     Observable<List<CryptoCurrency>> getCryptoCurrency(@Path("id") String id,
                                                        @Query("convert") String convertFormat);
+
+    /**
+     * Get the latest version of the wallet
+     */
+    @GET("/v1/wallet/versions/latest")
+    Observable<ApiRespResult> getLatestVersion(@Query("app") int appId,
+                                               @Query("os") int osId);
+
+    /**
+     * Get the latest version of the tokens
+     */
+    @GET("/v1/wallet/tokens/latest")
+    Observable<ApiRespResult> getLatestTokensVersion(@Query("type") int type);
 }

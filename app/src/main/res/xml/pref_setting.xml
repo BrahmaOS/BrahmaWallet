@@ -28,4 +28,10 @@
         android:positiveButtonText="@null"
         android:title="@string/pref_title_net_list" />
 
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="@string/key_touch_id_switch"
+        android:title="@string/pref_title_touch_id"
+        android:summary="@string/pref_summary_touch_id"/>
+
 </PreferenceScreen>

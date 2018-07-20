@@ -141,7 +141,7 @@ public class TransferActivity extends BaseActivity {
             final AlertDialog alertDialog = builder.create();
             alertDialog.show();
 
-            LinearLayout layoutBabyList = dialogView.findViewById(R.id.layout_accounts);
+            LinearLayout layoutAccountList = dialogView.findViewById(R.id.layout_accounts);
 
             for (final AccountEntity account : mAccounts) {
                 final AccountItemView accountItemView = new AccountItemView();
@@ -165,7 +165,7 @@ public class TransferActivity extends BaseActivity {
                     accountItemView.layoutDivider.setVisibility(View.GONE);
                 }
 
-                layoutBabyList.addView(accountItemView.layoutAccountItem);
+                layoutAccountList.addView(accountItemView.layoutAccountItem);
             }
         });
 
@@ -332,7 +332,7 @@ public class TransferActivity extends BaseActivity {
         }
 
         if (!cancel && (amount.compareTo(BigDecimal.ZERO) <= 0 ||
-                CommonUtil.convertFormWeiToEther(amount).compareTo(totalBalance) > 0)) {
+                CommonUtil.convertWeiFromEther(amount).compareTo(totalBalance) > 0)) {
             tips = getString(R.string.tip_invalid_amount);
             cancel = true;
         }
@@ -345,7 +345,7 @@ public class TransferActivity extends BaseActivity {
         // check the ether is enough
         if (!cancel && mToken.getName().toLowerCase().equals(BrahmaConst.ETHEREUM)) {
             totalBalance = ethTotalBalance;
-            if (CommonUtil.convertFormWeiToEther(amount.add(BrahmaConst.DEFAULT_FEE)).compareTo(totalBalance) > 0) {
+            if (CommonUtil.convertWeiFromEther(amount.add(BrahmaConst.DEFAULT_FEE)).compareTo(totalBalance) > 0) {
                 tips = getString(R.string.tip_insufficient_eth);
                 cancel = true;
             }

@@ -9,6 +9,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <application
         android:name=".WalletApp"
@@ -19,6 +21,25 @@
         android:roundIcon="@mipmap/ic_logo_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <!-- application spec -->
+        <receiver android:name=".receiver.InstallReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
+                <action android:name="android.intent.action.DOWNLOAD_NOTIFICATION_CLICKED" />
+            </intent-filter>
+        </receiver>
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="io.brahmaos.wallet.brahmawallet.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
         <activity android:name=".ui.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -80,8 +101,13 @@
         <activity android:name=".ui.contact.EditContactActivity" />
         <activity android:name=".ui.setting.ServiceTermsActivity" />
         <activity android:name=".ui.account.MnemonicBackupActivity" />
-        <activity android:name=".ui.account.ConfirmMnemonicActivity"></activity>
+        <activity android:name=".ui.account.ConfirmMnemonicActivity" />
         <activity android:name=".ui.account.BackupKeystoreActivity" />
+        <activity
+            android:name=".ui.FingerActivity"
+            android:launchMode="singleInstance"
+            android:theme="@style/FadeTheme" />
+        <activity android:name=".ui.transfer.InstantExchangeActivity"/>
     </application>
 
 </manifest>

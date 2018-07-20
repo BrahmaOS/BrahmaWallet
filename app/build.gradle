@@ -8,11 +8,11 @@ android {
         applicationId "io.brahmaos.wallet.brahmawallet"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 3
-        versionName "Earth (v0.4)"
+        versionCode 5000
+        versionName "Mars (v0.5)"
         multiDexEnabled true
 
-        buildConfigField("String", "MARKET_API_URL", "\"${MARKET_API_URL}\"")
+        buildConfigField("String", "WALLET_API_URL", "\"${WALLET_API_URL}\"")
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {

@@ -49,6 +49,9 @@ public class TokensActivity extends BaseActivity {
     // test rinkerby token
     private AllTokenEntity testToken = new AllTokenEntity(0, "BrahmaOS", "BRM(TEST)",
                                           "0xb958c57d1896823b8f4178a21e1bf6796371eac4", "", 1);
+    // test ropsten
+    private AllTokenEntity ropstenKyberToken = new AllTokenEntity(0, "Kyber Network Test", "KNC(TEST)",
+            "0x4E470dc7321E84CA96FcAEDD0C8aBCebbAEB68C6", "", 1);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +69,7 @@ public class TokensActivity extends BaseActivity {
             if (allTokenEntities != null) {
                 BLog.i(tag(), "the length is:" + allTokenEntities.size());
                 allTokens = allTokenEntities;
-                //allTokens.add(testToken);
+                //allTokens.add(ropstenKyberToken);
             }
             refreshTokenList();
         });

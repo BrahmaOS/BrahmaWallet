@@ -14,6 +14,7 @@ import io.brahmaos.wallet.brahmawallet.R;
 public class CustomProgressDialog extends ProgressDialog {
 
     private String title;
+    private TextView tvTitle;
 
     public CustomProgressDialog(Context context) {
         super(context);
@@ -51,7 +52,13 @@ public class CustomProgressDialog extends ProgressDialog {
         }
 
         if (title != null) {
-            TextView tvTitle = (TextView) findViewById(R.id.title_tv);
+            tvTitle =  findViewById(R.id.title_tv);
+            tvTitle.setText(title);
+        }
+    }
+
+    public void setProgressMessage(String title) {
+        if (title != null && tvTitle != null) {
             tvTitle.setText(title);
         }
     }

@@ -24,6 +24,7 @@
     <string name="action_add">新增</string>
     <string name="action_edit">编辑</string>
     <string name="action_delete">删除</string>
+    <string name="dialog_title_upgrade_prompt">更新提示</string>
 
     <!-- Drawer menu -->
     <string name="nav_menu_other">其余</string>
@@ -140,6 +141,7 @@
     <string name="title_tab_import_private_key">私钥</string>
 
     <!-- menu list -->
+    <string name="menu_instant_exchange">闪兑</string>
     <string name="menu_accounts">账号</string>
     <string name="menu_contacts">联系人</string>
     <string name="action_create_account">创建账号</string>
@@ -182,7 +184,7 @@
     <string name="pay_to_address">收款地址</string>
     <string name="pay_by_address">付款账号</string>
     <string name="fees">矿工费</string>
-    <string name="tip_error_password">转账失败！请检查密码！.</string>
+    <string name="tip_error_password">转账失败！请检查密码！</string>
     <string name="tip_error_net">网络连接超时!</string>
     <string name="tip_error_transfer">转账失败!</string>
     <string name="prompt_total_gas">0.000400000 ETH</string>
@@ -235,6 +237,8 @@
         <item>USD</item>
         <item>CNY</item>
     </string-array>
+    <string name="pref_title_touch_id">Touch ID</string>
+    <string name="pref_summary_touch_id">无操作5s后</string>
 
     <!-- share -->
     <string name="key_network_url">ethereum.network.url</string>
@@ -309,4 +313,32 @@
     <string name="title_edit_contact">编辑联系人</string>
     <string name="success_edit_contact">编辑联系人成功!</string>
     <string name="error_edit_contact">编辑联系人失败! 请稍后重试!</string>
+
+    <!-- fingerprint -->
+    <string name="tip_fingerprint">点击开启验证</string>
+    <string name="fail_fingerprint_verification">指纹验证失败</string>
+    <string name="error_fingerprint_verification">指纹验证失败</string>
+
+    <!-- instant exchange -->
+    <string name="title_activity_instant_exchange">闪兑</string>
+    <string name="title_current_rate">汇率</string>
+    <string name="choose_kyber_tokens">选择Tokens</string>
+    <string name="choose_send_kyber_tokens">选择发送Tokens</string>
+    <string name="choose_receive_kyber_tokens">选择接收Tokens</string>
+    <string name="prompt_pay">支付</string>
+    <string name="prompt_receive">接收</string>
+    <string name="prompt_pay_address">付款地址</string>
+    <string name="title_approve_transaction">合约授权</string>
+    <string name="tip_approve_transaction">授权。在交易发生前需要对合约进行授权。</string>
+    <string name="prompt_transfer_info">交易信息</string>
+    <string name="const_zero">0</string>
+    <string name="token_ethereum">ETH</string>
+    <string name="contract_approve">合约授权</string>
+    <string name="progress_get_rate">获取汇率…</string>
+    <string name="progress_get_allowance">获取授权额度</string>
+    <string name="action_instant_exchange">快速兑换</string>
+    <string name="prompt_approval_amount">授权额度</string>
+    <string name="tip_approve_success">合约授权请求已提交，请等待合约授权成功后进行下一步交易。</string>
+    <string name="prompt_send_amount">转出数量</string>
+    <string name="prompt_receive_amount">接收数量</string>
 </resources>
