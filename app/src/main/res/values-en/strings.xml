@@ -24,6 +24,7 @@
     <string name="action_edit">Edit</string>
     <string name="action_delete">Delete</string>
     <string name="action_finish">Finish</string>
+    <string name="dialog_title_upgrade_prompt">Update prompt</string>
 
     <!-- Drawer menu -->
     <string name="nav_menu_other">Other</string>
@@ -140,6 +141,7 @@
     <string name="title_tab_import_private_key">Private Key</string>
 
     <!-- menu list -->
+    <string name="menu_instant_exchange">IEX</string>
     <string name="menu_accounts">Accounts</string>
     <string name="menu_contacts">Contacts</string>
     <string name="action_create_account">Create Account</string>
@@ -192,6 +194,7 @@
     <string name="prompt_total_gas_desc">≈ Gas (20000) * Gas Price(20gwei)</string>
     <string name="action_go_settings">Go Settings</string>
     <string name="tip_camera_permission">You have not authorized the camera yet. Please go to the settings page.</string>
+    <string name="tip_external_storage_permission">You have not authorized the external storage yet. Please go to the settings page.</string>
 
     <!-- Strings related to login -->
     <string name="title_activity_account_change_password">Change Password</string>
@@ -381,4 +384,23 @@
     <string name="tip_fingerprint">Click to start verification</string>
     <string name="fail_fingerprint_verification">Fingerprint verification failed</string>
     <string name="error_fingerprint_verification">Fingerprint verification failed</string>
+
+    <!-- instant exchange -->
+    <string name="title_activity_instant_exchange">Instant Exchange</string>
+    <string name="title_current_rate">Rate</string>
+    <string name="choose_kyber_tokens">Choose Tokens</string>
+    <string name="choose_send_kyber_tokens">Choose Send Tokens</string>
+    <string name="choose_receive_kyber_tokens">Choose Receive Tokens</string>
+    <string name="prompt_pay">Pay</string>
+    <string name="prompt_receive">Receive</string>
+    <string name="prompt_pay_address">From</string>
+    <string name="title_approve_transaction">Approve Transaction</string>
+    <string name="tip_approve_transaction"> authorization is required before starting the transaction.</string>
+    <string name="prompt_transfer_info">Info</string>
+    <string name="const_zero">0</string>
+    <string name="token_ethereum">ETH</string>
+    <string name="contract_approve">Contract Approve</string>
+    <string name="progress_get_rate">get rate…</string>
+    <string name="progress_get_allowance">get allow…</string>
+    <string name="action_instant_exchange">Instant Exchange</string>
 </resources>

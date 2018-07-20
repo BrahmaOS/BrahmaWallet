@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:id="@+id/layout_transfer_info"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="@dimen/space_large"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:text="@string/title_transfer_request"
+                    android:paddingTop="@dimen/space_normal"
+                    android:paddingBottom="@dimen/space_small"
+                    android:textColor="@color/color_primary_text"
+                    android:textSize="@dimen/font_size_subheading"/>
+
+                <ImageView
+                    android:id="@+id/iv_close_dialog"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_small"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_close"/>
+            </FrameLayout>
+
+            <include layout="@layout/horizontal_divider"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/space_normal"
+                android:paddingEnd="@dimen/space_normal"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/space_normal"
+                    android:paddingBottom="@dimen/space_normal"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="@dimen/dialog_label_width"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/space_smaller"
+                        android:textColor="@color/color_hint_text"
+                        android:text="@string/prompt_amount"/>
+                    <TextView
+                        android:id="@+id/tv_pay_token_amount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/const_zero"
+                        android:textColor="@color/color_primary_text"
+                        android:textSize="@dimen/font_size_title"/>
+                    <TextView
+                        android:id="@+id/tv_pay_token_name"
+                        android:layout_marginStart="@dimen/space_smaller"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/token_ethereum"
+                        android:textColor="@color/color_primary_text"
+                        android:textSize="@dimen/font_size_title"/>
+                </LinearLayout>
+
+                <include layout="@layout/horizontal_divider"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:paddingTop="@dimen/space_normal"
+                    android:paddingBottom="@dimen/space_normal"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="@dimen/dialog_label_width"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/space_smaller"
+                        android:textColor="@color/color_hint_text"
+                        android:text="@string/prompt_approval_amount"/>
+                    <TextView
+                        android:id="@+id/tv_approval_token_amount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"/>
+                    <TextView
+                        android:id="@+id/tv_approval_token_name"
+                        android:layout_marginStart="@dimen/space_smaller"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <include layout="@layout/horizontal_divider"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/space_normal"
+                    android:paddingBottom="@dimen/space_normal"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="@dimen/dialog_label_width"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/space_smaller"
+                        android:textColor="@color/color_hint_text"
+                        android:text="@string/prompt_transfer_info"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/contract_approve"/>
+                </LinearLayout>
+
+                <include layout="@layout/horizontal_divider"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/space_normal"
+                    android:paddingBottom="@dimen/space_normal"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="@dimen/dialog_label_width"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/space_smaller"
+                        android:textColor="@color/color_hint_text"
+                        android:text="@string/pay_to_address"/>
+                    <TextView
+                        android:id="@+id/tv_pay_to_address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+
+                <include layout="@layout/horizontal_divider"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/space_normal"
+                    android:paddingBottom="@dimen/space_normal"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="@dimen/dialog_label_width"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/space_smaller"
+                        android:textColor="@color/color_hint_text"
+                        android:text="@string/pay_by_address"/>
+                    <TextView
+                        android:id="@+id/tv_pay_by_address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <include layout="@layout/horizontal_divider"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/space_normal"
+                    android:paddingBottom="@dimen/space_normal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:textColor="@color/color_hint_text"
+                        android:text="@string/fees"/>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:orientation="vertical">
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:id="@+id/tv_gas_value"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textAlignment="viewEnd"
+                                android:textSize="@dimen/font_size_subheading"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAlignment="viewEnd"
+                                android:textSize="@dimen/font_size_subheading"
+                                android:text=" ETH"/>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="≈ gas limit ("
+                                android:textSize="@dimen/font_size_caption"
+                                android:textColor="@color/color_hint_text"/>
+                            <TextView
+                                android:id="@+id/tv_gas_limit"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="200000"
+                                android:textSize="@dimen/font_size_caption"
+                                android:textColor="@color/color_hint_text"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text=") * gas price("
+                                android:textSize="@dimen/font_size_caption"
+                                android:textColor="@color/color_hint_text"/>
+                            <TextView
+                                android:id="@+id/tv_gas_price"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="20"
+                                android:textSize="@dimen/font_size_caption"
+                                android:textColor="@color/color_hint_text"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Gwei)"
+                                android:textSize="@dimen/font_size_caption"
+                                android:textColor="@color/color_hint_text"/>
+                        </LinearLayout>
+
+                    </LinearLayout>
+                </RelativeLayout>
+
+                <Button
+                    android:id="@+id/btn_commit_transfer"
+                    style="@style/ButtonSingle"
+                    android:layout_marginTop="@dimen/space_normal"
+                    android:text="@string/action_confirm"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_transfer_status"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:background="@color/white">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text="@string/title_transfer_request"
+                android:paddingTop="@dimen/space_normal"
+                android:paddingBottom="@dimen/space_small"
+                android:textColor="@color/color_primary_text"
+                android:textSize="@dimen/font_size_subheading"/>
+
+            <include layout="@layout/horizontal_divider"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
+                <io.brahmaos.wallet.brahmawallet.view.CustomStatusView
+                    android:id="@+id/as_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="3dp"
+                    app:progress_radius="24dp"
+                    app:progress_width="3dp" />
+                <TextView
+                    android:id="@+id/tv_transfer_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textColor="@color/color_hint_text"/>
+            </LinearLayout>
+        </LinearLayout>
+
+    </FrameLayout>
+
+</android.support.design.widget.CoordinatorLayout >

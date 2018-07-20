@@ -11,7 +11,10 @@ import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.FunctionReturnDecoder;
 import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.Address;
+import org.web3j.abi.datatypes.Array;
+import org.web3j.abi.datatypes.Bool;
 import org.web3j.abi.datatypes.Bytes;
+import org.web3j.abi.datatypes.DynamicArray;
 import org.web3j.abi.datatypes.Function;
 import org.web3j.abi.datatypes.Type;
 import org.web3j.abi.datatypes.Utf8String;
@@ -64,10 +67,13 @@ import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.AllTokenEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 import io.brahmaos.wallet.brahmawallet.model.CryptoCurrency;
+import io.brahmaos.wallet.brahmawallet.model.KyberToken;
 import io.brahmaos.wallet.util.BLog;
+import io.brahmaos.wallet.util.CommonUtil;
 import rx.Completable;
 import rx.Observable;
 import rx.Observer;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -333,6 +339,237 @@ public class BrahmaWeb3jService extends BaseService{
                 EthGasPrice ethGasPrice = web3j.ethGasPrice().send();
                 e.onNext(ethGasPrice.getGasPrice());
             } catch (IOException e1) {
+                e1.printStackTrace();
+                e.onError(e1);
+            }
+            e.onCompleted();
+        });
+    }
+
+    /**
+     *  Get the hash value of the toke list based on the ReliableTokens contract address
+     */
+    public Observable<List<Uint256>> getExpectedRate(String srcAddress, String destAddress) {
+        return Observable.create((Subscriber<? super List<Uint256>> e) -> {
+            try {
+                Web3j web3 = Web3jFactory.build(
+                        new HttpService(BrahmaConfig.getInstance().getNetworkUrl()));
+                ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
+                WalletFile walletFile = objectMapper.readValue(BrahmaConst.DEFAULT_KEYSTORE, WalletFile.class);
+                Credentials credentials = Credentials.create(Wallet.decrypt("654321", walletFile));
+                TransactionManager transactionManager = new RawTransactionManager(web3, credentials);
+
+                String rateContractAddress = BrahmaConst.KYBER_MAIN_NETWORK_ADDRESS;
+                if (BrahmaConfig.getInstance().getNetworkUrl().equals(BrahmaConst.ROPSTEN_TEST_URL)) {
+                    rateContractAddress = BrahmaConst.KYBER_ROPSTEN_NETWORK_ADDRESS;
+                }
+
+                /*Function function = new Function("getExpectedRates",
+                        Arrays.<Type>asList(new Address(BrahmaConst.KYBER_MAIN_NETWORK_ADDRESS),
+                                new DynamicArray<>(new Address(srcAddress), new Address(destAddress), new Address("0xdd974D5C2e2928deA5F71b9825b8b646686BD200")),
+                                new DynamicArray<>(new Address(destAddress), new Address(srcAddress), new Address("0xd26114cd6EE289AccF82350c8d8487fedB8A0C07")),
+                                new DynamicArray<>(new Uint256(new BigDecimal(Math.pow(10, 18)).toBigInteger()), new Uint256(new BigDecimal(Math.pow(10, 18)).toBigInteger()), new Uint256(new BigDecimal(Math.pow(10, 18)).toBigInteger()))),
+                        Arrays.<TypeReference<?>>asList(new TypeReference<DynamicArray<Uint256>>() {}, new TypeReference<DynamicArray<Uint256>>() {}));
+                String encodedFunction = FunctionEncoder.encode(function);
+                org.web3j.protocol.core.methods.response.EthCall ethCall = web3.ethCall(
+                        Transaction.createEthCallTransaction(
+                                transactionManager.getFromAddress(), BrahmaConst.KYBER_WRAPPER_ADDRESS, encodedFunction),
+                        DefaultBlockParameterName.LATEST)
+                        .send();
+                String rateValue = ethCall.getValue();
+                BLog.i(tag(), "the kyber wrapper contract rate origal result : " + rateValue);
+                List<Type> values = FunctionReturnDecoder.decode(rateValue, function.getOutputParameters());
+
+                for (Type rates : values) {
+                    DynamicArray<Uint256> rateList = (DynamicArray<Uint256>) rates;
+                    for (Uint256 rate : rateList.getValue()) {
+                        BLog.i(tag(), "rate is: " + rate.getValue().toString());
+                    }
+                }*/
+
+                Function function = new Function("getExpectedRate",
+                        Arrays.<Type>asList(new Address(srcAddress),
+                                new Address(destAddress),
+                                new Uint256(new BigDecimal(Math.pow(10, 18)).toBigInteger())),
+                        Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {}, new TypeReference<Uint256>() {}));
+                String encodedFunction = FunctionEncoder.encode(function);
+                org.web3j.protocol.core.methods.response.EthCall ethCall = web3.ethCall(
+                        Transaction.createEthCallTransaction(
+                                transactionManager.getFromAddress(), rateContractAddress, encodedFunction),
+                        DefaultBlockParameterName.LATEST)
+                        .send();
+
+                String rateValue = ethCall.getValue();
+
+                List<Type> values = FunctionReturnDecoder.decode(rateValue, function.getOutputParameters());
+                BLog.i(tag(), "the kyber wrapper contract rate origal result : " + rateValue);
+                List<Uint256> rateResult = new ArrayList<>();
+                for (Type rates : values) {
+                    Uint256 rate = (Uint256) rates;
+                    BLog.i(tag(), "rate is: " + rate.getValue().toString());
+                    rateResult.add(rate);
+                }
+                e.onNext(rateResult);
+            } catch (Exception e1) {
+                e1.printStackTrace();
+                e.onError(e1);
+            }
+            e.onCompleted();
+        });
+    }
+
+    /**
+     * Initiate a instant exchange transaction request and
+     * issue different events at different stages of the transaction,
+     * for example: verifying the account, sending request
+     * @return 1: verifying the account 2: sending request 10: transfer success
+     */
+    public Observable<Integer> sendInstantExchangeTransfer(AccountEntity account, KyberToken sendToken, KyberToken receiveToken,
+                                                           BigDecimal sendAmount, BigDecimal maxReceiveAmount, BigInteger minConversionRate,
+                                                           String password, BigDecimal gasPrice, BigInteger gasLimit) {
+        return Observable.create(e -> {
+            try {
+                e.onNext(1);
+                Web3j web3 = Web3jFactory.build(
+                        new HttpService(BrahmaConfig.getInstance().getNetworkUrl()));
+                Credentials credentials = WalletUtils.loadCredentials(
+                        password, context.getFilesDir() + "/" +  account.getFilename());
+                BLog.i(tag(), "load credential success");
+                e.onNext(2);
+                BigDecimal gasPriceWei = Convert.toWei(gasPrice, Convert.Unit.GWEI);
+                Function function = new Function(
+                        "trade",
+                        Arrays.<Type>asList(new Address(sendToken.getContractAddress()),
+                                new Uint256(CommonUtil.convertWeiFromEther(sendAmount)),
+                                new Address(receiveToken.getContractAddress()),
+                                new Address(account.getAddress()),
+                                new Uint256(CommonUtil.convertWeiFromEther(maxReceiveAmount)),
+                                new Uint256(minConversionRate),
+                                new Address("0x0000000000000000000000000000000000000000")),
+                        Collections.<TypeReference<?>>emptyList());
+                String encodedFunction = FunctionEncoder.encode(function);
+
+                String rateContractAddress = BrahmaConst.KYBER_MAIN_NETWORK_ADDRESS;
+                if (BrahmaConfig.getInstance().getNetworkUrl().equals(BrahmaConst.ROPSTEN_TEST_URL)) {
+                    rateContractAddress = BrahmaConst.KYBER_ROPSTEN_NETWORK_ADDRESS;
+                }
+
+                // if send ERC20 Token ,the send values is ZERO
+                BigInteger sendValue = CommonUtil.convertWeiFromEther(sendAmount);
+                if (!sendToken.getName().toLowerCase().equals(BrahmaConst.ETHEREUM)) {
+                    sendValue = BigInteger.ZERO;
+                }
+
+                RawTransactionManager txManager = new RawTransactionManager(web3, credentials);
+                EthSendTransaction transactionResponse = txManager.sendTransaction(
+                        gasPriceWei.toBigIntegerExact(), gasLimit, rateContractAddress, encodedFunction, sendValue);
+
+                if (transactionResponse.hasError()) {
+                    throw new RuntimeException("Error processing transaction request: "
+                            + transactionResponse.getError().getMessage());
+                }
+                String transactionHash = transactionResponse.getTransactionHash();
+                BLog.i(tag(), "===> transactionHash: " + transactionHash);
+                e.onNext(10);
+            } catch (IOException | CipherException e1) {
+                e1.printStackTrace();
+                e.onError(e1);
+            }
+            e.onCompleted();
+        });
+    }
+
+    /**
+     * Initiate contract approve request and
+     * issue different events at different stages of the transaction,
+     * for example: verifying the account, sending request
+     * @return 1: verifying the account 2: sending request 10: transfer success
+     */
+    public Observable<Integer> sendContractApproveTransfer(AccountEntity account, KyberToken sendToken, BigDecimal sendAmount,
+                                                           String password, BigDecimal gasPrice, BigInteger gasLimit) {
+        return Observable.create(e -> {
+            try {
+                e.onNext(1);
+                Web3j web3 = Web3jFactory.build(
+                        new HttpService(BrahmaConfig.getInstance().getNetworkUrl()));
+                Credentials credentials = WalletUtils.loadCredentials(
+                        password, context.getFilesDir() + "/" +  account.getFilename());
+                BLog.i(tag(), "load credential success");
+                e.onNext(2);
+                BigDecimal gasPriceWei = Convert.toWei(gasPrice, Convert.Unit.GWEI);
+
+                String kyberContractAddress = BrahmaConst.KYBER_MAIN_NETWORK_ADDRESS;
+                if (BrahmaConfig.getInstance().getNetworkUrl().equals(BrahmaConst.ROPSTEN_TEST_URL)) {
+                    kyberContractAddress = BrahmaConst.KYBER_ROPSTEN_NETWORK_ADDRESS;
+                }
+
+                Function function = new Function(
+                        "approve",
+                        Arrays.<Type>asList(new Address(kyberContractAddress),
+                                new Uint256(CommonUtil.convertWeiFromEther(sendAmount))),
+                        Collections.<TypeReference<?>>emptyList());
+                String encodedFunction = FunctionEncoder.encode(function);
+
+                RawTransactionManager txManager = new RawTransactionManager(web3, credentials);
+                EthSendTransaction transactionResponse = txManager.sendTransaction(
+                        gasPriceWei.toBigIntegerExact(), gasLimit, sendToken.getContractAddress(),
+                        encodedFunction, BigInteger.ZERO);
+
+                if (transactionResponse.hasError()) {
+                    throw new RuntimeException("Error processing transaction request: "
+                            + transactionResponse.getError().getMessage());
+                }
+                String transactionHash = transactionResponse.getTransactionHash();
+                BLog.i(tag(), "===> transactionHash: " + transactionHash);
+                e.onNext(10);
+            } catch (IOException | CipherException e1) {
+                e1.printStackTrace();
+                e.onError(e1);
+            }
+            e.onCompleted();
+        });
+    }
+
+    /**
+     * Get contract allowance.
+     * issue different events at different stages of the transaction,
+     * for example: verifying the account, sending request
+     * @return Uint: allowance amount
+     */
+    public Observable<BigInteger> getContractAllowance(AccountEntity account, KyberToken sendToken) {
+        return Observable.create(e -> {
+            try {
+                Web3j web3 = Web3jFactory.build(
+                        new HttpService(BrahmaConfig.getInstance().getNetworkUrl()));
+                ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
+                WalletFile walletFile = objectMapper.readValue(BrahmaConst.DEFAULT_KEYSTORE, WalletFile.class);
+                Credentials credentials = Credentials.create(Wallet.decrypt("654321", walletFile));
+                TransactionManager transactionManager = new RawTransactionManager(web3, credentials);
+
+                String kyberContractAddress = BrahmaConst.KYBER_MAIN_NETWORK_ADDRESS;
+                if (BrahmaConfig.getInstance().getNetworkUrl().equals(BrahmaConst.ROPSTEN_TEST_URL)) {
+                    kyberContractAddress = BrahmaConst.KYBER_ROPSTEN_NETWORK_ADDRESS;
+                }
+                Function function = new Function(
+                        "allowance",
+                        Arrays.<Type>asList(new Address(account.getAddress()),
+                                new Address(kyberContractAddress)),
+                        Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {}));
+                String encodedFunction = FunctionEncoder.encode(function);
+
+                org.web3j.protocol.core.methods.response.EthCall ethCall = web3.ethCall(
+                        Transaction.createEthCallTransaction(
+                                transactionManager.getFromAddress(), sendToken.getContractAddress(), encodedFunction),
+                        DefaultBlockParameterName.LATEST)
+                        .send();
+
+                String enableResult = ethCall.getValue();
+
+                List<Type> values = FunctionReturnDecoder.decode(enableResult, function.getOutputParameters());
+                Uint256 allowAmount = (Uint256) values.get(0);
+                BLog.i(tag(), "the enabled is :" + allowAmount.getValue());
+                e.onNext(allowAmount.getValue());
+            } catch (IOException | CipherException e1) {
                 e1.printStackTrace();
                 e.onError(e1);
             }

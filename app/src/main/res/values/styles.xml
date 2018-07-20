@@ -105,4 +105,9 @@
         <item name="android:windowAnimationStyle">@style/FadeAnimTheme</item>
     </style>
 
+    <style name="anim_bottom_popupwindow">
+        <item name="android:windowEnterAnimation">@anim/bottom_popupwindow_in</item>
+        <item name="android:windowExitAnimation">@anim/bottom_popupwindow_out</item>
+    </style>
+
 </resources>

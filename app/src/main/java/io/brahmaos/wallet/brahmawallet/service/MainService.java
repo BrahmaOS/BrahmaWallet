@@ -9,8 +9,11 @@ import org.web3j.protocol.ObjectMapperFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.brahmaos.wallet.brahmawallet.WalletApp;
 import io.brahmaos.wallet.brahmawallet.api.ApiConst;
@@ -22,6 +25,7 @@ import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.AllTokenEntity;
 import io.brahmaos.wallet.brahmawallet.model.AccountAssets;
 import io.brahmaos.wallet.brahmawallet.model.CryptoCurrency;
+import io.brahmaos.wallet.brahmawallet.model.KyberToken;
 import io.brahmaos.wallet.brahmawallet.model.TokensVersionInfo;
 import io.brahmaos.wallet.util.BLog;
 import rx.Completable;
@@ -51,6 +55,7 @@ public class MainService extends BaseService{
 
     private List<CryptoCurrency> cryptoCurrencies = new ArrayList<>();
     private List<AccountAssets> accountAssetsList = new ArrayList<>();
+    private List<KyberToken> kyberTokenList = new ArrayList<>();
     private AccountEntity newMnemonicAccount = new AccountEntity();
     private boolean isHaveAccount;
 
@@ -68,6 +73,14 @@ public class MainService extends BaseService{
 
     public void setAccountAssetsList(List<AccountAssets> accountAssetsList) {
         this.accountAssetsList = accountAssetsList;
+    }
+
+    public List<KyberToken> getKyberTokenList() {
+        return kyberTokenList;
+    }
+
+    public void setKyberTokenList(List<KyberToken> kyberTokenList) {
+        this.kyberTokenList = kyberTokenList;
     }
 
     public AccountEntity getNewMnemonicAccount() {
@@ -329,5 +342,48 @@ public class MainService extends BaseService{
                         }
                     }
                 });
+    }
+
+    /*
+     * Get kyber tokens
+     */
+    public Observable<List<KyberToken>> getKyberTokens() {
+        return Observable.create(e -> {
+            Networks.getInstance().getKyperApi()
+                    .getKyberPairsTokens()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<LinkedHashMap<String, Object>>() {
+                        @Override
+                        public void onCompleted() {
+                            e.onCompleted();
+                        }
+
+                        @Override
+                        public void onError(Throwable throwable) {
+                            throwable.printStackTrace();
+                            e.onError(throwable);
+                        }
+
+                        @Override
+                        public void onNext(LinkedHashMap<String, Object> apr) {
+                            if (apr != null) {
+                                BLog.i(tag(), apr.toString());
+                                kyberTokenList.clear();
+                                ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
+                                for(Map.Entry<String, Object> entry: apr.entrySet()){
+                                    try {
+                                        KyberToken kyberToken = objectMapper.readValue(objectMapper.writeValueAsString(entry.getValue()), new TypeReference<KyberToken>() {});
+                                        kyberTokenList.add(kyberToken);
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                                Collections.sort(kyberTokenList);
+                                e.onNext(kyberTokenList);
+                            }
+                        }
+                    });
+        });
     }
 }

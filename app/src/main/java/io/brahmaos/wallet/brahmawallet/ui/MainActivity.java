@@ -275,8 +275,10 @@ public class MainActivity extends BaseActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         //noinspection SimplifiableIfStatement
         if (item.getItemId() == R.id.menu_instant_exchange) {
-            Intent intent = new Intent(this, InstantExchangeActivity.class);
-            startActivity(intent);
+            if (cacheAccounts.size() > 0) {
+                Intent intent = new Intent(this, InstantExchangeActivity.class);
+                startActivity(intent);
+            }
         }
         return super.onOptionsItemSelected(item);
     }

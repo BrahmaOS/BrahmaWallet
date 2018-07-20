@@ -38,7 +38,7 @@ public class CommonUtil {
         return value.replaceAll("\\s*", "");
     }
 
-    public static BigInteger convertFormWeiToEther(BigDecimal value) {
+    public static BigInteger convertWeiFromEther(BigDecimal value) {
         return value.multiply(new BigDecimal(Math.pow(10, 18))).toBigInteger();
     }
 

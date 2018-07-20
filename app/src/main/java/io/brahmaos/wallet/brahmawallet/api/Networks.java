@@ -51,7 +51,7 @@ public class Networks {
         return true;
     }
 
-    // coinmarketcap API
+    // brahma wallet API
     private WalletApi walletApi;
     public WalletApi getWalletApi() {
         if (walletApi == null) {
@@ -69,6 +69,15 @@ public class Networks {
         return ipfsApi;
     }
 
+    // kyper
+    private KyperApi kyperApi;
+    public KyperApi getKyperApi() {
+        if (kyperApi == null) {
+            kyperApi = kyperConfigRetrofit(KyperApi.class, false);
+        }
+        return kyperApi;
+    }
+
     private <T> T configRetrofit(Class<T> service, boolean isAddCommonParam) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BuildConfig.WALLET_API_URL)
@@ -83,6 +92,17 @@ public class Networks {
     private <T> T ipfsConfigRetrofit(Class<T> service, boolean isAddCommonParam) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BrahmaConst.IPFS_BASE_URL)
+                .client(configClient(isAddCommonParam))
+                .addConverterFactory(JacksonConverterFactory.create(mapper))
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .build();
+
+        return retrofit.create(service);
+    }
+
+    private <T> T kyperConfigRetrofit(Class<T> service, boolean isAddCommonParam) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BrahmaConst.KYBER_NETWORK_URL)
                 .client(configClient(isAddCommonParam))
                 .addConverterFactory(JacksonConverterFactory.create(mapper))
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())

@@ -388,4 +388,25 @@
     <!-- instant exchange -->
     <string name="title_activity_instant_exchange">Instant Exchange</string>
     <string name="title_current_rate">Rate</string>
+    <string name="choose_kyber_tokens">Choose Tokens</string>
+    <string name="choose_send_kyber_tokens">Choose Send Tokens</string>
+    <string name="choose_receive_kyber_tokens">Choose Receive Tokens</string>
+    <string name="prompt_pay">Pay</string>
+    <string name="prompt_receive">Receive</string>
+    <string name="prompt_pay_address">From</string>
+    <string name="title_approve_transaction">Approve Transaction</string>
+    <string name="tip_approve_transaction"> authorization is required before starting the transaction.</string>
+    <string name="prompt_transfer_info">Info</string>
+    <string name="const_zero">0</string>
+    <string name="token_ethereum">ETH</string>
+    <string name="contract_approve">Contract Approve</string>
+    <string name="progress_get_rate">get rate…</string>
+    <string name="progress_get_allowance">get allow…</string>
+    <string name="action_instant_exchange">Instant Exchange</string>
+    <string name="prompt_approval_amount">Approve Amount</string>
+    <string name="tip_approve_success">
+        The contract approve request has been submitted. Please wait for the transaction to committed before proceeding to the next transaction.
+    </string>
+    <string name="prompt_send_amount">Send Amount</string>
+    <string name="prompt_receive_amount">Receive Amount</string>
 </resources>
