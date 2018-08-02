@@ -11,9 +11,13 @@ import android.widget.TextView;
 
 import io.brahmaos.wallet.brahmawallet.BuildConfig;
 import io.brahmaos.wallet.brahmawallet.R;
+import io.brahmaos.wallet.brahmawallet.model.VersionInfo;
+import io.brahmaos.wallet.brahmawallet.service.VersionUpgradeService;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
+import io.brahmaos.wallet.util.BLog;
 
-public class AboutActivity extends BaseActivity {
+public class AboutActivity extends BaseActivity
+        implements VersionUpgradeService.INewVerNotify  {
 
     @Override
     protected String tag() {
@@ -37,6 +41,27 @@ public class AboutActivity extends BaseActivity {
             Intent intent = new Intent(AboutActivity.this, ServiceTermsActivity.class);
             startActivity(intent);
         });
+
+        TextView tvVersionUpdate = findViewById(R.id.tv_check_update);
+        tvVersionUpdate.setOnClickListener(v -> {
+            VersionUpgradeService.getInstance().checkVersion(this, true, this);
+        });
+    }
+
+    @Override
+    public void alreadyLatest() {
+        BLog.d(tag(), "the latest version");
+        showShortToast(R.string.tip_already_latest_version);
+    }
+
+    @Override
+    public void confirmUpdate(VersionInfo newVer) {
+
+    }
+
+    @Override
+    public void cancelUpdate(VersionInfo newVer) {
+
     }
 
 }

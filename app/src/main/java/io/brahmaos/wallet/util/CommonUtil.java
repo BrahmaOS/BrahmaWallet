@@ -12,6 +12,8 @@ import android.util.DisplayMetrics;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
@@ -138,5 +140,16 @@ public class CommonUtil {
         } else{
             return false;
         }
+    }
+
+    /**
+     * Timestamp converted to date format string
+     * */
+    public static String timestampToDate(long seconds, String format) {
+        if(format == null || format.isEmpty()) {
+            format = "yyyy-MM-dd HH:mm:ss";
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        return sdf.format(new Date(seconds * 1000));
     }
 }

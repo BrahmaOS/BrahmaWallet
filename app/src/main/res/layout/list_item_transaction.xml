@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_transaction_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/space_small"
+        android:paddingBottom="@dimen/space_small"
+        android:paddingStart="@dimen/space_normal"
+        android:paddingEnd="@dimen/space_normal">
+        <ImageView
+            android:id="@+id/iv_transaction_status_icon"
+            android:layout_centerVertical="true"
+            android:layout_width="@dimen/toolbar_icon_size"
+            android:layout_height="@dimen/toolbar_icon_size"
+            android:src="@drawable/icon_receive"/>
+
+        <TextView
+            android:id="@+id/tv_transaction_time"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/space_small"
+        android:paddingStart="@dimen/space_normal"
+        android:paddingEnd="@dimen/space_normal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/tv_sender_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <ImageView
+                android:id="@+id/iv_transaction_arrow"
+                android:layout_width="20dp"
+                android:layout_height="12dp"
+                android:layout_marginTop="@dimen/space_smaller"
+                android:layout_marginBottom="@dimen/space_unit"
+                android:src="@drawable/icon_receive_arrow"/>
+            <TextView
+                android:id="@+id/tv_receiver_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_transactions_amount"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/font_size_title"/>
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="@dimen/space_normal"
+        android:layout_marginEnd="@dimen/space_normal"
+        android:orientation="horizontal"
+        android:background="@color/horizontal_divider">
+    </LinearLayout>
+</LinearLayout>

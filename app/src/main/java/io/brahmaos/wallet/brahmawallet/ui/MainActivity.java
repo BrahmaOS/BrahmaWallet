@@ -56,6 +56,7 @@ import io.brahmaos.wallet.brahmawallet.ui.account.ImportAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.ui.contact.ContactsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.setting.AboutActivity;
+import io.brahmaos.wallet.brahmawallet.ui.setting.HelpActivity;
 import io.brahmaos.wallet.brahmawallet.ui.setting.SettingsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.token.TokensActivity;
 import io.brahmaos.wallet.brahmawallet.ui.transfer.InstantExchangeActivity;
@@ -299,8 +300,8 @@ public class MainActivity extends BaseActivity
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_help) {
-            /*Intent intent = new Intent(this, FingerActivity.class);
-            startActivity(intent);*/
+            Intent intent = new Intent(this, HelpActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_info) {
             Intent intent = new Intent(this, AboutActivity.class);
             startActivity(intent);
@@ -476,7 +477,8 @@ public class MainActivity extends BaseActivity
             holder.tvTokenName.setText(tokenEntity.getShortName());
             holder.tvTokenFullName.setText(tokenEntity.getName());
             holder.tvTokenPrice.setText("0");
-            ImageManager.showTokenIcon(MainActivity.this, holder.ivTokenIcon, tokenEntity.getAvatar(), tokenEntity.getName());
+            ImageManager.showTokenIcon(MainActivity.this, holder.ivTokenIcon, tokenEntity.getAvatar(),
+                    tokenEntity.getName(), tokenEntity.getAddress());
             BigInteger tokenCount = BigInteger.ZERO;
             for (AccountAssets accountAssets : cacheAssets) {
                 if (accountAssets.getTokenEntity().getAddress().toLowerCase().equals(tokenEntity.getAddress().toLowerCase())) {

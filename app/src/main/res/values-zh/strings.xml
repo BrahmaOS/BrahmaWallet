@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">梵钱包</string>
     <string name="cancel">取消</string>
-    <string name="confirm">确认</string>
+    <string name="confirm">确定</string>
     <string name="quit">退出</string>
     <string name="ok">好的</string>
     <string name="copy">复制</string>
@@ -194,6 +194,7 @@
     <string name="prompt_gas_price">Gas Price</string>
     <string name="prompt_gas_limit">Gas Limit</string>
     <string name="unit_gas_price">Gwei</string>
+    <string name="label_balance">余额</string>
 
     <!-- Strings related to login -->
     <string name="title_activity_account_change_password">更改密码</string>
@@ -287,6 +288,7 @@
     <string name="about_privacy_policy">隐私条款</string>
     <string name="about_service_perms">服务协议</string>
     <string name="about_check_updates">检查更新</string>
+    <string name="tip_already_latest_version">当前已经为最新版本</string>
 
     <!-- privacy policy -->
     <string name="title_activity_privacy_policy">梵钱包隐私政策</string>
@@ -323,13 +325,13 @@
     <string name="title_activity_instant_exchange">闪兑</string>
     <string name="title_current_rate">汇率</string>
     <string name="choose_kyber_tokens">选择Tokens</string>
-    <string name="choose_send_kyber_tokens">选择发送Tokens</string>
+    <string name="choose_send_kyber_tokens">选择转出Tokens</string>
     <string name="choose_receive_kyber_tokens">选择接收Tokens</string>
     <string name="prompt_pay">支付</string>
     <string name="prompt_receive">接收</string>
     <string name="prompt_pay_address">付款地址</string>
     <string name="title_approve_transaction">合约授权</string>
-    <string name="tip_approve_transaction">授权。在交易发生前需要对合约进行授权。</string>
+    <string name="tip_approve_transaction">在交易发生前需要对合约进行授权。</string>
     <string name="prompt_transfer_info">交易信息</string>
     <string name="const_zero">0</string>
     <string name="token_ethereum">ETH</string>
@@ -341,4 +343,8 @@
     <string name="tip_approve_success">合约授权请求已提交，请等待合约授权成功后进行下一步交易。</string>
     <string name="prompt_send_amount">转出数量</string>
     <string name="prompt_receive_amount">接收数量</string>
+    <string name="question_contract_approval">什么是合约授权和授权额度?</string>
+
+    <!-- help -->
+    <string name="title_activity_help">帮助中心</string>
 </resources>

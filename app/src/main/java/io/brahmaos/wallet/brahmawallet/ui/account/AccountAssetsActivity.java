@@ -35,6 +35,8 @@ import io.brahmaos.wallet.brahmawallet.model.CryptoCurrency;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.service.MainService;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
+import io.brahmaos.wallet.brahmawallet.ui.transaction.EthTransactionsActivity;
+import io.brahmaos.wallet.brahmawallet.ui.transaction.TransactionsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.transfer.TransferActivity;
 import io.brahmaos.wallet.brahmawallet.view.CustomProgressDialog;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
@@ -223,15 +225,23 @@ public class AccountAssetsActivity extends BaseActivity {
             }
 
             holder.layoutAssets.setOnClickListener(v -> {
-                Intent intent = new Intent(AccountAssetsActivity.this, TransferActivity.class);
-                intent.putExtra(IntentParam.PARAM_ACCOUNT_INFO, account);
-                intent.putExtra(IntentParam.PARAM_TOKEN_INFO, tokenEntity);
-                startActivityForResult(intent, REQ_CODE_TRANSFER);
+                if (tokenEntity.getName().toLowerCase().equals(BrahmaConst.ETHEREUM)) {
+                    Intent intent = new Intent(AccountAssetsActivity.this, EthTransactionsActivity.class);
+                    intent.putExtra(IntentParam.PARAM_ACCOUNT_INFO, account);
+                    intent.putExtra(IntentParam.PARAM_TOKEN_INFO, tokenEntity);
+                    startActivityForResult(intent, REQ_CODE_TRANSFER);
+                } else {
+                    Intent intent = new Intent(AccountAssetsActivity.this, TransactionsActivity.class);
+                    intent.putExtra(IntentParam.PARAM_ACCOUNT_INFO, account);
+                    intent.putExtra(IntentParam.PARAM_TOKEN_INFO, tokenEntity);
+                    startActivityForResult(intent, REQ_CODE_TRANSFER);
+                }
             });
 
             holder.tvTokenName.setText(tokenEntity.getShortName());
             holder.tvTokenFullName.setText(tokenEntity.getName());
-            ImageManager.showTokenIcon(AccountAssetsActivity.this, holder.ivTokenIcon, tokenEntity.getAvatar(), tokenEntity.getName());
+            ImageManager.showTokenIcon(AccountAssetsActivity.this, holder.ivTokenIcon, tokenEntity.getAvatar(),
+                    tokenEntity.getName(), tokenEntity.getAddress());
             BigInteger tokenCount = BigInteger.ZERO;
             for (AccountAssets accountAssets : accountAssetsList) {
                 if (accountAssets.getTokenEntity().getAddress().equals(tokenEntity.getAddress()) &&

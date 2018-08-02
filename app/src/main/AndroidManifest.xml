@@ -108,6 +108,9 @@
             android:launchMode="singleInstance"
             android:theme="@style/FadeTheme" />
         <activity android:name=".ui.transfer.InstantExchangeActivity"/>
+        <activity android:name=".ui.setting.HelpActivity" />
+        <activity android:name=".ui.transaction.TransactionsActivity" />
+        <activity android:name=".ui.transaction.EthTransactionsActivity" />
     </application>
 
 </manifest>

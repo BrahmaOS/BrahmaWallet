@@ -13,6 +13,11 @@ public class BrahmaConst {
     public static final int APP_ID = 1;
     public static final String IPFS_BASE_URL = "https://ipfs.io/";
     public static final String KYBER_NETWORK_URL = "https://tracker.kyber.network/";
+    public static final String IMAGE_BASE_URL = "https://img.static.brahmaos.io/";
+    public static final String PAGE_BASE_URL = "https://wallet.apps.brahmaos.io/";
+    public static final String HELP_PREFIX = "help/";
+    public static final String TOKEN_ICON_PREFIX = "tokens/icon/";
+    public static final String TOKEN_ICON_SUFFIX = "-128x128.png";
     public static final String IPFS_PREFIX = "ipfs/";
     public static final int DEFAULT_TOKEN_COUNT = 20;
     public static final int DEFAULT_TOKEN_SHOW_FLAG = 1;
@@ -36,6 +41,7 @@ public class BrahmaConst {
 
     public static final String KYBER_NETWORK_MAINNET = "0x818e6fecd516ecc3849daf6845e3ec868087b755";
     public static final String KYBER_NETWORK_ROPSTEN = "0x85ecDf8803c35a271a87ad918B5927E5cA6a56D2";
+    //public static final String TRANSACTION_ACCOUNT_ADDRESS = "0x50FC3e2B2276E3a58AA696B5112Aa10775d42bd6";
 
     public static final String LANGUAGE_ENGLISH = "1";
     public static final String LANGUAGE_CHINESE = "2";

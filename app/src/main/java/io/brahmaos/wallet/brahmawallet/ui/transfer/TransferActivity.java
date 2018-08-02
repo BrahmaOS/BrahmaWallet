@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.web3j.crypto.CipherException;
@@ -47,6 +48,7 @@ import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.ui.common.barcode.CaptureActivity;
 import io.brahmaos.wallet.brahmawallet.ui.common.barcode.Intents;
 import io.brahmaos.wallet.brahmawallet.ui.contact.ChooseContactActivity;
+import io.brahmaos.wallet.brahmawallet.ui.transaction.TransactionsActivity;
 import io.brahmaos.wallet.brahmawallet.view.CustomStatusView;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
@@ -71,6 +73,16 @@ public class TransferActivity extends BaseActivity {
     TextView tvAccountAddress;
     @BindView(R.id.tv_change_account)
     TextView tvChangeAccount;
+
+    @BindView(R.id.tv_eth_balance)
+    TextView tvEthBalance;
+    @BindView(R.id.layout_send_token_balance)
+    RelativeLayout layoutSendTokenBalance;
+    @BindView(R.id.tv_send_token_name)
+    TextView tvSendTokenName;
+    @BindView(R.id.tv_send_token_balance)
+    TextView tvSendTokenBalance;
+
     @BindView(R.id.btn_show_transfer_info)
     Button btnShowTransfer;
     @BindView(R.id.et_receiver_address)
@@ -119,6 +131,13 @@ public class TransferActivity extends BaseActivity {
             }
         }
 
+        if (mToken.getName().toLowerCase().equals(BrahmaConst.ETHEREUM)) {
+            layoutSendTokenBalance.setVisibility(View.GONE);
+        } else {
+            layoutSendTokenBalance.setVisibility(View.VISIBLE);
+            tvSendTokenName.setText(mToken.getShortName());
+        }
+
         mAccountAssetsList = MainService.getInstance().getAccountAssetsList();
 
         mViewModel = ViewModelProviders.of(this).get(AccountViewModel.class);
@@ -130,6 +149,8 @@ public class TransferActivity extends BaseActivity {
             }
             if (mAccounts != null && mAccounts.size() > 1) {
                 tvChangeAccount.setVisibility(View.VISIBLE);
+            } else {
+                finish();
             }
             showAccountInfo(mAccount);
         });
@@ -205,9 +226,22 @@ public class TransferActivity extends BaseActivity {
                 });
     }
 
+    private void showAccountBalance() {
+        for (AccountAssets assets : mAccountAssetsList) {
+            if (assets.getAccountEntity().getAddress().toLowerCase().equals(mAccount.getAddress().toLowerCase())) {
+                if (assets.getTokenEntity().getAddress().toLowerCase().equals(mToken.getAddress().toLowerCase())) {
+                    tvSendTokenBalance.setText(String.valueOf(CommonUtil.getAccountFromWei(assets.getBalance())));
+                }
+                if (assets.getTokenEntity().getName().toLowerCase().equals(BrahmaConst.ETHEREUM.toLowerCase())) {
+                    tvEthBalance.setText(String.valueOf(CommonUtil.getAccountFromWei(assets.getBalance())));
+                }
+            }
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_scan, menu);
+        getMenuInflater().inflate(R.menu.menu_transfer, menu);
         return true;
     }
 
@@ -275,9 +309,12 @@ public class TransferActivity extends BaseActivity {
     }
 
     private void showAccountInfo(AccountEntity account) {
-        ImageManager.showAccountAvatar(this, ivAccountAvatar, account);
-        tvAccountName.setText(account.getName());
-        tvAccountAddress.setText(CommonUtil.generateSimpleAddress(account.getAddress()));
+        if (account != null) {
+            ImageManager.showAccountAvatar(this, ivAccountAvatar, account);
+            tvAccountName.setText(account.getName());
+            tvAccountAddress.setText(CommonUtil.generateSimpleAddress(account.getAddress()));
+            showAccountBalance();
+        }
     }
 
     private void showTransferInfo() {
