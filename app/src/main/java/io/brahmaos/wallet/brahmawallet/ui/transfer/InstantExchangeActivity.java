@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,12 +26,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.crypto.CipherException;
+import org.web3j.protocol.core.methods.response.EthCall;
 import org.web3j.protocol.exceptions.TransactionTimeoutException;
 import org.web3j.utils.Convert;
+import org.web3j.utils.Numeric;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -44,12 +48,14 @@ import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
+import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 import io.brahmaos.wallet.brahmawallet.model.AccountAssets;
 import io.brahmaos.wallet.brahmawallet.model.KyberToken;
 import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.service.MainService;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
+import io.brahmaos.wallet.brahmawallet.ui.setting.HelpActivity;
 import io.brahmaos.wallet.brahmawallet.view.CustomProgressDialog;
 import io.brahmaos.wallet.brahmawallet.view.CustomStatusView;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
@@ -70,6 +76,15 @@ public class InstantExchangeActivity extends BaseActivity {
     TextView tvAccountAddress;
     @BindView(R.id.tv_change_account)
     TextView tvChangeAccount;
+
+    @BindView(R.id.tv_eth_balance)
+    TextView tvEthBalance;
+    @BindView(R.id.layout_erc20_token_balance)
+    RelativeLayout layoutErc20Token;
+    @BindView(R.id.tv_erc20_token_name)
+    TextView tvErc20TokenName;
+    @BindView(R.id.tv_erc20_token_balance)
+    TextView tvErc20TokenBalance;
 
     @BindView(R.id.tv_rate_send_token_num)
     TextView tvRateSendTokenNum;
@@ -307,6 +322,16 @@ public class InstantExchangeActivity extends BaseActivity {
         }
     }
 
+    private void showAccountBalance() {
+        for (AccountAssets assets : mAccountAssetsList) {
+            if (assets.getAccountEntity().getAddress().toLowerCase().equals(mAccount.getAddress().toLowerCase())) {
+                if (assets.getTokenEntity().getName().toLowerCase().equals(BrahmaConst.ETHEREUM.toLowerCase())) {
+                    tvEthBalance.setText(String.valueOf(CommonUtil.getAccountFromWei(assets.getBalance())));
+                }
+            }
+        }
+    }
+
     private void initSendToken(KyberToken token) {
         sendToken = token;
         tvSendTokenName.setText(token.getSymbol());
@@ -315,6 +340,9 @@ public class InstantExchangeActivity extends BaseActivity {
             initReceiveToken(kncToken);
         } else {
             initReceiveToken(ethToken);
+        }
+        if (mAccount != null) {
+            showEre20TokenBalance();
         }
     }
 
@@ -329,6 +357,43 @@ public class InstantExchangeActivity extends BaseActivity {
     private void copyKyberTokens() {
         sendChooseKyberTokens = new ArrayList<>();
         sendChooseKyberTokens.addAll(mKyberTokens);
+    }
+
+    private void showEre20TokenBalance() {
+        if (sendToken.getName().toLowerCase().equals(BrahmaConst.ETHEREUM)) {
+            layoutErc20Token.setVisibility(View.GONE);
+        } else {
+            layoutErc20Token.setVisibility(View.VISIBLE);
+        }
+        tvErc20TokenName.setText(sendToken.getSymbol());
+        TokenEntity tokenEntity = new TokenEntity();
+        tokenEntity.setAddress(sendToken.getContractAddress());
+        tokenEntity.setShortName(sendToken.getSymbol());
+        BrahmaWeb3jService.getInstance().getTokenBalance(mAccount, tokenEntity)
+                .observable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<EthCall>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        BLog.e("get erc20 token balance", e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(EthCall ethCall) {
+                        BigInteger balance = BigInteger.ZERO;
+                        if (ethCall != null && ethCall.getValue() != null) {
+                            BLog.i("view model", "the " + mAccount.getName() + "'s " +
+                                    tokenEntity.getShortName() + " balance is " + ethCall.getValue());
+                            balance = Numeric.decodeQuantity(ethCall.getValue());
+                        }
+                        tvErc20TokenBalance.setText(String.valueOf(CommonUtil.getAccountFromWei(balance)));
+                    }
+                });
     }
 
     public void getGasPrice() {
@@ -356,6 +421,10 @@ public class InstantExchangeActivity extends BaseActivity {
                 });
     }
 
+    /*
+     *  Get the real-time rate and
+     *  update the receive amount based on the send amount
+     */
     private void getExpectedRate() {
         if (customProgressDialog != null) {
             customProgressDialog.setProgressMessage(getString(R.string.progress_get_rate));
@@ -379,6 +448,19 @@ public class InstantExchangeActivity extends BaseActivity {
                             }
                             Uint256 slippageRateUint256 = expectedRates.get(1);
                             slippageRate = slippageRateUint256.getValue();
+
+                            try {
+                                BigDecimal sendNum = new BigDecimal(Float.parseFloat(etSendTokenNum.getText().toString()));
+                                BigDecimal receiveNum = Convert.fromWei(sendNum.multiply(new BigDecimal(currentRate)), Convert.Unit.ETHER);
+                                if (receiveNum.compareTo(new BigDecimal(1)) > 0) {
+                                    etReceiveTokenNum.setText(String.valueOf(receiveNum.setScale(4, BigDecimal.ROUND_HALF_UP)));
+                                } else {
+                                    etReceiveTokenNum.setText(String.valueOf(receiveNum.setScale(8, BigDecimal.ROUND_HALF_UP)));
+                                }
+                            } catch (Exception e) {
+                                e.getMessage();
+                                etReceiveTokenNum.setText("");
+                            }
                         }
                     }
 
@@ -405,9 +487,13 @@ public class InstantExchangeActivity extends BaseActivity {
     }
 
     private void showAccountInfo(AccountEntity account) {
-        ImageManager.showAccountAvatar(this, ivAccountAvatar, account);
-        tvAccountName.setText(account.getName());
-        tvAccountAddress.setText(CommonUtil.generateSimpleAddress(account.getAddress()));
+        if (account != null) {
+            ImageManager.showAccountAvatar(this, ivAccountAvatar, account);
+            tvAccountName.setText(account.getName());
+            tvAccountAddress.setText(CommonUtil.generateSimpleAddress(account.getAddress()));
+            showAccountBalance();
+            showEre20TokenBalance();
+        }
     }
 
     // Show all kyber tokens
@@ -791,21 +877,34 @@ public class InstantExchangeActivity extends BaseActivity {
 
     // show approval tip
     private void showApprovalTipDialog() {
-        new AlertDialog.Builder(InstantExchangeActivity.this)
-                .setTitle(R.string.title_approve_transaction)
-                .setMessage(sendToken.getSymbol() + " " + getString(R.string.tip_approve_transaction))
-                .setCancelable(false)
-                .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel())
-                .setPositiveButton(R.string.ok, (dialog, which) -> {
-                    dialog.cancel();
-                    showApprovalInfo();
-                })
-                .create().show();
+        String sendAmount = etSendTokenNum.getText().toString().trim();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_contract_approve, null);
+        EditText etApproveAmount = dialogView.findViewById(R.id.et_approve_amount);
+        TextView tvHelp = dialogView.findViewById(R.id.tv_approve_reason);
+        tvHelp.setOnClickListener(v -> {
+            Intent intent = new Intent(InstantExchangeActivity.this, HelpActivity.class);
+            startActivity(intent);
+        });
+        etApproveAmount.setText(sendAmount);
+        AlertDialog alert = builder.setView(dialogView)
+                            .setCancelable(false)
+                            .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel())
+                            .setPositiveButton(R.string.confirm, (dialog, which) -> {
+                                String approveAmount = etApproveAmount.getText().toString().trim();
+                                if (approveAmount.length() > 0) {
+                                    dialog.cancel();
+                                    showApprovalInfo(approveAmount);
+                                }
+                            })
+                            .create();
+        alert.show();
+        Button negativeButton = alert.getButton(DialogInterface.BUTTON_NEGATIVE);
+        negativeButton.setTextColor(getResources().getColor(R.color.color_disabled_text));
     }
 
     // show approve transaction info
-    private void showApprovalInfo() {
-        String srcAmount = etSendTokenNum.getText().toString().trim();
+    private void showApprovalInfo(String approveAmount) {
         String gasPriceStr = etGasPrice.getText().toString().trim();
         String gasLimitStr = etGasLimit.getText().toString().trim();
         BigDecimal gasPrice = new BigDecimal(gasPriceStr);
@@ -831,7 +930,7 @@ public class InstantExchangeActivity extends BaseActivity {
 
         TextView tvApprovalAmount = view.findViewById(R.id.tv_approval_token_amount);
         TextView tvApprovalTokenName = view.findViewById(R.id.tv_approval_token_name);
-        tvApprovalAmount.setText(srcAmount);
+        tvApprovalAmount.setText(approveAmount);
         tvApprovalTokenName.setText(sendToken.getSymbol());
 
         TextView tvPayToAddress = view.findViewById(R.id.tv_pay_to_address);
@@ -865,7 +964,7 @@ public class InstantExchangeActivity extends BaseActivity {
                         customStatusView.loadLoading();
                         String password = ((EditText) dialogView.findViewById(R.id.et_password)).getText().toString();
                         BrahmaWeb3jService.getInstance().sendContractApproveTransfer(mAccount, sendToken,
-                                new BigDecimal(srcAmount), password, gasPrice, gasLimit)
+                                new BigDecimal(approveAmount), password, gasPrice, gasLimit)
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(new Observer<Integer>() {

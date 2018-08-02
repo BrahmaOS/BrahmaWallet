@@ -43,4 +43,8 @@
     <color name="possible_result_points">#c0ffbd21</color>  <!-- Android standard ICS color -->
     <color name="result_points">#c099cc00</color>  <!-- Android standard ICS color -->
     <color name="light_green">#70ff56</color>
+
+    <color name="tx_send">#F39900</color>
+    <color name="tx_receive">#2B9A35</color>
+    <color name="tx_error">#DD0000</color>
 </resources>

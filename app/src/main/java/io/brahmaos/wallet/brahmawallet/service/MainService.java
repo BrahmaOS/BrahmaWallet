@@ -50,6 +50,7 @@ public class MainService extends BaseService{
     public boolean init(Context context) {
         super.init(context);
         BrahmaWeb3jService.getInstance().init(context);
+        TransactionService.getInstance().init(context);
         return true;
     }
 

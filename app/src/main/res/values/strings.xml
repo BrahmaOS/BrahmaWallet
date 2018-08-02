@@ -141,7 +141,7 @@
     <string name="title_tab_import_private_key">Private Key</string>
 
     <!-- menu list -->
-    <string name="menu_instant_exchange">IEX</string>
+    <string name="menu_instant_exchange">FEX</string>
     <string name="menu_accounts">Accounts</string>
     <string name="menu_contacts">Contacts</string>
     <string name="action_create_account">Create Account</string>
@@ -195,6 +195,7 @@
     <string name="action_go_settings">Go Settings</string>
     <string name="tip_camera_permission">You have not authorized the camera yet. Please go to the settings page.</string>
     <string name="tip_external_storage_permission">You have not authorized the external storage yet. Please go to the settings page.</string>
+    <string name="label_balance">Balance</string>
 
     <!-- Strings related to login -->
     <string name="title_activity_account_change_password">Change Password</string>
@@ -353,6 +354,7 @@
     <string name="about_privacy_policy">Privacy Policy</string>
     <string name="about_service_perms">Terms of Service</string>
     <string name="about_check_updates">Check for updates</string>
+    <string name="tip_already_latest_version">Currently the latest version</string>
 
     <!-- privacy policy -->
     <string name="title_activity_privacy_policy">Brahma Wallet Privacy Policy</string>
@@ -386,7 +388,7 @@
     <string name="error_fingerprint_verification">Fingerprint verification failed</string>
 
     <!-- instant exchange -->
-    <string name="title_activity_instant_exchange">Instant Exchange</string>
+    <string name="title_activity_instant_exchange">Flash Exchange</string>
     <string name="title_current_rate">Rate</string>
     <string name="choose_kyber_tokens">Choose Tokens</string>
     <string name="choose_send_kyber_tokens">Choose Send Tokens</string>
@@ -395,18 +397,28 @@
     <string name="prompt_receive">Receive</string>
     <string name="prompt_pay_address">From</string>
     <string name="title_approve_transaction">Approve Transaction</string>
-    <string name="tip_approve_transaction"> authorization is required before starting the transaction.</string>
+    <string name="tip_approve_transaction">
+        Contract Approve is required before starting the transaction.
+    </string>
     <string name="prompt_transfer_info">Info</string>
     <string name="const_zero">0</string>
     <string name="token_ethereum">ETH</string>
     <string name="contract_approve">Contract Approve</string>
     <string name="progress_get_rate">get rate…</string>
     <string name="progress_get_allowance">get allow…</string>
-    <string name="action_instant_exchange">Instant Exchange</string>
-    <string name="prompt_approval_amount">Approve Amount</string>
+    <string name="action_instant_exchange">Flash Exchange</string>
+    <string name="prompt_approval_amount">Allowance</string>
     <string name="tip_approve_success">
         The contract approve request has been submitted. Please wait for the transaction to committed before proceeding to the next transaction.
     </string>
     <string name="prompt_send_amount">Send Amount</string>
     <string name="prompt_receive_amount">Receive Amount</string>
+    <string name="question_contract_approval">What is contract approval and allowance?</string>
+
+    <!-- help -->
+    <string name="title_activity_help">Help</string>
+
+    <!-- Transaction -->
+    <string name="title_transactions">Transactions</string>
+    <string name="no_transactions">No Transactions</string>
 </resources>

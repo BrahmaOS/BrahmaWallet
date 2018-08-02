@@ -1,5 +1,6 @@
 package io.brahmaos.wallet.brahmawallet.common;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -176,17 +177,25 @@ public class BrahmaConfig {
     }
 
     public String getServiceTermsUrl() {
-        String serviceUrl = BrahmaConst.SERVICE_PATH_EN;
+        String serviceUrl = BrahmaConst.PAGE_BASE_URL + BrahmaConst.HELP_PREFIX + "service_en.html";
         if (languageLocale.equals(BrahmaConst.LANGUAGE_CHINESE)) {
-            serviceUrl = BrahmaConst.SERVICE_PATH_ZH;
+            serviceUrl = BrahmaConst.PAGE_BASE_URL + BrahmaConst.HELP_PREFIX + "service_zh.html";
         }
         return serviceUrl;
     }
 
     public String getPrivacyUrl() {
-        String serviceUrl = BrahmaConst.PRIVACY_POLICY_PATH_EN;
+        String serviceUrl = BrahmaConst.PAGE_BASE_URL + BrahmaConst.HELP_PREFIX + "privacy_policy_en.html";
         if (languageLocale.equals(BrahmaConst.LANGUAGE_CHINESE)) {
-            serviceUrl = BrahmaConst.PRIVACY_POLICY_PATH_ZH;
+            serviceUrl = BrahmaConst.PAGE_BASE_URL + BrahmaConst.HELP_PREFIX + "privacy_policy_zh.html";
+        }
+        return serviceUrl;
+    }
+
+    public String getHelpUrl() {
+        String serviceUrl = BrahmaConst.PAGE_BASE_URL + BrahmaConst.HELP_PREFIX + "help_en.html";
+        if (languageLocale.equals(BrahmaConst.LANGUAGE_CHINESE)) {
+            serviceUrl = BrahmaConst.PAGE_BASE_URL + BrahmaConst.HELP_PREFIX + "help_zh.html";
         }
         return serviceUrl;
     }

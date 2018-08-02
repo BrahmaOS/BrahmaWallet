@@ -93,6 +93,61 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:paddingStart="2dp"
+                    android:paddingTop="@dimen/space_normal">
+                    <TextView
+                        android:id="@+id/tv_eth_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/font_size_subheading"
+                        android:text="ETH"/>
+                    <TextView
+                        android:layout_toEndOf="@id/tv_eth_name"
+                        android:layout_marginStart="@dimen/space_smaller"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/font_size_subheading"
+                        android:text="@string/label_balance"/>
+                    <TextView
+                        android:id="@+id/tv_eth_balance"
+                        android:textColor="@color/black"
+                        android:layout_alignParentEnd="true"
+                        android:textSize="@dimen/font_size_subheading"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/layout_erc20_token_balance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:paddingStart="2dp"
+                    android:paddingTop="@dimen/space_normal">
+                    <TextView
+                        android:id="@+id/tv_erc20_token_name"
+                        android:textSize="@dimen/font_size_subheading"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:layout_toEndOf="@id/tv_erc20_token_name"
+                        android:textSize="@dimen/font_size_subheading"
+                        android:layout_marginStart="@dimen/space_smaller"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_balance"/>
+                    <TextView
+                        android:id="@+id/tv_erc20_token_balance"
+                        android:textSize="@dimen/font_size_subheading"
+                        android:textColor="@color/black"
+                        android:layout_alignParentEnd="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:paddingTop="@dimen/space_normal"
                     android:paddingBottom="@dimen/space_normal"
                     android:paddingStart="2dp">
@@ -323,6 +378,7 @@
                     android:id="@+id/btn_show_transfer_info"
                     style="@style/ButtonSingle"
                     android:layout_marginTop="@dimen/space_larger"
+                    android:layout_marginBottom="@dimen/space_larger"
                     android:text="@string/action_instant_exchange"
                     android:textStyle="bold" />
 

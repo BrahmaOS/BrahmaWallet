@@ -12,6 +12,7 @@ import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
+import io.brahmaos.wallet.util.BLog;
 
 /**
  * image manager
@@ -50,7 +51,8 @@ public class ImageManager {
     /*
      * Avatar of token
      */
-    public static void showTokenIcon(Context Context, ImageView iv, String avatar, String tokenName) {
+    public static void showTokenIcon(Context Context, ImageView iv,
+                                     String avatar, String tokenName, String tokenAddress) {
         if (tokenName.toLowerCase().equals(BrahmaConst.BRAHMAOS_TOKEN)) {
             Glide.with(Context)
                     .load(R.drawable.icon_brm)
@@ -60,15 +62,12 @@ public class ImageManager {
                     .load(R.drawable.icon_eth)
                     .into(iv);
         } else {
-            try {
-                Glide.with(Context)
-                        .load(Integer.valueOf(avatar))
-                        .into(iv);
-            } catch (Exception e) {
-                Glide.with(Context)
-                        .load(BrahmaConst.IPFS_BASE_URL + BrahmaConst.IPFS_PREFIX + avatar)
-                        .into(iv);
-            }
+            BLog.i("icon url", BrahmaConst.IMAGE_BASE_URL + BrahmaConst.TOKEN_ICON_PREFIX +
+                    tokenAddress + BrahmaConst.TOKEN_ICON_SUFFIX);
+            Glide.with(Context)
+                    .load(BrahmaConst.IMAGE_BASE_URL + BrahmaConst.TOKEN_ICON_PREFIX +
+                            tokenAddress + BrahmaConst.TOKEN_ICON_SUFFIX)
+                    .into(iv);
         }
     }
 

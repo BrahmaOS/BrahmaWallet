@@ -386,11 +386,12 @@ public class BrahmaWeb3jService extends BaseService{
                         BLog.i(tag(), "rate is: " + rate.getValue().toString());
                     }
                 }*/
-
+                BLog.i(tag(), "the srcAddress is: " + srcAddress);
+                BLog.i(tag(), "the destAddress is: " + destAddress);
                 Function function = new Function("getExpectedRate",
                         Arrays.<Type>asList(new Address(srcAddress),
                                 new Address(destAddress),
-                                new Uint256(new BigDecimal(Math.pow(10, 18)).toBigInteger())),
+                                new Uint256(BigInteger.ONE)),
                         Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {}, new TypeReference<Uint256>() {}));
                 String encodedFunction = FunctionEncoder.encode(function);
                 org.web3j.protocol.core.methods.response.EthCall ethCall = web3.ethCall(
