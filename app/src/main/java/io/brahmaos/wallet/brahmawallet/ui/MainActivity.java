@@ -1,6 +1,7 @@
 package io.brahmaos.wallet.brahmawallet.ui;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -28,6 +29,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.hwangjr.rxbus.RxBus;
+import com.hwangjr.rxbus.annotation.Subscribe;
+import com.hwangjr.rxbus.annotation.Tag;
+import com.hwangjr.rxbus.thread.EventThread;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -44,6 +49,7 @@ import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
+import io.brahmaos.wallet.brahmawallet.event.EventTypeDef;
 import io.brahmaos.wallet.brahmawallet.model.AccountAssets;
 import io.brahmaos.wallet.brahmawallet.model.CryptoCurrency;
 import io.brahmaos.wallet.brahmawallet.model.VersionInfo;
@@ -115,6 +121,9 @@ public class MainActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drawer);
         ButterKnife.bind(this);
+
+        RxBus.get().register(this);
+
         VersionUpgradeService.getInstance().checkVersion(this, true, this);
         MainService.getInstance().getTokensLatestVersion();
 
@@ -229,6 +238,8 @@ public class MainActivity extends BaseActivity
             }
         });
     }
+
+
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -439,6 +450,26 @@ public class MainActivity extends BaseActivity
         }
 
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        RxBus.get().unregister(this);
+    }
+
+    @Subscribe(
+            thread = EventThread.MAIN_THREAD,
+            tags = {
+                    @Tag(EventTypeDef.ACCOUNT_ASSETS_CHANGE)
+            }
+    )
+    public void refreshAssets(String status) {
+        BLog.d(tag(), "account assetst change");
+        cacheAssets = MainService.getInstance().getAccountAssetsList();
+        BLog.d(tag(), cacheAssets.toString());
+        showAssetsCurrency();
     }
 
     /**

@@ -87,18 +87,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <ProgressBar
-                            android:id="@+id/loading_pbar"
-                            android:layout_marginTop="80dp"
-                            android:layout_marginBottom="@dimen/space_largest"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            style="@android:style/Widget.Holo.ProgressBar"
-                            android:indeterminateTint="@color/colorPrimary"
-                            android:indeterminateTintMode="src_in"
-                            android:indeterminate="true"/>
-
                         <android.support.v7.widget.RecyclerView
                             android:visibility="gone"
                             android:id="@+id/transactions_recycler"
@@ -131,6 +119,13 @@
                 </LinearLayout>
             </android.support.v4.widget.NestedScrollView>
         </android.support.v4.widget.SwipeRefreshLayout>
-
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            app:backgroundTint="@color/colorPrimary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:src="@drawable/icon_transaction"
+            android:layout_margin="16dp" />
     </android.support.design.widget.CoordinatorLayout>
 </android.support.v4.widget.DrawerLayout>

@@ -202,6 +202,7 @@
                     </android.support.design.widget.TextInputLayout>
 
                     <android.support.design.widget.TextInputLayout
+                        android:id="@+id/layout_text_input_remark"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:theme="@style/customEditTextLineColor"

@@ -15,7 +15,9 @@ import java.util.List;
 import java.util.Locale;
 
 import io.brahmaos.wallet.brahmawallet.R;
+import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
+import io.brahmaos.wallet.brahmawallet.model.Account;
 
 /**
  * the project common config
@@ -220,5 +222,17 @@ public class BrahmaConfig {
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putInt(KEY_TOKEN_LIST_VERSION, tokenListVersion);
         editor.apply();
+    }
+
+    public String getEtherscanTxsUrl(AccountEntity mAccount, TokenEntity mToken) {
+        String etherscanUrl = BrahmaConst.ETHERSCAN_BASE_URL + "address/" + mAccount.getAddress().toLowerCase();
+        if (!mToken.getName().toLowerCase().equals(BrahmaConst.ETHEREUM)) {
+            etherscanUrl += "#tokentxns";
+        }
+        return etherscanUrl;
+    }
+
+    public String getEtherscanTxDetailUrl(String txHash) {
+        return BrahmaConst.ETHERSCAN_BASE_URL + "tx/" + txHash;
     }
 }

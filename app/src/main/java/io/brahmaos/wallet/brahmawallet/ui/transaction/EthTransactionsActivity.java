@@ -1,7 +1,13 @@
 package io.brahmaos.wallet.brahmawallet.ui.transaction;
 
+import android.Manifest;
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
@@ -9,14 +15,16 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.hwangjr.rxbus.RxBus;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,7 +33,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
-import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
@@ -33,12 +40,15 @@ import io.brahmaos.wallet.brahmawallet.model.EthTransaction;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.service.TransactionService;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
+import io.brahmaos.wallet.brahmawallet.ui.transfer.TransferActivity;
+import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class EthTransactionsActivity extends BaseActivity {
+    public static final int REQ_CODE_TRANSFER = 10;
     @Override
     protected String tag() {
         return EthTransactionsActivity.class.getName();
@@ -56,12 +66,13 @@ public class EthTransactionsActivity extends BaseActivity {
     @BindView(R.id.tv_account_address)
     TextView tvAccountAddress;
 
-    @BindView(R.id.loading_pbar)
-    ProgressBar loadingProgressBar;
     @BindView(R.id.transactions_recycler)
     RecyclerView recyclerViewTransactions;
     @BindView(R.id.layout_no_transactions)
     LinearLayout layoutNoTransactions;
+
+    @BindView(R.id.fab)
+    FloatingActionButton fab;
 
     private AccountEntity mAccount;
     private TokenEntity mToken;
@@ -76,6 +87,9 @@ public class EthTransactionsActivity extends BaseActivity {
         setContentView(R.layout.activity_eth_transactions);
         ButterKnife.bind(this);
         showNavBackBtn();
+
+        RxBus.get().register(this);
+
         mAccount = (AccountEntity) getIntent().getSerializableExtra(IntentParam.PARAM_ACCOUNT_INFO);
         mToken = (TokenEntity) getIntent().getSerializableExtra(IntentParam.PARAM_TOKEN_INFO);
 
@@ -88,9 +102,7 @@ public class EthTransactionsActivity extends BaseActivity {
 
     private void initView() {
         swipeRefreshLayout.setColorSchemeResources(R.color.master);
-        swipeRefreshLayout.setOnRefreshListener(() -> {
-            swipeRefreshLayout.setRefreshing(false);
-        });
+        swipeRefreshLayout.setOnRefreshListener(this::getLatestTxList);
 
         String tokenShortName = mToken.getShortName();
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -104,7 +116,7 @@ public class EthTransactionsActivity extends BaseActivity {
         }
         showAccountInfo(mAccount);
 
-        loadingProgressBar.setVisibility(View.VISIBLE);
+        swipeRefreshLayout.setRefreshing(true);
         recyclerViewTransactions.setVisibility(View.GONE);
         layoutNoTransactions.setVisibility(View.GONE);
 
@@ -118,25 +130,17 @@ public class EthTransactionsActivity extends BaseActivity {
         recyclerViewTransactions.setHasFixedSize(true);
         recyclerViewTransactions.setNestedScrollingEnabled(false);
 
-        nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
-            @Override
-            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                if (scrollY > oldScrollY) {
-                    // Slide down
-                }
-
-                if (scrollY < oldScrollY) {
-                    // Slide up
-                }
-
-                if (scrollY == 0) {
-                    // top of list
-                }
-
-                if (scrollY == (v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight())) {
-                    getTxList();
-                }
+        nestedScrollView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+            if (scrollY == (v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight())) {
+                getTxList();
             }
+        });
+
+        fab.setOnClickListener(v -> {
+            Intent intent = new Intent(this, TransferActivity.class);
+            intent.putExtra(IntentParam.PARAM_ACCOUNT_INFO, mAccount);
+            intent.putExtra(IntentParam.PARAM_TOKEN_INFO, mToken);
+            startActivityForResult(intent, REQ_CODE_TRANSFER);
         });
     }
 
@@ -157,7 +161,6 @@ public class EthTransactionsActivity extends BaseActivity {
                     @Override
                     public void onCompleted() {
                         swipeRefreshLayout.setRefreshing(false);
-                        loadingProgressBar.setVisibility(View.GONE);
                     }
 
                     @Override
@@ -168,6 +171,42 @@ public class EthTransactionsActivity extends BaseActivity {
                     @Override
                     public void onNext(List<EthTransaction> apr) {
                         handleTxList(apr);
+                    }
+                });
+    }
+
+    private void getLatestTxList() {
+        TransactionService.getInstance().getEthTransactions(mAccount.getAddress().toLowerCase(), 0, count)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<List<EthTransaction>>() {
+
+                    @Override
+                    public void onCompleted() {
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        throwable.printStackTrace();
+                    }
+
+                    @Override
+                    public void onNext(List<EthTransaction> apr) {
+                        if (apr == null || apr.size() == 0) {
+                            return;
+                        }
+                        for (EthTransaction txNew : apr) {
+                            for (EthTransaction txLocal : mEthTransactions) {
+                                if (txLocal.getHash().equals(txNew.getHash())) {
+                                    mEthTransactions.remove(txLocal);
+                                    break;
+                                }
+                            }
+                            mEthTransactions.add(txNew);
+                        }
+                        Collections.sort(mEthTransactions);
+                        recyclerViewTransactions.getAdapter().notifyDataSetChanged();
                     }
                 });
     }
@@ -204,6 +243,46 @@ public class EthTransactionsActivity extends BaseActivity {
             recyclerViewTransactions.getAdapter().notifyDataSetChanged();
         }
         page += 1;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_tx_record, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.menu_tx_record) {
+            Intent intent = new Intent(EthTransactionsActivity.this, EtherscanTxsActivity.class);
+            intent.putExtra(IntentParam.PARAM_ACCOUNT_INFO, mAccount);
+            intent.putExtra(IntentParam.PARAM_TOKEN_INFO, mToken);
+            startActivity(intent);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == REQ_CODE_TRANSFER) {
+            if (resultCode == RESULT_OK) {
+                BLog.i(tag(), "transfer success");
+                swipeRefreshLayout.setRefreshing(true);
+                getLatestTxList();
+            }
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        RxBus.get().unregister(this);
     }
 
     /**
@@ -243,9 +322,9 @@ public class EthTransactionsActivity extends BaseActivity {
                 return;
             }
             holder.layoutTransaction.setOnClickListener(v -> {
-                /*Intent intent = new Intent(MainActivity.this, TransferActivity.class);
-                intent.putExtra(IntentParam.PARAM_TOKEN_INFO, tokenEntity);
-                startActivityForResult(intent, REQ_CODE_TRANSFER);*/
+                Intent intent = new Intent(EthTransactionsActivity.this, TransactionDetailActivity.class);
+                intent.putExtra(IntentParam.PARAM_ETH_TX, ethTransaction);
+                startActivity(intent);
             });
             holder.tvTxTime.setText(CommonUtil.timestampToDate(ethTransaction.getTxTime(), null));
             holder.tvTxSenderAddress.setText(CommonUtil.generateSimpleAddress(ethTransaction.getFromAddress()));
