@@ -17,12 +17,14 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -84,6 +86,8 @@ public class MainActivity extends BaseActivity
 
     public static int REQ_CODE_TRANSFER = 10;
 
+    @BindView(R.id.layout_header)
+    LinearLayout layoutHeader;
     @BindView(R.id.layout_new_account)
     ConstraintLayout createAccountLayout;
     @BindView(R.id.swipe_refresh_layout)
@@ -141,6 +145,23 @@ public class MainActivity extends BaseActivity
     }
 
     private void initView() {
+        DisplayMetrics display = this.getResources().getDisplayMetrics();
+        int height = display.heightPixels;
+
+        int statusBarHeight = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            statusBarHeight = getResources().getDimensionPixelSize(resourceId);
+        }
+        int toolbarHeight = getResources().getDimensionPixelSize(R.dimen.height_toolbar);
+
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) layoutHeader.getLayoutParams();
+        params.width = display.widthPixels;
+        params.height = ((int) (display.heightPixels * BrahmaConst.MAIN_PAGE_HEADER_RATIO) - statusBarHeight - toolbarHeight);
+        layoutHeader.setLayoutParams(params);
+        BLog.d(tag(), "the height is: " + height + "  ; the status bar height is: " +
+                statusBarHeight + "    ; the toolbar height is: " + toolbarHeight);
+
         swipeRefreshLayout.setColorSchemeResources(R.color.master);
         swipeRefreshLayout.setRefreshing(true);
         Toolbar toolbar = findViewById(R.id.toolbar);

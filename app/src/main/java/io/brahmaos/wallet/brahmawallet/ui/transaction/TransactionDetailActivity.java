@@ -43,6 +43,7 @@ import io.brahmaos.wallet.brahmawallet.model.TokenTransaction;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.service.TransactionService;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
+import io.brahmaos.wallet.brahmawallet.ui.contact.AddContactActivity;
 import io.brahmaos.wallet.brahmawallet.ui.transfer.TransferActivity;
 import io.brahmaos.wallet.brahmawallet.viewmodel.ContactViewModel;
 import io.brahmaos.wallet.util.BLog;
@@ -149,7 +150,6 @@ public class TransactionDetailActivity extends BaseActivity {
                     if (contactEntity.getAddress().toLowerCase().equals(fromAddress.toLowerCase())) {
                         tvSendAccountName.setVisibility(View.VISIBLE);
                         tvSendAccountName.setText(new StringBuilder().append(contactEntity.getName()).append(" ").append(contactEntity.getFamilyName()).toString());
-                        ivSendAccountAvatar.setPadding(0, 0, 0, 0);
                         ivSendAccountAvatar.setBackgroundResource(R.drawable.icon_contact_circle_bg);
                         Glide.with(this)
                                 .load(R.drawable.ic_person_account)
@@ -160,11 +160,10 @@ public class TransactionDetailActivity extends BaseActivity {
                     if (contactEntity.getAddress().toLowerCase().equals(toAddress.toLowerCase())) {
                         tvReceiveAccountName.setVisibility(View.VISIBLE);
                         tvReceiveAccountName.setText(new StringBuilder().append(contactEntity.getName()).append(" ").append(contactEntity.getFamilyName()).toString());
-                        ivReceiveAccountAvatar.setPadding(0, 0, 0, 0);
                         ivReceiveAccountAvatar.setBackgroundResource(R.drawable.icon_contact_circle_bg);
                         Glide.with(this)
                                 .load(R.drawable.ic_person_account)
-                                .into(ivSendAccountAvatar);
+                                .into(ivReceiveAccountAvatar);
 
                         toFlag = true;
                     }
@@ -205,6 +204,11 @@ public class TransactionDetailActivity extends BaseActivity {
                 Glide.with(this)
                         .load(R.drawable.ic_person_add)
                         .into(ivSendAccountAvatar);
+                ivSendAccountAvatar.setOnClickListener(v -> {
+                    Intent intent = new Intent(TransactionDetailActivity.this, AddContactActivity.class);
+                    intent.putExtra(IntentParam.PARAM_ETH_ADDRESS, fromAddress);
+                    startActivity(intent);
+                });
             }
             if (!toFlag) {
                 tvReceiveAccountName.setVisibility(View.GONE);
@@ -212,6 +216,11 @@ public class TransactionDetailActivity extends BaseActivity {
                 Glide.with(this)
                         .load(R.drawable.ic_person_add)
                         .into(ivReceiveAccountAvatar);
+                ivReceiveAccountAvatar.setOnClickListener(v -> {
+                    Intent intent = new Intent(TransactionDetailActivity.this, AddContactActivity.class);
+                    intent.putExtra(IntentParam.PARAM_ETH_ADDRESS, toAddress);
+                    startActivity(intent);
+                });
             }
         }
     }

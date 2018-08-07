@@ -267,8 +267,9 @@
                     android:id="@+id/tv_transfer_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:textColor="@color/color_hint_text"/>
+                    android:layout_marginTop="@dimen/space_smaller"
+                    android:textSize="@dimen/font_size_subheading"
+                    android:textColor="@color/color_secondary_text"/>
             </LinearLayout>
         </LinearLayout>
 

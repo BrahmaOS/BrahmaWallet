@@ -58,4 +58,6 @@ public class BrahmaConst {
     public static final String SERVICE_PATH_ZH = "https://ipfs.io/ipfs/QmWBTYAXg5ceyGGZ8pcbvXyPneTs8ca4WwStzKY74vaxKT";
     public static final String SERVICE_PATH_EN = "https://ipfs.io/ipfs/Qmds3fqPhHZTYpXQ68e6MURXF9g3kn9BCyTRLhhQAYf2VL";
     public static final String ETHERSCAN_BASE_URL = "https://etherscan.io/";
+
+    public static final Double MAIN_PAGE_HEADER_RATIO = 0.382;
 }
