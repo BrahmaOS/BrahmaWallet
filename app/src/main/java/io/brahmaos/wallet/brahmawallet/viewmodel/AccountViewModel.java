@@ -23,10 +23,13 @@ import android.arch.lifecycle.MediatorLiveData;
 import android.support.annotation.Nullable;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Splitter;
 
 import org.bitcoinj.crypto.ChildNumber;
 import org.bitcoinj.crypto.DeterministicKey;
 import org.bitcoinj.crypto.HDUtils;
+import org.bitcoinj.crypto.MnemonicCode;
+import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.wallet.DeterministicKeyChain;
 import org.bitcoinj.wallet.DeterministicSeed;
 import org.bitcoinj.wallet.UnreadableWalletException;
@@ -42,7 +45,6 @@ import org.web3j.utils.Numeric;
 
 import java.io.File;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
@@ -54,18 +56,14 @@ import java.util.Date;
 import java.util.List;
 
 import io.brahmaos.wallet.brahmawallet.WalletApp;
-import io.brahmaos.wallet.brahmawallet.api.Networks;
-import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.AllTokenEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 import io.brahmaos.wallet.brahmawallet.model.AccountAssets;
-import io.brahmaos.wallet.brahmawallet.model.CryptoCurrency;
 import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
 import io.brahmaos.wallet.brahmawallet.service.MainService;
 import io.brahmaos.wallet.util.BLog;
 import rx.Completable;
-import rx.CompletableSubscriber;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
@@ -265,9 +263,12 @@ public class AccountViewModel extends AndroidViewModel {
      * If an empty string is returned, the imported account already exists.
      * If an exception is returned, an exception has occurred during processing.
      */
-    public Observable<String> importAccountWithMnemonics(String mnemonics, String password, String name) {
+    public Observable<String> importAccountWithMnemonics(String mnemonics, String password, String accountName) {
         return Observable.create((Subscriber<? super String> e) -> {
             try {
+                List<String> menmonicsCodes = Splitter.on(" ").splitToList(mnemonics);
+                MnemonicCode.INSTANCE.check(menmonicsCodes);
+
                 long timeSeconds = System.currentTimeMillis() / 1000;
                 DeterministicSeed seed = new DeterministicSeed(mnemonics, null, "", timeSeconds);
                 DeterministicKeyChain chain = DeterministicKeyChain.builder().seed(seed).build();
@@ -301,12 +302,15 @@ public class AccountViewModel extends AndroidViewModel {
                     objectMapper.writeValue(destination, walletFile);
 
                     AccountEntity account = new AccountEntity();
-                    account.setName(name);
+                    account.setName(accountName);
                     account.setAddress(BrahmaWeb3jService.getInstance().prependHexPrefix(walletFile.getAddress()));
                     account.setFilename(filename);
                     ((WalletApp) getApplication()).getRepository().createAccount(account);
                     e.onNext(address);
                 }
+            } catch (MnemonicException e1) {
+                e1.printStackTrace();
+                e.onError(e1);
             } catch (CipherException | IOException | UnreadableWalletException e1) {
                 e1.printStackTrace();
                 e.onNext("exception");

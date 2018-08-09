@@ -234,7 +234,12 @@ public class ImportMnemonicsFragment extends Fragment {
                         @Override
                         public void onError(Throwable e) {
                             e.printStackTrace();
-                            Toast.makeText(getContext(), R.string.error_mnemonics, Toast.LENGTH_LONG).show();
+                            AlertDialog dialogTip = new AlertDialog.Builder(getContext())
+                                    .setMessage(R.string.error_mnemonics)
+                                    .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel())
+                                    .create();
+                            dialogTip.show();
+                            //Toast.makeText(getContext(), R.string.error_mnemonics, Toast.LENGTH_LONG).show();
                             customProgressDialog.cancel();
                             etMnemonic.requestFocus();
                             btnImportAccount.setEnabled(true);
