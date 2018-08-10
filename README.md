@@ -7,6 +7,7 @@ Brahma Wallet is a decentralized, secure and light wallet for brahma os, and sup
 - **Wallet account management**.
 - Token assets(Now only support Ethereum ERC20 token) management.
 - **Transaction management**.
+- **FEX(Flash Exchange)**, integrate Kyber, support DEX.
 - **Contact management**: you can set an wallet account for your contacts, when you select a contact at the time of transfer, the recipient of transfer is automatically set, this reduces the risk of transfer errors.
 
 ## Building
