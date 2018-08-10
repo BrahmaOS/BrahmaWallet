@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
+import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.common.ReqCode;
 import io.brahmaos.wallet.brahmawallet.db.entity.ContactEntity;
 import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
@@ -65,6 +66,11 @@ public class AddContactActivity extends BaseActivity {
                 scanAddressCode();
             }
         });
+
+        String address = getIntent().getStringExtra(IntentParam.PARAM_ETH_ADDRESS);
+        if (address != null && address.length() > 0) {
+            etContactAddress.setText(address);
+        }
     }
 
     @Override

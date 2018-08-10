@@ -421,4 +421,15 @@
     <!-- Transaction -->
     <string name="title_transactions">Transactions</string>
     <string name="no_transactions">No Transactions</string>
+    <string name="title_transaction">Transaction</string>
+    <string name="label_transaction_from">From</string>
+    <string name="label_transaction_to">To</string>
+    <string name="label_transaction_status">TxReceipt Status</string>
+    <string name="label_transaction_fees">Actual Tx Cost/Fee</string>
+    <string name="label_transaction_tx_hash">TxHash</string>
+    <string name="label_transaction_block_height">Blocl Height</string>
+    <string name="label_transaction_value">Value</string>
+    <string name="label_transaction_token_transfered">Token Transfered</string>
+    <string name="label_transaction_time">Time</string>
+    <string name="label_transaction_input_data">Remark</string>
 </resources>

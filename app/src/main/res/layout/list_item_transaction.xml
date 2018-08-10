@@ -4,7 +4,7 @@
     android:id="@+id/layout_transaction_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
+    android:background="@drawable/list_item_bg"
     android:orientation="vertical">
     <RelativeLayout
         android:layout_width="match_parent"

@@ -1,13 +1,13 @@
 package io.brahmaos.wallet.brahmawallet.ui.transfer;
 
 import android.Manifest;
-import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.BottomSheetDialog;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -22,6 +22,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.hwangjr.rxbus.RxBus;
 
 import org.web3j.crypto.CipherException;
 import org.web3j.protocol.exceptions.TransactionTimeoutException;
@@ -40,6 +42,7 @@ import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.common.ReqCode;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
+import io.brahmaos.wallet.brahmawallet.event.EventTypeDef;
 import io.brahmaos.wallet.brahmawallet.model.AccountAssets;
 import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
@@ -48,7 +51,6 @@ import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.ui.common.barcode.CaptureActivity;
 import io.brahmaos.wallet.brahmawallet.ui.common.barcode.Intents;
 import io.brahmaos.wallet.brahmawallet.ui.contact.ChooseContactActivity;
-import io.brahmaos.wallet.brahmawallet.ui.transaction.TransactionsActivity;
 import io.brahmaos.wallet.brahmawallet.view.CustomStatusView;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
@@ -89,6 +91,8 @@ public class TransferActivity extends BaseActivity {
     EditText etReceiverAddress;
     @BindView(R.id.et_amount)
     EditText etAmount;
+    @BindView(R.id.layout_text_input_remark)
+    TextInputLayout layoutRemarkInput;
     @BindView(R.id.et_remark)
     EditText etRemark;
     @BindView(R.id.et_gas_price)
@@ -133,9 +137,11 @@ public class TransferActivity extends BaseActivity {
 
         if (mToken.getName().toLowerCase().equals(BrahmaConst.ETHEREUM)) {
             layoutSendTokenBalance.setVisibility(View.GONE);
+            layoutRemarkInput.setVisibility(View.VISIBLE);
         } else {
             layoutSendTokenBalance.setVisibility(View.VISIBLE);
             tvSendTokenName.setText(mToken.getShortName());
+            layoutRemarkInput.setVisibility(View.GONE);
         }
 
         mAccountAssetsList = MainService.getInstance().getAccountAssetsList();
@@ -408,9 +414,7 @@ public class TransferActivity extends BaseActivity {
         transferInfoDialog.show();
 
         ImageView ivCloseDialog = view.findViewById(R.id.iv_close_dialog);
-        ivCloseDialog.setOnClickListener(v -> {
-            transferInfoDialog.cancel();
-        });
+        ivCloseDialog.setOnClickListener(v -> transferInfoDialog.cancel());
 
         TextView tvDialogPayToAddress = view.findViewById(R.id.tv_pay_to_address);
         tvDialogPayToAddress.setText(receiverAddress);
@@ -424,7 +428,7 @@ public class TransferActivity extends BaseActivity {
         tvGasLimit.setText(gasLimitStr);
         TextView tvGasValue = view.findViewById(R.id.tv_gas_value);
         BigDecimal gasValue = Convert.fromWei(Convert.toWei(new BigDecimal(gasLimit).multiply(gasPrice), Convert.Unit.GWEI), Convert.Unit.ETHER);
-        tvGasValue.setText(gasValue.setScale(9, BigDecimal.ROUND_HALF_UP).toString());
+        tvGasValue.setText(String.valueOf(gasValue.setScale(9, BigDecimal.ROUND_HALF_UP)));
 
         TextView tvTransferAmount = view.findViewById(R.id.tv_dialog_transfer_amount);
         tvTransferAmount.setText(String.valueOf(amount));
@@ -432,7 +436,6 @@ public class TransferActivity extends BaseActivity {
         TextView tvTransferToken = view.findViewById(R.id.tv_dialog_transfer_token);
         tvTransferToken.setText(mToken.getShortName());
 
-        LinearLayout layoutTransferInfo = view.findViewById(R.id.layout_transfer_info);
         LinearLayout layoutTransferStatus = view.findViewById(R.id.layout_transfer_status);
         CustomStatusView customStatusView = view.findViewById(R.id.as_status);
         TextView tvTransferStatus = view.findViewById(R.id.tv_transfer_status);
@@ -464,8 +467,11 @@ public class TransferActivity extends BaseActivity {
                                             customStatusView.loadSuccess();
                                             new Handler().postDelayed(() -> {
                                                 transferInfoDialog.cancel();
-                                                Intent intent = new Intent();
-                                                setResult(Activity.RESULT_OK, intent);
+                                                // Eth transfer is a real-time arrival, and token transfer may take longer,
+                                                // so there is no need to refresh
+                                                if (mToken.getName().toLowerCase().equals(BrahmaConst.ETHEREUM)) {
+                                                    RxBus.get().post(EventTypeDef.ACCOUNT_ASSETS_TRANSFER, "succ");
+                                                }
                                                 finish();
                                             }, 1200);
                                         } else if (flag == 1) {

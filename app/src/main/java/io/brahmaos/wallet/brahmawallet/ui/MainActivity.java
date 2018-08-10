@@ -1,6 +1,7 @@
 package io.brahmaos.wallet.brahmawallet.ui;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -16,18 +17,24 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.hwangjr.rxbus.RxBus;
+import com.hwangjr.rxbus.annotation.Subscribe;
+import com.hwangjr.rxbus.annotation.Tag;
+import com.hwangjr.rxbus.thread.EventThread;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -44,6 +51,7 @@ import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
+import io.brahmaos.wallet.brahmawallet.event.EventTypeDef;
 import io.brahmaos.wallet.brahmawallet.model.AccountAssets;
 import io.brahmaos.wallet.brahmawallet.model.CryptoCurrency;
 import io.brahmaos.wallet.brahmawallet.model.VersionInfo;
@@ -78,6 +86,8 @@ public class MainActivity extends BaseActivity
 
     public static int REQ_CODE_TRANSFER = 10;
 
+    @BindView(R.id.layout_header)
+    LinearLayout layoutHeader;
     @BindView(R.id.layout_new_account)
     ConstraintLayout createAccountLayout;
     @BindView(R.id.swipe_refresh_layout)
@@ -115,6 +125,9 @@ public class MainActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drawer);
         ButterKnife.bind(this);
+
+        RxBus.get().register(this);
+
         VersionUpgradeService.getInstance().checkVersion(this, true, this);
         MainService.getInstance().getTokensLatestVersion();
 
@@ -132,6 +145,23 @@ public class MainActivity extends BaseActivity
     }
 
     private void initView() {
+        DisplayMetrics display = this.getResources().getDisplayMetrics();
+        int height = display.heightPixels;
+
+        int statusBarHeight = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            statusBarHeight = getResources().getDimensionPixelSize(resourceId);
+        }
+        int toolbarHeight = getResources().getDimensionPixelSize(R.dimen.height_toolbar);
+
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) layoutHeader.getLayoutParams();
+        params.width = display.widthPixels;
+        params.height = ((int) (display.heightPixels * BrahmaConst.MAIN_PAGE_HEADER_RATIO) - statusBarHeight - toolbarHeight);
+        layoutHeader.setLayoutParams(params);
+        BLog.d(tag(), "the height is: " + height + "  ; the status bar height is: " +
+                statusBarHeight + "    ; the toolbar height is: " + toolbarHeight);
+
         swipeRefreshLayout.setColorSchemeResources(R.color.master);
         swipeRefreshLayout.setRefreshing(true);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -229,6 +259,8 @@ public class MainActivity extends BaseActivity
             }
         });
     }
+
+
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -439,6 +471,26 @@ public class MainActivity extends BaseActivity
         }
 
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        RxBus.get().unregister(this);
+    }
+
+    @Subscribe(
+            thread = EventThread.MAIN_THREAD,
+            tags = {
+                    @Tag(EventTypeDef.ACCOUNT_ASSETS_CHANGE)
+            }
+    )
+    public void refreshAssets(String status) {
+        BLog.d(tag(), "account assetst change");
+        cacheAssets = MainService.getInstance().getAccountAssetsList();
+        BLog.d(tag(), cacheAssets.toString());
+        showAssetsCurrency();
     }
 
     /**

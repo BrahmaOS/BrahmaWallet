@@ -232,11 +232,9 @@ public final class CameraManager {
                 return null;
             }
 
-            // 根据屏幕的宽高找到最合适的矩形框宽高值
             int width = findDesiredDimensionInRange(screenResolution.x, MIN_FRAME_WIDTH, MAX_FRAME_WIDTH);
-            int height = findDesiredDimensionInRange(screenResolution.y, MIN_FRAME_HEIGHT, MAX_FRAME_HEIGHT);
-
-            // 取屏幕中间的，宽为width，高为height的矩形框
+            //int height = findDesiredDimensionInRange(screenResolution.y, MIN_FRAME_HEIGHT, MAX_FRAME_HEIGHT);
+            int height = width;
             int leftOffset = (screenResolution.x - width) / 2;
             int topOffset = (screenResolution.y - height) / 3;
             framingRect = new Rect(leftOffset, topOffset, leftOffset + width, topOffset + height);

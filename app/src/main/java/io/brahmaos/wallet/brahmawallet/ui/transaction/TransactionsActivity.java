@@ -1,21 +1,22 @@
 package io.brahmaos.wallet.brahmawallet.ui.transaction;
 
-import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -27,19 +28,15 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
-import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
-import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
-import io.brahmaos.wallet.brahmawallet.model.AccountAssets;
 import io.brahmaos.wallet.brahmawallet.model.TokenTransaction;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
-import io.brahmaos.wallet.brahmawallet.service.MainService;
 import io.brahmaos.wallet.brahmawallet.service.TransactionService;
-import io.brahmaos.wallet.brahmawallet.ui.MainActivity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
-import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
+import io.brahmaos.wallet.brahmawallet.ui.transfer.TransferActivity;
+import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
@@ -50,6 +47,8 @@ public class TransactionsActivity extends BaseActivity {
     protected String tag() {
         return TransactionsActivity.class.getName();
     }
+
+    public static final int REQ_CODE_TRANSFER = 10;
 
     // UI references.
     @BindView(R.id.swipe_refresh_layout)
@@ -63,12 +62,13 @@ public class TransactionsActivity extends BaseActivity {
     @BindView(R.id.tv_account_address)
     TextView tvAccountAddress;
 
-    @BindView(R.id.loading_pbar)
-    ProgressBar loadingProgressBar;
     @BindView(R.id.transactions_recycler)
     RecyclerView recyclerViewTransactions;
     @BindView(R.id.layout_no_transactions)
     LinearLayout layoutNoTransactions;
+
+    @BindView(R.id.fab)
+    FloatingActionButton fab;
 
     private AccountEntity mAccount;
     private TokenEntity mToken;
@@ -95,9 +95,7 @@ public class TransactionsActivity extends BaseActivity {
 
     private void initView() {
         swipeRefreshLayout.setColorSchemeResources(R.color.master);
-        swipeRefreshLayout.setOnRefreshListener(() -> {
-            swipeRefreshLayout.setRefreshing(false);
-        });
+        swipeRefreshLayout.setOnRefreshListener(this::getLatestTokenTxList);
 
         String tokenShortName = mToken.getShortName();
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -111,6 +109,9 @@ public class TransactionsActivity extends BaseActivity {
         }
 
         showAccountInfo(mAccount);
+        swipeRefreshLayout.setRefreshing(true);
+        recyclerViewTransactions.setVisibility(View.GONE);
+        layoutNoTransactions.setVisibility(View.GONE);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setSmoothScrollbarEnabled(true);
@@ -125,18 +126,6 @@ public class TransactionsActivity extends BaseActivity {
         nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             @Override
             public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                if (scrollY > oldScrollY) {
-                    // Slide down
-                }
-
-                if (scrollY < oldScrollY) {
-                    // Slide up
-                }
-
-                if (scrollY == 0) {
-                    // top of list
-                }
-
                 if (scrollY == (v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight())) {
                     getTokenTxList();
                 }
@@ -145,6 +134,13 @@ public class TransactionsActivity extends BaseActivity {
         // Solve the sliding lag problem
         recyclerViewTransactions.setHasFixedSize(true);
         recyclerViewTransactions.setNestedScrollingEnabled(false);
+
+        fab.setOnClickListener(v -> {
+            Intent intent = new Intent(this, TransferActivity.class);
+            intent.putExtra(IntentParam.PARAM_ACCOUNT_INFO, mAccount);
+            intent.putExtra(IntentParam.PARAM_TOKEN_INFO, mToken);
+            startActivityForResult(intent, REQ_CODE_TRANSFER);
+        });
     }
 
     private void showAccountInfo(AccountEntity account) {
@@ -163,7 +159,6 @@ public class TransactionsActivity extends BaseActivity {
 
                     @Override
                     public void onCompleted() {
-                        loadingProgressBar.setVisibility(View.GONE);
                         swipeRefreshLayout.setRefreshing(false);
                     }
 
@@ -175,6 +170,43 @@ public class TransactionsActivity extends BaseActivity {
                     @Override
                     public void onNext(List<TokenTransaction> apr) {
                         handleTokenTxList(apr);
+                    }
+                });
+    }
+
+    private void getLatestTokenTxList() {
+        TransactionService.getInstance().getTokenTransactions(mToken.getAddress().toLowerCase(),
+                mAccount.getAddress().toLowerCase(), 0, count)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<List<TokenTransaction>>() {
+
+                    @Override
+                    public void onCompleted() {
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        throwable.printStackTrace();
+                    }
+
+                    @Override
+                    public void onNext(List<TokenTransaction> apr) {
+                        if (apr == null || apr.size() == 0) {
+                            return;
+                        }
+                        for (TokenTransaction txNew : apr) {
+                            for (TokenTransaction txLocal : mTokenTransactions) {
+                                if (txLocal.getEthTransaction().getHash().equals(txNew.getEthTransaction().getHash())) {
+                                    mTokenTransactions.remove(txLocal);
+                                    break;
+                                }
+                            }
+                            mTokenTransactions.add(txNew);
+                        }
+                        Collections.sort(mTokenTransactions);
+                        recyclerViewTransactions.getAdapter().notifyDataSetChanged();
                     }
                 });
     }
@@ -213,6 +245,41 @@ public class TransactionsActivity extends BaseActivity {
         page += 1;
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_tx_record, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.menu_tx_record) {
+            Intent intent = new Intent(TransactionsActivity.this, EtherscanTxsActivity.class);
+            intent.putExtra(IntentParam.PARAM_ACCOUNT_INFO, mAccount);
+            intent.putExtra(IntentParam.PARAM_TOKEN_INFO, mToken);
+            startActivity(intent);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == REQ_CODE_TRANSFER) {
+            if (resultCode == RESULT_OK) {
+                BLog.i(tag(), "transfer success");
+                swipeRefreshLayout.setRefreshing(true);
+                getLatestTokenTxList();
+            }
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+
     /**
      * list item account
      */
@@ -250,9 +317,9 @@ public class TransactionsActivity extends BaseActivity {
                 return;
             }
             holder.layoutTransaction.setOnClickListener(v -> {
-                /*Intent intent = new Intent(MainActivity.this, TransferActivity.class);
-                intent.putExtra(IntentParam.PARAM_TOKEN_INFO, tokenEntity);
-                startActivityForResult(intent, REQ_CODE_TRANSFER);*/
+                Intent intent = new Intent(TransactionsActivity.this, TransactionDetailActivity.class);
+                intent.putExtra(IntentParam.PARAM_TOKEN_TX, tokenTransaction);
+                startActivity(intent);
             });
             holder.tvTxTime.setText(CommonUtil.timestampToDate(tokenTransaction.getEthTransaction().getTxTime(), null));
             holder.tvTxSenderAddress.setText(CommonUtil.generateSimpleAddress(tokenTransaction.getFromAddress()));
