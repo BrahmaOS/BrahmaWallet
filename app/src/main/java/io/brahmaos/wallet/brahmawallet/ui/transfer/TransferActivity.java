@@ -149,14 +149,19 @@ public class TransferActivity extends BaseActivity {
         mViewModel = ViewModelProviders.of(this).get(AccountViewModel.class);
         mViewModel.getAccounts().observe(this, accountEntities -> {
             mAccounts = accountEntities;
-            if ((mAccount == null || mAccount.getAddress().length() == 0) &&
-                    accountEntities != null) {
-                mAccount = mAccounts.get(0);
-            }
+
             if (mAccounts != null && mAccounts.size() > 1) {
                 tvChangeAccount.setVisibility(View.VISIBLE);
             } else {
-                finish();
+                tvChangeAccount.setVisibility(View.GONE);
+                if (mAccounts == null || mAccounts.size() == 0) {
+                    finish();
+                }
+            }
+
+            if ((mAccount == null || mAccount.getAddress().length() == 0) &&
+                    accountEntities != null) {
+                mAccount = mAccounts.get(0);
             }
             showAccountInfo(mAccount);
         });

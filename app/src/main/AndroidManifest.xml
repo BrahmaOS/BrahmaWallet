@@ -74,7 +74,8 @@
             android:label="@string/title_activity_account_change_password" />
         <activity
             android:name=".ui.setting.SettingsActivity"
-            android:label="@string/title_activity_settings" />
+            android:label="@string/title_activity_settings"
+            android:configChanges="orientation|screenSize"/>
         <activity android:name=".ui.account.AddressQrcodeActivity" />
         <activity android:name=".ui.common.barcode.CaptureActivity" />
         <activity

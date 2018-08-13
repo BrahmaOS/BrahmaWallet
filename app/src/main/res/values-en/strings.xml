@@ -427,7 +427,7 @@
     <string name="label_transaction_status">TxReceipt Status</string>
     <string name="label_transaction_fees">Actual Tx Cost/Fee</string>
     <string name="label_transaction_tx_hash">TxHash</string>
-    <string name="label_transaction_block_height">Blocl Height</string>
+    <string name="label_transaction_block_height">Block Height</string>
     <string name="label_transaction_value">Value</string>
     <string name="label_transaction_token_transfered">Token Transfered</string>
     <string name="label_transaction_time">Time</string>

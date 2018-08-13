@@ -1,7 +1,6 @@
 package io.brahmaos.wallet.brahmawallet.ui;
 
 import android.Manifest;
-import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -24,7 +23,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -146,7 +144,6 @@ public class MainActivity extends BaseActivity
 
     private void initView() {
         DisplayMetrics display = this.getResources().getDisplayMetrics();
-        int height = display.heightPixels;
 
         int statusBarHeight = 0;
         int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
@@ -159,8 +156,6 @@ public class MainActivity extends BaseActivity
         params.width = display.widthPixels;
         params.height = ((int) (display.heightPixels * BrahmaConst.MAIN_PAGE_HEADER_RATIO) - statusBarHeight - toolbarHeight);
         layoutHeader.setLayoutParams(params);
-        BLog.d(tag(), "the height is: " + height + "  ; the status bar height is: " +
-                statusBarHeight + "    ; the toolbar height is: " + toolbarHeight);
 
         swipeRefreshLayout.setColorSchemeResources(R.color.master);
         swipeRefreshLayout.setRefreshing(true);
