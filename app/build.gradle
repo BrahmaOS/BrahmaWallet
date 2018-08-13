@@ -8,8 +8,8 @@ android {
         applicationId "io.brahmaos.wallet.brahmawallet"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 6000
-        versionName "Jupiter (v0.6)"
+        versionCode 6001
+        versionName "Jupiter (v0.6.1)"
         multiDexEnabled true
 
         buildConfigField("String", "WALLET_API_URL", "\"${WALLET_API_URL}\"")
