@@ -51,3 +51,6 @@ gradlew.bat build
 ```
 
 
+## Bugs and feature requests
+
+Have a bug or a feature request? [Please open a new issue](https://github.com/BrahmaOS/wallet/issues).
