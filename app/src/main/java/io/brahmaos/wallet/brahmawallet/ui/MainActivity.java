@@ -524,7 +524,7 @@ public class MainActivity extends BaseActivity
             holder.tvTokenName.setText(tokenEntity.getShortName());
             holder.tvTokenFullName.setText(tokenEntity.getName());
             holder.tvTokenPrice.setText("0");
-            ImageManager.showTokenIcon(MainActivity.this, holder.ivTokenIcon, tokenEntity.getAvatar(),
+            ImageManager.showTokenIcon(MainActivity.this, holder.ivTokenIcon,
                     tokenEntity.getName(), tokenEntity.getAddress());
             BigInteger tokenCount = BigInteger.ZERO;
             for (AccountAssets accountAssets : cacheAssets) {

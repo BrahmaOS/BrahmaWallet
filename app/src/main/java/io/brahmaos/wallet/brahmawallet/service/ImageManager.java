@@ -4,6 +4,7 @@ import android.content.Context;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.util.List;
 
@@ -52,7 +53,7 @@ public class ImageManager {
      * Avatar of token
      */
     public static void showTokenIcon(Context Context, ImageView iv,
-                                     String avatar, String tokenName, String tokenAddress) {
+                                     String tokenName, String tokenAddress) {
         if (tokenName.toLowerCase().equals(BrahmaConst.BRAHMAOS_TOKEN)) {
             Glide.with(Context)
                     .load(R.drawable.icon_brm)
@@ -62,11 +63,15 @@ public class ImageManager {
                     .load(R.drawable.icon_eth)
                     .into(iv);
         } else {
+            RequestOptions options = new RequestOptions()
+                    .placeholder(R.drawable.token_default)
+                    .error(R.drawable.token_default);
             BLog.i("icon url", BrahmaConst.IMAGE_BASE_URL + BrahmaConst.TOKEN_ICON_PREFIX +
                     tokenAddress + BrahmaConst.TOKEN_ICON_SUFFIX);
             Glide.with(Context)
                     .load(BrahmaConst.IMAGE_BASE_URL + BrahmaConst.TOKEN_ICON_PREFIX +
                             tokenAddress + BrahmaConst.TOKEN_ICON_SUFFIX)
+                    .apply(options)
                     .into(iv);
         }
     }

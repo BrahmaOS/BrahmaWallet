@@ -235,4 +235,8 @@ public class BrahmaConfig {
     public String getEtherscanTxDetailUrl(String txHash) {
         return BrahmaConst.ETHERSCAN_BASE_URL + "tx/" + txHash;
     }
+
+    public String getFeedbackUrl() {
+        return BrahmaConst.FEEDBACK_URL;
+    }
 }

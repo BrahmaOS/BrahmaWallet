@@ -251,7 +251,7 @@ public class AccountAssetsActivity extends BaseActivity {
 
             holder.tvTokenName.setText(tokenEntity.getShortName());
             holder.tvTokenFullName.setText(tokenEntity.getName());
-            ImageManager.showTokenIcon(AccountAssetsActivity.this, holder.ivTokenIcon, tokenEntity.getAvatar(),
+            ImageManager.showTokenIcon(AccountAssetsActivity.this, holder.ivTokenIcon,
                     tokenEntity.getName(), tokenEntity.getAddress());
             BigInteger tokenCount = BigInteger.ZERO;
             for (AccountAssets accountAssets : accountAssetsList) {

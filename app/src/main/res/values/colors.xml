@@ -26,6 +26,7 @@
     <color name="master">#3C78C2</color>
     <color name="divider">#18000000</color>
     <color name="gray_border">#c6c6c6</color>
+    <color name="link_color">#07f</color>
 
     <color name="main_bg">#F6F6F6</color>
     <color name="main_btn_bg">@color/master</color>
