@@ -35,9 +35,10 @@ public interface WalletApi {
     /**
      * Get the latest version of the wallet
      */
-    @GET("/v1/wallet/versions/latest")
+    @GET("/v2/wallet/versions/latest")
     Observable<ApiRespResult> getLatestVersion(@Query("app") int appId,
-                                               @Query("os") int osId);
+                                               @Query("os") int osId,
+                                               @Query("lang") String language);
 
     /**
      * Get the latest version of the tokens

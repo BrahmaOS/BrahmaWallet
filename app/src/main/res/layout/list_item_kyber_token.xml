@@ -19,7 +19,6 @@
             android:layout_width="@dimen/icon_normal_size"
             android:layout_height="@dimen/icon_normal_size"
             android:padding="6dp"
-            android:visibility="gone"
             android:src="@drawable/icon_ven"/>
         
         <LinearLayout

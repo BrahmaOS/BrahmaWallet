@@ -563,10 +563,10 @@ public class InstantExchangeActivity extends BaseActivity {
             // ETH cannot be cancelled
             if (token.getSymbol().equals("ETH")) {
                 holder.tvTokenAddress.setVisibility(View.GONE);
-                //ImageManager.showTokenIcon(InstantExchangeActivity.this, holder.ivTokenAvatar, R.drawable.icon_eth);
+                ImageManager.showTokenIcon(InstantExchangeActivity.this, holder.ivTokenAvatar, R.drawable.icon_eth);
             } else {
                 holder.tvTokenAddress.setVisibility(View.VISIBLE);
-                //ImageManager.showTokenIcon(TokensActivity.this, holder.ivTokenAvatar, token.getAvatar(), token.getName());
+                ImageManager.showTokenIcon(InstantExchangeActivity.this, holder.ivTokenAvatar, token.getName(), token.getContractAddress().toLowerCase());
             }
             holder.layoutKyberToken.setOnClickListener(v -> {
                 if (BrahmaConfig.getInstance().getNetworkUrl().equals(BrahmaConst.MAINNET_URL)) {
@@ -640,10 +640,10 @@ public class InstantExchangeActivity extends BaseActivity {
             // ETH cannot be cancelled
             if (token.getSymbol().equals("ETH")) {
                 holder.tvTokenAddress.setVisibility(View.GONE);
-                //ImageManager.showTokenIcon(InstantExchangeActivity.this, holder.ivTokenAvatar, R.drawable.icon_eth);
+                ImageManager.showTokenIcon(InstantExchangeActivity.this, holder.ivTokenAvatar, R.drawable.icon_eth);
             } else {
                 holder.tvTokenAddress.setVisibility(View.VISIBLE);
-                //ImageManager.showTokenIcon(TokensActivity.this, holder.ivTokenAvatar, token.getAvatar(), token.getName());
+                ImageManager.showTokenIcon(InstantExchangeActivity.this, holder.ivTokenAvatar, token.getName(), token.getContractAddress().toLowerCase());
             }
             holder.layoutKyberToken.setOnClickListener(v -> {
                 if (BrahmaConfig.getInstance().getNetworkUrl().equals(BrahmaConst.MAINNET_URL)) {

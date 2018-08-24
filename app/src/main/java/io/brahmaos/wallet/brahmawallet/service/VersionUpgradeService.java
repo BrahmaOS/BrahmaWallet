@@ -94,9 +94,14 @@ public class VersionUpgradeService {
                              final boolean dontAlert, final INewVerNotify notify) {
 
         VersionInfo currVer = getCurrVer(activity);
+        String lang = "en";
+        if (BrahmaConfig.getInstance().getLanguageLocale().equals(BrahmaConst.LANGUAGE_CHINESE)) {
+            lang = "zh";
+        }
+
         if (currVer != null) {
             Networks.getInstance().getWalletApi().getLatestVersion(BrahmaConst.APP_ID,
-                    ApiConst.OSTYPE_ANDROID)
+                    ApiConst.OSTYPE_ANDROID, lang)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<ApiRespResult>() {

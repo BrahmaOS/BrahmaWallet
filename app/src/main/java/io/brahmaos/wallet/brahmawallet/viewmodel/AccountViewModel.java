@@ -266,8 +266,8 @@ public class AccountViewModel extends AndroidViewModel {
     public Observable<String> importAccountWithMnemonics(String mnemonics, String password, String accountName) {
         return Observable.create((Subscriber<? super String> e) -> {
             try {
-                List<String> menmonicsCodes = Splitter.on(" ").splitToList(mnemonics);
-                MnemonicCode.INSTANCE.check(menmonicsCodes);
+                List<String> mnemonicsCodes = Splitter.on(" ").splitToList(mnemonics);
+                MnemonicCode.INSTANCE.check(mnemonicsCodes);
 
                 long timeSeconds = System.currentTimeMillis() / 1000;
                 DeterministicSeed seed = new DeterministicSeed(mnemonics, null, "", timeSeconds);

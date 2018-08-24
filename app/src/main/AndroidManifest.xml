@@ -74,8 +74,8 @@
             android:label="@string/title_activity_account_change_password" />
         <activity
             android:name=".ui.setting.SettingsActivity"
-            android:label="@string/title_activity_settings"
-            android:configChanges="orientation|screenSize"/>
+            android:configChanges="orientation|screenSize"
+            android:label="@string/title_activity_settings" />
         <activity android:name=".ui.account.AddressQrcodeActivity" />
         <activity android:name=".ui.common.barcode.CaptureActivity" />
         <activity
@@ -112,8 +112,9 @@
         <activity android:name=".ui.transaction.TransactionsActivity" />
         <activity android:name=".ui.transaction.EthTransactionsActivity" />
         <activity android:name=".ui.transaction.EtherscanTxsActivity" />
-        <activity android:name=".ui.transaction.EtherscanTxDetailActivity"></activity>
+        <activity android:name=".ui.transaction.EtherscanTxDetailActivity" />
         <activity android:name=".ui.transaction.TransactionDetailActivity" />
+        <activity android:name=".ui.setting.FeedbackActivity"></activity>
     </application>
 
 </manifest>

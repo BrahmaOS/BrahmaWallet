@@ -354,6 +354,7 @@
     <string name="about_privacy_policy">Privacy Policy</string>
     <string name="about_service_perms">Terms of Service</string>
     <string name="about_check_updates">Check for updates</string>
+    <string name="about_feedback">Feedback</string>
     <string name="tip_already_latest_version">Currently the latest version</string>
 
     <!-- privacy policy -->
@@ -432,4 +433,5 @@
     <string name="label_transaction_token_transfered">Token Transfered</string>
     <string name="label_transaction_time">Time</string>
     <string name="label_transaction_input_data">Remark</string>
+    <string name="label_copy_etherscan_url">Copy Etherscan details url</string>
 </resources>

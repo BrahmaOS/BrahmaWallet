@@ -60,4 +60,5 @@ public class BrahmaConst {
     public static final String ETHERSCAN_BASE_URL = "https://etherscan.io/";
 
     public static final Double MAIN_PAGE_HEADER_RATIO = 0.382;
+    public static final String FEEDBACK_URL = "https://github.com/BrahmaOS/wallet/issues";
 }
