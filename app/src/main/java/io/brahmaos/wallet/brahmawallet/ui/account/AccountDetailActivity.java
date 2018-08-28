@@ -1,6 +1,5 @@
 package io.brahmaos.wallet.brahmawallet.ui.account;
 
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.ClipboardManager;
@@ -8,15 +7,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.view.Gravity;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import butterknife.BindView;
@@ -45,14 +40,16 @@ public class AccountDetailActivity extends BaseActivity {
     // UI references.
     @BindView(R.id.iv_account_avatar)
     ImageView ivAccountAvatar;
+    @BindView(R.id.layout_account_name)
+    RelativeLayout layoutAccountName;
     @BindView(R.id.tv_account_name)
     TextView tvAccountName;
     @BindView(R.id.layout_account_address)
-    LinearLayout layoutAccountAddress;
+    RelativeLayout layoutAccountAddress;
     @BindView(R.id.tv_account_address)
     TextView tvAccountAddress;
-    @BindView(R.id.tv_change_account_name)
-    TextView tvChangeAccountName;
+    @BindView(R.id.layout_account_address_qrcode)
+    RelativeLayout layoutAccountAddressQRCode;
     @BindView(R.id.tv_change_password)
     TextView tvChangePassword;
     @BindView(R.id.tv_export_private_key)
@@ -102,18 +99,25 @@ public class AccountDetailActivity extends BaseActivity {
         tvAccountName.setText(account.getName());
         tvAccountAddress.setText(CommonUtil.generateSimpleAddress(account.getAddress()));
 
+        layoutAccountName.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ChangeAccountNameActivity.class);
+            intent.putExtra(IntentParam.PARAM_ACCOUNT_ID, account.getId());
+            intent.putExtra(IntentParam.PARAM_ACCOUNT_NAME, account.getName());
+            startActivity(intent);
+        });
+
         layoutAccountAddress.setOnClickListener(v -> {
             Intent intent = new Intent(AccountDetailActivity.this, AddressQrcodeActivity.class);
             intent.putExtra(IntentParam.PARAM_ACCOUNT_INFO, account);
             startActivity(intent);
         });
 
-        tvChangeAccountName.setOnClickListener(v -> {
-            Intent intent = new Intent(this, ChangeAccountNameActivity.class);
-            intent.putExtra(IntentParam.PARAM_ACCOUNT_ID, account.getId());
-            intent.putExtra(IntentParam.PARAM_ACCOUNT_NAME, account.getName());
+        layoutAccountAddressQRCode.setOnClickListener(v -> {
+            Intent intent = new Intent(AccountDetailActivity.this, AddressQrcodeActivity.class);
+            intent.putExtra(IntentParam.PARAM_ACCOUNT_INFO, account);
             startActivity(intent);
         });
+
         tvChangePassword.setOnClickListener(v -> {
             Intent intent = new Intent(this, AccountChangePasswordActivity.class);
             intent.putExtra(IntentParam.PARAM_ACCOUNT_ID, account.getId());
