@@ -2,6 +2,7 @@ package io.brahmaos.wallet.brahmawallet.service;
 
 import android.content.Context;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -23,7 +24,7 @@ public class ImageManager {
     /*
      * Avatar of account number, use random fruit picture to show
      */
-    public static void showAccountAvatar(Context Context, ImageView iv, AccountEntity account) {
+    public static void showAccountAvatar(Context context, ImageView iv, AccountEntity account) {
         int resId = 0;
         if (account.getId() % 9 == 1) {
             resId = R.drawable.fruit_icons_00;
@@ -44,9 +45,33 @@ public class ImageManager {
         } else {
             resId = R.drawable.fruit_icons_08;
         }
-        Glide.with(Context)
+        Glide.with(context)
                 .load(resId)
                 .into(iv);
+    }
+
+    /*
+     * Show account info background.
+     */
+    public static void showAccountBackground(Context context, ImageView ivLayoutBg, AccountEntity account) {
+        int resId;
+        int position = account.getId();
+        if (position % 6 == 1) {
+            resId = R.drawable.account_bg_apple;
+        } else if (position % 6 == 2) {
+            resId = R.drawable.account_bg_baker;
+        } else if (position % 6 == 3) {
+            resId = R.drawable.account_bg_charley;
+        } else if (position % 6 == 4) {
+            resId = R.drawable.account_bg_dog;
+        } else if (position % 6 == 5) {
+            resId = R.drawable.account_bg_easy;
+        } else {
+            resId = R.drawable.account_bg_fox;
+        }
+        Glide.with(context)
+                .load(resId)
+                .into(ivLayoutBg);
     }
 
     /*

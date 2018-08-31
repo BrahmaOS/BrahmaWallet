@@ -82,6 +82,10 @@
     <string name="title_tab_qr_code">二维码</string>
     <string name="action_copy_keystore">复制Keystore</string>
 
+    <string name="label_avatar">头像</string>
+    <string name="label_account_name">账号名</string>
+    <string name="label_account_address">账号地址</string>
+    <string name="label_qrcode">地址二维码</string>
     <string name="action_change_account_name">更改账号名</string>
     <string name="action_change_password">更改密码</string>
     <string name="action_export_private_key">导出私钥</string>

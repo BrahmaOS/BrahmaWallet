@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.io.File;
@@ -198,6 +199,7 @@ public class AccountsActivity extends BaseActivity {
                 return ;
             }
             ImageManager.showAccountAvatar(AccountsActivity.this, holder.ivAccountAvatar, account);
+            ImageManager.showAccountBackground(AccountsActivity.this, holder.ivAccountBg, account);
             String currencyUnit = BrahmaConfig.getInstance().getCurrencyUnit();
             if (currencyUnit != null) {
                 holder.tvCurrencyUnit.setText(currencyUnit);
@@ -232,6 +234,7 @@ public class AccountsActivity extends BaseActivity {
 
         class ItemViewHolder extends RecyclerView.ViewHolder {
 
+            ImageView ivAccountBg;
             ImageView ivAccountAvatar;
             TextView tvAccountName;
             TextView tvAccountAddress;
@@ -241,6 +244,7 @@ public class AccountsActivity extends BaseActivity {
 
             ItemViewHolder(View itemView) {
                 super(itemView);
+                ivAccountBg = itemView.findViewById(R.id.iv_account_bg);
                 ivAccountAvatar = itemView.findViewById(R.id.iv_account_avatar);
                 tvAccountName = itemView.findViewById(R.id.tv_account_name);
                 tvAccountAddress = itemView.findViewById(R.id.tv_account_address);

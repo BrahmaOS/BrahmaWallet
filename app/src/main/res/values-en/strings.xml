@@ -82,6 +82,10 @@
     <string name="title_tab_qr_code">QR Code</string>
     <string name="action_copy_keystore">Copy Keystore</string>
 
+    <string name="label_avatar">Avatar</string>
+    <string name="label_account_name">Name</string>
+    <string name="label_account_address">Address</string>
+    <string name="label_qrcode">Address Code</string>
     <string name="action_change_account_name">Change Name</string>
     <string name="action_change_password">Change Password</string>
     <string name="action_export_private_key">Export Private Key</string>

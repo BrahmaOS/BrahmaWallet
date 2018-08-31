@@ -3,13 +3,19 @@ package io.brahmaos.wallet.brahmawallet.ui.account;
 import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -72,6 +78,12 @@ public class AccountAssetsActivity extends BaseActivity {
     TextView tvTotalAssets;
     @BindView(R.id.tv_currency_unit)
     TextView tvCurrencyUnit;
+    @BindView(R.id.layout_app_bar)
+    AppBarLayout appBarLayout;
+    @BindView(R.id.layout_collapsing_toolbar)
+    CollapsingToolbarLayout collapsingToolbarLayout;
+    @BindView(R.id.iv_account_bg)
+    ImageView ivAccountBg;
 
     private int accountId;
     private AccountEntity account;
@@ -108,6 +120,8 @@ public class AccountAssetsActivity extends BaseActivity {
         mViewModel = ViewModelProviders.of(this).get(AccountViewModel.class);
         cryptoCurrencies = MainService.getInstance().getCryptoCurrencies();
         accountAssetsList = MainService.getInstance().getAccountAssetsList();
+
+        appBarLayout.setExpanded(true);
     }
 
     @Override
@@ -133,6 +147,7 @@ public class AccountAssetsActivity extends BaseActivity {
 
     private void initView() {
         ImageManager.showAccountAvatar(AccountAssetsActivity.this, ivAccountAvatar, account);
+        ImageManager.showAccountBackground(AccountAssetsActivity.this, ivAccountBg, account);
         tvAccountName.setText(account.getName());
         tvAccountAddress.setText(CommonUtil.generateSimpleAddress(account.getAddress()));
 
@@ -141,6 +156,38 @@ public class AccountAssetsActivity extends BaseActivity {
             intent.putExtra(IntentParam.PARAM_ACCOUNT_ID, account.getId());
             startActivity(intent);
         });
+
+        appBarLayout.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
+            if (Math.abs(verticalOffset) >= appBarLayout.getTotalScrollRange() / 2) {
+                collapsingToolbarLayout.setTitle(account.getName());
+            } else {
+                collapsingToolbarLayout.setTitle("");
+            }
+        });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_qrcode, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.menu_qrcode) {
+            if (account != null) {
+                Intent intent = new Intent(AccountAssetsActivity.this, AddressQrcodeActivity.class);
+                intent.putExtra(IntentParam.PARAM_ACCOUNT_INFO, account);
+                startActivity(intent);
+            }
+            return true;
+        } else if (id == android.R.id.home) {
+            finish();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void initAssets() {
