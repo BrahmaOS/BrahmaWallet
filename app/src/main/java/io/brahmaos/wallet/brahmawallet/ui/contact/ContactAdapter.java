@@ -58,7 +58,7 @@ public class ContactAdapter extends IndexableAdapter<ContactEntity> {
         vh.tvName.setText(entity.getName() + " " + entity.getFamilyName());
         vh.tvAddress.setText(entity.getAddress());
 
-        if (entity.getAvatar() != null && !entity.getAvatar().equals("null")) {
+        if (entity.getAvatar() != null && entity.getAvatar().length() > 0 && !entity.getAvatar().equals("null")) {
             Uri uriAvatar = Uri.parse(entity.getAvatar());
             try {
                 Bitmap bmpAvatar = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uriAvatar);

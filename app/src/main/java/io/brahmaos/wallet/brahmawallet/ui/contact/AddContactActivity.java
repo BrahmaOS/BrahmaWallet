@@ -91,7 +91,9 @@ public class AddContactActivity extends BaseActivity {
                     != PackageManager.PERMISSION_GRANTED) {
                 requestExternalStorage();
             } else {
-                selectContactAvatar();
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/*");
+                startActivityForResult(intent, ReqCode.CHOOSE_IMAGE);
             }
         });
 
@@ -228,9 +230,4 @@ public class AddContactActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    public void selectContactAvatar() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("image/*");
-        startActivityForResult(intent, ReqCode.CHOOSE_IMAGE);
-    }
 }
