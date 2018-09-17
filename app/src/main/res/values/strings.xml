@@ -82,6 +82,10 @@
     <string name="title_tab_qr_code">QR Code</string>
     <string name="action_copy_keystore">Copy Keystore</string>
 
+    <string name="label_avatar">Avatar</string>
+    <string name="label_account_name">Name</string>
+    <string name="label_account_address">Address</string>
+    <string name="label_qrcode">Address Code</string>
     <string name="action_change_account_name">Change Name</string>
     <string name="action_change_password">Change Password</string>
     <string name="action_export_private_key">Export Private Key</string>
@@ -354,6 +358,7 @@
     <string name="about_privacy_policy">Privacy Policy</string>
     <string name="about_service_perms">Terms of Service</string>
     <string name="about_check_updates">Check for updates</string>
+    <string name="about_feedback">Feedback</string>
     <string name="tip_already_latest_version">Currently the latest version</string>
 
     <!-- privacy policy -->
@@ -432,4 +437,5 @@
     <string name="label_transaction_token_transfered">Token Transfered</string>
     <string name="label_transaction_time">Time</string>
     <string name="label_transaction_input_data">Remark</string>
+    <string name="label_copy_etherscan_url">Copy Etherscan details url</string>
 </resources>

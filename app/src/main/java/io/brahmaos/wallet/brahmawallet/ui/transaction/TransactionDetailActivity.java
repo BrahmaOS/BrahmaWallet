@@ -1,6 +1,9 @@
 package io.brahmaos.wallet.brahmawallet.ui.transaction;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -34,6 +37,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.ContactEntity;
@@ -96,6 +100,8 @@ public class TransactionDetailActivity extends BaseActivity {
     TextView tvTxGasUsed;
     @BindView(R.id.tv_gas_price)
     TextView tvTxGasPrice;
+    @BindView(R.id.layout_copy_etherscan_url)
+    LinearLayout layoutCopyEtherscanUrl;
 
     private EthTransaction mEthTx;
     private TokenTransaction mTokenTx;
@@ -139,6 +145,14 @@ public class TransactionDetailActivity extends BaseActivity {
         }
         initHeader();
 
+        layoutCopyEtherscanUrl.setOnClickListener(v -> {
+            ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clipData = ClipData.newPlainText("text", BrahmaConfig.getInstance().getEtherscanTxDetailUrl(txHash));
+            if (cm != null) {
+                cm.setPrimaryClip(clipData);
+                showLongToast(R.string.tip_success_copy);
+            }
+        });
     }
 
     private void initHeader() {

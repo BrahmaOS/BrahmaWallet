@@ -46,6 +46,12 @@ public class AboutActivity extends BaseActivity
         tvVersionUpdate.setOnClickListener(v -> {
             VersionUpgradeService.getInstance().checkVersion(this, true, this);
         });
+
+        TextView tvFeedback = findViewById(R.id.tv_feedback);
+        tvFeedback.setOnClickListener(v -> {
+            Intent intent = new Intent(AboutActivity.this, FeedbackActivity.class);
+            startActivity(intent);
+        });
     }
 
     @Override

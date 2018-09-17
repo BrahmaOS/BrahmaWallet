@@ -1,164 +1,202 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
 
-    <android.support.design.widget.CoordinatorLayout
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/layout_app_bar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
+        android:theme="@style/AppTheme.AppBarOverlay">
 
-        <android.support.design.widget.AppBarLayout
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/layout_collapsing_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:theme="@style/AppTheme.AppBarOverlay">
+            android:layout_height="224dp"
+            android:fitsSystemWindows="true"
+            app:contentScrim="?attr/colorPrimary"
+            android:theme="@style/ToolBarStyle"
+            app:titleTextAppearance="@style/ToolbarTitleText"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+            <FrameLayout
+                android:fitsSystemWindows="true"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <ImageView
+                    android:id="@+id/iv_account_bg"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:fitsSystemWindows="true"
+                    android:src="@drawable/account_bg_apple"
+                    app:layout_collapseMode="parallax"
+                    app:layout_collapseParallaxMultiplier="0.7" />
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="160dp"
+                    android:layout_gravity="center"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/account_bg"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:orientation="vertical">
+                    <RelativeLayout
+                        android:id="@+id/layout_account_info"
+                        android:clickable="true"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="@dimen/space_normal"
+                        android:paddingEnd="@dimen/space_normal"
+                        android:paddingTop="@dimen/space_large"
+                        android:paddingBottom="@dimen/space_large"
+                        android:focusable="true">
+                        <ImageView
+                            android:id="@+id/iv_account_avatar"
+                            android:layout_gravity="center"
+                            android:layout_centerVertical="true"
+                            android:layout_width="@dimen/icon_normal_size"
+                            android:layout_height="@dimen/icon_normal_size"/>
+                        <TextView
+                            android:id="@+id/tv_account_name"
+                            android:layout_toEndOf="@id/iv_account_avatar"
+                            android:layout_marginStart="@dimen/space_normal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/font_size_title"
+                            android:textColor="@color/white"
+                            tools:ignore="RelativeOverlap"/>
+                        <TextView
+                            android:id="@+id/tv_account_address"
+                            android:layout_below="@id/tv_account_name"
+                            android:layout_alignStart="@id/tv_account_name"
+                            android:layout_marginTop="@dimen/space_unit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/font_size_body"
+                            android:textColor="#bfFFFFFF"/>
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_keyboard_arrow_right"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"/>
+                    </RelativeLayout>
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="1px"
+                        android:background="#66FFFFFF"/>
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="72dp"
+                        android:paddingEnd="@dimen/space_normal"
+                        android:paddingTop="@dimen/space_small"
+                        android:paddingBottom="@dimen/space_small">
+                        <TextView
+                            android:id="@+id/tv_total_assets_desc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:textColor="@color/white"
+                            android:text="@string/total_assets"/>
+                        <TextView
+                            android:id="@+id/left_brackets"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toEndOf="@id/tv_total_assets_desc"
+                            android:layout_centerVertical="true"
+                            android:textColor="@color/white"
+                            android:layout_marginStart="@dimen/space_unit"
+                            android:text="("/>
+
+                        <TextView
+                            android:id="@+id/tv_currency_unit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_toEndOf="@id/left_brackets"
+                            android:text="@string/unit_cny"
+                            android:textColor="@color/white" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toEndOf="@id/tv_currency_unit"
+                            android:layout_centerVertical="true"
+                            android:textColor="@color/white"
+                            android:text=")"/>
+                        <TextView
+                            android:id="@+id/tv_total_assets"
+                            android:layout_alignParentEnd="true"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/font_size_subtitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toStartOf="@id/tv_total_assets"
+                            android:layout_marginEnd="@dimen/space_smaller"
+                            android:layout_centerVertical="true"
+                            android:textColor="@color/white"
+                            android:text="@string/asymptotic"/>
+                    </RelativeLayout>
+                </LinearLayout>
+            </FrameLayout>
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"
+                android:theme="@style/ToolBarStyle"
                 app:titleTextAppearance="@style/ToolbarTitleText"
-                app:title="@string/title_account_assets"
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
+        </android.support.design.widget.CollapsingToolbarLayout>
 
-        </android.support.design.widget.AppBarLayout>
+    </android.support.design.widget.AppBarLayout>
 
-        <android.support.v4.widget.NestedScrollView
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/height_toolbar">
-            <LinearLayout
+            android:layout_height="wrap_content"
+            android:descendantFocusability="blocksDescendants"
+            android:orientation="vertical">
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/assets_recycler"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:descendantFocusability="blocksDescendants"
-                android:orientation="vertical">
-                <RelativeLayout
-                    android:id="@+id/layout_account_info"
-                    android:clickable="true"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/list_item_bg"
-                    android:paddingStart="@dimen/space_normal"
-                    android:paddingEnd="@dimen/space_normal"
-                    android:paddingTop="@dimen/space_large"
-                    android:paddingBottom="@dimen/space_large"
-                    android:focusable="true">
-                    <ImageView
-                        android:id="@+id/iv_account_avatar"
-                        android:layout_gravity="center"
-                        android:background="@drawable/icon_circle_bg"
-                        android:layout_width="@dimen/icon_normal_size"
-                        android:layout_height="@dimen/icon_normal_size"
-                        android:padding="@dimen/space_smaller"/>
-                    <TextView
-                        android:id="@+id/tv_account_name"
-                        android:layout_toEndOf="@id/iv_account_avatar"
-                        android:layout_marginStart="@dimen/space_normal"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/font_size_subheading"
-                        android:textColor="@color/black"
-                        tools:ignore="RelativeOverlap" />
-                    <TextView
-                        android:id="@+id/tv_account_address"
-                        android:layout_below="@id/tv_account_name"
-                        android:layout_alignStart="@id/tv_account_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_hint_text"
-                        android:layout_marginTop="@dimen/space_unit"/>
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
 
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_keyboard_arrow_right"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"/>
-                </RelativeLayout>
-                <include layout="@layout/horizontal_divider"/>
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/white"
-                    android:paddingStart="72dp"
-                    android:paddingEnd="@dimen/space_normal"
-                    android:paddingTop="@dimen/space_small"
-                    android:paddingBottom="@dimen/space_small">
-                    <TextView
-                        android:id="@+id/tv_total_assets_desc"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:textColor="@color/color_hint_text"
-                        android:text="@string/total_assets"/>
-                    <TextView
-                        android:id="@+id/left_brackets"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_toEndOf="@id/tv_total_assets_desc"
-                        android:layout_centerVertical="true"
-                        android:textColor="@color/color_hint_text"
-                        android:layout_marginStart="@dimen/space_unit"
-                        android:text="("/>
+    <!-- progress -->
+    <FrameLayout
+        android:id="@+id/layout_progress"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/color_mask"
+        android:visibility="gone">
+        <ProgressBar
+            style="?android:attr/progressBarStyle"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"/>
+    </FrameLayout>
 
-                    <TextView
-                        android:id="@+id/tv_currency_unit"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_toEndOf="@id/left_brackets"
-                        android:text="@string/unit_cny"
-                        android:textColor="@color/color_hint_text" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_toEndOf="@id/tv_currency_unit"
-                        android:layout_centerVertical="true"
-                        android:textColor="@color/color_hint_text"
-                        android:text=")"/>
-                    <TextView
-                        android:id="@+id/tv_total_assets"
-                        android:layout_alignParentEnd="true"
-                        android:textColor="@color/color_primary_text"
-                        android:textSize="@dimen/font_size_subtitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="0"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_toStartOf="@id/tv_total_assets"
-                        android:layout_marginEnd="@dimen/space_smaller"
-                        android:layout_centerVertical="true"
-                        android:textColor="@color/color_hint_text"
-                        android:text="@string/asymptotic"/>
-                </RelativeLayout>
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/assets_recycler"
-                    android:layout_marginTop="@dimen/space_large"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-            </LinearLayout>
-        </android.support.v4.widget.NestedScrollView>
-
-        <!-- progress -->
-        <FrameLayout
-            android:id="@+id/layout_progress"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/color_mask"
-            android:visibility="gone">
-            <ProgressBar
-                style="?android:attr/progressBarStyle"
-                android:layout_gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"/>
-        </FrameLayout>
-
-    </android.support.design.widget.CoordinatorLayout>
-</android.support.v4.widget.DrawerLayout>
+</android.support.design.widget.CoordinatorLayout>
 

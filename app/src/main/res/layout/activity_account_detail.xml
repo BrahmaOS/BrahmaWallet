@@ -35,73 +35,104 @@
                 android:layout_height="wrap_content"
                 android:descendantFocusability="blocksDescendants"
                 android:orientation="vertical">
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="@dimen/space_normal">
-                    <ImageView
-                        android:id="@+id/iv_account_avatar"
-                        android:layout_gravity="center"
-                        android:background="@drawable/icon_circle_bg"
-                        android:layout_width="@dimen/icon_normal_size"
-                        android:layout_height="@dimen/icon_normal_size"
-                        android:padding="@dimen/space_smaller"/>
-                    <TextView
-                        android:id="@+id/tv_account_name"
-                        android:layout_width="match_parent"
-                        android:textAlignment="center"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/space_unit"
-                        android:textSize="@dimen/font_size_subheading"
-                        android:textColor="@color/color_primary_text"/>
-                    <LinearLayout
-                        android:id="@+id/layout_account_address"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="@dimen/space_unit"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:id="@+id/tv_account_address"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="@dimen/font_size_caption"
-                            android:textColor="@color/color_hint_text"/>
-                        <ImageView
-                            android:layout_width="12dp"
-                            android:layout_height="12dp"
-                            android:layout_marginStart="@dimen/space_unit"
-                            android:layout_gravity="center_vertical"
-                            android:src="@drawable/qrcode"/>
-                    </LinearLayout>
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/tv_change_account_name"
                     android:clickable="true"
                     android:focusable="true"
+                    android:padding="@dimen/space_normal"
+                    android:background="@drawable/list_item_bg">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:text="@string/label_avatar"/>
+                    <ImageView
+                        android:id="@+id/iv_account_avatar"
+                        android:layout_alignParentEnd="true"
+                        android:layout_gravity="center"
+                        android:layout_width="@dimen/toolbar_icon_size"
+                        android:layout_height="@dimen/toolbar_icon_size"/>
+                </RelativeLayout>
+                <include layout="@layout/horizontal_divider"/>
+                <RelativeLayout
+                    android:id="@+id/layout_account_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:padding="@dimen/space_normal"
-                    android:background="@drawable/list_item_bg"
-                    android:text="@string/action_change_account_name"/>
+                    android:background="@drawable/list_item_bg">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:text="@string/label_account_name"/>
+                    <TextView
+                        android:id="@+id/tv_account_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:textColor="@color/color_secondary_text"/>
+                </RelativeLayout>
                 <include layout="@layout/horizontal_divider"/>
+                <RelativeLayout
+                    android:id="@+id/layout_account_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="@dimen/space_normal"
+                    android:background="@drawable/list_item_bg">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:text="@string/label_account_address"/>
+                    <TextView
+                        android:id="@+id/tv_account_address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:textColor="@color/color_secondary_text"/>
+                </RelativeLayout>
+                <include layout="@layout/horizontal_divider"/>
+                <RelativeLayout
+                    android:id="@+id/layout_account_address_qrcode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="@dimen/space_normal"
+                    android:background="@drawable/list_item_bg">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:text="@string/label_qrcode"/>
+                    <ImageView
+                        android:layout_width="@dimen/icon_small_size"
+                        android:layout_height="@dimen/icon_small_size"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/qrcode"/>
+                </RelativeLayout>
+
                 <TextView
                     android:id="@+id/tv_change_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_normal"
                     android:padding="@dimen/space_normal"
                     android:clickable="true"
                     android:focusable="true"
                     android:background="@drawable/list_item_bg"
                     android:text="@string/action_change_password"/>
-
+                <include layout="@layout/horizontal_divider"/>
                 <TextView
                     android:id="@+id/tv_export_private_key"
                     android:clickable="true"
                     android:focusable="true"
-                    android:layout_marginTop="@dimen/space_normal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/space_normal"

@@ -290,7 +290,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
-                            android:textColor="@color/color_hint_text"
                             android:text="@string/fees"/>
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -356,6 +355,32 @@
 
                         </LinearLayout>
                     </RelativeLayout>
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/horizontal_divider"/>
+
+                    <LinearLayout
+                        android:id="@+id/layout_copy_etherscan_url"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_large"
+                        android:layout_marginBottom="@dimen/space_large"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+                        <ImageView
+                            android:layout_width="@dimen/icon_small_size"
+                            android:layout_height="@dimen/icon_small_size"
+                            android:src="@drawable/etherscan"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/master"
+                            android:layout_marginStart="@dimen/space_unit"
+                            android:text="@string/label_copy_etherscan_url"/>
+                    </LinearLayout>
 
                 </LinearLayout>
 
