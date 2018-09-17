@@ -41,10 +41,10 @@
                     android:layout_height="@dimen/icon_large_size"
                     android:layout_marginStart="@dimen/space_normal"
                     android:layout_marginEnd="24dp"
-                    android:padding="@dimen/space_small"
                     android:layout_gravity="center_vertical"
-                    android:background="@drawable/icon_contact_circle_bg"
-                    android:src="@drawable/ic_person_account"/>
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_default_account_circle_24dp"
+                    android:contentDescription="@string/tip_contact_image_avatar" />
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -55,7 +55,6 @@
                         android:layout_height="wrap_content"
                         android:theme="@style/customEditTextLineColor"
                         app:hintTextAppearance="@style/customEditTextHint">
-
                         <EditText
                             android:id="@+id/et_contact_name"
                             android:layout_width="match_parent"
@@ -115,7 +114,8 @@
                     android:padding="10dp"
                     android:layout_marginBottom="@dimen/space_unit"
                     android:layout_gravity="end|bottom"
-                    android:src="@drawable/ic_scan"/>
+                    android:src="@drawable/ic_scan"
+                    android:contentDescription="@string/tip_contact_scan_address" />
             </FrameLayout>
 
             <android.support.design.widget.TextInputLayout

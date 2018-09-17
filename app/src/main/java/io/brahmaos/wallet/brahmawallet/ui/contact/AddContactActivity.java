@@ -5,13 +5,23 @@ import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
+
+import com.yalantis.ucrop.UCrop;
+
+import java.io.File;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -26,10 +36,13 @@ import io.brahmaos.wallet.brahmawallet.ui.common.barcode.Intents;
 import io.brahmaos.wallet.brahmawallet.view.CustomProgressDialog;
 import io.brahmaos.wallet.brahmawallet.viewmodel.ContactViewModel;
 import io.brahmaos.wallet.util.BLog;
+import io.brahmaos.wallet.util.FileHelper;
+import io.brahmaos.wallet.util.ImageUtil;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class AddContactActivity extends BaseActivity {
+
     // UI references.
     @BindView(R.id.img_avatar)
     ImageView ivContactAvatar;
@@ -45,6 +58,12 @@ public class AddContactActivity extends BaseActivity {
     EditText etContactRemark;
 
     private ContactViewModel mViewModel;
+
+    // File cropped for contact avatar
+    // if not save, need remove from filesystem
+    private File fileContactAvatar;
+    private File tempFileContactAvatar;
+    private Uri urlContactAvatar;
 
     @Override
     protected String tag() {
@@ -64,6 +83,15 @@ public class AddContactActivity extends BaseActivity {
                 requestCameraScanPermission();
             } else {
                 scanAddressCode();
+            }
+        });
+
+        ivContactAvatar.setOnClickListener(v -> {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestExternalStorage();
+            } else {
+                selectContactAvatar();
             }
         });
 
@@ -104,6 +132,9 @@ public class AddContactActivity extends BaseActivity {
             contact.setName(name);
             contact.setFamilyName(familyName);
             contact.setRemark(remark);
+            if (urlContactAvatar != null) {
+                contact.setAvatar(urlContactAvatar.toString());
+            }
 
             CustomProgressDialog progressDialog = new CustomProgressDialog(this, R.style.CustomProgressDialogStyle, "");
             progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -151,9 +182,55 @@ public class AddContactActivity extends BaseActivity {
                     }
                 }
             }
+        } else if (requestCode == ReqCode.CHOOSE_IMAGE) {
+            if (resultCode == RESULT_OK) {
+                if (data != null && data.getData() != null) {
+                    Uri imageUri = data.getData();
+                    Log.i(tag(), "select image from " + imageUri);
+                    tempFileContactAvatar = FileHelper.getOutputImageFile(0);
+                    if (tempFileContactAvatar != null) {
+                        UCrop.Options options = new UCrop.Options();
+                        options.setHideBottomControls(true);
+                        options.setToolbarColor(getResources().getColor(R.color.master));
+                        options.setStatusBarColor(getResources().getColor(R.color.master));
+                        UCrop uCrop = UCrop.of(imageUri, Uri.fromFile(tempFileContactAvatar));
+                        uCrop.withAspectRatio(1, 1);
+                        uCrop.withMaxResultSize(256, 256);
+                        uCrop.withOptions(options);
+                        uCrop.start(this, ReqCode.CROP_IMAGE);
+                    }
+                }
+            }
+        } else if (requestCode == ReqCode.CROP_IMAGE) {
+            if (resultCode == RESULT_OK) {
+                if (data != null) {
+                    urlContactAvatar = UCrop.getOutput(data);
+                    Log.i(tag(), "crop image finished - " + urlContactAvatar);
+                    try {
+                        if (fileContactAvatar != null) {
+                            if (fileContactAvatar.delete()) {
+                                Log.i(tag(), "delete file success");
+                            } else {
+                                Log.i(tag(), "delete file failed!");
+                            }
+                        }
+                        fileContactAvatar = tempFileContactAvatar;
+                        Bitmap bmpAvatar = MediaStore.Images.Media.getBitmap(getContentResolver(), urlContactAvatar);
+                        ivContactAvatar.setImageBitmap(ImageUtil.getCircleBitmap(bmpAvatar));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(this, "Crop failed", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
         }
 
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    public void selectContactAvatar() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(intent, ReqCode.CHOOSE_IMAGE);
+    }
 }

@@ -28,6 +28,7 @@ import io.brahmaos.wallet.brahmawallet.repository.DataRepository;
 import io.brahmaos.wallet.brahmawallet.service.MainService;
 import io.brahmaos.wallet.brahmawallet.ui.FingerActivity;
 import io.brahmaos.wallet.util.CommonUtil;
+import io.brahmaos.wallet.util.FileHelper;
 
 /**
  * Android Application class. Used for accessing singletons.
@@ -50,8 +51,8 @@ public class WalletApp extends Application {
         super.onCreate();
         WalletDatabase.getInstance(getApplicationContext());
         MainService.getInstance().init(getApplicationContext());
-        // init the config
         BrahmaConfig.getInstance().init(getApplicationContext());
+        FileHelper.getInstance().init(getApplicationContext());
 
         AppFrontBackHelper helper = new AppFrontBackHelper();
         helper.register(WalletApp.this, new AppFrontBackHelper.OnAppStatusListener() {

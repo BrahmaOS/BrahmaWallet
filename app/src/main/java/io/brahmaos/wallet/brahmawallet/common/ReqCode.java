@@ -7,4 +7,6 @@ public class ReqCode {
     public static final int SCAN_QR_CODE = 101;
     public static final int CHOOSE_TRANSFER_CONTACT = 102;
     public static final int CONFIRM_MNEMONIC = 103;
+    public static final int CHOOSE_IMAGE = 104;
+    public static final int CROP_IMAGE = 105;
 }
