@@ -320,6 +320,7 @@
     <string name="title_edit_contact">编辑联系人</string>
     <string name="success_edit_contact">编辑联系人成功!</string>
     <string name="error_edit_contact">编辑联系人失败! 请稍后重试!</string>
+    <string name="tip_contact_image_avatar">联系人头像</string>
 
     <!-- fingerprint -->
     <string name="tip_fingerprint">点击开启验证</string>

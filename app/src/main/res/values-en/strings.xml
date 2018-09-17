@@ -9,7 +9,7 @@
     <string name="unit_cny">CNY</string>
     <string name="unit_usd">USD</string>
 
-    <string name="title_brahma_wallet">Wallet</string>
+    <string name="title_brahma_wallet">Brahma Wallet</string>
     <string name="brahma_wallet_desc">Your smart digital wallet</string>
     <string name="title_activity_create_account">Create Account</string>
     <string name="total_assets">Total Assets</string>
@@ -386,6 +386,7 @@
     <string name="title_edit_contact">Edit Contact</string>
     <string name="success_edit_contact">Edit contact success!</string>
     <string name="error_edit_contact">Edit contact error! please try again!</string>
+    <string name="tip_contact_image_avatar">Contact Avatar</string>
 
     <!-- fingerprint -->
     <string name="tip_fingerprint">Click to start verification</string>

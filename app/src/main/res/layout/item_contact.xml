@@ -7,35 +7,44 @@
     android:paddingLeft="@dimen/space_normal"
     android:paddingRight="@dimen/space_normal"
     android:paddingTop="@dimen/space_small">
-
-    <ImageView
-        android:id="@+id/img_avatar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/space_normal"/>
-
-    <TextView
-        android:id="@+id/tv_name"
+    <LinearLayout
+        android:id="@+id/layout_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/img_avatar"
-        android:textColor="#373737"
-        android:textSize="16sp" />
-
-    <TextView
-        android:id="@+id/tv_address"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tv_name"
-        android:layout_marginTop="@dimen/space_unit"
-        android:layout_toRightOf="@id/img_avatar"
-        android:textColor="#969696" />
-
+        android:orientation="horizontal">
+        <ImageView
+            android:id="@+id/iv_avatar"
+            android:layout_width="@dimen/icon_normal_size"
+            android:layout_height="@dimen/icon_normal_size"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/icon_contact_circle_bg"
+            android:src="@drawable/ic_person_account"
+            android:padding="@dimen/space_smaller"
+            android:contentDescription="@string/tip_contact_image_avatar" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_normal"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#373737"
+                android:textSize="16sp" />
+            <TextView
+                android:id="@+id/tv_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_unit"
+                android:singleLine="true"
+                android:textColor="#969696" />
+        </LinearLayout>
+    </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_below="@id/tv_address"
+        android:layout_below="@id/layout_info"
         android:layout_height="1dp"
         android:layout_marginTop="@dimen/space_small"
         android:background="#f9f9f9"/>
-
 </RelativeLayout>
