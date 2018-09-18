@@ -41,10 +41,9 @@
                     android:layout_height="@dimen/icon_large_size"
                     android:layout_marginStart="@dimen/space_normal"
                     android:layout_marginEnd="24dp"
-                    android:padding="@dimen/space_small"
                     android:layout_gravity="center_vertical"
-                    android:background="@drawable/icon_contact_circle_bg"
-                    android:src="@drawable/ic_person_account"/>
+                    android:src="@drawable/ic_default_account_circle_24dp"
+                    android:contentDescription="@string/tip_contact_image_avatar" />
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

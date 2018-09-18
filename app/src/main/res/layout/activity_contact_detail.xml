@@ -45,10 +45,8 @@
                         android:id="@+id/img_contact_avatar"
                         android:layout_width="@dimen/icon_large_size"
                         android:layout_height="@dimen/icon_large_size"
-                        android:padding="@dimen/space_small"
                         android:layout_gravity="center"
-                        android:background="@drawable/icon_contact_circle_bg"
-                        android:src="@drawable/ic_person_account"/>
+                        android:src="@drawable/ic_default_account_circle_24dp"/>
                     <TextView
                         android:id="@+id/tv_contact_name"
                         android:layout_width="match_parent"

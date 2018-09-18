@@ -18,9 +18,9 @@ import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.ContactEntity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.viewmodel.ContactViewModel;
-import me.yokeyword.indexablerv.IndexableAdapter;
 import me.yokeyword.indexablerv.IndexableLayout;
 import me.yokeyword.indexablerv.SimpleHeaderAdapter;
+
 
 public class ContactsActivity extends BaseActivity {
     private ContactAdapter mAdapter;
@@ -42,13 +42,8 @@ public class ContactsActivity extends BaseActivity {
         indexableLayout = findViewById(R.id.indexableLayout);
         indexableLayout.setLayoutManager(new LinearLayoutManager(this));
 
-        // setAdapter
         mAdapter = new ContactAdapter(this);
         indexableLayout.setAdapter(mAdapter);
-        // init Datas
-        initData();
-
-        // set Listener
         mAdapter.setOnItemContentClickListener((v, originalPosition, currentPosition, entity) -> {
             if (originalPosition >= 0) {
                 Intent intent = new Intent(ContactsActivity.this, ContactDetailActivity.class);
@@ -56,6 +51,8 @@ public class ContactsActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
+
+        initData();
     }
 
     private void initData() {

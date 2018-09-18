@@ -386,6 +386,8 @@
     <string name="title_edit_contact">Edit Contact</string>
     <string name="success_edit_contact">Edit contact success!</string>
     <string name="error_edit_contact">Edit contact error! please try again!</string>
+    <string name="tip_contact_image_avatar">Contact Avatar</string>
+    <string name="tip_contact_scan_address">Scan</string>
 
     <!-- fingerprint -->
     <string name="tip_fingerprint">Click to start verification</string>

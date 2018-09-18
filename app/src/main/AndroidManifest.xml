@@ -114,7 +114,12 @@
         <activity android:name=".ui.transaction.EtherscanTxsActivity" />
         <activity android:name=".ui.transaction.EtherscanTxDetailActivity" />
         <activity android:name=".ui.transaction.TransactionDetailActivity" />
-        <activity android:name=".ui.setting.FeedbackActivity"></activity>
+        <activity android:name=".ui.setting.FeedbackActivity" />
+
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
     </application>
 
 </manifest>

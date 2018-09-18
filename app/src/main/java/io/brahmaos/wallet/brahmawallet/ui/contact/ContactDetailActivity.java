@@ -1,12 +1,15 @@
 package io.brahmaos.wallet.brahmawallet.ui.contact;
 
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -25,6 +29,7 @@ import io.brahmaos.wallet.brahmawallet.db.entity.ContactEntity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.viewmodel.ContactViewModel;
 import io.brahmaos.wallet.util.BLog;
+import io.brahmaos.wallet.util.ImageUtil;
 import io.brahmaos.wallet.util.QRCodeUtil;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -35,12 +40,18 @@ public class ContactDetailActivity extends BaseActivity {
     private ContactEntity contact;
     private ContactViewModel mViewModel;
 
+    @BindView(R.id.img_contact_avatar)
+    ImageView ivContactAvatar;
+
     @BindView(R.id.tv_contact_name)
     TextView tvContactName;
+
     @BindView(R.id.tv_contact_address)
     TextView tvContactAddress;
+
     @BindView(R.id.tv_contact_remark)
     TextView tvContactRemark;
+
     @BindView(R.id.iv_address_code)
     ImageView ivContactAddress;
 
@@ -73,11 +84,22 @@ public class ContactDetailActivity extends BaseActivity {
                 });
     }
 
+    @SuppressLint("SetTextI18n")
     private void initContactInfo() {
-        tvContactName.setText(contact.getName() + contact.getFamilyName());
+        tvContactName.setText(contact.getName() + " " + contact.getFamilyName());
         tvContactAddress.setText(contact.getAddress());
         tvContactRemark.setText(contact.getRemark());
         ivContactAddress.setOnClickListener(v -> showQrcodeDialog(contact.getAddress()));
+        if (contact.getAvatar() != null && contact.getAvatar().length() > 0 && !contact.getAvatar().equals("null")) {
+            Uri uriAvatar = Uri.parse(contact.getAvatar());
+            try {
+                Bitmap bmpAvatar = MediaStore.Images.Media.getBitmap(getContentResolver(), uriAvatar);
+                ivContactAvatar.setImageBitmap(ImageUtil.getCircleBitmap(bmpAvatar));
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(this, "show failed", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     @Override
