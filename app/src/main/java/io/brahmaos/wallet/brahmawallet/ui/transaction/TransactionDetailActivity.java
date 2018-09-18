@@ -1,12 +1,16 @@
 package io.brahmaos.wallet.brahmawallet.ui.transaction;
 
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.NestedScrollView;
@@ -24,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -52,6 +57,7 @@ import io.brahmaos.wallet.brahmawallet.ui.transfer.TransferActivity;
 import io.brahmaos.wallet.brahmawallet.viewmodel.ContactViewModel;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
+import io.brahmaos.wallet.util.ImageUtil;
 import me.yokeyword.indexablerv.IndexableLayout;
 import me.yokeyword.indexablerv.SimpleHeaderAdapter;
 import rx.Observer;
@@ -155,6 +161,7 @@ public class TransactionDetailActivity extends BaseActivity {
         });
     }
 
+    @SuppressLint("SetTextI18n")
     private void initHeader() {
         tvSendAccountAddress.setText(fromAddress);
         tvReceiveAccountAddress.setText(toAddress);
@@ -163,21 +170,46 @@ public class TransactionDetailActivity extends BaseActivity {
                 for (ContactEntity contactEntity : contactEntities) {
                     if (contactEntity.getAddress().toLowerCase().equals(fromAddress.toLowerCase())) {
                         tvSendAccountName.setVisibility(View.VISIBLE);
-                        tvSendAccountName.setText(new StringBuilder().append(contactEntity.getName()).append(" ").append(contactEntity.getFamilyName()).toString());
-                        ivSendAccountAvatar.setBackgroundResource(R.drawable.icon_contact_circle_bg);
-                        Glide.with(this)
-                                .load(R.drawable.ic_person_account)
-                                .into(ivSendAccountAvatar);
+                        tvSendAccountName.setText(contactEntity.getName() + " " + contactEntity.getFamilyName());
+                        if (contactEntity.getAvatar() != null
+                                && contactEntity.getAvatar().length() > 0
+                                && !contactEntity.getAvatar().equals("null")) {
+                            Uri uriAvatar = Uri.parse(contactEntity.getAvatar());
+                            try {
+                                Bitmap bmpAvatar = MediaStore.Images.Media.getBitmap(getContentResolver(), uriAvatar);
+                                ivSendAccountAvatar.setPadding(0, 0, 0, 0);
+                                ivSendAccountAvatar.setImageBitmap(ImageUtil.getCircleBitmap(bmpAvatar));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            ivSendAccountAvatar.setBackgroundResource(0);
+                            ivSendAccountAvatar.setPadding(0, 0, 0, 0);
+                            ivSendAccountAvatar.setImageResource(R.drawable.ic_default_account_circle_24dp);
+                        }
 
                         fromFlag = true;
                     }
+
                     if (contactEntity.getAddress().toLowerCase().equals(toAddress.toLowerCase())) {
                         tvReceiveAccountName.setVisibility(View.VISIBLE);
-                        tvReceiveAccountName.setText(new StringBuilder().append(contactEntity.getName()).append(" ").append(contactEntity.getFamilyName()).toString());
-                        ivReceiveAccountAvatar.setBackgroundResource(R.drawable.icon_contact_circle_bg);
-                        Glide.with(this)
-                                .load(R.drawable.ic_person_account)
-                                .into(ivReceiveAccountAvatar);
+                        tvReceiveAccountName.setText(contactEntity.getName() + " " + contactEntity.getFamilyName());
+                        if (contactEntity.getAvatar() != null
+                                && contactEntity.getAvatar().length() > 0
+                                && !contactEntity.getAvatar().equals("null")) {
+                            Uri uriAvatar = Uri.parse(contactEntity.getAvatar());
+                            try {
+                                Bitmap bmpAvatar = MediaStore.Images.Media.getBitmap(getContentResolver(), uriAvatar);
+                                ivReceiveAccountAvatar.setPadding(0, 0, 0, 0);
+                                ivReceiveAccountAvatar.setImageBitmap(ImageUtil.getCircleBitmap(bmpAvatar));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            ivReceiveAccountAvatar.setBackgroundResource(0);
+                            ivReceiveAccountAvatar.setPadding(0, 0, 0, 0);
+                            ivReceiveAccountAvatar.setImageResource(R.drawable.ic_default_account_circle_24dp);
+                        }
 
                         toFlag = true;
                     }
@@ -193,14 +225,12 @@ public class TransactionDetailActivity extends BaseActivity {
                         tvSendAccountName.setVisibility(View.VISIBLE);
                         tvSendAccountName.setText(accountEntity.getName());
                         ImageManager.showAccountAvatar(this, ivSendAccountAvatar, accountEntity);
-
                         fromFlag = true;
                     }
                     if (accountEntity.getAddress().toLowerCase().equals(toAddress.toLowerCase())) {
                         tvReceiveAccountName.setVisibility(View.VISIBLE);
                         tvReceiveAccountName.setText(accountEntity.getName());
                         ImageManager.showAccountAvatar(this, ivReceiveAccountAvatar, accountEntity);
-
                         toFlag = true;
                     }
                 }

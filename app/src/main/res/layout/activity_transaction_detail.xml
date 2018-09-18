@@ -55,9 +55,9 @@
                     <ImageView
                         android:id="@+id/iv_send_account_avatar"
                         android:layout_gravity="center"
-                        android:background="@drawable/icon_circle_bg"
                         android:layout_width="@dimen/icon_normal_size"
                         android:layout_height="@dimen/icon_normal_size"
+                        android:background="@drawable/icon_circle_bg"
                         android:padding="@dimen/space_smaller"/>
                     <LinearLayout
                         android:layout_toEndOf="@id/iv_send_account_avatar"
@@ -108,9 +108,9 @@
                     <ImageView
                         android:id="@+id/iv_receive_account_avatar"
                         android:layout_gravity="center"
-                        android:background="@drawable/icon_circle_bg"
                         android:layout_width="@dimen/icon_normal_size"
                         android:layout_height="@dimen/icon_normal_size"
+                        android:background="@drawable/icon_circle_bg"
                         android:padding="@dimen/space_smaller"/>
                     <LinearLayout
                         android:layout_toEndOf="@id/iv_receive_account_avatar"
