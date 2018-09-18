@@ -86,7 +86,7 @@ public class ContactDetailActivity extends BaseActivity {
 
     @SuppressLint("SetTextI18n")
     private void initContactInfo() {
-        tvContactName.setText(contact.getName() + contact.getFamilyName());
+        tvContactName.setText(contact.getName() + " " + contact.getFamilyName());
         tvContactAddress.setText(contact.getAddress());
         tvContactRemark.setText(contact.getRemark());
         ivContactAddress.setOnClickListener(v -> showQrcodeDialog(contact.getAddress()));
