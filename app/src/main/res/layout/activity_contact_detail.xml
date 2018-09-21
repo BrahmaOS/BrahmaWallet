@@ -46,7 +46,7 @@
                         android:layout_width="@dimen/icon_large_size"
                         android:layout_height="@dimen/icon_large_size"
                         android:layout_gravity="center"
-                        android:src="@drawable/ic_default_account_circle_24dp"/>
+                        android:src="@drawable/ic_default_account_avatar"/>
                     <TextView
                         android:id="@+id/tv_contact_name"
                         android:layout_width="match_parent"

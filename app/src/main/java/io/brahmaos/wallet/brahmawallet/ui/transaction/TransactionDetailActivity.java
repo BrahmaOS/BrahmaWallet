@@ -7,37 +7,22 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.widget.NestedScrollView;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
 import org.web3j.utils.Convert;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -46,31 +31,21 @@ import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.ContactEntity;
-import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 import io.brahmaos.wallet.brahmawallet.model.EthTransaction;
 import io.brahmaos.wallet.brahmawallet.model.TokenTransaction;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
-import io.brahmaos.wallet.brahmawallet.service.TransactionService;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.ui.contact.AddContactActivity;
-import io.brahmaos.wallet.brahmawallet.ui.transfer.TransferActivity;
 import io.brahmaos.wallet.brahmawallet.viewmodel.ContactViewModel;
-import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
 import io.brahmaos.wallet.util.ImageUtil;
-import me.yokeyword.indexablerv.IndexableLayout;
-import me.yokeyword.indexablerv.SimpleHeaderAdapter;
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+
 
 public class TransactionDetailActivity extends BaseActivity {
     @Override
     protected String tag() {
         return TransactionDetailActivity.class.getName();
     }
-
-    public static final int REQ_CODE_TRANSFER = 10;
 
     // UI references.
     @BindView(R.id.iv_send_account_avatar)
@@ -185,7 +160,7 @@ public class TransactionDetailActivity extends BaseActivity {
                         } else {
                             ivSendAccountAvatar.setBackgroundResource(0);
                             ivSendAccountAvatar.setPadding(0, 0, 0, 0);
-                            ivSendAccountAvatar.setImageResource(R.drawable.ic_default_account_circle_24dp);
+                            ivSendAccountAvatar.setImageResource(R.drawable.ic_default_account_avatar);
                         }
 
                         fromFlag = true;
@@ -208,7 +183,7 @@ public class TransactionDetailActivity extends BaseActivity {
                         } else {
                             ivReceiveAccountAvatar.setBackgroundResource(0);
                             ivReceiveAccountAvatar.setPadding(0, 0, 0, 0);
-                            ivReceiveAccountAvatar.setImageResource(R.drawable.ic_default_account_circle_24dp);
+                            ivReceiveAccountAvatar.setImageResource(R.drawable.ic_default_account_avatar);
                         }
 
                         toFlag = true;

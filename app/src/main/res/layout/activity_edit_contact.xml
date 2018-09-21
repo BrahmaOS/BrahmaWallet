@@ -42,7 +42,7 @@
                     android:layout_marginStart="@dimen/space_normal"
                     android:layout_marginEnd="24dp"
                     android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_default_account_circle_24dp"
+                    android:src="@drawable/ic_default_account_avatar"
                     android:contentDescription="@string/tip_contact_image_avatar" />
                 <LinearLayout
                     android:layout_width="match_parent"
