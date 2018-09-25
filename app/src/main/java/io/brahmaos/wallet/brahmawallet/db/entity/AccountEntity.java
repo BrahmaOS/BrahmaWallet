@@ -24,9 +24,10 @@ import java.io.Serializable;
 import java.util.List;
 
 import io.brahmaos.wallet.brahmawallet.model.Account;
+import me.yokeyword.indexablerv.IndexableEntity;
 
 @Entity(tableName = "accounts")
-public class AccountEntity implements Account, Serializable {
+public class AccountEntity implements Account, Serializable, IndexableEntity {
     @PrimaryKey(autoGenerate = true)
     private int id;
     private String name;
@@ -107,5 +108,19 @@ public class AccountEntity implements Account, Serializable {
                 ", filename='" + filename + '\'' +
                 ", mnemonics=" + mnemonics +
                 '}';
+    }
+
+    @Override
+    public String getFieldIndexBy() {
+        return name;
+    }
+
+    @Override
+    public void setFieldIndexBy(String indexField) {
+        this.name = indexField;
+    }
+
+    @Override
+    public void setFieldPinyinIndexBy(String pinyin) {
     }
 }
