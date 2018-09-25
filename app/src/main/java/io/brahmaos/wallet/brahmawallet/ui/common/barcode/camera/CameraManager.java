@@ -225,7 +225,6 @@ public final class CameraManager {
                 return null;
             }
 
-            // 获取屏幕的尺寸像素
             Point screenResolution = configManager.getScreenResolution();
             if (screenResolution == null) {
                 // Called early, before init even finished
@@ -233,11 +232,9 @@ public final class CameraManager {
             }
 
             int width = findDesiredDimensionInRange(screenResolution.x, MIN_FRAME_WIDTH, MAX_FRAME_WIDTH);
-            //int height = findDesiredDimensionInRange(screenResolution.y, MIN_FRAME_HEIGHT, MAX_FRAME_HEIGHT);
-            int height = width;
             int leftOffset = (screenResolution.x - width) / 2;
-            int topOffset = (screenResolution.y - height) / 3;
-            framingRect = new Rect(leftOffset, topOffset, leftOffset + width, topOffset + height);
+            int topOffset = (screenResolution.y - width) / 3;
+            framingRect = new Rect(leftOffset, topOffset, leftOffset + width, topOffset + width);
             Log.d(TAG, "Calculated framing rect: " + framingRect);
         }
         return framingRect;
@@ -267,7 +264,6 @@ public final class CameraManager {
                 return null;
             }
 
-            // 获取相机分辨率和屏幕分辨率
             Rect rect = new Rect(framingRect);
             Point cameraResolution = configManager.getCameraResolution();
             Point screenResolution = configManager.getScreenResolution();
@@ -276,7 +272,6 @@ public final class CameraManager {
                 return null;
             }
 
-            // 根据相机分辨率和屏幕分辨率的比例对屏幕中央聚焦框进行调整
             rect.left = rect.left * cameraResolution.x / screenResolution.x;
             rect.right = rect.right * cameraResolution.x / screenResolution.x;
             rect.top = rect.top * cameraResolution.y / screenResolution.y;
@@ -334,17 +329,6 @@ public final class CameraManager {
      * @return A PlanarYUVLuminanceSource instance.
      */
     public PlanarYUVLuminanceSource buildLuminanceSource(byte[] data, int width, int height) {
-        // 取得预览框内的矩形
-//        Rect rect = getFramingRectInPreview();
-//        if (rect == null) {
-//            return null;
-//        }
-//
-//        // Go ahead and assume it's YUV rather than die.
-//        return new PlanarYUVLuminanceSource(data, width, height, rect.left, rect.top,
-//                rect.width(), rect.height(), false);
-
-        // 直接返回整幅图像的数据，而不计算聚焦框大小。
         return new PlanarYUVLuminanceSource(data, width, height, 0, 0, width, height, false);
     }
 
