@@ -15,9 +15,9 @@
             android:id="@+id/iv_avatar"
             android:layout_width="@dimen/icon_normal_size"
             android:layout_height="@dimen/icon_normal_size"
-            android:layout_gravity="center_vertical"
-            android:src="@drawable/ic_default_account_avatar_grey"
-            android:scaleType="centerCrop"
+            android:layout_gravity="center"
+            android:background="@drawable/circle_bg_account_icon_grey"
+            android:padding="@dimen/space_smaller"
             android:contentDescription="@string/tip_contact_image_avatar" />
         <LinearLayout
             android:layout_width="wrap_content"

@@ -160,7 +160,7 @@ public class TransactionDetailActivity extends BaseActivity {
                         } else {
                             ivSendAccountAvatar.setBackgroundResource(0);
                             ivSendAccountAvatar.setPadding(0, 0, 0, 0);
-                            ivSendAccountAvatar.setImageResource(R.drawable.ic_default_account_avatar);
+                            ivSendAccountAvatar.setImageResource(R.drawable.ic_default_account_avatar_grey);
                         }
 
                         fromFlag = true;
@@ -183,7 +183,7 @@ public class TransactionDetailActivity extends BaseActivity {
                         } else {
                             ivReceiveAccountAvatar.setBackgroundResource(0);
                             ivReceiveAccountAvatar.setPadding(0, 0, 0, 0);
-                            ivReceiveAccountAvatar.setImageResource(R.drawable.ic_default_account_avatar);
+                            ivReceiveAccountAvatar.setImageResource(R.drawable.ic_default_account_avatar_grey);
                         }
 
                         toFlag = true;

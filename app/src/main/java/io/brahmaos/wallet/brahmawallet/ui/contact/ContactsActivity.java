@@ -23,7 +23,9 @@ import me.yokeyword.indexablerv.SimpleHeaderAdapter;
 
 
 public class ContactsActivity extends BaseActivity {
+
     private ContactAdapter mAdapter;
+    private ContactsHeaderAdapter mHeaderAdapter;
     private ContactViewModel mViewModel;
     IndexableLayout indexableLayout;
 
@@ -67,7 +69,8 @@ public class ContactsActivity extends BaseActivity {
         });
         mViewModel.getAccounts().observe(this, accountEntities -> {
             if (accountEntities != null) {
-                indexableLayout.addHeaderAdapter(new SimpleHeaderAdapter<>(mAdapter, "☆", getString(R.string.title_my_accounts), initWalletAccount(accountEntities)));
+                mHeaderAdapter = new ContactsHeaderAdapter(this, "☆", getString(R.string.title_my_accounts), accountEntities);
+                indexableLayout.addHeaderAdapter(mHeaderAdapter);
             }
         });
     }

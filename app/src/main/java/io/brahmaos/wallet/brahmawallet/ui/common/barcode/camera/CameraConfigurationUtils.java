@@ -322,7 +322,6 @@ public final class CameraConfigurationUtils {
             int realWidth = supportedPreviewSize.width;
             int realHeight = supportedPreviewSize.height;
 
-            // 首先把不符合最小预览像素值的尺寸排除
             if (realWidth * realHeight < MIN_PREVIEW_PIXELS) {
                 it.remove();
                 continue;
@@ -334,7 +333,6 @@ public final class CameraConfigurationUtils {
             double aspectRatio = maybeFlippedWidth / (double) maybeFlippedHeight;
             double distortion = Math.abs(aspectRatio - screenAspectRatio);
 
-            // 根据宽高比判断是否满足最大误差要求（默认最大值为0.15，即宽高比默认不能超过给定比例的15%）
             if (distortion > MAX_ASPECT_DISTORTION) {
                 it.remove();
                 continue;
@@ -350,7 +348,6 @@ public final class CameraConfigurationUtils {
         // If no exact match, use largest preview size. This was not a great idea on older devices because
         // of the additional computation needed. We're likely to get here on newer Android 4+ devices, where
         // the CPU is much more powerful.
-        // 如果没有精确匹配到合适的尺寸，则使用最大的尺寸，这样设置便是预览图像可能产生拉伸的根本原因
         if (!supportedPreviewSizes.isEmpty()) {
             Camera.Size largestPreview = supportedPreviewSizes.get(0);
             Point largestSize = new Point(largestPreview.width, largestPreview.height);
@@ -359,7 +356,6 @@ public final class CameraConfigurationUtils {
         }
 
         // If there is nothing at all suitable, return current preview size
-        // 如果没有找到合适的尺寸，就返回默认设定的尺寸
         Camera.Size defaultPreview = parameters.getPreviewSize();
         if (defaultPreview == null) {
             throw new IllegalStateException("Parameters contained no preview size!");
@@ -418,7 +414,7 @@ public final class CameraConfigurationUtils {
         return collectStats(parameters.flatten());
     }
 
-    public static String collectStats(CharSequence flattenedParams) {
+    private static String collectStats(CharSequence flattenedParams) {
         StringBuilder result = new StringBuilder(1000);
 
         result.append("BOARD=").append(Build.BOARD).append('\n');

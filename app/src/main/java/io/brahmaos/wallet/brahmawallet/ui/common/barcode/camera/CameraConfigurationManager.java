@@ -56,7 +56,6 @@ final class CameraConfigurationManager {
         WindowManager manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = manager.getDefaultDisplay();
 
-        // 判断屏幕方向，是否有需要从自然角度旋转到显示器角度
         int displayRotation = display.getRotation();
         int cwRotationFromNaturalToDisplay;
         switch (displayRotation) {
@@ -82,7 +81,6 @@ final class CameraConfigurationManager {
         }
         Log.i(TAG, "Display at: " + cwRotationFromNaturalToDisplay);
 
-        // 判断相机的方向，根据前后摄像机判断是否有需要旋转
         int cwRotationFromNaturalToCamera = camera.getOrientation();
         Log.i(TAG, "Camera at: " + cwRotationFromNaturalToCamera);
 
@@ -92,7 +90,6 @@ final class CameraConfigurationManager {
             Log.i(TAG, "Front camera overriden to: " + cwRotationFromNaturalToCamera);
         }
 
-        // 根据屏幕方向和相机方向判断是否有需要进行旋转
         cwRotationFromDisplayToCamera =
                 (360 + cwRotationFromNaturalToCamera - cwRotationFromNaturalToDisplay) % 360;
         Log.i(TAG, "Final display orientation: " + cwRotationFromDisplayToCamera);
@@ -109,7 +106,6 @@ final class CameraConfigurationManager {
         screenResolution = theScreenResolution;
         Log.i(TAG, "Screen resolution in current orientation: " + screenResolution);
 
-        // 寻找最佳的预览宽高值
         cameraResolution = CameraConfigurationUtils.findBestPreviewSizeValue(parameters, screenResolution);
         Log.i(TAG, "Camera resolution: " + cameraResolution);
         bestPreviewSize = CameraConfigurationUtils.findBestPreviewSizeValue(parameters, screenResolution);
@@ -144,22 +140,14 @@ final class CameraConfigurationManager {
 
         initializeTorch(parameters);
 
-        // 设置对焦功能
         CameraConfigurationUtils.setFocus(parameters, true, true, safeMode);
 
         if (!safeMode) {
-            // 不需要进行条形码场景匹配
             CameraConfigurationUtils.setBarcodeSceneMode(parameters);
-
-            // 不使用距离测量
             CameraConfigurationUtils.setVideoStabilization(parameters);
             CameraConfigurationUtils.setFocusArea(parameters);
             CameraConfigurationUtils.setMetering(parameters);
         }
-
-        //parameters.setPreviewSize(bestPreviewSize.x, bestPreviewSize.y);
-
-        //theCamera.setParameters(parameters);
 
         theCamera.setDisplayOrientation(cwRotationFromDisplayToCamera);
 

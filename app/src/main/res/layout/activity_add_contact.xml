@@ -43,7 +43,7 @@
                     android:layout_marginEnd="24dp"
                     android:layout_gravity="center_vertical"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/ic_default_account_avatar"
+                    android:src="@drawable/ic_default_account_avatar_grey"
                     android:contentDescription="@string/tip_contact_image_avatar" />
                 <LinearLayout
                     android:layout_width="match_parent"
