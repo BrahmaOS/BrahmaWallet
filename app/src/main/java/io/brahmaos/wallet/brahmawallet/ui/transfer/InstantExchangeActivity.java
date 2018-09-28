@@ -284,9 +284,9 @@ public class InstantExchangeActivity extends BaseActivity {
         kncToken.setSymbol("KNC");
         kncToken.setName("Kyber Network");
         if (BrahmaConfig.getInstance().getNetworkUrl().equals(BrahmaConst.MAINNET_URL)) {
-            kncToken.setContractAddress("0xdd974d5c2e2928dea5f71b9825b8b646686bd200");
+            kncToken.setContractAddress(BrahmaConst.KNC_MAIN_NETWORK_CONTRACT_ADDRESS);
         } else {
-            kncToken.setContractAddress("0x4E470dc7321E84CA96FcAEDD0C8aBCebbAEB68C6");
+            kncToken.setContractAddress(BrahmaConst.KNC_ROPSTEN_NETWORK_CONTRACT_ADDRESS);
         }
 
         initSendToken(ethToken);
