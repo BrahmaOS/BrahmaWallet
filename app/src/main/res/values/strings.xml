@@ -361,7 +361,7 @@
     <string name="about_feedback">Feedback</string>
     <string name="tip_already_latest_version">Currently the latest version</string>
 
-    <string name="title_activity_celestial_body_intro">Celestial Body Intro</string>
+    <string name="title_activity_celestial_body_intro">Planet Wiki</string>
 
     <!-- privacy policy -->
     <string name="title_activity_privacy_policy">Brahma Wallet Privacy Policy</string>
