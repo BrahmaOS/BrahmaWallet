@@ -91,6 +91,10 @@
             android:name=".ui.setting.PrivacyPolicyActivity"
             android:label="@string/title_activity_privacy_policy"
             android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ui.setting.CelestialBodyIntroActivity"
+            android:label="@string/title_activity_celestial_body_intro"
+            android:theme="@style/AppTheme" />
         <activity android:name=".ui.contact.ContactsActivity" />
         <activity
             android:name=".ui.contact.AddContactActivity"

@@ -352,6 +352,8 @@
     <string name="prompt_receive_amount">接收数量</string>
     <string name="question_contract_approval">什么是合约授权和授权额度?</string>
 
+    <string name="title_activity_celestial_body_intro">天体介绍</string>
+
     <!-- help -->
     <string name="title_activity_help">帮助中心</string>
 
