@@ -43,7 +43,7 @@ public class CelestialBodyIntroActivity extends BaseActivity {
         wvContent.setWebViewClient(new CelestialBodyIntroActivity.ContentWebViewClient());
         WebSettings webSettings = wvContent.getSettings();
         webSettings.setJavaScriptEnabled(true);
-        wvContent.loadUrl("https://en.wikipedia.org/wiki/Saturn");
+        wvContent.loadUrl("https://en.wikipedia.org/wiki/Neptune");
     }
 
     public class ContentWebViewClient extends WebViewClient {
