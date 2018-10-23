@@ -206,6 +206,9 @@
 
     <!-- Strings related to Settings -->
     <string name="title_setting">设置</string>
+    <string name="title_setting_lang_currency">语言 &amp; 货币</string>
+    <string name="title_setting_network">区块链网络</string>
+    <string name="title_setting_other">其他</string>
 
     <string name="pref_title_net_list">选择以太坊网络</string>
     <string-array name="pref_net_list_titles">
@@ -225,11 +228,11 @@
 
     <string name="pref_title_btc_net_list">选择比特币网络</string>
     <string-array name="pref_btc_net_list_titles">
-        <item>Mainnet</item>
+        <item>MainNet</item>
         <item>TestNet3(测试网络)</item>
     </string-array>
     <string-array name="pref_btc_net_list_values">
-        <item>Mainnet</item>
+        <item>MainNet</item>
         <item>TestNet3(测试网络)</item>
     </string-array>
 

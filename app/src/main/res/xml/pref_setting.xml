@@ -1,46 +1,51 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <ListPreference
-        android:entries="@array/pref_language_list_titles"
-        android:entryValues="@array/pref_language_list_values"
-        android:key="@string/key_wallet_language"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        android:title="@string/pref_title_language" />
+    <PreferenceCategory android:title="@string/title_setting_lang_currency">
+        <ListPreference
+            android:entries="@array/pref_language_list_titles"
+            android:entryValues="@array/pref_language_list_values"
+            android:key="@string/key_wallet_language"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_language" />
+        <ListPreference
+            android:entries="@array/pref_currency_unit_list_titles"
+            android:entryValues="@array/pref_currency_unit_list_values"
+            android:key="@string/key_wallet_currency_unit"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_currency_unit" />
+    </PreferenceCategory>
 
-    <ListPreference
-        android:entries="@array/pref_currency_unit_list_titles"
-        android:entryValues="@array/pref_currency_unit_list_values"
-        android:key="@string/key_wallet_currency_unit"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        android:title="@string/pref_title_currency_unit" />
-
-    <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
+    <PreferenceCategory android:title="@string/title_setting_network">
+        <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
          dismiss it. -->
-    <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
-    <ListPreference
-        android:defaultValue="https://mainnet.infura.io/Gy3Csyt4bzKIGsctm3g0"
-        android:entries="@array/pref_net_list_titles"
-        android:entryValues="@array/pref_net_list_values"
-        android:key="@string/key_network_url"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        android:title="@string/pref_title_net_list" />
+        <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
+        <ListPreference
+            android:defaultValue="https://mainnet.infura.io/Gy3Csyt4bzKIGsctm3g0"
+            android:entries="@array/pref_net_list_titles"
+            android:entryValues="@array/pref_net_list_values"
+            android:key="@string/key_network_url"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_net_list" />
 
-    <ListPreference
-        android:defaultValue="MainNet"
-        android:entries="@array/pref_btc_net_list_titles"
-        android:entryValues="@array/pref_btc_net_list_values"
-        android:key="@string/key_btc_network_url"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        android:title="@string/pref_title_btc_net_list" />
+        <ListPreference
+            android:defaultValue="MainNet"
+            android:entries="@array/pref_btc_net_list_titles"
+            android:entryValues="@array/pref_btc_net_list_values"
+            android:key="@string/key_btc_network_url"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_btc_net_list" />
+    </PreferenceCategory>
 
-    <SwitchPreference
-        android:defaultValue="false"
-        android:key="@string/key_touch_id_switch"
-        android:title="@string/pref_title_touch_id"
-        android:summary="@string/pref_summary_touch_id"/>
+    <PreferenceCategory android:title="@string/title_setting_other">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/key_touch_id_switch"
+            android:title="@string/pref_title_touch_id"
+            android:summary="@string/pref_summary_touch_id"/>
+    </PreferenceCategory>
 
 </PreferenceScreen>
