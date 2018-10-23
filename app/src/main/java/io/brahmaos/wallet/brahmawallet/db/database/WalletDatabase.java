@@ -142,7 +142,7 @@ public abstract class WalletDatabase extends RoomDatabase {
     private static final Migration MIGRATION_4_5 = new Migration(4, 5) {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
-            database.execSQL("ALTER TABLE accounts ADD COLUMN type INTEGER");
+            database.execSQL("ALTER TABLE accounts ADD COLUMN type INTEGER default 1 not null");
             database.execSQL("ALTER TABLE accounts ADD COLUMN cryptoMnemonics TEXT");
             database.execSQL("UPDATE accounts SET type = 1");
             database.execSQL("INSERT INTO tokens (name, address, shortName, avatar) " +
