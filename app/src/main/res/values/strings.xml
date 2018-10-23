@@ -208,7 +208,7 @@
     <!-- Strings related to Settings -->
     <string name="title_setting">Settings</string>
 
-    <string name="pref_title_net_list">Network</string>
+    <string name="pref_title_net_list">Ethereum Network</string>
     <string-array name="pref_net_list_titles">
         <item>Mainnet</item>
         <item>Ropsten(Test)</item>
@@ -222,6 +222,16 @@
         <item>https://infuranet.infura.io/Gy3Csyt4bzKIGsctm3g0</item>
         <item>https://kovan.infura.io/Gy3Csyt4bzKIGsctm3g0</item>
         <item>https://rinkeby.infura.io/Gy3Csyt4bzKIGsctm3g0</item>
+    </string-array>
+
+    <string name="pref_title_btc_net_list">Bitcoin Network</string>
+    <string-array name="pref_btc_net_list_titles">
+        <item>MainNet</item>
+        <item>TestNet3</item>
+    </string-array>
+    <string-array name="pref_btc_net_list_values">
+        <item>MainNet</item>
+        <item>TestNet3</item>
     </string-array>
 
     <string name="pref_title_language">Language</string>
@@ -248,6 +258,7 @@
 
     <!-- shared preferences -->
     <string name="key_network_url">ethereum.network.url</string>
+    <string name="key_btc_network_url">bitcoin.network.url</string>
     <string name="key_wallet_language">wallet.language</string>
     <string name="key_wallet_currency_unit">wallet.currency.unit</string>
     <string name="key_touch_id_switch">wallet.touch.id.switch</string>

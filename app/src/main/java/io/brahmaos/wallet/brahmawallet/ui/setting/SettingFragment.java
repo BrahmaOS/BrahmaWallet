@@ -12,6 +12,7 @@ import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -25,6 +26,7 @@ import io.brahmaos.wallet.util.CommonUtil;
  * Activities that contain this fragment must implement the PreferenceFragment
  */
 public class SettingFragment extends PreferenceFragment {
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,14 +36,28 @@ public class SettingFragment extends PreferenceFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        bindPreferenceSummaryToValue(findPreference(getString(R.string.key_network_url)));
 
+        // Ethereum network
+        bindPreferenceSummaryToValue(findPreference(getString(R.string.key_network_url)));
         Preference networkUrl = findPreference(getString(R.string.key_network_url));
         networkUrl.setOnPreferenceChangeListener((preference, value) -> {
             BrahmaConfig.getInstance().setNetworkUrl(value.toString());
             bindPreferenceSummaryToValue(findPreference(getString(R.string.key_network_url)));
             Intent intent = new Intent(getActivity(), MainActivity.class);
             intent.putExtra(IntentParam.FLAG_CHANGE_NETWORK, true);
+            startActivity(intent);
+            return true;
+        });
+
+        // Bitcoin network
+        bindPreferenceSummaryToValue(findPreference(getString(R.string.key_btc_network_url)));
+        Preference btcNetwork = findPreference(getString(R.string.key_btc_network_url));
+        btcNetwork.setOnPreferenceChangeListener((preference, value) -> {
+            Log.i("Setting", "==> select - value:" + value);
+            BrahmaConfig.getInstance().setBtcNetworkFlag(value.toString());
+            bindPreferenceSummaryToValue(findPreference(getString(R.string.key_btc_network_url)));
+            Intent intent = new Intent(getActivity(), MainActivity.class);
+            intent.putExtra(IntentParam.FLAG_CHANGE_BTC_NETWORK, true);
             startActivity(intent);
             return true;
         });

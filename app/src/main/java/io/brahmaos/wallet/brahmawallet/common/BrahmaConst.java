@@ -39,6 +39,9 @@ public class BrahmaConst {
     public static final String KOVAN_TEST_URL = "https://kovan.infura.io/Gy3Csyt4bzKIGsctm3g0";
     public static final String RINKEBY_TEST_URL = "https://rinkeby.infura.io/Gy3Csyt4bzKIGsctm3g0";
 
+    public static final String BTC_MAINNET = "MainNet";
+    public static final String BTC_TESTNET3 = "TestNet3";
+
     public static final String KYBER_NETWORK_MAINNET = "0x818e6fecd516ecc3849daf6845e3ec868087b755";
     public static final String KYBER_NETWORK_ROPSTEN = "0x85ecDf8803c35a271a87ad918B5927E5cA6a56D2";
     //public static final String TRANSACTION_ACCOUNT_ADDRESS = "0x50FC3e2B2276E3a58AA696B5112Aa10775d42bd6";

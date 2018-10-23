@@ -207,7 +207,7 @@
     <!-- Strings related to Settings -->
     <string name="title_setting">设置</string>
 
-    <string name="pref_title_net_list">网络</string>
+    <string name="pref_title_net_list">选择以太坊网络</string>
     <string-array name="pref_net_list_titles">
         <item>Mainnet</item>
         <item>Ropsten(测试网络)</item>
@@ -221,6 +221,16 @@
         <item>https://infuranet.infura.io/Gy3Csyt4bzKIGsctm3g0</item>
         <item>https://kovan.infura.io/Gy3Csyt4bzKIGsctm3g0</item>
         <item>https://rinkeby.infura.io/Gy3Csyt4bzKIGsctm3g0</item>
+    </string-array>
+
+    <string name="pref_title_btc_net_list">选择比特币网络</string>
+    <string-array name="pref_btc_net_list_titles">
+        <item>Mainnet</item>
+        <item>TestNet3(测试网络)</item>
+    </string-array>
+    <string-array name="pref_btc_net_list_values">
+        <item>Mainnet</item>
+        <item>TestNet3(测试网络)</item>
     </string-array>
 
     <string name="pref_title_language">语言偏好设置</string>
@@ -247,6 +257,7 @@
 
     <!-- share -->
     <string name="key_network_url">ethereum.network.url</string>
+    <string name="key_btc_network_url">bitcoin.network.url</string>
     <string name="key_wallet_language">wallet.language</string>
     <string name="key_wallet_currency_unit">wallet.currency.unit</string>
 
