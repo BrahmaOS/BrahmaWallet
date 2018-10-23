@@ -40,7 +40,7 @@ import io.brahmaos.wallet.brahmawallet.db.entity.ContactEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 
 
-@Database(entities = {AccountEntity.class, TokenEntity.class, AllTokenEntity.class, ContactEntity.class}, version = 4, exportSchema = false)
+@Database(entities = {AccountEntity.class, TokenEntity.class, AllTokenEntity.class, ContactEntity.class}, version = 5, exportSchema = false)
 @TypeConverters(DateConverter.class)
 public abstract class WalletDatabase extends RoomDatabase {
 
@@ -83,6 +83,8 @@ public abstract class WalletDatabase extends RoomDatabase {
                                 "values (\"BrahmaOS\", \"0xd7732e3783b0047aa251928960063f863ad022d8\", \"BRM\", "
                                 + String.valueOf(R.drawable.icon_brm) + ")");
                         db.execSQL("INSERT INTO tokens (name, address, shortName, avatar) " +
+                                "values (\"Bitcoin\", \"btc\", \"BTC\", \"\")");
+                        db.execSQL("INSERT INTO tokens (name, address, shortName, avatar) " +
                                 "values (\"Ethereum\", \"\", \"ETH\", "
                                 + String.valueOf(R.drawable.icon_eth) + ")");
                     }
@@ -97,6 +99,7 @@ public abstract class WalletDatabase extends RoomDatabase {
                 .addMigrations(MIGRATION_1_2)
                 .addMigrations(MIGRATION_2_3)
                 .addMigrations(MIGRATION_3_4)
+                .addMigrations(MIGRATION_4_5)
                 .build();
     }
 
@@ -133,6 +136,17 @@ public abstract class WalletDatabase extends RoomDatabase {
             database.execSQL("CREATE TABLE `contacts` (`id` INTEGER not null, "
                     + "`familyName` TEXT, `name` TEXT, `address` TEXT, `avatar` TEXT, `remark` TEXT," +
                     "PRIMARY KEY(`id`))");
+        }
+    };
+
+    private static final Migration MIGRATION_4_5 = new Migration(4, 5) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE accounts ADD COLUMN type INTEGER");
+            database.execSQL("ALTER TABLE accounts ADD COLUMN cryptoMnemonics TEXT");
+            database.execSQL("UPDATE accounts SET type = 1");
+            database.execSQL("INSERT INTO tokens (name, address, shortName, avatar) " +
+                    "values (\"Bitcoin\", \"btc\", \"BTC\", \"\")");
         }
     };
 

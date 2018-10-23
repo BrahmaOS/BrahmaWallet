@@ -65,4 +65,8 @@ public class BrahmaConst {
     // KNC contract addresses
     public static final String KNC_MAIN_NETWORK_CONTRACT_ADDRESS = "0xdd974d5c2e2928dea5f71b9825b8b646686bd200";
     public static final String KNC_ROPSTEN_NETWORK_CONTRACT_ADDRESS = "0x4E470dc7321E84CA96FcAEDD0C8aBCebbAEB68C6";
+
+    // Account type
+    public static final int ETH_ACCOUNT_TYPE = 1;
+    public static final int BTC_ACCOUNT_TYPE = 2;
 }
