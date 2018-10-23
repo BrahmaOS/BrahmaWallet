@@ -13,10 +13,10 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/iv_celestial_body"
         android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="@string/nav_header_desc"
-        app:srcCompat="@drawable/saturn" />
+        app:srcCompat="@drawable/planet_neptune"/>
 </LinearLayout>

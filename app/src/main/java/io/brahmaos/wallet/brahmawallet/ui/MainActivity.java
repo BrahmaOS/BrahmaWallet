@@ -62,6 +62,7 @@ import io.brahmaos.wallet.brahmawallet.ui.account.ImportAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.ui.contact.ContactsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.setting.AboutActivity;
+import io.brahmaos.wallet.brahmawallet.ui.setting.CelestialBodyIntroActivity;
 import io.brahmaos.wallet.brahmawallet.ui.setting.HelpActivity;
 import io.brahmaos.wallet.brahmawallet.ui.setting.SettingsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.token.TokensActivity;
@@ -74,6 +75,7 @@ import io.brahmaos.wallet.util.PermissionUtil;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+
 
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener, VersionUpgradeService.INewVerNotify {
@@ -166,6 +168,12 @@ public class MainActivity extends BaseActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
+
+        ImageView ivCelestialBody = navigationView.getHeaderView(0).findViewById(R.id.iv_celestial_body);
+        ivCelestialBody.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, CelestialBodyIntroActivity.class);
+            startActivity(intent);
+        });
 
         swipeRefreshLayout.setOnRefreshListener(() -> {
             // get the latest assets
