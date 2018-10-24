@@ -101,7 +101,7 @@
                         android:id="@+id/et_contact_address"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/prompt_contact_address"
+                        android:hint="@string/prompt_contact_ethereum_address"
                         android:maxLines="2"
                         android:paddingEnd="@dimen/icon_normal_size"
                         android:textSize="@dimen/font_size_body"

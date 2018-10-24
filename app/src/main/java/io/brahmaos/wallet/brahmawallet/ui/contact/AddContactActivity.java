@@ -14,7 +14,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -54,6 +53,13 @@ public class AddContactActivity extends BaseActivity {
     EditText etContactAddress;
     @BindView(R.id.iv_scan)
     ImageView ivScan;
+
+    @BindView(R.id.et_contact_btc_address)
+    EditText etContactBtcAddress;
+
+    @BindView(R.id.iv_btc_scan)
+    ImageView ivBtcScan;
+
     @BindView(R.id.et_contact_remark)
     EditText etContactRemark;
 
@@ -119,18 +125,25 @@ public class AddContactActivity extends BaseActivity {
                 etContactName.setError(getString(R.string.error_field_required));
                 return false;
             }
+
             String familyName = etContactFamilyName.getText().toString();
             String address = etContactAddress.getText().toString();
-            if (TextUtils.isEmpty(address)) {
-                etContactAddress.setError(getString(R.string.error_field_required));
+            String btcAddress = etContactBtcAddress.getText().toString();
+
+            if (TextUtils.isEmpty(address) && TextUtils.isEmpty(btcAddress)) {
+                showLongToast(R.string.error_create_contact_least_one_address);
                 return false;
-            } else if (!BrahmaWeb3jService.getInstance().isValidAddress(address)) {
+            }
+
+            if (!TextUtils.isEmpty(address) && !BrahmaWeb3jService.getInstance().isValidAddress(address)) {
                 etContactAddress.setError(getString(R.string.tip_error_address));
                 return false;
             }
+
             String remark = etContactRemark.getText().toString();
             ContactEntity contact = new ContactEntity();
             contact.setAddress(address);
+            contact.setBtcAddress(btcAddress);
             contact.setName(name);
             contact.setFamilyName(familyName);
             contact.setRemark(remark);

@@ -318,11 +318,13 @@
     <string name="title_add_contact">添加联系人</string>
     <string name="prompt_contact_first_name">名</string>
     <string name="prompt_contact_last_name">姓</string>
-    <string name="prompt_contact_address">联系人地址</string>
+    <string name="prompt_contact_ethereum_address">以太坊账号地址</string>
+    <string name="prompt_contact_bitcoin_address">比特币账号地址</string>
     <string name="title_choose_contact">选择联系人</string>
     <string name="title_my_accounts">我的账号</string>
     <string name="success_create_contact">添加联系人成功!</string>
     <string name="error_create_contact">添加联系人失败! 请稍后重试!</string>
+    <string name="error_create_contact_least_one_address">至少需要提供一个账号地址</string>
     <string name="delete_contact_tip">要删除此联系人吗？</string>
     <string name="success_delete_contact">删除联系人成功。</string>
     <string name="error_delete_contact">删除联系人失败!!!</string>
