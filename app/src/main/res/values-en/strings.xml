@@ -211,7 +211,7 @@
     <string name="title_setting_network">Blockchain Network</string>
     <string name="title_setting_other">Other</string>
 
-    <string name="pref_title_net_list">Network</string>
+    <string name="pref_title_net_list">Ethereum Network</string>
     <string-array name="pref_net_list_titles">
         <item>Mainnet</item>
         <item>Ropsten(Test)</item>
