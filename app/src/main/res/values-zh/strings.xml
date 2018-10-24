@@ -336,6 +336,7 @@
     <string name="error_edit_contact">编辑联系人失败! 请稍后重试!</string>
     <string name="tip_contact_image_avatar">联系人头像</string>
     <string name="tip_contact_scan_address">扫描联系人地址二维码</string>
+    <string name="subtitle_contact_wallet_account">钱包账号</string>
 
     <!-- fingerprint -->
     <string name="tip_fingerprint">点击开启验证</string>
