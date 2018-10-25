@@ -55,6 +55,12 @@ public class EditContactActivity extends BaseActivity {
     @BindView(R.id.et_contact_remark)
     EditText etContactRemark;
 
+    @BindView(R.id.et_contact_btc_address)
+    EditText etContactBtcAddress;
+
+    @BindView(R.id.iv_btc_scan)
+    ImageView ivBtcScan;
+
     private int contactId;
     private ContactEntity contact;
     private ContactViewModel mViewModel;
@@ -114,6 +120,7 @@ public class EditContactActivity extends BaseActivity {
         etContactName.setText(contact.getName());
         etContactFamilyName.setText(contact.getFamilyName());
         etContactAddress.setText(contact.getAddress());
+        etContactBtcAddress.setText(contact.getBtcAddress());
         etContactRemark.setText(contact.getRemark());
         if (contact.getAvatar() != null && contact.getAvatar().length() > 0 && !contact.getAvatar().equals("null")) {
             Uri uriAvatar = Uri.parse(contact.getAvatar());
@@ -145,16 +152,21 @@ public class EditContactActivity extends BaseActivity {
             }
             String familyName = etContactFamilyName.getText().toString();
             String address = etContactAddress.getText().toString();
-            if (TextUtils.isEmpty(address)) {
-                etContactAddress.setError(getString(R.string.error_field_required));
+            String btcAddress = etContactBtcAddress.getText().toString();
+
+            if (TextUtils.isEmpty(address) && TextUtils.isEmpty(btcAddress)) {
+                showLongToast(R.string.error_create_contact_least_one_address);
                 return false;
-            } else if (!BrahmaWeb3jService.getInstance().isValidAddress(address)) {
+            }
+
+            if (!TextUtils.isEmpty(address) && !BrahmaWeb3jService.getInstance().isValidAddress(address)) {
                 etContactAddress.setError(getString(R.string.tip_error_address));
                 return false;
             }
             String remark = etContactRemark.getText().toString();
             ContactEntity contact = new ContactEntity();
             contact.setAddress(address);
+            contact.setBtcAddress(btcAddress);
             contact.setName(name);
             contact.setFamilyName(familyName);
             contact.setRemark(remark);

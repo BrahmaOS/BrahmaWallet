@@ -36,9 +36,6 @@ public interface ContactDao {
     @Insert
     void insertContact(ContactEntity contact);
 
-    @Query("delete from contacts where LOWER(address) = LOWER(:address)")
-    void deleteContactWithAddress(String address);
-
     @Query("delete from contacts where id = :contactId")
     void deleteContact(int contactId);
 
