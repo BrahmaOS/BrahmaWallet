@@ -83,10 +83,10 @@ public abstract class WalletDatabase extends RoomDatabase {
                                 "values (\"BrahmaOS\", \"0xd7732e3783b0047aa251928960063f863ad022d8\", \"BRM\", "
                                 + String.valueOf(R.drawable.icon_brm) + ")");
                         db.execSQL("INSERT INTO tokens (name, address, shortName, avatar) " +
-                                "values (\"Bitcoin\", \"btc\", \"BTC\", \"\")");
-                        db.execSQL("INSERT INTO tokens (name, address, shortName, avatar) " +
                                 "values (\"Ethereum\", \"\", \"ETH\", "
                                 + String.valueOf(R.drawable.icon_eth) + ")");
+                        db.execSQL("INSERT INTO tokens (name, address, shortName, avatar) " +
+                                "values (\"Bitcoin\", \"btc\", \"BTC\", \"\")");
                     }
 
                     @Override

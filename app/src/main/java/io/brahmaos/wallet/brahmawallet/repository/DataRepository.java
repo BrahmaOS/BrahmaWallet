@@ -71,6 +71,10 @@ public class DataRepository {
         return mObservableAccounts;
     }
 
+    public List<AccountEntity> getBtcAccountsSync() {
+        return mDatabase.accountDao().loadBtcAccountsSync();
+    }
+
     public LiveData<AccountEntity> loadAccount(final int accountId) {
         return mDatabase.accountDao().loadAccount(accountId);
     }

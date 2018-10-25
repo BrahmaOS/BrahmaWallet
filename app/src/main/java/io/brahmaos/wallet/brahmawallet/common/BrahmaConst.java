@@ -28,6 +28,7 @@ public class BrahmaConst {
 
     public static final String BRAHMAOS_TOKEN = "brahmaos";
     public static final String ETHEREUM = "ethereum";
+    public static final String BITCOIN = "bitcoin";
     public static final int DEFAULT_GAS_LIMIT = 400000;
     // unit Gwei
     public static final int DEFAULT_GAS_PRICE = 20;
