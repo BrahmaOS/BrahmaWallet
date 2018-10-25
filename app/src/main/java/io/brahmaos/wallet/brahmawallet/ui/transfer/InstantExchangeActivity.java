@@ -32,7 +32,7 @@ import android.widget.TextView;
 import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.crypto.CipherException;
 import org.web3j.protocol.core.methods.response.EthCall;
-import org.web3j.protocol.exceptions.TransactionTimeoutException;
+import org.web3j.protocol.exceptions.TransactionException;
 import org.web3j.utils.Convert;
 import org.web3j.utils.Numeric;
 
@@ -162,15 +162,22 @@ public class InstantExchangeActivity extends BaseActivity {
 
         mViewModel = ViewModelProviders.of(this).get(AccountViewModel.class);
         mViewModel.getAccounts().observe(this, accountEntities -> {
-            mAccounts = accountEntities;
-            if ((mAccount == null || mAccount.getAddress().length() == 0) &&
-                    accountEntities != null) {
-                mAccount = mAccounts.get(0);
+            if (accountEntities != null && accountEntities.size() > 0) {
+                for (AccountEntity accountEntity : accountEntities) {
+                    if (accountEntity.getType() == BrahmaConst.ETH_ACCOUNT_TYPE) {
+                        mAccounts.add(accountEntity);
+                    }
+                }
+                if ((mAccount == null || mAccount.getAddress().length() == 0) &&
+                        mAccounts != null && mAccounts.size() > 0) {
+                    mAccount = mAccounts.get(0);
+                }
+                if (mAccounts != null && mAccounts.size() > 1) {
+                    tvChangeAccount.setVisibility(View.VISIBLE);
+                }
+                showAccountInfo(mAccount);
             }
-            if (mAccounts != null && mAccounts.size() > 1) {
-                tvChangeAccount.setVisibility(View.VISIBLE);
-            }
-            showAccountInfo(mAccount);
+
         });
         tvChangeAccount.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -815,7 +822,7 @@ public class InstantExchangeActivity extends BaseActivity {
                                             int resId = R.string.tip_error_transfer;
                                             if (e instanceof CipherException) {
                                                 resId = R.string.tip_error_password;
-                                            } else if (e instanceof TransactionTimeoutException) {
+                                            } else if (e instanceof TransactionException) {
                                                 resId = R.string.tip_error_net;
                                             }
                                             new AlertDialog.Builder(InstantExchangeActivity.this)
@@ -999,7 +1006,7 @@ public class InstantExchangeActivity extends BaseActivity {
                                             int resId = R.string.tip_error_transfer;
                                             if (e instanceof CipherException) {
                                                 resId = R.string.tip_error_password;
-                                            } else if (e instanceof TransactionTimeoutException) {
+                                            } else if (e instanceof TransactionException) {
                                                 resId = R.string.tip_error_net;
                                             }
                                             new AlertDialog.Builder(InstantExchangeActivity.this)
