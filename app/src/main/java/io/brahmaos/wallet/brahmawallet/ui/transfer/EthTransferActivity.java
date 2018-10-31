@@ -59,11 +59,11 @@ import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class TransferActivity extends BaseActivity {
+public class EthTransferActivity extends BaseActivity {
 
     @Override
     protected String tag() {
-        return TransferActivity.class.getName();
+        return EthTransferActivity.class.getName();
     }
 
     // UI references.
@@ -148,19 +148,26 @@ public class TransferActivity extends BaseActivity {
 
         mViewModel = ViewModelProviders.of(this).get(AccountViewModel.class);
         mViewModel.getAccounts().observe(this, accountEntities -> {
-            mAccounts = accountEntities;
+            if (accountEntities == null || accountEntities.size() == 0) {
+                finish();
+            }
+            for (AccountEntity accountEntity : accountEntities) {
+                if (accountEntity.getType() == BrahmaConst.ETH_ACCOUNT_TYPE) {
+                    mAccounts.add(accountEntity);
+                }
+            }
+            // don't have eth account
+            if (mAccounts == null || mAccounts.size() == 0) {
+                finish();
+            }
 
             if (mAccounts != null && mAccounts.size() > 1) {
                 tvChangeAccount.setVisibility(View.VISIBLE);
             } else {
                 tvChangeAccount.setVisibility(View.GONE);
-                if (mAccounts == null || mAccounts.size() == 0) {
-                    finish();
-                }
             }
 
-            if ((mAccount == null || mAccount.getAddress().length() == 0) &&
-                    accountEntities != null) {
+            if (mAccount == null || mAccount.getAddress().length() == 0) {
                 mAccount = mAccounts.get(0);
             }
             showAccountInfo(mAccount);
@@ -207,7 +214,7 @@ public class TransferActivity extends BaseActivity {
         getGasPrice();
 
         ivContacts.setOnClickListener(v -> {
-            Intent intent = new Intent(TransferActivity.this, ChooseContactActivity.class);
+            Intent intent = new Intent(EthTransferActivity.this, ChooseContactActivity.class);
             startActivityForResult(intent, ReqCode.CHOOSE_TRANSFER_CONTACT);
         });
     }
@@ -449,7 +456,7 @@ public class TransferActivity extends BaseActivity {
         confirmBtn.setOnClickListener(v -> {
             final View dialogView = getLayoutInflater().inflate(R.layout.dialog_account_password, null);
 
-            AlertDialog passwordDialog = new AlertDialog.Builder(TransferActivity.this)
+            AlertDialog passwordDialog = new AlertDialog.Builder(EthTransferActivity.this)
                     .setView(dialogView)
                     .setCancelable(false)
                     .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel())
@@ -499,7 +506,7 @@ public class TransferActivity extends BaseActivity {
                                             } else if (e instanceof TransactionException) {
                                                 resId = R.string.tip_error_net;
                                             }
-                                            new AlertDialog.Builder(TransferActivity.this)
+                                            new AlertDialog.Builder(EthTransferActivity.this)
                                                     .setMessage(resId)
                                                     .setNegativeButton(R.string.ok, (dialog1, which1) -> dialog1.cancel())
                                                     .create().show();

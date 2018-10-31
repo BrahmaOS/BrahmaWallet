@@ -41,6 +41,17 @@ public class CommonUtil {
         return bigDecimal.divide(new BigDecimal(Math.pow(10, 8)), 8, BigDecimal.ROUND_HALF_UP);
     }
 
+    public static BigDecimal convertUnit(String tokenName, BigInteger value) {
+        if (value.compareTo(BigInteger.ZERO) <= 0) {
+            return new BigDecimal(0.0000);
+        }
+        if (tokenName.toLowerCase().equals(BrahmaConst.BITCOIN)) {
+            return convertBTCFromSatoshi(value);
+        } else {
+            return getAccountFromWei(value);
+        }
+    }
+
     public static String parseAccountContent(String value) {
         return value.replaceAll("\\s*", "");
     }

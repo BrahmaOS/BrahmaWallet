@@ -465,4 +465,20 @@
     <string name="label_transaction_time">Time</string>
     <string name="label_transaction_input_data">Remark</string>
     <string name="label_copy_etherscan_url">Copy Etherscan details url</string>
+
+    <!-- restore account-->
+    <string name="title_restore_account">Restore Account</string>
+    <string name="action_restore_account">Restore Account</string>
+    <string name="success_restore_account">Restore account success!</string>
+
+    <!-- btc assets -->
+    <string name="current_price">Current Price</string>
+    <string name="prompt_send">Send</string>
+    <string name="btc_transaction_unspent">Unspent</string>
+    <string name="btc_transaction_pending">Pending</string>
+    <string name="btc_transaction_spent">Spend</string>
+    <string name="btc_transaction_dead">Dead</string>
+    <string name="transaction_amount">Amount</string>
+    <string name="prompt_transactions">Transactions</string>
+    <string name="prompt_transacted_total">Total Transacted</string>
 </resources>

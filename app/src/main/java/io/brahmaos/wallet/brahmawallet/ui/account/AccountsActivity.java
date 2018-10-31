@@ -65,7 +65,7 @@ public class AccountsActivity extends BaseActivity {
             startActivity(intent);
             return true;
         } else if (id == R.id.menu_import_account) {
-            Intent intent = new Intent(this, ImportAccountActivity.class);
+            Intent intent = new Intent(this, ImportEthereumAccountActivity.class);
             startActivityForResult(intent, REQ_IMPORT_ACCOUNT);
             return true;
         } else if (id == android.R.id.home) {

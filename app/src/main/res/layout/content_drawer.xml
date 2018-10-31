@@ -4,8 +4,54 @@
     android:layout_marginTop="@dimen/height_toolbar"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <android.support.constraint.ConstraintLayout
+    <LinearLayout
+        android:id="@+id/layout_new_account"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:layout_marginStart="@dimen/space_large"
+        android:layout_marginEnd="@dimen/space_large"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:src="@drawable/home_restore_account_bg"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+        <TextView
+            android:id="@+id/test_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/font_size_subheading"
+            android:text="@string/brahma_wallet_desc" />
+        <Button
+            android:id="@+id/btn_create_account"
+            style="@style/MainButtonSingle"
+            android:layout_marginTop="@dimen/space_larger"
+            android:layout_marginStart="@dimen/space_largest"
+            android:layout_marginEnd="@dimen/space_largest"
+            android:text="@string/action_create_account" />
+        <TextView
+            android:id="@+id/btn_restore_account"
+            android:layout_height="50dp"
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:textSize="@dimen/font_size_subheading"
+            android:layout_marginTop="@dimen/space_smaller"
+            android:text="@string/action_restore_account" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+    </LinearLayout>
+    <!--<android.support.constraint.ConstraintLayout
         android:id="@+id/layout_new_account"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -22,39 +68,43 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/sample_text"
+            <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/title_brahma_wallet"
-                android:textSize="@dimen/font_size_headline"
-                android:typeface="monospace"
-                android:textStyle="bold"/>
+                android:adjustViewBounds="true"
+                android:src="@drawable/home_restore_account_bg"/>
+
             <TextView
                 android:id="@+id/test_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_smaller"
+                android:textSize="@dimen/font_size_subheading"
+                android:layout_marginTop="@dimen/space_largest"
                 android:text="@string/brahma_wallet_desc" />
 
             <Button
                 android:id="@+id/btn_create_account"
                 style="@style/MainButtonSingle"
                 android:layout_marginTop="@dimen/space_larger"
+                android:layout_marginStart="@dimen/space_normal"
+                android:layout_marginEnd="@dimen/space_normal"
                 android:text="@string/action_create_account" />
 
-            <Button
-                android:id="@+id/btn_import_account"
-                style="@style/MainButtonSingle"
-                android:layout_marginTop="@dimen/space_larger"
+            <TextView
+                android:id="@+id/btn_restore_account"
+                android:layout_height="50dp"
+                android:layout_width="match_parent"
+                android:gravity="center"
+                android:textSize="@dimen/font_size_subheading"
+                android:layout_marginTop="@dimen/space_smaller"
                 android:layout_marginBottom="@dimen/space_larger"
-                android:text="@string/action_import_account" />
+                android:text="@string/action_restore_account" />
 
         </LinearLayout>
     </android.support.constraint.ConstraintLayout>
-
+-->
     <android.support.v4.widget.SwipeRefreshLayout
-        android:visibility="visible"
+        android:visibility="gone"
         android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -41,8 +41,6 @@ public class CreateAccountActivity extends BaseActivity {
     EditText etRepeatPassword;
     @BindView(R.id.btn_create_account)
     Button btnCreateAccount;
-    @BindView(R.id.btn_import_account)
-    TextView tvImportAccount;
     @BindView(R.id.checkbox_read_protocol)
     CheckBox checkBoxReadProtocol;
     @BindView(R.id.layout_create_account_form)
@@ -84,11 +82,6 @@ public class CreateAccountActivity extends BaseActivity {
         btnCreateAccount.setOnClickListener(view -> createAccount());
 
         checkBoxReadProtocol.setOnCheckedChangeListener((buttonView, isChecked) -> btnCreateAccount.setEnabled(isChecked));
-
-        tvImportAccount.setOnClickListener(v -> {
-            Intent intent = new Intent(CreateAccountActivity.this, ImportAccountActivity.class);
-            startActivity(intent);
-        });
 
         tvServiceAgreement.setOnClickListener(v -> {
             Intent intent = new Intent(CreateAccountActivity.this, ServiceTermsActivity.class);

@@ -88,37 +88,21 @@
                     android:textColor="@color/white"
                     android:text="@string/total_assets"/>
                 <TextView
-                    android:id="@+id/left_brackets"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/tv_total_assets_desc"
-                    android:layout_centerVertical="true"
-                    android:textColor="@color/white"
-                    android:layout_marginStart="@dimen/space_unit"
-                    android:text="("/>
-                <TextView
-                    android:id="@+id/tv_currency_unit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/left_brackets"
-                    android:layout_centerVertical="true"
-                    android:textColor="@color/white"
-                    android:text="@string/unit_cny"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/tv_currency_unit"
-                    android:layout_centerVertical="true"
-                    android:textColor="@color/white"
-                    android:text=")"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toStartOf="@id/tv_total_assets"
-                    android:layout_marginEnd="@dimen/space_smaller"
+                    android:layout_toStartOf="@id/iv_currency_amount"
+                    android:layout_marginEnd="@dimen/space_unit"
                     android:layout_centerVertical="true"
                     android:textColor="@color/white"
                     android:text="@string/asymptotic"/>
+                <ImageView
+                    android:id="@+id/iv_currency_amount"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@id/tv_total_assets"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:layout_marginEnd="@dimen/space_smaller"
+                    android:src="@drawable/currency_cny_white"/>
                 <TextView
                     android:id="@+id/tv_total_assets"
                     android:layout_alignParentEnd="true"

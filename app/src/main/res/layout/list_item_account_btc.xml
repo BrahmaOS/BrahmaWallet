@@ -82,31 +82,11 @@
                 android:layout_marginStart="56dp">
                 <TextView
                     android:id="@+id/tv_total_assets_desc"
+                    android:layout_marginTop="@dimen/space_unit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
                     android:text="@string/total_assets"/>
-                <TextView
-                    android:id="@+id/left_brackets"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/tv_total_assets_desc"
-                    android:textColor="@color/white"
-                    android:layout_marginStart="@dimen/space_unit"
-                    android:text="("/>
-                <TextView
-                    android:id="@+id/tv_currency_unit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/left_brackets"
-                    android:textColor="@color/white"
-                    android:text="@string/unit_cny"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/tv_currency_unit"
-                    android:textColor="@color/white"
-                    android:text=")"/>
                 <LinearLayout
                     android:layout_alignParentEnd="true"
                     android:layout_width="wrap_content"
@@ -115,16 +95,18 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="end"
                         android:orientation="horizontal">
                         <TextView
+                            android:id="@+id/tv_account_balance"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textSize="@dimen/font_size_subheading"
                             android:layout_marginEnd="@dimen/space_smaller"
-                            android:textColor="@color/white"
-                            android:text="@string/asymptotic"/>
+                            android:textColor="@color/white"/>
                         <TextView
                             android:textColor="@color/white"
-                            android:textSize="@dimen/font_size_subtitle"
+                            android:textSize="@dimen/font_size_subheading"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/account_btc"/>
@@ -132,13 +114,23 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_marginTop="@dimen/space_unit"
                         android:orientation="horizontal">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="@dimen/space_smaller"
+                            android:layout_marginEnd="@dimen/space_unit"
+                            android:layout_gravity="center_vertical"
                             android:textColor="@color/white"
                             android:text="@string/asymptotic"/>
+                        <ImageView
+                            android:id="@+id/iv_currency_amount"
+                            android:layout_gravity="center_vertical"
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:layout_marginEnd="@dimen/space_smaller"
+                            android:src="@drawable/currency_cny_white"/>
                         <TextView
                             android:id="@+id/tv_total_assets"
                             android:textColor="@color/white"

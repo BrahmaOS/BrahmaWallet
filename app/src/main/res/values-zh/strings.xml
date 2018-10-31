@@ -38,6 +38,8 @@
 
     <!-- Strings related to accounts -->
     <string name="title_accounts">账号</string>
+    <string name="title_tab_account_ethereum">以太坊</string>
+    <string name="title_tab_account_bitcoin">比特币</string>
     <string name="title_account_assets">账号资产</string>
     <string name="title_account_detail">账号详情</string>
     <string name="title_account_change_name">更改账号名</string>
@@ -389,4 +391,9 @@
     <string name="label_transaction_time">时间</string>
     <string name="label_transaction_input_data">备注</string>
     <string name="label_copy_etherscan_url">复制Etherscan详情链接</string>
+
+    <!-- restore account-->
+    <string name="title_restore_account">恢复账号</string>
+    <string name="action_restore_account">恢复账号</string>
+    <string name="success_restore_account">恢复账号成功!</string>
 </resources>

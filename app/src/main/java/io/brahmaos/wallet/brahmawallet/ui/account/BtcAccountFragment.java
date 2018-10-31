@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import org.bitcoinj.kits.WalletAppKit;
 
 import java.math.BigDecimal;
@@ -117,11 +119,11 @@ public class BtcAccountFragment extends Fragment {
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_btc_account, parent, false);
+            View rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_account_btc, parent, false);
             rootView.setOnClickListener(v -> {
                 int position = recyclerViewAccounts.getChildAdapterPosition(v);
                 AccountEntity account = accounts.get(position);
-                Intent intent = new Intent(getActivity(), AccountAssetsActivity.class);
+                Intent intent = new Intent(getActivity(), BtcAccountAssetsActivity.class);
                 intent.putExtra(IntentParam.PARAM_ACCOUNT_ID, account.getId());
                 startActivity(intent);
             });
@@ -146,19 +148,23 @@ public class BtcAccountFragment extends Fragment {
             }
             ImageManager.showAccountAvatar(getActivity(), holder.ivAccountAvatar, account);
             ImageManager.showAccountBackground(getActivity(), holder.ivAccountBg, account);
-            String currencyUnit = BrahmaConfig.getInstance().getCurrencyUnit();
-            if (currencyUnit != null) {
-                holder.tvCurrencyUnit.setText(currencyUnit);
+            if (BrahmaConfig.getInstance().getCurrencyUnit().equals(BrahmaConst.UNIT_PRICE_CNY)) {
+                Glide.with(BtcAccountFragment.this)
+                        .load(R.drawable.currency_cny_white)
+                        .into(holder.ivCurrencyUnit);
             } else {
-                holder.tvCurrencyUnit.setText(BrahmaConst.UNIT_PRICE_CNY);
+                Glide.with(BtcAccountFragment.this)
+                        .load(R.drawable.currency_usd_white)
+                        .into(holder.ivCurrencyUnit);
             }
             holder.tvAccountName.setText(account.getName());
             // get current receive address and balance through walletAppKit
             BigDecimal totalAssets = BigDecimal.ZERO;
+            long balance = 0;
             WalletAppKit kit = BtcAccountManager.getInstance().getBtcWalletAppKit(account.getFilename());
             if ( kit != null && kit.wallet() != null) {
                 holder.tvAccountAddress.setText(CommonUtil.generateSimpleAddress(kit.wallet().currentReceiveAddress().toBase58()));
-                long balance = kit.wallet().getBalance().value;
+                balance = kit.wallet().getBalance().value;
                 if (balance > 0) {
                     for (CryptoCurrency currency : cryptoCurrencies) {
                         if (currency.getName().toLowerCase().equals(BrahmaConst.BITCOIN)) {
@@ -173,26 +179,10 @@ public class BtcAccountFragment extends Fragment {
                     }
                 }
             } else {
+                BtcAccountManager.getInstance().initExistsWalletAppKit(account);
                 holder.tvAccountAddress.setText(CommonUtil.generateSimpleAddress(account.getAddress()));
             }
-            holder.tvTotalAssets.setText(String.valueOf(totalAssets.setScale(2, BigDecimal.ROUND_HALF_UP)));
-
-
-            for (AccountAssets assets : accountAssetsList) {
-                if (assets.getAccountEntity().getAddress().equals(account.getAddress()) &&
-                        assets.getBalance().compareTo(BigInteger.ZERO) > 0) {
-                    for (CryptoCurrency currency : cryptoCurrencies) {
-                        if (CommonUtil.cryptoCurrencyCompareToken(currency, assets.getTokenEntity())) {
-                            double tokenPrice = currency.getPriceCny();
-                            if (BrahmaConfig.getInstance().getCurrencyUnit().equals(BrahmaConst.UNIT_PRICE_USD)) {
-                                tokenPrice = currency.getPriceUsd();
-                            }
-                            BigDecimal tokenValue = new BigDecimal(tokenPrice).multiply(CommonUtil.getAccountFromWei(assets.getBalance()));
-                            totalAssets = totalAssets.add(tokenValue);
-                        }
-                    }
-                }
-            }
+            holder.tvAccountBalance.setText(String.valueOf(CommonUtil.convertUnit(BrahmaConst.BITCOIN, new BigInteger(String.valueOf(balance)))));
             holder.tvTotalAssets.setText(String.valueOf(totalAssets.setScale(2, BigDecimal.ROUND_HALF_UP)));
         }
 
@@ -207,9 +197,10 @@ public class BtcAccountFragment extends Fragment {
             ImageView ivAccountAvatar;
             TextView tvAccountName;
             TextView tvAccountAddress;
+            TextView tvAccountBalance;
             TextView tvTotalAssetsDesc;
             TextView tvTotalAssets;
-            TextView tvCurrencyUnit;
+            ImageView ivCurrencyUnit;
 
             ItemViewHolder(View itemView) {
                 super(itemView);
@@ -218,8 +209,9 @@ public class BtcAccountFragment extends Fragment {
                 tvAccountName = itemView.findViewById(R.id.tv_account_name);
                 tvAccountAddress = itemView.findViewById(R.id.tv_account_address);
                 tvTotalAssetsDesc = itemView.findViewById(R.id.tv_total_assets_desc);
+                tvAccountBalance = itemView.findViewById(R.id.tv_account_balance);
                 tvTotalAssets = itemView.findViewById(R.id.tv_total_assets);
-                tvCurrencyUnit = itemView.findViewById(R.id.tv_currency_unit);
+                ivCurrencyUnit = itemView.findViewById(R.id.iv_currency_amount);
             }
         }
     }

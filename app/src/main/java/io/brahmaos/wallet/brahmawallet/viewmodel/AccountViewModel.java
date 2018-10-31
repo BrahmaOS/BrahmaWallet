@@ -178,6 +178,7 @@ public class AccountViewModel extends AndroidViewModel {
 
                     // create btc account
                     String btcFilePrefix = seed.toHexString();
+                    seed.setCreationTimeSeconds(timeSeconds);
                     BtcAccountManager.getInstance().createWalletAppKit(btcFilePrefix, seed);
                     AccountEntity btcAccount = new AccountEntity();
                     btcAccount.setName(name);
@@ -191,6 +192,80 @@ public class AccountViewModel extends AndroidViewModel {
             } catch (IOException | CipherException | UnreadableWalletException e) {
                 e.printStackTrace();
             }
+        });
+    }
+
+    /*
+     * Restore ETH account & BTC account through mnemonics
+     * If an exception is returned, an exception has occurred during processing.
+     */
+    public Observable<String> restoreAccountWithMnemonics(String mnemonics, String password, String accountName) {
+        return Observable.create((Subscriber<? super String> e) -> {
+            try {
+                List<String> mnemonicsCodes = Splitter.on(" ").splitToList(mnemonics);
+                MnemonicCode.INSTANCE.check(mnemonicsCodes);
+                long timeSeconds = System.currentTimeMillis() / 1000;
+                DeterministicSeed seed = new DeterministicSeed(mnemonics, null, "", timeSeconds);
+
+                // restore eth account
+                DeterministicKeyChain chain = DeterministicKeyChain.builder().seed(seed).build();
+                List<ChildNumber> keyPath = HDUtils.parsePath("M/44H/60H/0H/0/0");
+                DeterministicKey key = chain.getKeyByPath(keyPath, true);
+                BigInteger privateKey = key.getPrivKey();
+                ECKeyPair ecKeyPair = ECKeyPair.create(privateKey);
+                WalletFile walletFile = Wallet.createLight(password, ecKeyPair);
+
+                String address = BrahmaWeb3jService.getInstance().prependHexPrefix(walletFile.getAddress());
+
+                // check the eth account address
+                List<AccountEntity> accounts = mObservableAccounts.getValue();
+                boolean cancel = false;
+                if (accounts != null && accounts.size() > 0) {
+                    for (AccountEntity accountEntity : accounts) {
+                        if (accountEntity.getAddress().equals(address)) {
+                            cancel = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (cancel) {
+                    e.onNext("");
+                } else {
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("'UTC--'yyyy-MM-dd'T'HH-mm-ss.SSS'--'");
+                    String filename = dateFormat.format(new Date()) + walletFile.getAddress() + ".json";
+                    File destination = new File(getApplication().getFilesDir(), filename);
+                    ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
+                    objectMapper.writeValue(destination, walletFile);
+
+                    AccountEntity account = new AccountEntity();
+                    account.setName(accountName);
+                    account.setType(BrahmaConst.ETH_ACCOUNT_TYPE);
+                    account.setAddress(address);
+                    account.setFilename(filename);
+                    ((WalletApp) getApplication()).getRepository().createAccount(account);
+
+                    // restore btc account
+                    String btcFilePrefix = seed.toHexString();
+                    //seed.setCreationTimeSeconds(timeSeconds);
+                    BtcAccountManager.getInstance().restoreWalletAppKit(btcFilePrefix, seed);
+                    AccountEntity btcAccount = new AccountEntity();
+                    btcAccount.setName(accountName);
+                    btcAccount.setAddress("");
+                    btcAccount.setFilename(btcFilePrefix);
+                    btcAccount.setType(BrahmaConst.BTC_ACCOUNT_TYPE);
+                    MainService.getInstance().setNewMnemonicAccount(btcAccount);
+                    ((WalletApp) getApplication()).getRepository().createAccount(btcAccount);
+                    e.onNext(address);
+                }
+            } catch (MnemonicException e1) {
+                e1.printStackTrace();
+                e.onError(e1);
+            } catch (CipherException | IOException | UnreadableWalletException e1) {
+                e1.printStackTrace();
+                e.onNext("exception");
+            }
+            e.onCompleted();
         });
     }
 
@@ -407,6 +482,20 @@ public class AccountViewModel extends AndroidViewModel {
     }
 
     /*
+     * Get all the btc assets for all btc accounts
+     */
+    public void getBtcAssets() {
+        List<AccountEntity> accounts = mObservableAccounts.getValue();
+        if (accounts != null && accounts.size() > 0) {
+            for (AccountEntity accountEntity : accounts) {
+                if (accountEntity.getType() == BrahmaConst.BTC_ACCOUNT_TYPE) {
+                    getBtcBalance(accountEntity);
+                }
+            }
+        }
+    }
+
+    /*
      * Get the specified token asset of the specified account
      */
     private void getTokenAssetsOnEthereumChain(final AccountEntity account, final TokenEntity tokenEntity) {
@@ -489,6 +578,7 @@ public class AccountViewModel extends AndroidViewModel {
                     BigInteger.valueOf(kit.wallet().getBalance().value));
             checkTokenAsset(assets);
         } else {
+            BtcAccountManager.getInstance().initExistsWalletAppKit(accountEntity);
             AccountAssets assets = new AccountAssets(accountEntity, btcEntity,
                     BigInteger.ZERO);
             checkTokenAsset(assets);

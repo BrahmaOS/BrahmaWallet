@@ -1,45 +1,26 @@
 package io.brahmaos.wallet.brahmawallet.ui.account;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import org.web3j.crypto.WalletUtils;
+import com.bumptech.glide.Glide;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
@@ -49,15 +30,10 @@ import io.brahmaos.wallet.brahmawallet.model.AccountAssets;
 import io.brahmaos.wallet.brahmawallet.model.CryptoCurrency;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.service.MainService;
-import io.brahmaos.wallet.brahmawallet.ui.setting.PrivacyPolicyActivity;
-import io.brahmaos.wallet.brahmawallet.ui.setting.ServiceTermsActivity;
 import io.brahmaos.wallet.brahmawallet.view.CustomProgressDialog;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 public class EthAccountFragment extends Fragment {
     protected String tag() {
@@ -114,7 +90,7 @@ public class EthAccountFragment extends Fragment {
                 accounts = new ArrayList<>();
             } else {
                 for (AccountEntity accountEntity : accountEntities) {
-                    if (accountEntity.getType() == BrahmaConst.ETH_ACCOUNT_TYPE) {
+                    if (accountEntity.getType() != BrahmaConst.BTC_ACCOUNT_TYPE) {
                         accounts.add(accountEntity);
                     }
                 }
@@ -140,11 +116,11 @@ public class EthAccountFragment extends Fragment {
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_account, parent, false);
+            View rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_account_eth, parent, false);
             rootView.setOnClickListener(v -> {
                 int position = recyclerViewAccounts.getChildAdapterPosition(v);
                 AccountEntity account = accounts.get(position);
-                Intent intent = new Intent(getActivity(), AccountAssetsActivity.class);
+                Intent intent = new Intent(getActivity(), EthAccountAssetsActivity.class);
                 intent.putExtra(IntentParam.PARAM_ACCOUNT_ID, account.getId());
                 startActivity(intent);
             });
@@ -169,12 +145,17 @@ public class EthAccountFragment extends Fragment {
             }
             ImageManager.showAccountAvatar(getActivity(), holder.ivAccountAvatar, account);
             ImageManager.showAccountBackground(getActivity(), holder.ivAccountBg, account);
-            String currencyUnit = BrahmaConfig.getInstance().getCurrencyUnit();
-            if (currencyUnit != null) {
-                holder.tvCurrencyUnit.setText(currencyUnit);
+
+            if (BrahmaConfig.getInstance().getCurrencyUnit().equals(BrahmaConst.UNIT_PRICE_CNY)) {
+                Glide.with(EthAccountFragment.this)
+                        .load(R.drawable.currency_cny_white)
+                        .into(holder.ivCurrencyUnit);
             } else {
-                holder.tvCurrencyUnit.setText(BrahmaConst.UNIT_PRICE_CNY);
+                Glide.with(EthAccountFragment.this)
+                        .load(R.drawable.currency_usd_white)
+                        .into(holder.ivCurrencyUnit);
             }
+
             holder.tvAccountName.setText(account.getName());
             holder.tvAccountAddress.setText(CommonUtil.generateSimpleAddress(account.getAddress()));
             BigDecimal totalAssets = BigDecimal.ZERO;
@@ -209,7 +190,7 @@ public class EthAccountFragment extends Fragment {
             TextView tvAccountAddress;
             TextView tvTotalAssetsDesc;
             TextView tvTotalAssets;
-            TextView tvCurrencyUnit;
+            ImageView ivCurrencyUnit;
 
             ItemViewHolder(View itemView) {
                 super(itemView);
@@ -219,7 +200,7 @@ public class EthAccountFragment extends Fragment {
                 tvAccountAddress = itemView.findViewById(R.id.tv_account_address);
                 tvTotalAssetsDesc = itemView.findViewById(R.id.tv_total_assets_desc);
                 tvTotalAssets = itemView.findViewById(R.id.tv_total_assets);
-                tvCurrencyUnit = itemView.findViewById(R.id.tv_currency_unit);
+                ivCurrencyUnit = itemView.findViewById(R.id.iv_currency_amount);
             }
         }
     }

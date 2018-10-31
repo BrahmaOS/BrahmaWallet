@@ -35,7 +35,7 @@ import io.brahmaos.wallet.brahmawallet.model.TokenTransaction;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.service.TransactionService;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
-import io.brahmaos.wallet.brahmawallet.ui.transfer.TransferActivity;
+import io.brahmaos.wallet.brahmawallet.ui.transfer.EthTransferActivity;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
 import rx.Observer;
@@ -136,7 +136,7 @@ public class TransactionsActivity extends BaseActivity {
         recyclerViewTransactions.setNestedScrollingEnabled(false);
 
         fab.setOnClickListener(v -> {
-            Intent intent = new Intent(this, TransferActivity.class);
+            Intent intent = new Intent(this, EthTransferActivity.class);
             intent.putExtra(IntentParam.PARAM_ACCOUNT_INFO, mAccount);
             intent.putExtra(IntentParam.PARAM_TOKEN_INFO, mToken);
             startActivityForResult(intent, REQ_CODE_TRANSFER);

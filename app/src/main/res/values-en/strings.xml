@@ -38,6 +38,8 @@
 
     <!-- Strings related to accounts -->
     <string name="title_accounts">Accounts</string>
+    <string name="title_tab_account_ethereum">Ethereum</string>
+    <string name="title_tab_account_bitcoin">Bitcoin</string>
     <string name="title_account_assets">Account Assets</string>
     <string name="title_account_detail">Account Detail</string>
     <string name="title_account_change_name">Change Name</string>
@@ -459,4 +461,9 @@
     <string name="label_transaction_time">Time</string>
     <string name="label_transaction_input_data">Remark</string>
     <string name="label_copy_etherscan_url">Copy Etherscan details url</string>
+
+    <!-- restore account-->
+    <string name="title_restore_account">Restore Account</string>
+    <string name="action_restore_account">Restore Account</string>
+    <string name="success_restore_account">Restore account success!</string>
 </resources>
