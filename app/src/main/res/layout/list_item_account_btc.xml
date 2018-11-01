@@ -101,7 +101,7 @@
                             android:id="@+id/tv_account_balance"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="@dimen/font_size_subheading"
+                            android:textSize="@dimen/font_size_subtitle"
                             android:layout_marginEnd="@dimen/space_smaller"
                             android:textColor="@color/white"/>
                         <TextView

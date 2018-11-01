@@ -1,5 +1,6 @@
 package io.brahmaos.wallet.brahmawallet.ui.account;
 
+import android.animation.ObjectAnimator;
 import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -25,12 +27,19 @@ import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
 import com.hwangjr.rxbus.thread.EventThread;
 
+import org.bitcoinj.core.Sha256Hash;
+import org.bitcoinj.core.Transaction;
 import org.bitcoinj.kits.WalletAppKit;
+import org.bitcoinj.wallet.Wallet;
+import org.bitcoinj.wallet.WalletTransaction;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -72,6 +81,8 @@ public class BtcAccountAssetsActivity extends BaseActivity {
     TextView tvAccountName;
     @BindView(R.id.tv_account_address)
     TextView tvAccountAddress;
+    @BindView(R.id.tv_account_balance)
+    TextView tvAccountBalance;
     @BindView(R.id.tv_total_assets)
     TextView tvTotalAssets;
     @BindView(R.id.iv_currency_unit)
@@ -86,6 +97,12 @@ public class BtcAccountAssetsActivity extends BaseActivity {
     TextView tvBtcPrice;
     @BindView(R.id.tv_btc_price_unit)
     TextView tvBtcPriceUnit;
+    @BindView(R.id.layout_sync_status)
+    RelativeLayout mLayoutSyncStatus;
+    @BindView(R.id.layout_receive_btc)
+    LinearLayout mLayoutReceiveBtc;
+    @BindView(R.id.layout_send_btc)
+    LinearLayout mLayoutSendBtc;
 
     private int accountId;
     private AccountEntity account;
@@ -141,7 +158,6 @@ public class BtcAccountAssetsActivity extends BaseActivity {
         ImageManager.showAccountAvatar(BtcAccountAssetsActivity.this, ivAccountAvatar, account);
         ImageManager.showAccountBackground(BtcAccountAssetsActivity.this, ivAccountBg, account);
         tvAccountName.setText(account.getName());
-        tvAccountAddress.setText(CommonUtil.generateSimpleAddress(kit.wallet().currentReceiveAddress().toBase58()));
 
         mLayoutAccountInfo.setOnClickListener(v -> {
             Intent intent = new Intent(this, AccountDetailActivity.class);
@@ -155,6 +171,15 @@ public class BtcAccountAssetsActivity extends BaseActivity {
             } else {
                 collapsingToolbarLayout.setTitle("");
             }
+        });
+
+        mLayoutReceiveBtc.setOnClickListener(v -> {
+            mLayoutSyncStatus.setVisibility(View.VISIBLE);
+            ObjectAnimator.ofFloat(mLayoutSyncStatus, "translationY", mLayoutSyncStatus.getHeight()).start();
+        });
+
+        mLayoutSendBtc.setOnClickListener(v -> {
+            ObjectAnimator.ofFloat(mLayoutSyncStatus, "translationY", -mLayoutSyncStatus.getHeight()).start();
         });
     }
 
@@ -193,8 +218,60 @@ public class BtcAccountAssetsActivity extends BaseActivity {
                 break;
             }
         }
-        BigDecimal totalValue = BigDecimal.ZERO;
-        tvTotalAssets.setText(String.valueOf(totalValue.setScale(2, BigDecimal.ROUND_HALF_UP)));
+        BigDecimal totalAssets = BigDecimal.ZERO;
+        long balance = 0;
+        if ( kit != null && kit.wallet() != null) {
+            tvAccountAddress.setText(CommonUtil.generateSimpleAddress(kit.wallet().currentReceiveAddress().toBase58()));
+            balance = kit.wallet().getBalance().value;
+            if (balance > 0) {
+                for (CryptoCurrency currency : cryptoCurrencies) {
+                    if (currency.getName().toLowerCase().equals(BrahmaConst.BITCOIN)) {
+                        double tokenPrice = currency.getPriceCny();
+                        if (BrahmaConfig.getInstance().getCurrencyUnit().equals(BrahmaConst.UNIT_PRICE_USD)) {
+                            tokenPrice = currency.getPriceUsd();
+                        }
+                        BigDecimal tokenValue = new BigDecimal(tokenPrice).multiply(CommonUtil.convertBTCFromSatoshi(new BigInteger(String.valueOf(balance))));
+                        totalAssets = totalAssets.add(tokenValue);
+                        break;
+                    }
+                }
+            }
+            setBtcTransactionInfo();
+        } else {
+            BtcAccountManager.getInstance().initExistsWalletAppKit(account);
+            tvAccountAddress.setText(CommonUtil.generateSimpleAddress(account.getAddress()));
+        }
+        tvAccountBalance.setText(String.valueOf(CommonUtil.convertUnit(BrahmaConst.BITCOIN, new BigInteger(String.valueOf(balance)))));
+        tvTotalAssets.setText(String.valueOf(totalAssets.setScale(2, BigDecimal.ROUND_HALF_UP)));
+    }
+
+    private void setBtcTransactionInfo() {
+        if (kit != null && kit.wallet() != null) {
+            Wallet wallet = kit.wallet();
+            Map<Sha256Hash, Transaction> unspent = wallet.getTransactionPool(WalletTransaction.Pool.UNSPENT);
+            unspent.size();
+            Collection<Transaction> unspentTxns;
+            unspentTxns = new TreeSet<Transaction>(Transaction.SORT_TX_BY_UPDATE_TIME);
+            unspentTxns.addAll(unspent.values());
+
+            Map<Sha256Hash, Transaction> spent = wallet.getTransactionPool(WalletTransaction.Pool.SPENT);
+            spent.size();
+            Collection<Transaction> spentTxns;
+            spentTxns = new TreeSet<Transaction>(Transaction.SORT_TX_BY_HEIGHT);
+            spentTxns.addAll(unspent.values());
+
+            Map<Sha256Hash, Transaction> pending = wallet.getTransactionPool(WalletTransaction.Pool.PENDING);
+            pending.size();
+            Collection<Transaction> pendingTxns;
+            pendingTxns = new TreeSet<Transaction>(Transaction.SORT_TX_BY_HEIGHT);
+            pendingTxns.addAll(unspent.values());
+
+            Map<Sha256Hash, Transaction> dead = wallet.getTransactionPool(WalletTransaction.Pool.DEAD);
+            dead.size();
+            Collection<Transaction> deadTxns;
+            deadTxns = new TreeSet<Transaction>(Transaction.SORT_TX_BY_UPDATE_TIME);
+            deadTxns.addAll(unspent.values());
+        }
     }
 
     @Override

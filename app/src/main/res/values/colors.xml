@@ -48,4 +48,6 @@
     <color name="tx_send">#F39900</color>
     <color name="tx_receive">#2B9A35</color>
     <color name="tx_error">#DD0000</color>
+
+    <color name="sync_status_bg">#e6acacac</color>
 </resources>
