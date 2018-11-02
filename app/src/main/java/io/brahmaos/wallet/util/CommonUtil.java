@@ -36,11 +36,6 @@ public class CommonUtil {
         return bigDecimal.divide(new BigDecimal(Math.pow(10, 18)), 4, BigDecimal.ROUND_HALF_UP);
     }
 
-    public static BigDecimal convertBTCFromSatoshi(BigInteger value) {
-        BigDecimal bigDecimal = new BigDecimal(value);
-        return bigDecimal.divide(new BigDecimal(Math.pow(10, 8)), 8, BigDecimal.ROUND_HALF_UP);
-    }
-
     public static String parseAccountContent(String value) {
         return value.replaceAll("\\s*", "");
     }
@@ -99,12 +94,13 @@ public class CommonUtil {
     }
 
     public static boolean cryptoCurrencyCompareToken(CryptoCurrency cryptoCurrency, TokenEntity token) {
-        if (cryptoCurrency.getName().toLowerCase().equals(BrahmaConst.ETHEREUM)) {
-            return token.getName().toLowerCase().equals(BrahmaConst.ETHEREUM);
-        } else if (cryptoCurrency.getName().toLowerCase().equals(BrahmaConst.BITCOIN)) {
-            return token.getName().toLowerCase().equals(BrahmaConst.BITCOIN);
+        if (cryptoCurrency.getName().toLowerCase().equals(BrahmaConst.ETHEREUM) &&
+                token.getName().toLowerCase().equals(BrahmaConst.ETHEREUM)) {
+            return true;
+        } else if (cryptoCurrency.getTokenAddress().toLowerCase().equals(token.getAddress().toLowerCase())) {
+            return true;
         } else {
-            return cryptoCurrency.getTokenAddress().toLowerCase().equals(token.getAddress().toLowerCase());
+            return false;
         }
     }
 

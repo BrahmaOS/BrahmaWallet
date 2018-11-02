@@ -36,7 +36,7 @@ import org.web3j.protocol.core.methods.response.EthGetBalance;
 import org.web3j.protocol.core.methods.response.EthGetTransactionReceipt;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
-import org.web3j.protocol.exceptions.TransactionException;
+import org.web3j.protocol.exceptions.TransactionTimeoutException;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tx.Contract;
 import org.web3j.tx.ManagedTransaction;
@@ -188,7 +188,7 @@ public class BrahmaWeb3jService extends BaseService{
                         }
                     }
                     if (transferReceipt == null) {
-                        throw new TransactionException("Transaction receipt was not generated after "
+                        throw new TransactionTimeoutException("Transaction receipt was not generated after "
                                 + ((SLEEP_DURATION * ATTEMPTS) / 1000
                                 + " seconds for transaction: " + transactionHash));
                     }
@@ -215,7 +215,7 @@ public class BrahmaWeb3jService extends BaseService{
                     BLog.i(tag(), "===> transactionHash: " + transactionHash);
                 }
                 e.onNext(10);
-            } catch (IOException | CipherException | TransactionException | InterruptedException e1) {
+            } catch (IOException | CipherException | TransactionTimeoutException | InterruptedException e1) {
                 e1.printStackTrace();
                 e.onError(e1);
             }
