@@ -8,9 +8,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -28,15 +31,19 @@ import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
-import io.brahmaos.wallet.brahmawallet.model.AccountAssets;
+import io.brahmaos.wallet.brahmawallet.event.EventTypeDef;
+import io.brahmaos.wallet.brahmawallet.model.BitcoinDownloadProgress;
 import io.brahmaos.wallet.brahmawallet.model.CryptoCurrency;
 import io.brahmaos.wallet.brahmawallet.service.BtcAccountManager;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.service.MainService;
-import io.brahmaos.wallet.brahmawallet.view.CustomProgressDialog;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
+import io.brahmaos.wallet.util.RxEventBus;
+import rx.Observable;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
 
 public class BtcAccountFragment extends Fragment {
     protected String tag() {
@@ -48,12 +55,12 @@ public class BtcAccountFragment extends Fragment {
     // UI references.
     private View parentView;
     RecyclerView recyclerViewAccounts;
-    private CustomProgressDialog progressDialog;
 
     private AccountViewModel mViewModel;
     private List<AccountEntity> accounts = new ArrayList<>();
-    private List<AccountAssets> accountAssetsList = new ArrayList<>();
     private List<CryptoCurrency> cryptoCurrencies = new ArrayList<>();
+    private BitcoinDownloadProgress bitcoinDownloadProgress;
+    private Observable<BitcoinDownloadProgress> btcSyncStatus;
 
     public static BtcAccountFragment newInstance(int page) {
         Bundle args = new Bundle();
@@ -66,6 +73,36 @@ public class BtcAccountFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // used to receive btc blocks sync progress
+        btcSyncStatus = RxEventBus.get().register(EventTypeDef.BTC_ACCOUNT_SYNC, BitcoinDownloadProgress.class);
+        btcSyncStatus.onBackpressureBuffer()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<BitcoinDownloadProgress>() {
+                    @Override
+                    public void onNext(BitcoinDownloadProgress progress) {
+                        bitcoinDownloadProgress = progress;
+                        if ((int)progress.getProgressPercentage() >= 100 ) {
+                            bitcoinDownloadProgress.setDownloaded(true);
+                        }
+                        recyclerViewAccounts.getAdapter().notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        Log.i(tag(), e.toString());
+                    }
+                });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        RxEventBus.get().unregister(EventTypeDef.BTC_ACCOUNT_SYNC, btcSyncStatus);
     }
 
     @Nullable
@@ -107,7 +144,6 @@ public class BtcAccountFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerViewAccounts.setLayoutManager(layoutManager);
         recyclerViewAccounts.setAdapter(new AccountRecyclerAdapter());
-        accountAssetsList = MainService.getInstance().getAccountAssetsList();
         cryptoCurrencies = MainService.getInstance().getCryptoCurrencies();
     }
 
@@ -182,6 +218,16 @@ public class BtcAccountFragment extends Fragment {
                 BtcAccountManager.getInstance().initExistsWalletAppKit(account);
                 holder.tvAccountAddress.setText(CommonUtil.generateSimpleAddress(account.getAddress()));
             }
+            if (bitcoinDownloadProgress != null && !bitcoinDownloadProgress.isDownloaded()) {
+                holder.ivSyncStatus.setVisibility(View.VISIBLE);
+                Animation rotate = AnimationUtils.loadAnimation(getContext(), R.anim.sync_rotate);
+                if (rotate != null) {
+                    holder.ivSyncStatus.startAnimation(rotate);
+                }
+            } else {
+                holder.ivSyncStatus.setVisibility(View.GONE);
+            }
+
             holder.tvAccountBalance.setText(String.valueOf(CommonUtil.convertUnit(BrahmaConst.BITCOIN, new BigInteger(String.valueOf(balance)))));
             holder.tvTotalAssets.setText(String.valueOf(totalAssets.setScale(2, BigDecimal.ROUND_HALF_UP)));
         }
@@ -201,6 +247,7 @@ public class BtcAccountFragment extends Fragment {
             TextView tvTotalAssetsDesc;
             TextView tvTotalAssets;
             ImageView ivCurrencyUnit;
+            ImageView ivSyncStatus;
 
             ItemViewHolder(View itemView) {
                 super(itemView);
@@ -212,6 +259,7 @@ public class BtcAccountFragment extends Fragment {
                 tvAccountBalance = itemView.findViewById(R.id.tv_account_balance);
                 tvTotalAssets = itemView.findViewById(R.id.tv_total_assets);
                 ivCurrencyUnit = itemView.findViewById(R.id.iv_currency_amount);
+                ivSyncStatus = itemView.findViewById(R.id.iv_btc_sync_status);
             }
         }
     }

@@ -396,4 +396,17 @@
     <string name="title_restore_account">恢复账号</string>
     <string name="action_restore_account">恢复账号</string>
     <string name="success_restore_account">恢复账号成功!</string>
+
+    <!-- btc assets -->
+    <string name="current_price">当前价格</string>
+    <string name="prompt_send">发送</string>
+    <string name="btc_transaction_unspent">未消费</string>
+    <string name="btc_transaction_pending">确认中</string>
+    <string name="btc_transaction_spent">已消费</string>
+    <string name="btc_transaction_dead">交易失败</string>
+    <string name="transaction_amount">Amount</string>
+    <string name="prompt_transactions">交易次数</string>
+    <string name="prompt_transacted_total">交易总金额</string>
+    <string name="from">从 </string>
+    <string name="start_sync">同步</string>
 </resources>

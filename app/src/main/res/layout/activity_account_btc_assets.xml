@@ -122,7 +122,6 @@
                             android:id="@+id/tv_total_assets_desc"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
                             android:textColor="@color/white"
                             android:text="@string/total_assets"/>
                         <LinearLayout
@@ -670,8 +669,8 @@
             </LinearLayout>
             <RelativeLayout
                 android:id="@+id/layout_sync_status"
-                android:paddingStart="@dimen/space_smaller"
-                android:paddingEnd="@dimen/space_smaller"
+                android:paddingStart="@dimen/space_normal"
+                android:paddingEnd="@dimen/space_normal"
                 android:paddingTop="@dimen/space_unit"
                 android:paddingBottom="@dimen/space_unit"
                 android:background="@color/sync_status_bg"
@@ -680,11 +679,11 @@
                 android:layout_marginTop="-32dp"
                 android:orientation="horizontal">
                 <TextView
+                    android:id="@+id/tv_sync_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:textColor="@color/white"
-                    android:text="从2018-01-01 12:20:20同步"/>
+                    android:textColor="@color/white"/>
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -692,14 +691,17 @@
                     android:layout_centerVertical="true"
                     android:orientation="horizontal">
                     <TextView
+                        android:id="@+id/tv_sync_status"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/white"
-                        android:layout_gravity="center_vertical"
-                        android:text="同步中...97%"/>
+                        android:layout_marginEnd="@dimen/space_unit"
+                        android:layout_gravity="center_vertical"/>
                     <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:id="@+id/iv_sync_status"
+                        android:layout_width="@dimen/icon_small_size"
+                        android:layout_gravity="center_vertical"
+                        android:layout_height="@dimen/icon_small_size"
                         android:src="@drawable/ic_sync"/>
                 </LinearLayout>
             </RelativeLayout>

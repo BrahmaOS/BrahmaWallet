@@ -269,7 +269,7 @@ public class AccountViewModel extends AndroidViewModel {
         });
     }
 
-    public Observable<Boolean> importAccount(WalletFile walletFile, String password, String name) {
+    public Observable<Boolean> importEthAccountWithKeystore(WalletFile walletFile, String password, String name) {
         return Observable.create(e -> {
             try {
                 BLog.d("view model", "Observable thread is : " + Thread.currentThread().getName());
@@ -286,6 +286,7 @@ public class AccountViewModel extends AndroidViewModel {
                     account.setName(name);
                     account.setAddress(BrahmaWeb3jService.getInstance().prependHexPrefix(walletFile.getAddress()));
                     account.setFilename(filename);
+                    account.setType(BrahmaConst.ETH_ACCOUNT_TYPE);
                     ((WalletApp) getApplication()).getRepository().createAccount(account);
                     e.onNext(Boolean.TRUE);
                 } else {
@@ -307,7 +308,7 @@ public class AccountViewModel extends AndroidViewModel {
      * If an empty string is returned, the imported account already exists.
      * If an exception is returned, an exception has occurred during processing.
      */
-    public Observable<String> importAccountWithPrivateKey(String privateKey, String password, String name) {
+    public Observable<String> importEthAccountWithPrivateKey(String privateKey, String password, String name) {
         return Observable.create(e -> {
             try {
                 ECKeyPair ecKeyPair = ECKeyPair.create(Hex.decode(privateKey));
@@ -340,6 +341,7 @@ public class AccountViewModel extends AndroidViewModel {
                     account.setName(name);
                     account.setAddress(BrahmaWeb3jService.getInstance().prependHexPrefix(walletFile.getAddress()));
                     account.setFilename(filename);
+                    account.setType(BrahmaConst.ETH_ACCOUNT_TYPE);
                     ((WalletApp) getApplication()).getRepository().createAccount(account);
                     e.onNext(address);
                 }
@@ -358,7 +360,7 @@ public class AccountViewModel extends AndroidViewModel {
      * If an empty string is returned, the imported account already exists.
      * If an exception is returned, an exception has occurred during processing.
      */
-    public Observable<String> importAccountWithMnemonics(String mnemonics, String password, String accountName) {
+    public Observable<String> importEthAccountWithMnemonics(String mnemonics, String password, String accountName) {
         return Observable.create((Subscriber<? super String> e) -> {
             try {
                 List<String> mnemonicsCodes = Splitter.on(" ").splitToList(mnemonics);
@@ -400,6 +402,7 @@ public class AccountViewModel extends AndroidViewModel {
                     account.setName(accountName);
                     account.setAddress(BrahmaWeb3jService.getInstance().prependHexPrefix(walletFile.getAddress()));
                     account.setFilename(filename);
+                    account.setType(BrahmaConst.ETH_ACCOUNT_TYPE);
                     ((WalletApp) getApplication()).getRepository().createAccount(account);
                     e.onNext(address);
                 }

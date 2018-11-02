@@ -133,7 +133,6 @@ public class BtcAccountManager extends BaseService{
                 // on the main thread.
                 System.out.println("the setup completed;");
                 RxEventBus.get().post(EventTypeDef.BTC_APP_KIT_INIT_SET_UP, true);
-
             }
         };
         kit.setDownloadListener(listener);

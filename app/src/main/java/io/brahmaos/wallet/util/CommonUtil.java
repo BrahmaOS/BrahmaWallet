@@ -41,6 +41,10 @@ public class CommonUtil {
         return bigDecimal.divide(new BigDecimal(Math.pow(10, 8)), 8, BigDecimal.ROUND_HALF_UP);
     }
 
+    public static BigDecimal convertUnit(String tokenName, long value) {
+        return convertUnit(tokenName, new BigInteger(String.valueOf(value)));
+    }
+
     public static BigDecimal convertUnit(String tokenName, BigInteger value) {
         if (value.compareTo(BigInteger.ZERO) <= 0) {
             return new BigDecimal(0.0000);
@@ -166,5 +170,10 @@ public class CommonUtil {
         }
         SimpleDateFormat sdf = new SimpleDateFormat(format);
         return sdf.format(new Date(seconds * 1000));
+    }
+
+    public static String datetimeFormat(Date date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return formatter.format(date);
     }
 }

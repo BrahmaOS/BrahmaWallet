@@ -39,7 +39,7 @@
             android:paddingBottom="@dimen/space_normal"
             android:orientation="vertical">
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -51,6 +51,7 @@
                     android:layout_height="@dimen/icon_normal_size"
                     android:padding="@dimen/space_smaller"/>
                 <LinearLayout
+                    android:layout_toEndOf="@id/iv_account_avatar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/space_normal"
@@ -68,7 +69,15 @@
                         android:textColor="@color/white"
                         android:layout_marginTop="@dimen/space_smaller"/>
                 </LinearLayout>
-            </LinearLayout>
+                <ImageView
+                    android:visibility="gone"
+                    android:id="@+id/iv_btc_sync_status"
+                    android:layout_width="@dimen/toolbar_icon_size"
+                    android:layout_height="@dimen/toolbar_icon_size"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/ic_sync_white"/>
+            </RelativeLayout>
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"

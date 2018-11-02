@@ -21,18 +21,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.web3j.crypto.WalletFile;
 import org.web3j.crypto.WalletUtils;
-import org.web3j.protocol.ObjectMapperFactory;
 
-import java.io.IOException;
 import java.util.List;
 
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
-import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
 import io.brahmaos.wallet.brahmawallet.ui.setting.PrivacyPolicyActivity;
 import io.brahmaos.wallet.brahmawallet.ui.setting.ServiceTermsActivity;
 import io.brahmaos.wallet.brahmawallet.view.CustomProgressDialog;
@@ -202,7 +196,7 @@ public class ImportMnemonicsFragment extends Fragment {
             customProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             customProgressDialog.setCancelable(false);
             customProgressDialog.show();
-            mViewModel.importAccountWithMnemonics(mnemonics, password, name)
+            mViewModel.importEthAccountWithMnemonics(mnemonics, password, name)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<String>() {
