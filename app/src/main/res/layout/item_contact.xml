@@ -35,14 +35,14 @@
             android:orientation="horizontal">
             <ImageView
                 android:id="@+id/eth_icon"
-                android:layout_width="@dimen/icon_small_size"
-                android:layout_height="@dimen/icon_small_size"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
                 android:src="@drawable/icon_eth"
                 android:contentDescription="@string/tip_contact_image_avatar"/>
             <ImageView
                 android:id="@+id/btc_icon"
-                android:layout_width="@dimen/icon_small_size"
-                android:layout_height="@dimen/icon_small_size"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
                 android:layout_marginStart="@dimen/space_unit"
                 android:src="@drawable/icon_btc"
                 android:contentDescription="@string/tip_contact_image_avatar"/>

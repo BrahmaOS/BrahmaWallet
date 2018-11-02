@@ -198,7 +198,32 @@ public class ContactDetailActivity extends BaseActivity {
     }
 
     private void showBtcQrcodeDialog(String btcAddress) {
-
+        final View dialogView = getLayoutInflater().inflate(R.layout.dialog_contact_address, null);
+        TextView tvContactAddress = dialogView.findViewById(R.id.tv_contact_address);
+        ImageView ivQrcode = dialogView.findViewById(R.id.iv_contact_address_code);
+        Button btnCopyAddress = dialogView.findViewById(R.id.btn_copy_address);
+        tvContactAddress.setText(btcAddress);
+        AlertDialog qrcodeDialog = new AlertDialog.Builder(this)
+                .setView(dialogView)
+                .setCancelable(true)
+                .create();
+        new Thread(() -> {
+            Bitmap bitmap = QRCodeUtil.createQRImageTransparentBg("bitcoin:" + btcAddress, 200, 200, null);
+            if (bitmap != null) {
+                runOnUiThread(() -> Glide.with(ContactDetailActivity.this)
+                        .load(bitmap)
+                        .into(ivQrcode));
+            }
+        }).start();
+        qrcodeDialog.show();
+        btnCopyAddress.setOnClickListener(v -> {
+            ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clipData = ClipData.newPlainText("text", btcAddress);
+            if (cm != null) {
+                cm.setPrimaryClip(clipData);
+                showLongToast(R.string.tip_success_copy);
+            }
+        });
     }
 
     private void deleteContact() {
