@@ -53,6 +53,7 @@ import io.brahmaos.wallet.brahmawallet.event.EventTypeDef;
 import io.brahmaos.wallet.brahmawallet.model.AccountAssets;
 import io.brahmaos.wallet.brahmawallet.model.CryptoCurrency;
 import io.brahmaos.wallet.brahmawallet.model.VersionInfo;
+import io.brahmaos.wallet.brahmawallet.service.BtcAccountManager;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.service.MainService;
 import io.brahmaos.wallet.brahmawallet.service.VersionUpgradeService;
@@ -72,8 +73,11 @@ import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
 import io.brahmaos.wallet.util.PermissionUtil;
+import io.brahmaos.wallet.util.RxEventBus;
+import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 
@@ -119,6 +123,8 @@ public class MainActivity extends BaseActivity
     private List<CryptoCurrency> cacheCryptoCurrencies = new ArrayList<>();
     private VersionInfo newVersionInfo;
 
+    private Observable<String> btcSyncStatus;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         BLog.i(tag(), "MainActivity onCreate");
@@ -126,6 +132,14 @@ public class MainActivity extends BaseActivity
         setContentView(R.layout.activity_drawer);
         ButterKnife.bind(this);
 
+        btcSyncStatus = RxEventBus.get().register(EventTypeDef.BTC_ACCOUNT_SYNC, String.class);
+        btcSyncStatus.observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<String>() {
+                    @Override
+                    public void call(String s) {
+                        //showLongToast(s);
+                    }
+                });
         RxBus.get().register(this);
 
         VersionUpgradeService.getInstance().checkVersion(this, true, this);
@@ -375,7 +389,7 @@ public class MainActivity extends BaseActivity
             }
             symbols = stringBuilder.toString();
         } else {
-            symbols = "ETH,BRM";
+            symbols = "ETH,BRM,BTC";
         }
         MainService.getInstance().fetchCurrenciesFromNet(symbols)
                 .subscribeOn(Schedulers.io())
@@ -421,7 +435,18 @@ public class MainActivity extends BaseActivity
      * Display the number of tokens and the corresponding legal currency value
      */
     private void showAssetsCurrency() {
-        if (cacheAssets.size() == cacheAccounts.size() * cacheTokens.size()) {
+        int ethAccountCount = 0;
+        int btcAccountCount = 0;
+        for (AccountEntity account : cacheAccounts) {
+            if (account.getType() == BrahmaConst.BTC_ACCOUNT_TYPE) {
+                btcAccountCount++;
+            } else if (account.getType() == BrahmaConst.ETH_ACCOUNT_TYPE) {
+                ethAccountCount++;
+            }
+        }
+        int ethTokenCount = cacheTokens.size() - 1;
+        int totalCount = ethAccountCount * ethTokenCount + btcAccountCount;
+        if (cacheAssets.size() == totalCount) {
             recyclerViewAssets.getAdapter().notifyDataSetChanged();
 
             BigDecimal totalValue = BigDecimal.ZERO;
@@ -481,6 +506,7 @@ public class MainActivity extends BaseActivity
     protected void onDestroy() {
         super.onDestroy();
         RxBus.get().unregister(this);
+        RxEventBus.get().unregister(EventTypeDef.BTC_ACCOUNT_SYNC, btcSyncStatus);
     }
 
     @Subscribe(

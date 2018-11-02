@@ -36,9 +36,6 @@ public interface ContactDao {
     @Insert
     void insertContact(ContactEntity contact);
 
-    @Query("delete from contacts where LOWER(address) = LOWER(:address)")
-    void deleteContactWithAddress(String address);
-
     @Query("delete from contacts where id = :contactId")
     void deleteContact(int contactId);
 
@@ -48,6 +45,6 @@ public interface ContactDao {
     @Query("select * from contacts where id = :contactId")
     ContactEntity loadContactSync(int contactId);
 
-    @Query("update contacts set familyName = :familyName, name = :name, address = :address, avatar = :avatar, remark = :remark where id = :contactId")
-    void changeContact(int contactId, String familyName, String name, String address, String avatar, String remark);
+    @Query("update contacts set familyName = :familyName, name = :name, address = :address, btcAddress = :btcAddress, avatar = :avatar, remark = :remark where id = :contactId")
+    void changeContact(int contactId, String familyName, String name, String address, String btcAddress, String avatar, String remark);
 }

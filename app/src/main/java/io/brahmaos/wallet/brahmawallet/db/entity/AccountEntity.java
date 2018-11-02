@@ -33,6 +33,8 @@ public class AccountEntity implements Account, Serializable, IndexableEntity {
     private String name;
     private String address;
     private String filename;
+    private int type;
+    private String cryptoMnemonics;
     @Ignore
     List<String> mnemonics;
 
@@ -80,15 +82,34 @@ public class AccountEntity implements Account, Serializable, IndexableEntity {
         this.mnemonics = mnemonics;
     }
 
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public String getCryptoMnemonics() {
+        return cryptoMnemonics;
+    }
+
+    public void setCryptoMnemonics(String cryptoMnemonics) {
+        this.cryptoMnemonics = cryptoMnemonics;
+    }
+
     public AccountEntity() {
     }
 
     @Ignore
-    public AccountEntity(int id, String name, String address, String filename) {
+    public AccountEntity(int id, String name, String address, String filename,
+                         int type, String cryptoMnemonics) {
         this.id = id;
         this.name = name;
         this.address = address;
         this.filename = filename;
+        this.type = type;
+        this.cryptoMnemonics = cryptoMnemonics;
     }
 
     @Ignore
@@ -97,6 +118,8 @@ public class AccountEntity implements Account, Serializable, IndexableEntity {
         this.name = account.getName();
         this.address = account.getAddress();
         this.filename = account.getFilename();
+        this.type = account.getType();
+        this.cryptoMnemonics = account.getCryptoMnemonics();
     }
 
     @Override

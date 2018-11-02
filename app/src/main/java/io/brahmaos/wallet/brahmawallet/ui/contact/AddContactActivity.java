@@ -14,7 +14,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -36,6 +35,7 @@ import io.brahmaos.wallet.brahmawallet.ui.common.barcode.Intents;
 import io.brahmaos.wallet.brahmawallet.view.CustomProgressDialog;
 import io.brahmaos.wallet.brahmawallet.viewmodel.ContactViewModel;
 import io.brahmaos.wallet.util.BLog;
+import io.brahmaos.wallet.util.BitcoinPaymentURI;
 import io.brahmaos.wallet.util.FileHelper;
 import io.brahmaos.wallet.util.ImageUtil;
 import rx.android.schedulers.AndroidSchedulers;
@@ -54,6 +54,13 @@ public class AddContactActivity extends BaseActivity {
     EditText etContactAddress;
     @BindView(R.id.iv_scan)
     ImageView ivScan;
+
+    @BindView(R.id.et_contact_btc_address)
+    EditText etContactBtcAddress;
+
+    @BindView(R.id.iv_btc_scan)
+    ImageView ivBtcScan;
+
     @BindView(R.id.et_contact_remark)
     EditText etContactRemark;
 
@@ -83,6 +90,15 @@ public class AddContactActivity extends BaseActivity {
                 requestCameraScanPermission();
             } else {
                 scanAddressCode();
+            }
+        });
+
+        ivBtcScan.setOnClickListener(v -> {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestCameraScanPermission();
+            } else {
+                scanBitcoinAddressCode();
             }
         });
 
@@ -119,18 +135,25 @@ public class AddContactActivity extends BaseActivity {
                 etContactName.setError(getString(R.string.error_field_required));
                 return false;
             }
+
             String familyName = etContactFamilyName.getText().toString();
             String address = etContactAddress.getText().toString();
-            if (TextUtils.isEmpty(address)) {
-                etContactAddress.setError(getString(R.string.error_field_required));
+            String btcAddress = etContactBtcAddress.getText().toString();
+
+            if (TextUtils.isEmpty(address) && TextUtils.isEmpty(btcAddress)) {
+                showLongToast(R.string.error_create_contact_least_one_address);
                 return false;
-            } else if (!BrahmaWeb3jService.getInstance().isValidAddress(address)) {
+            }
+
+            if (!TextUtils.isEmpty(address) && !BrahmaWeb3jService.getInstance().isValidAddress(address)) {
                 etContactAddress.setError(getString(R.string.tip_error_address));
                 return false;
             }
+
             String remark = etContactRemark.getText().toString();
             ContactEntity contact = new ContactEntity();
             contact.setAddress(address);
+            contact.setBtcAddress(btcAddress);
             contact.setName(name);
             contact.setFamilyName(familyName);
             contact.setRemark(remark);
@@ -170,6 +193,12 @@ public class AddContactActivity extends BaseActivity {
         startActivityForResult(intent, ReqCode.SCAN_QR_CODE);
     }
 
+    private void scanBitcoinAddressCode() {
+        Intent intent = new Intent(this, CaptureActivity.class);
+        intent.putExtra(Intents.Scan.PROMPT_MESSAGE, "");
+        startActivityForResult(intent, ReqCode.SCAN_BITCOIN_QR_CODE);
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         BLog.d(tag(), "requestCode: " + requestCode + "  ;resultCode" + resultCode);
@@ -179,6 +208,22 @@ public class AddContactActivity extends BaseActivity {
                     String qrCode = data.getStringExtra(Intents.Scan.RESULT);
                     if (qrCode != null && qrCode.length() > 0) {
                         etContactAddress.setText(qrCode);
+                    } else {
+                        showLongToast(R.string.tip_scan_code_failed);
+                    }
+                }
+            }
+        } else if (requestCode == ReqCode.SCAN_BITCOIN_QR_CODE) {
+            if (resultCode == RESULT_OK) {
+                if (data != null) {
+                    String qrCode = data.getStringExtra(Intents.Scan.RESULT);
+                    if (qrCode != null && qrCode.length() > 0) {
+                        BitcoinPaymentURI bitcoinPaymentURI = BitcoinPaymentURI.parse(qrCode);
+                        if (bitcoinPaymentURI == null || bitcoinPaymentURI.getAddress() == null) {
+                            showLongToast(R.string.tip_scan_code_failed);
+                        } else {
+                            etContactBtcAddress.setText(bitcoinPaymentURI.getAddress());
+                        }
                     } else {
                         showLongToast(R.string.tip_scan_code_failed);
                     }
