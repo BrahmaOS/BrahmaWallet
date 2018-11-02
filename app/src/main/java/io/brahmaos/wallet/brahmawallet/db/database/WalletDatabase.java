@@ -85,6 +85,8 @@ public abstract class WalletDatabase extends RoomDatabase {
                         db.execSQL("INSERT INTO tokens (name, address, shortName, avatar) " +
                                 "values (\"Ethereum\", \"\", \"ETH\", "
                                 + String.valueOf(R.drawable.icon_eth) + ")");
+                        db.execSQL("INSERT INTO tokens (name, address, shortName, avatar) " +
+                                "values (\"Bitcoin\", \"btc\", \"BTC\", \"\")");
                     }
 
                     @Override
@@ -141,6 +143,11 @@ public abstract class WalletDatabase extends RoomDatabase {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
             database.execSQL("ALTER TABLE contacts ADD COLUMN btcAddress TEXT");
+            database.execSQL("ALTER TABLE accounts ADD COLUMN type INTEGER default 1 not null");
+            database.execSQL("ALTER TABLE accounts ADD COLUMN cryptoMnemonics TEXT");
+            database.execSQL("UPDATE accounts SET type = 1");
+            database.execSQL("INSERT INTO tokens (name, address, shortName, avatar) " +
+                    "values (\"Bitcoin\", \"btc\", \"BTC\", \"\")");
         }
     };
 
