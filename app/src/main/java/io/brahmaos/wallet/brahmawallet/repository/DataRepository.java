@@ -182,7 +182,7 @@ public class DataRepository {
 
     public void updateContact(int contactId, ContactEntity contact) {
         mDatabase.contactDao().changeContact(contactId, contact.getFamilyName(),
-                contact.getName(), contact.getAddress(), contact.getAvatar(),
+                contact.getName(), contact.getAddress(), contact.getBtcAddress(), contact.getAvatar(),
                 contact.getRemark());
     }
 
