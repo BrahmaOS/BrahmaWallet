@@ -3,8 +3,10 @@ package io.brahmaos.wallet.brahmawallet.ui.contact;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.v7.widget.DrawableUtils;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -66,6 +68,9 @@ public class ContactAdapter extends IndexableAdapter<ContactEntity> {
                 e.printStackTrace();
                 Toast.makeText(context, "Crop failed", Toast.LENGTH_SHORT).show();
             }
+        } else {
+            vh.ivAvatar.setImageBitmap(BitmapFactory.decodeResource(
+                    context.getResources(), R.drawable.ic_default_account_avatar_grey));
         }
 
         String ethAddress = entity.getAddress();
