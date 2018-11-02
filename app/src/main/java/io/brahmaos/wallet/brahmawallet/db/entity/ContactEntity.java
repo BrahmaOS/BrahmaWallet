@@ -31,7 +31,6 @@ public class ContactEntity implements Serializable, IndexableEntity{
     private String familyName;
     private String name;
     private String address;
-    private String btcAddress;
     private String avatar;
     private String remark;
 
@@ -44,17 +43,6 @@ public class ContactEntity implements Serializable, IndexableEntity{
         this.familyName = familyName;
         this.name = name;
         this.address = address;
-        this.avatar = avatar;
-        this.remark = remark;
-    }
-
-    @Ignore
-    public ContactEntity(int id, String familyName, String name, String address, String btcAddress, String avatar, String remark) {
-        this.id = id;
-        this.familyName = familyName;
-        this.name = name;
-        this.address = address;
-        this.btcAddress = btcAddress;
         this.avatar = avatar;
         this.remark = remark;
     }
@@ -81,14 +69,6 @@ public class ContactEntity implements Serializable, IndexableEntity{
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public String getBtcAddress() {
-        return btcAddress;
-    }
-
-    public void setBtcAddress(String btcAddress) {
-        this.btcAddress = btcAddress;
     }
 
     public String getAvatar() {

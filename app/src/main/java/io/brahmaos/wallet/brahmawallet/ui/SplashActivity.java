@@ -23,10 +23,8 @@ import io.brahmaos.wallet.brahmawallet.api.ApiRespResult;
 import io.brahmaos.wallet.brahmawallet.api.Networks;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
-import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.AllTokenEntity;
 import io.brahmaos.wallet.brahmawallet.model.TokensVersionInfo;
-import io.brahmaos.wallet.brahmawallet.service.BtcAccountManager;
 import io.brahmaos.wallet.brahmawallet.service.MainService;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
@@ -73,12 +71,6 @@ public class SplashActivity extends BaseActivity {
         mViewModel.getAccounts().observe(this, accountEntities -> {
             if (accountEntities != null && accountEntities.size() > 0) {
                 MainService.getInstance().setHaveAccount(true);
-                // init btc account walletAppKit
-                for (AccountEntity accountEntity : accountEntities) {
-                    if (accountEntity.getType() == BrahmaConst.BTC_ACCOUNT_TYPE) {
-                        BtcAccountManager.getInstance().initExistsWalletAppKit(accountEntity);
-                    }
-                }
             }
         });
 

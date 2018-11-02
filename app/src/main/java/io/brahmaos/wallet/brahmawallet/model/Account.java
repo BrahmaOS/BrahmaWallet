@@ -18,9 +18,7 @@ package io.brahmaos.wallet.brahmawallet.model;
 
 public interface Account {
     int getId();
-    int getType();
     String getName();
     String getAddress();
     String getFilename();
-    String getCryptoMnemonics();
 }

@@ -9,5 +9,4 @@ public class ReqCode {
     public static final int CONFIRM_MNEMONIC = 103;
     public static final int CHOOSE_IMAGE = 104;
     public static final int CROP_IMAGE = 105;
-    public static final int SCAN_BITCOIN_QR_CODE = 106;
 }

@@ -10,10 +10,6 @@ import android.os.LocaleList;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 
-import org.bitcoinj.core.NetworkParameters;
-import org.bitcoinj.params.MainNetParams;
-import org.bitcoinj.params.TestNet3Params;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -44,7 +40,6 @@ public class BrahmaConfig {
     // first user app, show the guide
     private boolean firstOpenAppFlag = true;
     private String networkUrl;
-    private String btcNetworkFlag = BrahmaConst.BTC_MAINNET;
     private String languageLocale;
     private String currencyUnit;
     private boolean assetsVisible = true;
@@ -58,13 +53,7 @@ public class BrahmaConfig {
         this.context = context;
         sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         localKeystorePath = context.getFilesDir().toString();
-
-        // Ethereum network
         networkUrl = sharedPref.getString(context.getString(R.string.key_network_url), BrahmaConst.MAINNET_URL);
-
-        // Bitcoin network
-        btcNetworkFlag = sharedPref.getString(context.getString(R.string.key_btc_network_url), BrahmaConst.BTC_MAINNET);
-
         languageLocale = sharedPref.getString(context.getString(R.string.key_wallet_language), null);
         currencyUnit = sharedPref.getString(context.getString(R.string.key_wallet_currency_unit), null);
         assetsVisible = sharedPref.getBoolean(KEY_ASSETS_VISIBLE, true);
@@ -86,26 +75,6 @@ public class BrahmaConfig {
         this.networkUrl = networkUrl;
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(context.getString(R.string.key_network_url), networkUrl);
-        editor.apply();
-    }
-
-    public NetworkParameters getBtcNetworkParam() {
-
-        if (btcNetworkFlag.equals(BrahmaConst.BTC_TESTNET3)) {
-            return TestNet3Params.get();
-        }
-
-        return MainNetParams.get();
-    }
-
-    public String getBtcNetworkFlag() {
-        return btcNetworkFlag;
-    }
-
-    public void setBtcNetworkFlag(String btcNetworkFlag) {
-        this.btcNetworkFlag = btcNetworkFlag;
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString(context.getString(R.string.key_btc_network_url), this.btcNetworkFlag);
         editor.apply();
     }
 
