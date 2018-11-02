@@ -103,6 +103,22 @@ public class BtcAccountAssetsActivity extends BaseActivity {
     LinearLayout mLayoutReceiveBtc;
     @BindView(R.id.layout_send_btc)
     LinearLayout mLayoutSendBtc;
+    @BindView(R.id.tv_btc_unspent_total)
+    TextView mTvUnspentBtc;
+    @BindView(R.id.tv_btc_unspent_transactions)
+    TextView mTvUnspentTxs;
+    @BindView(R.id.tv_btc_pending_total)
+    TextView mTvPendingBtc;
+    @BindView(R.id.tv_btc_pending_transactions)
+    TextView mTvPendingTxs;
+    @BindView(R.id.tv_btc_spent_total)
+    TextView mTvSpentBtc;
+    @BindView(R.id.tv_btc_spent_transactions)
+    TextView mTvSpentTxs;
+    @BindView(R.id.tv_btc_dead_total)
+    TextView mTvDeadBtc;
+    @BindView(R.id.tv_btc_dead_transactions)
+    TextView mTvDeadTxs;
 
     private int accountId;
     private AccountEntity account;
@@ -249,10 +265,15 @@ public class BtcAccountAssetsActivity extends BaseActivity {
         if (kit != null && kit.wallet() != null) {
             Wallet wallet = kit.wallet();
             Map<Sha256Hash, Transaction> unspent = wallet.getTransactionPool(WalletTransaction.Pool.UNSPENT);
-            unspent.size();
-            Collection<Transaction> unspentTxns;
-            unspentTxns = new TreeSet<Transaction>(Transaction.SORT_TX_BY_UPDATE_TIME);
-            unspentTxns.addAll(unspent.values());
+            if (unspent.size() > 0) {
+                Collection<Transaction> unspentTxns = new TreeSet<Transaction>(Transaction.SORT_TX_BY_UPDATE_TIME);
+                unspentTxns.addAll(unspent.values());
+                mTvUnspentTxs.setText(String.valueOf(unspent.size()));
+
+                for (Transaction tx : unspentTxns) {
+                    //tx.getValue(wallet).value
+                }
+            }
 
             Map<Sha256Hash, Transaction> spent = wallet.getTransactionPool(WalletTransaction.Pool.SPENT);
             spent.size();

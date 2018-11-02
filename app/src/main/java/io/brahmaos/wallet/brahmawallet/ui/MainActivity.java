@@ -141,7 +141,8 @@ public class MainActivity extends BaseActivity
 
         // used to receive btc blocks sync progress
         btcSyncStatus = RxEventBus.get().register(EventTypeDef.BTC_ACCOUNT_SYNC, BitcoinDownloadProgress.class);
-        btcSyncStatus.observeOn(AndroidSchedulers.mainThread())
+        btcSyncStatus.onBackpressureBuffer()
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<BitcoinDownloadProgress>() {
                     @Override
                     public void onNext(BitcoinDownloadProgress progress) {
