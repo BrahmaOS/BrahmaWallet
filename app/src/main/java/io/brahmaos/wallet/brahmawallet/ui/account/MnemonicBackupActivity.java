@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.brahmaos.wallet.brahmawallet.R;
@@ -32,16 +33,15 @@ public class MnemonicBackupActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        String accountAddress = getIntent().getStringExtra(IntentParam.PARAM_ACCOUNT_ADDRESS);
-        if (accountAddress.length() <= 0) {
-            finish();
+        List<String> mnemonicCode = getIntent().getStringArrayListExtra(IntentParam.PARAM_MNEMONIC_CODE);
+        if (mnemonicCode == null) {
+            mnemonicCode = MainService.getInstance().getMnemonicCode();
         }
-        AccountEntity account = MainService.getInstance().getNewMnemonicAccount();
-        if (!account.getAddress().toLowerCase().equals(accountAddress.toLowerCase()) || account.getMnemonics() == null) {
+        if (mnemonicCode == null || mnemonicCode.size() == 0 || mnemonicCode.size() % 3 > 0) {
             finish();
+            return;
         }
         TextView tvMnemonics = findViewById(R.id.tv_account_mnemonics);
-        List<String> mnemonicCode = account.getMnemonics();
         StringBuilder mnemonicStr = new StringBuilder();
         for (String mnemonic : mnemonicCode) {
             mnemonicStr.append(mnemonic).append(" ");
@@ -49,10 +49,11 @@ public class MnemonicBackupActivity extends BaseActivity {
         tvMnemonics.setText(mnemonicStr.toString());
 
         Button nextBtn = findViewById(R.id.btn_next);
+        ArrayList<String> finalMnemonicCode = (ArrayList<String>) mnemonicCode;
         nextBtn.setOnClickListener(v -> {
             Intent intent = new Intent(MnemonicBackupActivity.this,
                     ConfirmMnemonicActivity.class);
-            intent.putExtra(IntentParam.PARAM_ACCOUNT_ADDRESS, account.getAddress());
+            intent.putStringArrayListExtra(IntentParam.PARAM_MNEMONIC_CODE, finalMnemonicCode);
             startActivityForResult(intent, ReqCode.CONFIRM_MNEMONIC);
         });
     }

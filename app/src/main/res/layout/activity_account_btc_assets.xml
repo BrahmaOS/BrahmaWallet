@@ -271,14 +271,14 @@
                         android:layout_marginEnd="1dp"
                         android:orientation="horizontal">
                         <ImageView
-                            android:layout_width="@dimen/toolbar_icon_size_smaller"
-                            android:layout_height="@dimen/toolbar_icon_size_smaller"
+                            android:layout_width="@dimen/toolbar_icon_size"
+                            android:layout_height="@dimen/toolbar_icon_size"
                             android:src="@drawable/icon_receive_code"/>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/space_smaller"
-                            android:textSize="@dimen/font_size_subtitle"
+                            android:textSize="@dimen/font_size_subheading"
                             android:textColor="@color/color_primary_text"
                             android:text="@string/prompt_receive"/>
                     </LinearLayout>
@@ -301,7 +301,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/space_smaller"
-                            android:textSize="@dimen/font_size_subtitle"
+                            android:textSize="@dimen/font_size_subheading"
                             android:textColor="@color/color_primary_text"
                             android:text="@string/prompt_send"/>
                     </LinearLayout>
@@ -329,7 +329,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="@dimen/font_size_subtitle"
+                            android:textSize="@dimen/font_size_subheading"
                             android:layout_marginStart="@dimen/space_smaller"
                             android:text="@string/btc_transaction_unspent"/>
                     </LinearLayout>
@@ -419,7 +419,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="@dimen/font_size_subtitle"
+                            android:textSize="@dimen/font_size_subheading"
                             android:layout_marginStart="@dimen/space_smaller"
                             android:text="@string/btc_transaction_pending"/>
                     </LinearLayout>
@@ -509,7 +509,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="@dimen/font_size_subtitle"
+                            android:textSize="@dimen/font_size_subheading"
                             android:layout_marginStart="@dimen/space_smaller"
                             android:text="@string/btc_transaction_spent"/>
                     </LinearLayout>
@@ -600,7 +600,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/space_smaller"
-                            android:textSize="@dimen/font_size_subtitle"
+                            android:textSize="@dimen/font_size_subheading"
                             android:text="@string/btc_transaction_dead"/>
                     </LinearLayout>
                     <LinearLayout

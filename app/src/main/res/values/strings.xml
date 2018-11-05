@@ -483,4 +483,10 @@
     <string name="prompt_transacted_total">Total Transacted</string>
     <string name="from">From </string>
     <string name="start_sync">sync</string>
+
+    <!-- btc qrcode -->
+    <string name="btc_main_address">Main Address</string>
+    <string name="btc_child_address">Child Address</string>
+    <string name="transfer_btc">Please transfer BTC</string>
+    <string name="enter_btc_amount">Enter amount</string>
 </resources>

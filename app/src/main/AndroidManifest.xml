@@ -127,6 +127,7 @@
         <activity android:name=".ui.account.RestoreAccountActivity" />
         <activity android:name=".ui.transfer.BtcTransferActivity" />
         <activity android:name=".ui.account.BtcAccountAssetsActivity" />
+        <activity android:name=".ui.account.AddressQrcodeBtcActivity" />
     </application>
 
 </manifest>

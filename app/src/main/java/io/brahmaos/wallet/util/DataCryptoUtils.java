@@ -1,6 +1,5 @@
 package io.brahmaos.wallet.util;
 
-import android.os.UserManager;
 import android.util.Log;
 
 import java.math.BigInteger;
@@ -16,10 +15,10 @@ public class DataCryptoUtils {
     private static final String TAG = "DataCryptoUtils";
 
     /** Used to generate SecretKeySpec for AES 128 crypto **/
-    private final byte[] SALT = new byte[]{0x62, 0x72, 0x61, 0x68, 0x6d, 0x61, 0x6f, 0x73};//must be 8 bytes
-    private final int ITERATION_COUNT = 1024;
-    private final int KEY_STRENGTH = 128;
-    private final int DEFAULT_BLOCK_SIZE = 64;
+    private final static byte[] SALT = new byte[]{0x62, 0x72, 0x61, 0x68, 0x6d, 0x61, 0x6f, 0x73};//must be 8 bytes
+    private final static int ITERATION_COUNT = 1024;
+    private final static int KEY_STRENGTH = 128;
+    private final static int DEFAULT_BLOCK_SIZE = 64;
 
     /**
      * The results returned by crypto APIs
@@ -50,7 +49,7 @@ public class DataCryptoUtils {
      *
      * @return the encrypted hex string, if null it means encrypt failed
      */
-    public String aes128Encrypt(String content, String password) {
+    public static String aes128Encrypt(String content, String password) {
         try {
             Cipher cipher = Cipher.getInstance("AES");
             cipher.init(Cipher.ENCRYPT_MODE, genKey(password));
@@ -71,7 +70,7 @@ public class DataCryptoUtils {
      *
      * @return the clear text hex string, if null it means decrypt failed
      */
-    public String aes128Decrypt(String content, String password) {
+    public static String aes128Decrypt(String content, String password) {
         try {
             byte[] decryptFrom = parseHexStr2Byte(content);
             Cipher cipher = Cipher.getInstance("AES");
@@ -88,7 +87,7 @@ public class DataCryptoUtils {
      * get SecretKeySpec according to the password using "PBKDF2WithHmacSHA1" algorithm
      * @return
      */
-    private SecretKeySpec genKey(String password){
+    private static SecretKeySpec genKey(String password){
         try {
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
             KeySpec spec = new PBEKeySpec(password.toCharArray(), SALT, ITERATION_COUNT, KEY_STRENGTH);
@@ -101,7 +100,7 @@ public class DataCryptoUtils {
         return null;
     }
 
-    private String parseByte2HexStr(byte buf[]) {
+    private static String parseByte2HexStr(byte buf[]) {
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < buf.length; i++) {
             String hex = Integer.toHexString(buf[i] & 0xFF);
@@ -113,7 +112,7 @@ public class DataCryptoUtils {
         return sb.toString();
     }
 
-    private byte[] parseHexStr2Byte(String hexStr) {
+    private static byte[] parseHexStr2Byte(String hexStr) {
         if (hexStr == null || hexStr.length() < 1)
             return null;
         byte[] result = new byte[hexStr.length() / 2];

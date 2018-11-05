@@ -68,6 +68,7 @@ import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
 import io.brahmaos.wallet.brahmawallet.service.BtcAccountManager;
 import io.brahmaos.wallet.brahmawallet.service.MainService;
 import io.brahmaos.wallet.util.BLog;
+import io.brahmaos.wallet.util.DataCryptoUtils;
 import rx.Completable;
 import rx.Observable;
 import rx.Observer;
@@ -152,6 +153,9 @@ public class AccountViewModel extends AndroidViewModel {
                     long timeSeconds = System.currentTimeMillis() / 1000;
                     DeterministicSeed seed = new DeterministicSeed(mnemonicStr.toString().trim(), null, "", timeSeconds);
 
+                    // encrypt mnemonic
+                    String encryptMnemonic = DataCryptoUtils.aes128Encrypt(mnemonicStr.toString().trim(), password);
+
                     // create ethereum account
                     DeterministicKeyChain chain = DeterministicKeyChain.builder().seed(seed).build();
                     List<ChildNumber> keyPath = HDUtils.parsePath("M/44H/60H/0H/0/0");
@@ -171,9 +175,8 @@ public class AccountViewModel extends AndroidViewModel {
                     account.setName(name);
                     account.setAddress(BrahmaWeb3jService.getInstance().prependHexPrefix(walletFile.getAddress()));
                     account.setFilename(filename);
-                    account.setMnemonics(mnemonicCode);
+                    account.setCryptoMnemonics(encryptMnemonic);
                     account.setType(BrahmaConst.ETH_ACCOUNT_TYPE);
-                    MainService.getInstance().setNewMnemonicAccount(account);
                     ((WalletApp) getApplication()).getRepository().createAccount(account);
 
                     // create btc account
@@ -184,10 +187,12 @@ public class AccountViewModel extends AndroidViewModel {
                     btcAccount.setName(name);
                     btcAccount.setAddress("");
                     btcAccount.setFilename(btcFilePrefix);
-                    btcAccount.setMnemonics(mnemonicCode);
+                    btcAccount.setCryptoMnemonics(encryptMnemonic);
                     btcAccount.setType(BrahmaConst.BTC_ACCOUNT_TYPE);
-                    MainService.getInstance().setNewMnemonicAccount(btcAccount);
                     ((WalletApp) getApplication()).getRepository().createAccount(btcAccount);
+
+                    // set mnemonic code in cache for backup
+                    MainService.getInstance().setMnemonicCode(mnemonicCode);
                 }
             } catch (IOException | CipherException | UnreadableWalletException e) {
                 e.printStackTrace();
@@ -254,7 +259,6 @@ public class AccountViewModel extends AndroidViewModel {
                     btcAccount.setAddress("");
                     btcAccount.setFilename(btcFilePrefix);
                     btcAccount.setType(BrahmaConst.BTC_ACCOUNT_TYPE);
-                    MainService.getInstance().setNewMnemonicAccount(btcAccount);
                     ((WalletApp) getApplication()).getRepository().createAccount(btcAccount);
                     e.onNext(address);
                 }

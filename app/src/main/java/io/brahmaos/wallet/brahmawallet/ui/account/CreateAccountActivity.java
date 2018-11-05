@@ -167,7 +167,6 @@ public class CreateAccountActivity extends BaseActivity {
                                 showLongToast(R.string.success_create_account);
                                 Intent intent = new Intent(CreateAccountActivity.this,
                                         AccountBackupActivity.class);
-                                intent.putExtra(IntentParam.PARAM_ACCOUNT_NAME, name);
                                 startActivity(intent);
                                 finish();
                             },

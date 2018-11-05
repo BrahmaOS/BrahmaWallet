@@ -554,6 +554,7 @@ public class MainActivity extends BaseActivity
         super.onDestroy();
         RxBus.get().unregister(this);
         RxEventBus.get().unregister(EventTypeDef.BTC_ACCOUNT_SYNC, btcSyncStatus);
+        RxEventBus.get().unregister(EventTypeDef.BTC_APP_KIT_INIT_SET_UP, btcAppkitSetup);
     }
 
     @Subscribe(

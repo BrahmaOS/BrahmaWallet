@@ -409,4 +409,10 @@
     <string name="prompt_transacted_total">交易总金额</string>
     <string name="from">从 </string>
     <string name="start_sync">同步</string>
+
+    <!-- btc qrcode -->
+    <string name="btc_main_address">主地址</string>
+    <string name="btc_child_address">子地址</string>
+    <string name="transfer_btc">转入 BTC</string>
+    <string name="enter_btc_amount">输入金额</string>
 </resources>

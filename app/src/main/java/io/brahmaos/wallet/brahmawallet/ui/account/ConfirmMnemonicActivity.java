@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.brahmaos.wallet.brahmawallet.R;
@@ -33,15 +34,11 @@ public class ConfirmMnemonicActivity extends BaseActivity {
         setContentView(R.layout.activity_confirm_mnemonic);
         showNavBackBtn();
 
-        String accountAddress = getIntent().getStringExtra(IntentParam.PARAM_ACCOUNT_ADDRESS);
-        if (accountAddress.length() <= 0) {
+        ArrayList<String> mnemonicCode = getIntent().getStringArrayListExtra(IntentParam.PARAM_MNEMONIC_CODE);
+        if (mnemonicCode == null || mnemonicCode.size() == 0 || mnemonicCode.size() % 3 > 0) {
             finish();
+            return;
         }
-        AccountEntity account = MainService.getInstance().getNewMnemonicAccount();
-        if (!account.getAddress().toLowerCase().equals(accountAddress.toLowerCase()) || account.getMnemonics() == null) {
-            finish();
-        }
-        List<String> mnemonicCode = account.getMnemonics();
         StringBuilder mnemonicStringBuilder = new StringBuilder();
         for (String mnemonic : mnemonicCode) {
             mnemonicStringBuilder.append(mnemonic).append(" ");

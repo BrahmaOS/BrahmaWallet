@@ -21,4 +21,5 @@ public class IntentParam {
     public static final String PARAM_TOKEN_TX = "token-transaction";
     public static final String PARAM_TX_HASH = "tx-hash";
     public static final String PARAM_ETH_ADDRESS = "eth-account-address";
+    public static final String PARAM_MNEMONIC_CODE = "account-mnemonic-code";
 }

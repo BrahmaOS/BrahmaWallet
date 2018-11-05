@@ -124,6 +124,7 @@ public class BtcAccountAssetsActivity extends BaseActivity {
     private List<CryptoCurrency> cryptoCurrencies = new ArrayList<>();
     private BitcoinDownloadProgress bitcoinDownloadProgress;
     private Observable<BitcoinDownloadProgress> btcSyncStatus;
+    private Observable<Boolean> btcAppkitSetup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -197,6 +198,28 @@ public class BtcAccountAssetsActivity extends BaseActivity {
                         Log.i(tag(), e.toString());
                     }
                 });
+
+        btcAppkitSetup = RxEventBus.get().register(EventTypeDef.BTC_APP_KIT_INIT_SET_UP, Boolean.class);
+        btcAppkitSetup.observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Boolean>() {
+                    @Override
+                    public void onNext(Boolean flag) {
+                        if (flag) {
+                            initView();
+                            initAssets();
+                        }
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        Log.i(tag(), e.toString());
+                    }
+                });
     }
 
     @Override
@@ -235,8 +258,9 @@ public class BtcAccountAssetsActivity extends BaseActivity {
         });
 
         mLayoutReceiveBtc.setOnClickListener(v -> {
-            mLayoutSyncStatus.setVisibility(View.VISIBLE);
-            ObjectAnimator.ofFloat(mLayoutSyncStatus, "translationY", mLayoutSyncStatus.getHeight()).start();
+            Intent intent = new Intent(BtcAccountAssetsActivity.this, AddressQrcodeBtcActivity.class);
+            intent.putExtra(IntentParam.PARAM_ACCOUNT_ID, account.getId());
+            startActivity(intent);
         });
 
         mLayoutSendBtc.setOnClickListener(v -> {
@@ -246,18 +270,16 @@ public class BtcAccountAssetsActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_qrcode, menu);
+        getMenuInflater().inflate(R.menu.menu_sync, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.menu_qrcode) {
-            if (account != null) {
-                Intent intent = new Intent(BtcAccountAssetsActivity.this, AddressQrcodeActivity.class);
-                intent.putExtra(IntentParam.PARAM_ACCOUNT_INFO, account);
-                startActivity(intent);
+        if (id == R.id.menu_sync) {
+            if (kit != null) {
+                kit.startAsync();
             }
             return true;
         } else if (id == android.R.id.home) {
@@ -364,5 +386,6 @@ public class BtcAccountAssetsActivity extends BaseActivity {
         super.onDestroy();
         RxBus.get().unregister(this);
         RxEventBus.get().unregister(EventTypeDef.BTC_ACCOUNT_SYNC, btcSyncStatus);
+        RxEventBus.get().unregister(EventTypeDef.BTC_APP_KIT_INIT_SET_UP, btcAppkitSetup);
     }
 }
