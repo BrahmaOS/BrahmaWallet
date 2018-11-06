@@ -7,17 +7,22 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import org.bitcoinj.kits.WalletAppKit;
 import org.bitcoinj.wallet.Wallet;
+
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,7 +34,6 @@ import io.brahmaos.wallet.brahmawallet.service.BtcAccountManager;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
-import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.BitcoinPaymentURI;
 import io.brahmaos.wallet.util.CommonUtil;
 import io.brahmaos.wallet.util.QRCodeUtil;
@@ -37,6 +41,7 @@ import io.brahmaos.wallet.util.RxEventBus;
 import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class AddressQrcodeBtcActivity extends BaseActivity {
 
@@ -62,6 +67,8 @@ public class AddressQrcodeBtcActivity extends BaseActivity {
     TextView tvInputAmount;
 
     private int accountId;
+    private String currentAddress;
+    private double amount;
     private AccountEntity account;
     private AccountViewModel mViewModel;
     private WalletAppKit kit;
@@ -105,11 +112,7 @@ public class AddressQrcodeBtcActivity extends BaseActivity {
                         Log.i(tag(), e.toString());
                     }
                 });
-    }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
         mViewModel.getAccountById(accountId)
                 .observe(this, (AccountEntity accountEntity) -> {
                     if (accountEntity != null) {
@@ -126,40 +129,116 @@ public class AddressQrcodeBtcActivity extends BaseActivity {
         if (kit != null && kit.wallet() != null) {
             ImageManager.showAccountAvatar(this, ivAccountAvatar, account);
             tvAccountName.setText(account.getName());
-            Wallet wallet = kit.wallet();
-            String receiveAddress = wallet.currentReceiveAddress().toBase58();
-            tvAccountAddress.setText(CommonUtil.generateSimpleAddress(receiveAddress));
+            final Wallet wallet = kit.wallet();
+            final String mainAddress = wallet.currentChangeAddress().toBase58();
+            final String childAddress = wallet.currentReceiveAddress().toBase58();
+            currentAddress = mainAddress;
+            tvAccountAddress.setText(CommonUtil.generateSimpleAddress(currentAddress));
 
-            BitcoinPaymentURI.Builder receiveUriBuilder = new BitcoinPaymentURI.Builder();
-            String receiveUri = receiveUriBuilder.address(receiveAddress).build().getURI();
             layoutAccountAddress.setOnClickListener(v -> {
                 ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clipData = ClipData.newPlainText("text",account.getAddress());
+                ClipData clipData = ClipData.newPlainText("text", currentAddress);
                 if (cm != null) {
                     cm.setPrimaryClip(clipData);
                     showLongToast(R.string.tip_success_copy);
                 }
             });
 
-            new Thread(() -> {
-                Bitmap bitmap = QRCodeUtil.createQRImage(receiveUri, 200, 200, null);
-
-                if (bitmap != null) {
-                    runOnUiThread(() -> Glide.with(AddressQrcodeBtcActivity.this)
-                            .load(bitmap)
-                            .into(ivAddressCode));
-                }
-            }).start();
+            showQRCode();
 
             tvMainAddress.setOnClickListener(v -> {
                 ObjectAnimator.ofFloat(tvAddressType, "translationX", 0).start();
                 tvAddressType.setText(R.string.btc_main_address);
+                currentAddress = mainAddress;
+                tvAccountAddress.setText(CommonUtil.generateSimpleAddress(currentAddress));
+                showQRCode();
             });
             tvChildAddress.setOnClickListener(v -> {
                 ObjectAnimator.ofFloat(tvAddressType, "translationX", tvAddressType.getWidth()).start();
                 tvAddressType.setText(R.string.btc_child_address);
+                currentAddress = childAddress;
+                tvAccountAddress.setText(CommonUtil.generateSimpleAddress(currentAddress));
+                showQRCode();
             });
         }
+
+        tvInputAmount.setOnClickListener(v -> {
+            final View dialogView = getLayoutInflater().inflate(R.layout.dialog_transfer_btc_amount, null);
+            final EditText etAmount = dialogView.findViewById(R.id.et_btc_amount);
+
+            AlertDialog passwordDialog = new AlertDialog.Builder(this, R.style.Theme_AppCompat_Light_Dialog_Alert_Self)
+                    .setView(dialogView)
+                    .setCancelable(true)
+                    .setPositiveButton(R.string.confirm, (dialog, which) -> {
+                        dialog.cancel();
+                        try {
+                            amount = Double.valueOf(etAmount.getText().toString());
+                            if (amount > 0) {
+                                String text = String.format(Locale.getDefault(), "%s %s %s",
+                                        getString(R.string.prompt_receive),
+                                        etAmount.getText().toString(),
+                                        getString(R.string.account_btc));
+                                tvReceiveAmount.setText(text);
+                            } else {
+                                tvReceiveAmount.setText(R.string.transfer_btc);
+                            }
+                        } catch (Exception e) {
+                            e.fillInStackTrace();
+                        }
+                        showQRCode();
+                    })
+                    .create();
+            passwordDialog.setOnShowListener(dialog -> {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(etAmount, InputMethodManager.SHOW_IMPLICIT);
+            });
+
+            passwordDialog.show();
+        });
+    }
+
+    private void showQRCode() {
+        BitcoinPaymentURI.Builder receiveUriBuilder = new BitcoinPaymentURI.Builder();
+        String receiveUri = receiveUriBuilder
+                .address(currentAddress)
+                .amount(amount)
+                .build()
+                .getURI();
+        System.out.println(receiveUri);
+
+        Observable<Bitmap> observable = Observable.create(e -> {
+            Bitmap bitmap = QRCodeUtil.createQRImage(receiveUri, 220, 220, null);
+            e.onNext(bitmap);
+            e.onCompleted();
+        });
+        observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Bitmap>() {
+                    @Override
+                    public void onNext(Bitmap bitmap) {
+                        int width = ivAddressCode.getWidth();
+                        if (width > 0) {
+                            ivAddressCode.getLayoutParams().height = width;
+                            ivAddressCode.requestLayout();
+                        }
+                        RequestOptions options = RequestOptions.placeholderOf(R.drawable.btc_address_bg);
+                        Glide.with(AddressQrcodeBtcActivity.this)
+                                .load(bitmap)
+                                .apply(options)
+                                .into(ivAddressCode);
+                    }
+
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+                });
+        ;
     }
 
     @Override

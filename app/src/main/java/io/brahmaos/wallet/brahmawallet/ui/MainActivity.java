@@ -71,6 +71,7 @@ import io.brahmaos.wallet.brahmawallet.ui.setting.CelestialBodyIntroActivity;
 import io.brahmaos.wallet.brahmawallet.ui.setting.HelpActivity;
 import io.brahmaos.wallet.brahmawallet.ui.setting.SettingsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.token.TokensActivity;
+import io.brahmaos.wallet.brahmawallet.ui.transfer.BtcTransferActivity;
 import io.brahmaos.wallet.brahmawallet.ui.transfer.InstantExchangeActivity;
 import io.brahmaos.wallet.brahmawallet.ui.transfer.EthTransferActivity;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
@@ -600,7 +601,9 @@ public class MainActivity extends BaseActivity
             }
             holder.layoutAssets.setOnClickListener(v -> {
                 if (tokenEntity.getName().toLowerCase().equals(BrahmaConst.BITCOIN)) {
-
+                    Intent intent = new Intent(MainActivity.this, BtcTransferActivity.class);
+                    intent.putExtra(IntentParam.PARAM_TOKEN_INFO, tokenEntity);
+                    startActivityForResult(intent, REQ_CODE_TRANSFER);
                 } else {
                     Intent intent = new Intent(MainActivity.this, EthTransferActivity.class);
                     intent.putExtra(IntentParam.PARAM_TOKEN_INFO, tokenEntity);

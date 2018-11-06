@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import com.hwangjr.rxbus.RxBus;
 
+import org.bitcoinj.kits.WalletAppKit;
 import org.web3j.crypto.CipherException;
 import org.web3j.protocol.exceptions.TransactionException;
 import org.web3j.utils.Convert;
@@ -45,6 +46,7 @@ import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 import io.brahmaos.wallet.brahmawallet.event.EventTypeDef;
 import io.brahmaos.wallet.brahmawallet.model.AccountAssets;
 import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
+import io.brahmaos.wallet.brahmawallet.service.BtcAccountManager;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.service.MainService;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
@@ -75,16 +77,8 @@ public class BtcTransferActivity extends BaseActivity {
     TextView tvAccountAddress;
     @BindView(R.id.tv_change_account)
     TextView tvChangeAccount;
-
-    @BindView(R.id.tv_eth_balance)
-    TextView tvEthBalance;
-    @BindView(R.id.layout_send_token_balance)
-    RelativeLayout layoutSendTokenBalance;
-    @BindView(R.id.tv_send_token_name)
-    TextView tvSendTokenName;
-    @BindView(R.id.tv_send_token_balance)
-    TextView tvSendTokenBalance;
-
+    @BindView(R.id.tv_btc_balance)
+    TextView tvBtcBalance;
     @BindView(R.id.btn_show_transfer_info)
     Button btnShowTransfer;
     @BindView(R.id.et_receiver_address)
@@ -103,101 +97,56 @@ public class BtcTransferActivity extends BaseActivity {
     ImageView ivContacts;
 
     private AccountEntity mAccount;
-    private TokenEntity mToken;
     private AccountViewModel mViewModel;
+    private WalletAppKit kit;
     private List<AccountEntity> mAccounts = new ArrayList<>();
-    private List<AccountAssets> mAccountAssetsList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_transfer);
+        setContentView(R.layout.activity_btc_transfer);
         ButterKnife.bind(this);
         showNavBackBtn();
         mAccount = (AccountEntity) getIntent().getSerializableExtra(IntentParam.PARAM_ACCOUNT_INFO);
-        mToken = (TokenEntity) getIntent().getSerializableExtra(IntentParam.PARAM_TOKEN_INFO);
 
-        if (mToken == null) {
-            finish();
-        }
         initView();
     }
 
     private void initView() {
-        String tokenShortName = mToken.getShortName();
         Toolbar toolbar = findViewById(R.id.toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
             ActionBar ab = getSupportActionBar();
             if (ab != null) {
-                ab.setTitle(tokenShortName + getString(R.string.blank_space) +
+                ab.setTitle(getString(R.string.account_btc) + getString(R.string.blank_space) +
                         getString(R.string.action_transfer));
             }
         }
 
-        if (mToken.getName().toLowerCase().equals(BrahmaConst.ETHEREUM)) {
-            layoutSendTokenBalance.setVisibility(View.GONE);
-            layoutRemarkInput.setVisibility(View.VISIBLE);
-        } else {
-            layoutSendTokenBalance.setVisibility(View.VISIBLE);
-            tvSendTokenName.setText(mToken.getShortName());
-            layoutRemarkInput.setVisibility(View.GONE);
-        }
-
-        mAccountAssetsList = MainService.getInstance().getAccountAssetsList();
-
         mViewModel = ViewModelProviders.of(this).get(AccountViewModel.class);
         mViewModel.getAccounts().observe(this, accountEntities -> {
-            mAccounts = accountEntities;
-
-            if (mAccounts != null && mAccounts.size() > 1) {
-                tvChangeAccount.setVisibility(View.VISIBLE);
-            } else {
-                tvChangeAccount.setVisibility(View.GONE);
-                if (mAccounts == null || mAccounts.size() == 0) {
-                    finish();
-                }
-            }
-
-            if ((mAccount == null || mAccount.getAddress().length() == 0) &&
-                    accountEntities != null) {
-                mAccount = mAccounts.get(0);
-            }
-            showAccountInfo(mAccount);
-        });
-        tvChangeAccount.setOnClickListener(v -> {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            View dialogView = getLayoutInflater().inflate(R.layout.dialog_account_list, null);
-            builder.setView(dialogView);
-            builder.setCancelable(true);
-            final AlertDialog alertDialog = builder.create();
-            alertDialog.show();
-
-            LinearLayout layoutAccountList = dialogView.findViewById(R.id.layout_accounts);
-
-            for (final AccountEntity account : mAccounts) {
-                final AccountItemView accountItemView = new AccountItemView();
-                accountItemView.layoutAccountItem = LayoutInflater.from(this).inflate(R.layout.dialog_list_item_account, null);
-                accountItemView.ivAccountAvatar = accountItemView.layoutAccountItem.findViewById(R.id.iv_account_avatar);
-                accountItemView.tvAccountName = accountItemView.layoutAccountItem.findViewById(R.id.tv_account_name);
-                accountItemView.tvAccountAddress = accountItemView.layoutAccountItem.findViewById(R.id.tv_account_address);
-                accountItemView.layoutDivider = accountItemView.layoutAccountItem.findViewById(R.id.layout_divider);
-
-                accountItemView.tvAccountName.setText(account.getName());
-                ImageManager.showAccountAvatar(this, accountItemView.ivAccountAvatar, account);
-                accountItemView.tvAccountAddress.setText(CommonUtil.generateSimpleAddress(account.getAddress()));
-
-                accountItemView.layoutAccountItem.setOnClickListener(v1 -> {
-                    alertDialog.cancel();
-                    mAccount = account;
-                    showAccountInfo(account);
-                });
-
-                if (mAccounts.indexOf(account) == mAccounts.size() - 1) {
-                    accountItemView.layoutDivider.setVisibility(View.GONE);
+            if (accountEntities != null) {
+                mAccounts.clear();
+                for (AccountEntity accountEntity : accountEntities) {
+                    if (accountEntity.getType() == BrahmaConst.BTC_ACCOUNT_TYPE) {
+                        mAccounts.add(accountEntity);
+                    }
                 }
 
-                layoutAccountList.addView(accountItemView.layoutAccountItem);
+                if (mAccounts != null && mAccounts.size() > 1) {
+                    tvChangeAccount.setVisibility(View.VISIBLE);
+                } else {
+                    tvChangeAccount.setVisibility(View.GONE);
+                    if (mAccounts == null || mAccounts.size() == 0) {
+                        finish();
+                    }
+                }
+
+                if (mAccount == null) {
+                    mAccount = mAccounts.get(0);
+                }
+                kit = BtcAccountManager.getInstance().getBtcWalletAppKit(mAccount.getFilename());
+                showAccountInfo(mAccount);
             }
         });
 
@@ -208,6 +157,7 @@ public class BtcTransferActivity extends BaseActivity {
 
         ivContacts.setOnClickListener(v -> {
             Intent intent = new Intent(BtcTransferActivity.this, ChooseContactActivity.class);
+            intent.putExtra(IntentParam.PARAM_ACCOUNT_TYPE, BrahmaConst.BTC_ACCOUNT_TYPE);
             startActivityForResult(intent, ReqCode.CHOOSE_TRANSFER_CONTACT);
         });
     }
@@ -235,19 +185,6 @@ public class BtcTransferActivity extends BaseActivity {
 
                     }
                 });
-    }
-
-    private void showAccountBalance() {
-        for (AccountAssets assets : mAccountAssetsList) {
-            if (assets.getAccountEntity().getAddress().toLowerCase().equals(mAccount.getAddress().toLowerCase())) {
-                if (assets.getTokenEntity().getAddress().toLowerCase().equals(mToken.getAddress().toLowerCase())) {
-                    tvSendTokenBalance.setText(String.valueOf(CommonUtil.getAccountFromWei(assets.getBalance())));
-                }
-                if (assets.getTokenEntity().getName().toLowerCase().equals(BrahmaConst.ETHEREUM.toLowerCase())) {
-                    tvEthBalance.setText(String.valueOf(CommonUtil.getAccountFromWei(assets.getBalance())));
-                }
-            }
-        }
     }
 
     @Override
@@ -311,20 +248,12 @@ public class BtcTransferActivity extends BaseActivity {
         scanAddressCode();
     }
 
-    private class AccountItemView {
-        View layoutAccountItem;
-        ImageView ivAccountAvatar;
-        TextView tvAccountName;
-        TextView tvAccountAddress;
-        LinearLayout layoutDivider;
-    }
-
     private void showAccountInfo(AccountEntity account) {
-        if (account != null) {
+        if (account != null && kit != null && kit.wallet() != null) {
             ImageManager.showAccountAvatar(this, ivAccountAvatar, account);
             tvAccountName.setText(account.getName());
-            tvAccountAddress.setText(CommonUtil.generateSimpleAddress(account.getAddress()));
-            showAccountBalance();
+            tvAccountAddress.setText(CommonUtil.generateSimpleAddress(kit.wallet().currentReceiveAddress().toBase58()));
+            tvBtcBalance.setText(String.valueOf(CommonUtil.convertUnit(BrahmaConst.BITCOIN, kit.wallet().getBalance().value)));
         }
     }
 
@@ -359,16 +288,6 @@ public class BtcTransferActivity extends BaseActivity {
 
         BigInteger totalBalance = BigInteger.ZERO;
         BigInteger ethTotalBalance = BigInteger.ZERO;
-        for (AccountAssets assets : mAccountAssetsList) {
-            if (assets.getAccountEntity().getAddress().equals(mAccount.getAddress())) {
-                if (assets.getTokenEntity().getAddress().equals(mToken.getAddress())) {
-                    totalBalance = assets.getBalance();
-                }
-                if (assets.getTokenEntity().getName().toLowerCase().equals(BrahmaConst.ETHEREUM.toLowerCase())) {
-                    ethTotalBalance = assets.getBalance();
-                }
-            }
-        }
 
         if (!cancel) {
             if (transferAmount.length() < 1) {
@@ -388,15 +307,6 @@ public class BtcTransferActivity extends BaseActivity {
         if (!cancel && ethTotalBalance.compareTo(BigInteger.ZERO) <= 0) {
             tips = getString(R.string.tip_insufficient_eth);
             cancel = true;
-        }
-
-        // check the ether is enough
-        if (!cancel && mToken.getName().toLowerCase().equals(BrahmaConst.ETHEREUM)) {
-            totalBalance = ethTotalBalance;
-            if (CommonUtil.convertWeiFromEther(amount.add(BrahmaConst.DEFAULT_FEE)).compareTo(totalBalance) > 0) {
-                tips = getString(R.string.tip_insufficient_eth);
-                cancel = true;
-            }
         }
 
         if (cancel) {
@@ -438,9 +348,6 @@ public class BtcTransferActivity extends BaseActivity {
         TextView tvTransferAmount = view.findViewById(R.id.tv_dialog_transfer_amount);
         tvTransferAmount.setText(String.valueOf(amount));
 
-        TextView tvTransferToken = view.findViewById(R.id.tv_dialog_transfer_token);
-        tvTransferToken.setText(mToken.getShortName());
-
         LinearLayout layoutTransferStatus = view.findViewById(R.id.layout_transfer_status);
         CustomStatusView customStatusView = view.findViewById(R.id.as_status);
         TextView tvTransferStatus = view.findViewById(R.id.tv_transfer_status);
@@ -459,59 +366,6 @@ public class BtcTransferActivity extends BaseActivity {
                         layoutTransferStatus.setVisibility(View.VISIBLE);
                         customStatusView.loadLoading();
                         String password = ((EditText) dialogView.findViewById(R.id.et_password)).getText().toString();
-                        BrahmaWeb3jService.getInstance().sendTransfer(mAccount, mToken, password, receiverAddress,
-                                finalAmount, gasPrice, gasLimit, remark)
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(new Observer<Integer>() {
-                                    @Override
-                                    public void onNext(Integer flag) {
-                                        if (flag == 10) {
-                                            tvTransferStatus.setText(R.string.progress_transfer_success);
-                                            BLog.i(tag(), "the transfer success");
-                                            customStatusView.loadSuccess();
-                                            new Handler().postDelayed(() -> {
-                                                transferInfoDialog.cancel();
-                                                // Eth transfer is a real-time arrival, and token transfer may take longer,
-                                                // so there is no need to refresh
-                                                if (mToken.getName().toLowerCase().equals(BrahmaConst.ETHEREUM)) {
-                                                    RxBus.get().post(EventTypeDef.ACCOUNT_ASSETS_TRANSFER, "succ");
-                                                }
-                                                finish();
-                                            }, 1200);
-                                        } else if (flag == 1) {
-                                            tvTransferStatus.setText(R.string.progress_verify_account);
-                                        } else if (flag == 2) {
-                                            tvTransferStatus.setText(R.string.progress_send_request);
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onError(Throwable e) {
-                                        e.printStackTrace();
-                                        customStatusView.loadFailure();
-                                        tvTransferStatus.setText(R.string.progress_transfer_fail);
-                                        new Handler().postDelayed(() -> {
-                                            layoutTransferStatus.setVisibility(View.GONE);
-                                            int resId = R.string.tip_error_transfer;
-                                            if (e instanceof CipherException) {
-                                                resId = R.string.tip_error_password;
-                                            } else if (e instanceof TransactionException) {
-                                                resId = R.string.tip_error_net;
-                                            }
-                                            new AlertDialog.Builder(BtcTransferActivity.this)
-                                                    .setMessage(resId)
-                                                    .setNegativeButton(R.string.ok, (dialog1, which1) -> dialog1.cancel())
-                                                    .create().show();
-                                        }, 1500);
-
-                                        BLog.i(tag(), "the transfer failed");
-                                    }
-
-                                    @Override
-                                    public void onCompleted() {
-                                    }
-                                });
                         })
                     .create();
             passwordDialog.show();

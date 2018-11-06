@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.brahmaos.wallet.brahmawallet.R;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.common.ReqCode;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
@@ -27,6 +28,7 @@ import me.yokeyword.indexablerv.SimpleHeaderAdapter;
 public class ChooseContactActivity extends BaseActivity {
     private ContactAdapter mAdapter;
     private ContactViewModel mViewModel;
+    private int accountType;
     IndexableLayout indexableLayout;
 
     @Override
@@ -47,7 +49,7 @@ public class ChooseContactActivity extends BaseActivity {
 
         indexableLayout = findViewById(R.id.indexableLayout);
         indexableLayout.setLayoutManager(new LinearLayoutManager(this));
-
+        accountType = getIntent().getIntExtra(IntentParam.PARAM_ACCOUNT_TYPE, BrahmaConst.ETH_ACCOUNT_TYPE);
         // setAdapter
         mAdapter = new ContactAdapter(this);
         indexableLayout.setAdapter(mAdapter);

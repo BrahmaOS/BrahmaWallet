@@ -164,8 +164,10 @@
                                 android:layout_height="wrap_content"
                                 android:textSize="@dimen/font_size_subheading"
                                 android:textColor="@color/master"
-                                android:layout_marginTop="@dimen/space_normal"
-                                android:layout_marginBottom="@dimen/space_larger"
+                                android:layout_marginTop="@dimen/space_smaller"
+                                android:layout_marginBottom="@dimen/space_large"
+                                android:paddingTop="@dimen/space_smaller"
+                                android:paddingBottom="@dimen/space_smaller"
                                 android:textAlignment="center"
                                 android:text="@string/enter_btc_amount"/>
                         </LinearLayout>
