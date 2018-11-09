@@ -56,6 +56,7 @@ import io.brahmaos.wallet.brahmawallet.ui.contact.ChooseContactActivity;
 import io.brahmaos.wallet.brahmawallet.view.CustomStatusView;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
+import io.brahmaos.wallet.util.BitcoinPaymentURI;
 import io.brahmaos.wallet.util.CommonUtil;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
@@ -222,11 +223,13 @@ public class BtcTransferActivity extends BaseActivity {
             if (resultCode == RESULT_OK) {
                 if (data != null) {
                     String qrCode = data.getStringExtra(Intents.Scan.RESULT);
-                    if (qrCode != null && qrCode.length() > 0) {
-                        etReceiverAddress.setText(qrCode);
-                    } else {
-                        showLongToast(R.string.tip_scan_code_failed);
+                    BitcoinPaymentURI bitcoinUri = BitcoinPaymentURI.parse(qrCode);
+                    if (bitcoinUri == null) {
+                        showLongToast(R.string.invalid_btc_address);
+                        return;
                     }
+                    etReceiverAddress.setText(bitcoinUri.getAddress());
+                    etAmount.setText(String.valueOf(bitcoinUri.getAmount()));
                 }
             }
         } else if (requestCode == ReqCode.CHOOSE_TRANSFER_CONTACT) {

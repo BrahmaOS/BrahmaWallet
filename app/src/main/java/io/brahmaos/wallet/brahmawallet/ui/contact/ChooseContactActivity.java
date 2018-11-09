@@ -58,8 +58,24 @@ public class ChooseContactActivity extends BaseActivity {
 
         // set Listener
         mAdapter.setOnItemContentClickListener((v, originalPosition, currentPosition, entity) -> {
+            String backAddress = "";
+            if (accountType == BrahmaConst.ETH_ACCOUNT_TYPE) {
+                if (entity.getAddress() == null || entity.getAddress().length() < 1) {
+                    showLongToast(R.string.tip_no_ethereum_address);
+                    return;
+                }
+                backAddress = entity.getAddress();
+            }
+
+            if (accountType == BrahmaConst.BTC_ACCOUNT_TYPE) {
+                if (entity.getBtcAddress() == null || entity.getBtcAddress().length() < 1) {
+                    showLongToast(R.string.tip_no_bitcoin_address);
+                    return;
+                }
+                backAddress = entity.getBtcAddress();
+            }
             Intent intent = ChooseContactActivity.this.getIntent();
-            intent.putExtra(IntentParam.PARAM_CONTACT_ADDRESS, entity.getAddress());
+            intent.putExtra(IntentParam.PARAM_CONTACT_ADDRESS, backAddress);
             setResult(RESULT_OK, intent);
             finish();
         });

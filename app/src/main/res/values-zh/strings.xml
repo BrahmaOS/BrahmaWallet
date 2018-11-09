@@ -47,7 +47,7 @@
     <string name="action_copy_address">复制地址</string>
     <string name="title_dialog_export_keystore">导出Keystore</string>
     <string name="title_dialog_export_private_key">导出私钥</string>
-
+    <string name="title_dialog_export_mnemonics">导出助记词</string>
     <string name="export_keystore_tip_1">
         离线保存，复制Keystore文件到安全、离线的地方保存。切勿保存到邮箱、网盘、聊天工具等，非常危险。
     </string>
@@ -72,6 +72,9 @@
     <string name="export_private_key_tip_1">
         安全告警: 私钥未经加密，导出存在风险.
     </string>
+    <string name="export_mnemonics_tip_1">
+        安全告警: 助记词未经加密，导出存在风险.
+    </string>
     <string name="confirm_qr_code_show">
         已确认周围无人和摄像头。
     </string>
@@ -93,6 +96,7 @@
     <string name="action_export_private_key">导出私钥</string>
     <string name="action_export_keystore">导出Keystore</string>
     <string name="action_delete_account">删除账号</string>
+    <string name="action_export_mnemonics">导出助记词</string>
 
     <string name="success_change_account_name">更改账号名成功!</string>
     <string name="error_change_account_name">删除账号失败!!!</string>
@@ -341,6 +345,8 @@
     <string name="tip_contact_image_avatar">联系人头像</string>
     <string name="tip_contact_scan_address">扫描联系人地址二维码</string>
     <string name="subtitle_contact_wallet_account">钱包账号</string>
+    <string name="tip_no_ethereum_address">请选择有以太坊地址的联系人</string>
+    <string name="tip_no_bitcoin_address">请选择有比特币地址的联系人</string>
 
     <!-- fingerprint -->
     <string name="tip_fingerprint">点击开启验证</string>

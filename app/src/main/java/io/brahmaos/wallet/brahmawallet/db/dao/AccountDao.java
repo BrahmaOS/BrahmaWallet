@@ -51,6 +51,9 @@ public interface AccountDao {
     @Query("update accounts set filename = :filename where id = :accountId")
     void changeAccountFilename(int accountId, String filename);
 
+    @Query("update accounts set cryptoMnemonics = :encryptMnemonics where id = :accountId")
+    void changeAccountEncryptMnemonics(int accountId, String encryptMnemonics);
+
     @Query("delete from accounts where id = :accountId")
     void deleteAccount(int accountId);
 }

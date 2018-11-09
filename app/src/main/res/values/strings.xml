@@ -51,6 +51,7 @@
     <string name="action_copy_address">Copy Address</string>
     <string name="title_dialog_export_keystore">Export Keystore</string>
     <string name="title_dialog_export_private_key">Export Private Key</string>
+    <string name="title_dialog_export_mnemonics">Export Mnemonics</string>
 
     <string name="export_keystore_tip_1">
         Store offline. Please store keystore to a safe offline place. Never put it on internet.
@@ -80,6 +81,9 @@
     <string name="export_private_key_tip_1">
         Warning: Export plain private key is very dangerous.
     </string>
+    <string name="export_mnemonics_tip_1">
+        Warning: Export plain mnemonics is very dangerous.
+    </string>
     <string name="delete_account_tip">
         Caution! This operation cannot be revoked!
     </string>
@@ -97,6 +101,7 @@
     <string name="action_export_private_key">Export Private Key</string>
     <string name="action_export_keystore">Export Keystore</string>
     <string name="action_delete_account">Delete Account</string>
+    <string name="action_export_mnemonics">Export Mnemonics</string>
 
     <string name="success_change_account_name">Change account name success!</string>
     <string name="error_change_account_name">Change account name error!!!</string>
@@ -413,7 +418,8 @@
     <string name="tip_contact_image_avatar">Contact Avatar</string>
     <string name="tip_contact_scan_address">Scan</string>
     <string name="subtitle_contact_wallet_account">Wallet Account</string>
-
+    <string name="tip_no_ethereum_address">Please choose ethereum address</string>
+    <string name="tip_no_bitcoin_address">Please choose bitcoin address</string>
     <!-- fingerprint -->
     <string name="tip_fingerprint">Click to start verification</string>
     <string name="fail_fingerprint_verification">Fingerprint verification failed</string>
@@ -489,4 +495,8 @@
     <string name="btc_child_address">Child Address</string>
     <string name="transfer_btc">Please transfer BTC</string>
     <string name="enter_btc_amount">Enter amount</string>
+    <string name="invalid_btc_address">Invalid bitcoin address</string>
+    <string name="current_block_height">Current Block Height</string>
+    <string name="private_key_num">Private Keys</string>
+    <string name="transactions_num">Transactions</string>
 </resources>

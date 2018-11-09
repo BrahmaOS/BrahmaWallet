@@ -126,16 +126,15 @@ public class BtcAccountFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(AccountViewModel.class);
         mViewModel.getAccounts().observe(this, accountEntities -> {
-            if (accountEntities == null || accountEntities.size() < 1) {
-                accounts = new ArrayList<>();
-            } else {
+            accounts = new ArrayList<>();
+            if (accountEntities != null && accountEntities.size() > 0) {
                 for (AccountEntity accountEntity : accountEntities) {
                     if (accountEntity.getType() == BrahmaConst.BTC_ACCOUNT_TYPE) {
                         accounts.add(accountEntity);
                     }
                 }
-                recyclerViewAccounts.getAdapter().notifyDataSetChanged();
             }
+            recyclerViewAccounts.getAdapter().notifyDataSetChanged();
         });
     }
 

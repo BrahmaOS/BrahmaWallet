@@ -5,14 +5,21 @@ import android.view.View;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 
+import org.bitcoinj.core.Address;
+import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.core.Peer;
+import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.Utils;
 import org.bitcoinj.core.listeners.DownloadProgressTracker;
 import org.bitcoinj.kits.WalletAppKit;
 import org.bitcoinj.params.TestNet3Params;
 import org.bitcoinj.wallet.DeterministicSeed;
+import org.bitcoinj.wallet.Wallet;
+import org.spongycastle.util.encoders.Hex;
 import org.web3j.protocol.ObjectMapperFactory;
 
 import java.io.File;
@@ -27,6 +34,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.WalletApp;
@@ -198,5 +207,35 @@ public class BtcAccountManager extends BaseService{
         } else {
             return null;
         }
+    }
+
+    public void transfer(String receiveAddress, double amount, String accountFilename) {
+        try {
+            WalletAppKit kit = btcAccountKit.get(accountFilename);
+            Coin value = Coin.valueOf(1000000);
+            System.out.println("Forwarding " + value.toFriendlyString() + " BTC");
+            // Now send the coins back! Send with a small fee attached to ensure rapid confirmation.
+            final Coin amountToSend = value.subtract(Transaction.REFERENCE_DEFAULT_MIN_TX_FEE);
+            final Wallet.SendResult sendResult = kit.wallet().sendCoins(kit.peerGroup(),
+                    new Address(getNetworkParams(), Hex.decode(receiveAddress)), amountToSend);
+            System.out.println("Sending ...");
+            // Register a callback that is invoked when the transaction has propagated across the network.
+            // This shows a second style of registering ListenableFuture callbacks, it works when you don't
+            // need access to the object the future returns.
+
+            ListeningExecutorService executorService = MoreExecutors.listeningDecorator(Executors.newCachedThreadPool());
+
+            sendResult.broadcastComplete.addListener(new Runnable() {
+                @Override
+                public void run() {
+                    // The wallet has changed now, it'll get auto saved shortly or when the app shuts down.
+                    System.out.println("Sent coins onwards! Transaction hash is " +
+                            sendResult.tx.getHashAsString());
+                }
+            }, executorService);
+        } catch (Exception e) {
+            e.fillInStackTrace();
+        }
+
     }
 }

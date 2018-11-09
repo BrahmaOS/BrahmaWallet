@@ -95,6 +95,10 @@ public class DataRepository {
         mDatabase.accountDao().changeAccountFilename(accountId, filename);
     }
 
+    public void changeAccountEncryptMnemonics(int accountId, String encryptMnemonics) {
+        mDatabase.accountDao().changeAccountEncryptMnemonics(accountId, encryptMnemonics);
+    }
+
     public LiveData<AccountEntity> getAccountById(int accountId) {
         return mDatabase.accountDao().loadAccount(accountId);
     }
