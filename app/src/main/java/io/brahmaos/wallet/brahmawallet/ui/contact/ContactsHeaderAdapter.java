@@ -12,6 +12,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import io.brahmaos.wallet.brahmawallet.R;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import me.yokeyword.indexablerv.IndexableHeaderAdapter;
@@ -47,20 +48,28 @@ public class ContactsHeaderAdapter extends IndexableHeaderAdapter<AccountEntity>
         Log.i(TAG, "entity - " + entity);
         ContentVH vh = (ContentVH) holder;
         vh.tvName.setText(entity.getName());
-        vh.tvAddress.setText(entity.getAddress());
         ImageManager.showAccountAvatar(ctx, vh.ivAvatar, entity);
+        if (entity.getType() == BrahmaConst.ETH_ACCOUNT_TYPE) {
+            vh.ivEthIcon.setVisibility(View.VISIBLE);
+            vh.ivBtcIcon.setVisibility(View.GONE);
+        } else {
+            vh.ivEthIcon.setVisibility(View.GONE);
+            vh.ivBtcIcon.setVisibility(View.VISIBLE);
+        }
     }
 
     private class ContentVH extends RecyclerView.ViewHolder {
         TextView tvName;
-        TextView tvAddress;
         ImageView ivAvatar;
+        ImageView ivEthIcon;
+        ImageView ivBtcIcon;
 
         ContentVH(View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tv_name);
-            tvAddress = itemView.findViewById(R.id.tv_address);
             ivAvatar = itemView.findViewById(R.id.iv_avatar);
+            ivEthIcon = itemView.findViewById(R.id.eth_icon);
+            ivBtcIcon = itemView.findViewById(R.id.btc_icon);
         }
     }
 }

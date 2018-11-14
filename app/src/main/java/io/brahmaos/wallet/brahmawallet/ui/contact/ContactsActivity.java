@@ -92,12 +92,4 @@ public class ContactsActivity extends BaseActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-    private List<ContactEntity> initWalletAccount(List<AccountEntity> accounts) {
-        List<ContactEntity> list = new ArrayList<>();
-        for (AccountEntity accountEntity : accounts) {
-            list.add(new ContactEntity(0, "", accountEntity.getName(), accountEntity.getAddress(), "", ""));
-        }
-        return list;
-    }
 }

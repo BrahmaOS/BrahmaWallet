@@ -165,7 +165,7 @@ public class BtcAccountManager extends BaseService{
         btcAccountKit.put(filePrefix, kit);
     }
 
-    public void restoreWalletAppKit(String filePrefix, DeterministicSeed seed) {
+    public WalletAppKit restoreWalletAppKit(String filePrefix, DeterministicSeed seed) {
         WalletAppKit kit = new WalletAppKit(getNetworkParams(), context.getFilesDir(), filePrefix){
             @Override
             protected void onSetupCompleted() {
@@ -189,6 +189,7 @@ public class BtcAccountManager extends BaseService{
         kit.awaitRunning();
         kit.wallet().addTransactionConfidenceEventListener(txListener);
         btcAccountKit.put(filePrefix, kit);
+        return kit;
     }
 
     public WalletAppKit getBtcWalletAppKit(String filePrefix) {

@@ -22,12 +22,14 @@ import io.brahmaos.wallet.brahmawallet.db.entity.ContactEntity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.viewmodel.ContactViewModel;
 import me.yokeyword.indexablerv.IndexableAdapter;
+import me.yokeyword.indexablerv.IndexableHeaderAdapter;
 import me.yokeyword.indexablerv.IndexableLayout;
 import me.yokeyword.indexablerv.SimpleHeaderAdapter;
 
 public class ChooseContactActivity extends BaseActivity {
     private ContactAdapter mAdapter;
     private ContactViewModel mViewModel;
+    private ContactsHeaderAdapter mHeaderAdapter;
     private int accountType;
     IndexableLayout indexableLayout;
 
@@ -79,6 +81,29 @@ public class ChooseContactActivity extends BaseActivity {
             setResult(RESULT_OK, intent);
             finish();
         });
+
+        mHeaderAdapter.setOnItemHeaderClickListener((v, currentPosition, entity) -> {
+            String backAddress = "";
+            if (accountType == BrahmaConst.ETH_ACCOUNT_TYPE) {
+                if (entity.getType() != BrahmaConst.ETH_ACCOUNT_TYPE) {
+                    showLongToast(R.string.tip_no_ethereum_address);
+                    return;
+                }
+                backAddress = entity.getAddress();
+            }
+
+            if (accountType == BrahmaConst.BTC_ACCOUNT_TYPE) {
+                if (entity.getType() != BrahmaConst.BTC_ACCOUNT_TYPE) {
+                    showLongToast(R.string.tip_no_bitcoin_address);
+                    return;
+                }
+                backAddress = entity.getAddress();
+            }
+            Intent intent = ChooseContactActivity.this.getIntent();
+            intent.putExtra(IntentParam.PARAM_CONTACT_ADDRESS, backAddress);
+            setResult(RESULT_OK, intent);
+            finish();
+        });
     }
 
     private void initData() {
@@ -93,7 +118,8 @@ public class ChooseContactActivity extends BaseActivity {
         });
         mViewModel.getAccounts().observe(this, accountEntities -> {
             if (accountEntities != null) {
-                indexableLayout.addHeaderAdapter(new SimpleHeaderAdapter<>(mAdapter, "☆", getString(R.string.title_my_accounts), initWalletAccount(accountEntities)));
+                mHeaderAdapter = new ContactsHeaderAdapter(this, "☆", getString(R.string.title_my_accounts), accountEntities);
+                indexableLayout.addHeaderAdapter(mHeaderAdapter);
             }
         });
     }
@@ -114,13 +140,5 @@ public class ChooseContactActivity extends BaseActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private List<ContactEntity> initWalletAccount(List<AccountEntity> accounts) {
-        List<ContactEntity> list = new ArrayList<>();
-        for (AccountEntity accountEntity : accounts) {
-            list.add(new ContactEntity(0, "", accountEntity.getName(), accountEntity.getAddress(), "", ""));
-        }
-        return list;
     }
 }
