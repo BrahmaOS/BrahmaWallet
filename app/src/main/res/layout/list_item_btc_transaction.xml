@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_transaction_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/list_item_bg"
+    android:orientation="vertical">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_small"
+        android:layout_marginBottom="@dimen/space_small"
+        android:paddingStart="@dimen/space_normal"
+        android:paddingEnd="@dimen/space_normal">
+
+        <ImageView
+            android:id="@+id/iv_transaction_status_icon"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/space_normal"
+            android:layout_width="@dimen/toolbar_icon_size"
+            android:layout_height="@dimen/toolbar_icon_size"
+            android:src="@drawable/icon_receive"/>
+
+        <LinearLayout
+            android:layout_toEndOf="@id/iv_transaction_status_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/tv_transaction_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2018-08-08 10:10:10"/>
+            <TextView
+                android:id="@+id/tv_confirm_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="confirmed"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_transactions_amount"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/font_size_title"/>
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="@dimen/space_normal"
+        android:layout_marginEnd="@dimen/space_normal"
+        android:orientation="horizontal"
+        android:background="@color/horizontal_divider">
+    </LinearLayout>
+</LinearLayout>

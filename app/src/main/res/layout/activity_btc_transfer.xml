@@ -202,10 +202,10 @@
                             android:theme="@style/customEditTextLineColor"
                             app:hintTextAppearance="@style/customEditTextHint">
                             <EditText
-                                android:id="@+id/et_gas_price"
+                                android:id="@+id/et_btc_miner_fee"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="@string/prompt_gas_price"
+                                android:hint="@string/prompt_btc_fee"
                                 android:textSize="@dimen/font_size_subheading"
                                 android:inputType="number"
                                 android:singleLine="true"/>
@@ -216,24 +216,8 @@
                             android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
                             android:layout_marginEnd="@dimen/space_unit"
-                            android:text="@string/unit_gas_price"/>
+                            android:text="@string/prompt_btc_fee_unit"/>
                     </RelativeLayout>
-
-                    <android.support.design.widget.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:theme="@style/customEditTextLineColor"
-                        android:layout_marginTop="@dimen/space_smaller"
-                        app:hintTextAppearance="@style/customEditTextHint">
-                        <EditText
-                            android:id="@+id/et_gas_limit"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/prompt_gas_limit"
-                            android:textSize="@dimen/font_size_subheading"
-                            android:inputType="number"
-                            android:singleLine="true"/>
-                    </android.support.design.widget.TextInputLayout>
 
                 </LinearLayout>
 

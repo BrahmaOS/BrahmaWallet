@@ -50,8 +50,10 @@ import io.brahmaos.wallet.brahmawallet.service.BtcAccountManager;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.service.MainService;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
+import io.brahmaos.wallet.brahmawallet.ui.transaction.BtcTransactionsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.transfer.BtcTransferActivity;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
+import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
 import io.brahmaos.wallet.util.RxEventBus;
 import jnr.ffi.annotations.In;
@@ -122,6 +124,7 @@ public class BtcAccountAssetsActivity extends BaseActivity {
     private BitcoinDownloadProgress bitcoinDownloadProgress;
     private Observable<BitcoinDownloadProgress> btcSyncStatus;
     private Observable<Boolean> btcAppkitSetup;
+    private Observable<Transaction> btcTransactionStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -182,6 +185,14 @@ public class BtcAccountAssetsActivity extends BaseActivity {
                                 mIvSyncStatus.startAnimation(rotate);
                             }
                             ObjectAnimator.ofFloat(mLayoutSyncStatus, "translationY", mLayoutSyncStatus.getHeight()).start();
+
+                            if (kit != null && kit.wallet() != null) {
+                                Wallet wallet = kit.wallet();
+                                mTvSyncBlockHeight.setText(String.valueOf(wallet.getLastBlockSeenHeight()));
+                                if (wallet.getLastBlockSeenTime() != null) {
+                                    mTvSyncBlockDatetime.setText(Utils.dateTimeFormat(wallet.getLastBlockSeenTime()));
+                                }
+                            }
                         }
                     }
 
@@ -205,6 +216,26 @@ public class BtcAccountAssetsActivity extends BaseActivity {
                             initView();
                             initAssets();
                         }
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        Log.i(tag(), e.toString());
+                    }
+                });
+
+        btcTransactionStatus = RxEventBus.get().register(EventTypeDef.BTC_TRANSACTION_CHANGE, Transaction.class);
+        btcTransactionStatus.onBackpressureBuffer()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Transaction>() {
+                    @Override
+                    public void onNext(Transaction transaction) {
+                        BLog.d(tag(), transaction.toString());
                     }
 
                     @Override
@@ -266,6 +297,12 @@ public class BtcAccountAssetsActivity extends BaseActivity {
             intent.putExtra(IntentParam.PARAM_ACCOUNT_INFO, account);
             startActivity(intent);
         });
+
+        mLayoutTransaction.setOnClickListener(v -> {
+            Intent intent = new Intent(BtcAccountAssetsActivity.this, BtcTransactionsActivity.class);
+            intent.putExtra(IntentParam.PARAM_ACCOUNT_INFO, account);
+            startActivity(intent);
+        });
     }
 
     @Override
@@ -315,10 +352,9 @@ public class BtcAccountAssetsActivity extends BaseActivity {
 
     private void setBtcTransactionInfo() {
         if (kit != null && kit.wallet() != null) {
-            Wallet wallet = kit.wallet();
             BigDecimal totalAssets = BigDecimal.ZERO;
-            long balance = wallet.getBalance().value;
-            tvAccountAddress.setText(CommonUtil.generateSimpleAddress(wallet.currentReceiveAddress().toBase58()));
+            long balance = kit.wallet().getBalance().value;
+            tvAccountAddress.setText(CommonUtil.generateSimpleAddress(kit.wallet().currentReceiveAddress().toBase58()));
             if (balance > 0) {
                 for (CryptoCurrency currency : cryptoCurrencies) {
                     if (currency.getName().toLowerCase().equals(BrahmaConst.BITCOIN)) {
@@ -334,13 +370,13 @@ public class BtcAccountAssetsActivity extends BaseActivity {
             }
             tvAccountBalance.setText(String.valueOf(CommonUtil.convertUnit(BrahmaConst.BITCOIN, new BigInteger(String.valueOf(balance)))));
             tvTotalAssets.setText(String.valueOf(totalAssets.setScale(2, BigDecimal.ROUND_HALF_UP)));
-            mTvSyncBlockHeight.setText(String.valueOf(wallet.getLastBlockSeenHeight()));
-            if (wallet.getLastBlockSeenTime() != null) {
-                mTvSyncBlockDatetime.setText(Utils.dateTimeFormat(wallet.getLastBlockSeenTime()));
+            mTvSyncBlockHeight.setText(String.valueOf(kit.wallet().getLastBlockSeenHeight()));
+            if (kit.wallet().getLastBlockSeenTime() != null) {
+                mTvSyncBlockDatetime.setText(Utils.dateTimeFormat(kit.wallet().getLastBlockSeenTime()));
             }
-            mTvPrivateKeyNum.setText(String.valueOf(wallet.getActiveKeyChain().getIssuedExternalKeys()
-                    + wallet.getActiveKeyChain().getIssuedInternalKeys()));
-            mTvTransactionNum.setText(String.valueOf(wallet.getTransactionsByTime().size()));
+            mTvPrivateKeyNum.setText(String.valueOf(kit.wallet().getActiveKeyChain().getIssuedExternalKeys()
+                    + kit.wallet().getActiveKeyChain().getIssuedInternalKeys()));
+            mTvTransactionNum.setText(String.valueOf(kit.wallet().getTransactionsByTime().size()));
         }
     }
 
@@ -350,5 +386,6 @@ public class BtcAccountAssetsActivity extends BaseActivity {
         RxBus.get().unregister(this);
         RxEventBus.get().unregister(EventTypeDef.BTC_ACCOUNT_SYNC, btcSyncStatus);
         RxEventBus.get().unregister(EventTypeDef.BTC_APP_KIT_INIT_SET_UP, btcAppkitSetup);
+        RxEventBus.get().unregister(EventTypeDef.BTC_TRANSACTION_CHANGE, btcTransactionStatus);
     }
 }

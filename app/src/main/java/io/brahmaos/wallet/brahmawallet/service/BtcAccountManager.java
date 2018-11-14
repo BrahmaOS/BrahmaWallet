@@ -1,10 +1,7 @@
 package io.brahmaos.wallet.brahmawallet.service;
 
 import android.content.Context;
-import android.view.View;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 
@@ -15,50 +12,28 @@ import org.bitcoinj.core.Peer;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.Utils;
 import org.bitcoinj.core.listeners.DownloadProgressTracker;
+import org.bitcoinj.core.listeners.TransactionConfidenceEventListener;
 import org.bitcoinj.kits.WalletAppKit;
 import org.bitcoinj.params.TestNet3Params;
 import org.bitcoinj.wallet.DeterministicSeed;
+import org.bitcoinj.wallet.SendRequest;
 import org.bitcoinj.wallet.Wallet;
 import org.spongycastle.util.encoders.Hex;
-import org.web3j.protocol.ObjectMapperFactory;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
-import io.brahmaos.wallet.brahmawallet.R;
-import io.brahmaos.wallet.brahmawallet.WalletApp;
-import io.brahmaos.wallet.brahmawallet.api.ApiConst;
-import io.brahmaos.wallet.brahmawallet.api.ApiRespResult;
-import io.brahmaos.wallet.brahmawallet.api.Networks;
-import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
-import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
-import io.brahmaos.wallet.brahmawallet.db.entity.AllTokenEntity;
 import io.brahmaos.wallet.brahmawallet.event.EventTypeDef;
-import io.brahmaos.wallet.brahmawallet.model.AccountAssets;
 import io.brahmaos.wallet.brahmawallet.model.BitcoinDownloadProgress;
-import io.brahmaos.wallet.brahmawallet.model.CryptoCurrency;
-import io.brahmaos.wallet.brahmawallet.model.KyberToken;
-import io.brahmaos.wallet.brahmawallet.model.TokensVersionInfo;
 import io.brahmaos.wallet.util.BLog;
+import io.brahmaos.wallet.util.CommonUtil;
 import io.brahmaos.wallet.util.RxEventBus;
-import rx.Completable;
-import rx.Observable;
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 public class BtcAccountManager extends BaseService{
     @Override
@@ -71,6 +46,8 @@ public class BtcAccountManager extends BaseService{
     public static BtcAccountManager getInstance() {
         return instance;
     }
+
+    public static int BYTES_PER_BTC_KB = 1000;
 
     private Map<String, WalletAppKit> btcAccountKit = new HashMap<>();
 
@@ -132,6 +109,14 @@ public class BtcAccountManager extends BaseService{
         }
     };
 
+    private TransactionConfidenceEventListener txListener = new TransactionConfidenceEventListener() {
+        @Override
+        public void onTransactionConfidenceChanged(Wallet wallet, Transaction tx) {
+            BLog.d(tag(), tx.toString());
+            RxEventBus.get().post(EventTypeDef.BTC_TRANSACTION_CHANGE, tx);
+        }
+    };
+
     public void initExistsWalletAppKit(AccountEntity accountEntity) {
         WalletAppKit kit = new WalletAppKit(getNetworkParams(), context.getFilesDir(),
                 accountEntity.getFilename()) {
@@ -149,6 +134,7 @@ public class BtcAccountManager extends BaseService{
         kit.setBlockingStartup(false);
         kit.startAsync();
         kit.awaitRunning();
+        kit.wallet().addTransactionConfidenceEventListener(txListener);
         btcAccountKit.put(accountEntity.getFilename(), kit);
     }
 
@@ -173,6 +159,7 @@ public class BtcAccountManager extends BaseService{
         kit.setBlockingStartup(false);
         kit.startAsync();
         kit.awaitRunning();
+        kit.wallet().addTransactionConfidenceEventListener(txListener);
         btcAccountKit.put(filePrefix, kit);
     }
 
@@ -198,6 +185,7 @@ public class BtcAccountManager extends BaseService{
         kit.setBlockingStartup(false);
         kit.startAsync();
         kit.awaitRunning();
+        kit.wallet().addTransactionConfidenceEventListener(txListener);
         btcAccountKit.put(filePrefix, kit);
     }
 
@@ -209,19 +197,19 @@ public class BtcAccountManager extends BaseService{
         }
     }
 
-    public void transfer(String receiveAddress, double amount, String accountFilename) {
+    public boolean transfer(String receiveAddress, BigDecimal amount, long fee, String accountFilename) {
         try {
             WalletAppKit kit = btcAccountKit.get(accountFilename);
-            Coin value = Coin.valueOf(1000000);
+            Coin value = Coin.valueOf(CommonUtil.convertSatoshiFromBTC(amount).longValue());
             System.out.println("Forwarding " + value.toFriendlyString() + " BTC");
-            // Now send the coins back! Send with a small fee attached to ensure rapid confirmation.
-            final Coin amountToSend = value.subtract(Transaction.REFERENCE_DEFAULT_MIN_TX_FEE);
-            final Wallet.SendResult sendResult = kit.wallet().sendCoins(kit.peerGroup(),
-                    new Address(getNetworkParams(), Hex.decode(receiveAddress)), amountToSend);
-            System.out.println("Sending ...");
-            // Register a callback that is invoked when the transaction has propagated across the network.
-            // This shows a second style of registering ListenableFuture callbacks, it works when you don't
-            // need access to the object the future returns.
+            Address to = Address.fromBase58(getNetworkParams(), receiveAddress);
+            Transaction transaction = new Transaction(getNetworkParams());
+            transaction.addOutput(value, to);
+
+            SendRequest request = SendRequest.forTx(transaction);
+            request.feePerKb = Coin.valueOf(fee);
+
+            Wallet.SendResult sendResult = kit.wallet().sendCoins(kit.peerGroup(), request);
 
             ListeningExecutorService executorService = MoreExecutors.listeningDecorator(Executors.newCachedThreadPool());
 
@@ -231,11 +219,24 @@ public class BtcAccountManager extends BaseService{
                     // The wallet has changed now, it'll get auto saved shortly or when the app shuts down.
                     System.out.println("Sent coins onwards! Transaction hash is " +
                             sendResult.tx.getHashAsString());
+                    RxEventBus.get().post(EventTypeDef.BTC_TRANSACTION_BROADCAST_COMPLETE, true);
                 }
             }, executorService);
+            return true;
         } catch (Exception e) {
             e.fillInStackTrace();
+            return false;
         }
 
+    }
+
+    public boolean isValidBtcAddress(String address) {
+        try {
+            Address.fromBase58(getNetworkParams(), address);
+            return true;
+        } catch (Exception e) {
+            e.fillInStackTrace();
+            return false;
+        }
     }
 }

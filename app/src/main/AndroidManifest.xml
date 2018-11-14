@@ -130,6 +130,7 @@
         <activity android:name=".ui.account.AddressQrcodeBtcActivity" />
         <activity android:name=".ui.account.BtcAccountDetailActivity" />
         <activity android:name=".ui.account.BtcAccountChangePasswordActivity" />
+        <activity android:name=".ui.transaction.BtcTransactionsActivity" />
     </application>
 
 </manifest>

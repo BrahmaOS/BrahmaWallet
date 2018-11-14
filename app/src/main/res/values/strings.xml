@@ -499,4 +499,12 @@
     <string name="current_block_height">Current Block Height</string>
     <string name="private_key_num">Private Keys</string>
     <string name="transactions_num">Transactions</string>
+
+    <!-- btc transfer -->
+    <string name="prompt_btc_fee">Miner Fee</string>
+    <string name="prompt_btc_fee_unit">sat/b</string>
+    <string name="tip_invalid_fee">Invalid miner fee.</string>
+    <string name="title_btc_transfer_request">BTC Transfer Request</string>
+    <string name="tip_error_btc_address">Tips: The invalid btc address.</string>
+    <string name="title_btc_transactions">BTC transactions</string>
 </resources>

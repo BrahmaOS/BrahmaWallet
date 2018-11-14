@@ -33,6 +33,8 @@ public class BrahmaConst {
     // unit Gwei
     public static final int DEFAULT_GAS_PRICE = 20;
     public static final BigDecimal DEFAULT_FEE = BigDecimal.valueOf(0.000400000);
+    // unit sat/b
+    public static final int DEFAULT_MINER_FEE = 50;
 
     public static final String MAINNET_URL = "https://mainnet.infura.io/Gy3Csyt4bzKIGsctm3g0";
     public static final String ROPSTEN_TEST_URL = "https://ropsten.infura.io/Gy3Csyt4bzKIGsctm3g0";
