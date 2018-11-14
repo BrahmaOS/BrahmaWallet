@@ -134,7 +134,7 @@ public class AccountViewModel extends AndroidViewModel {
     }
 
     /**
-     * Generate ethereum account via mnemonics
+     * Generate ethereum & btc account via mnemonics
      */
     public Completable createAccountWithMnemonic(String name, String password) {
         return Completable.fromAction(() -> {
@@ -195,6 +195,105 @@ public class AccountViewModel extends AndroidViewModel {
                     MainService.getInstance().setMnemonicCode(mnemonicCode);
                 }
             } catch (IOException | CipherException | UnreadableWalletException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    /**
+     * Generate ethereum account via mnemonics
+     */
+    public Completable createEthAccountWithMnemonic(String name, String password) {
+        return Completable.fromAction(() -> {
+            try {
+                String passphrase = "";
+                SecureRandom secureRandom = new SecureRandom();
+                long creationTimeSeconds = System.currentTimeMillis() / 1000;
+                DeterministicSeed deterministicSeed = new DeterministicSeed(secureRandom, 128, passphrase, creationTimeSeconds);
+                List<String> mnemonicCode = deterministicSeed.getMnemonicCode();
+
+                if (mnemonicCode != null && mnemonicCode.size() > 0) {
+                    StringBuilder mnemonicStr = new StringBuilder();
+                    for (String mnemonic : mnemonicCode) {
+                        mnemonicStr.append(mnemonic).append(" ");
+                    }
+                    long timeSeconds = System.currentTimeMillis() / 1000;
+                    DeterministicSeed seed = new DeterministicSeed(mnemonicStr.toString().trim(), null, "", timeSeconds);
+
+                    // encrypt mnemonic
+                    String encryptMnemonic = DataCryptoUtils.aes128Encrypt(mnemonicStr.toString().trim(), password);
+
+                    // create ethereum account
+                    DeterministicKeyChain chain = DeterministicKeyChain.builder().seed(seed).build();
+                    List<ChildNumber> keyPath = HDUtils.parsePath("M/44H/60H/0H/0/0");
+                    DeterministicKey key = chain.getKeyByPath(keyPath, true);
+                    BigInteger privateKey = key.getPrivKey();
+                    // Web3j
+                    ECKeyPair ecKeyPair = ECKeyPair.create(privateKey);
+                    WalletFile walletFile = Wallet.createLight(password, ecKeyPair);
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("'UTC--'yyyy-MM-dd'T'HH-mm-ss.SSS'--'");
+                    String filename = dateFormat.format(new Date()) + walletFile.getAddress() + ".json";
+
+                    File destination = new File(getApplication().getFilesDir(), filename);
+                    ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
+                    objectMapper.writeValue(destination, walletFile);
+
+                    AccountEntity account = new AccountEntity();
+                    account.setName(name);
+                    account.setAddress(BrahmaWeb3jService.getInstance().prependHexPrefix(walletFile.getAddress()));
+                    account.setFilename(filename);
+                    account.setCryptoMnemonics(encryptMnemonic);
+                    account.setType(BrahmaConst.ETH_ACCOUNT_TYPE);
+                    ((WalletApp) getApplication()).getRepository().createAccount(account);
+
+                    // set mnemonic code in cache for backup
+                    MainService.getInstance().setMnemonicCode(mnemonicCode);
+                }
+            } catch (IOException | CipherException | UnreadableWalletException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    /**
+     * Generate btc account via mnemonics
+     */
+    public Completable createBtcAccountWithMnemonic(String name, String password) {
+        return Completable.fromAction(() -> {
+            try {
+                String passphrase = "";
+                SecureRandom secureRandom = new SecureRandom();
+                long creationTimeSeconds = System.currentTimeMillis() / 1000;
+                DeterministicSeed deterministicSeed = new DeterministicSeed(secureRandom, 128, passphrase, creationTimeSeconds);
+                List<String> mnemonicCode = deterministicSeed.getMnemonicCode();
+
+                if (mnemonicCode != null && mnemonicCode.size() > 0) {
+                    StringBuilder mnemonicStr = new StringBuilder();
+                    for (String mnemonic : mnemonicCode) {
+                        mnemonicStr.append(mnemonic).append(" ");
+                    }
+                    long timeSeconds = System.currentTimeMillis() / 1000;
+                    DeterministicSeed seed = new DeterministicSeed(mnemonicStr.toString().trim(), null, "", timeSeconds);
+
+                    // encrypt mnemonic
+                    String encryptMnemonic = DataCryptoUtils.aes128Encrypt(mnemonicStr.toString().trim(), password);
+
+                    // create btc account
+                    String btcFilePrefix = seed.toHexString();
+                    seed.setCreationTimeSeconds(timeSeconds);
+                    BtcAccountManager.getInstance().createWalletAppKit(btcFilePrefix, seed);
+                    AccountEntity btcAccount = new AccountEntity();
+                    btcAccount.setName(name);
+                    btcAccount.setAddress("");
+                    btcAccount.setFilename(btcFilePrefix);
+                    btcAccount.setCryptoMnemonics(encryptMnemonic);
+                    btcAccount.setType(BrahmaConst.BTC_ACCOUNT_TYPE);
+                    ((WalletApp) getApplication()).getRepository().createAccount(btcAccount);
+
+                    // set mnemonic code in cache for backup
+                    MainService.getInstance().setMnemonicCode(mnemonicCode);
+                }
+            } catch (UnreadableWalletException e) {
                 e.printStackTrace();
             }
         });
@@ -273,6 +372,37 @@ public class AccountViewModel extends AndroidViewModel {
                 e.onNext("exception");
             }
             e.onCompleted();
+        });
+    }
+
+    /*
+     * Restore BTC account through mnemonics
+     * If an exception is returned, an exception has occurred during processing.
+     */
+    public Completable restoreBtcAccountWithMnemonics(String mnemonics, String password, String accountName) {
+        return Completable.fromAction(() -> {
+            try {
+                List<String> mnemonicsCodes = Splitter.on(" ").splitToList(mnemonics);
+                MnemonicCode.INSTANCE.check(mnemonicsCodes);
+                long timeSeconds = System.currentTimeMillis() / 1000;
+                DeterministicSeed seed = new DeterministicSeed(mnemonics, null, "", timeSeconds);
+
+                // restore btc account
+                // encrypt mnemonic
+                String encryptMnemonic = DataCryptoUtils.aes128Encrypt(mnemonics.toString().trim(), password);
+                String btcFilePrefix = seed.toHexString();
+                //seed.setCreationTimeSeconds(timeSeconds);
+                BtcAccountManager.getInstance().restoreWalletAppKit(btcFilePrefix, seed);
+                AccountEntity btcAccount = new AccountEntity();
+                btcAccount.setName(accountName);
+                btcAccount.setAddress("");
+                btcAccount.setFilename(btcFilePrefix);
+                btcAccount.setType(BrahmaConst.BTC_ACCOUNT_TYPE);
+                btcAccount.setCryptoMnemonics(encryptMnemonic);
+                ((WalletApp) getApplication()).getRepository().createAccount(btcAccount);
+            } catch (MnemonicException | UnreadableWalletException e) {
+                e.printStackTrace();
+            }
         });
     }
 

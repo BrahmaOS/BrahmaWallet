@@ -155,7 +155,15 @@
     <string name="menu_accounts">账号</string>
     <string name="menu_contacts">联系人</string>
     <string name="action_create_account">创建账号</string>
-    <string name="action_import_account">导入账号</string>
+    <string name="action_restore_account">恢复账号</string>
+    <string name="action_create_eth_account">创建ETH账号</string>
+    <string name="action_restore_eth_account">恢复ETH账号</string>
+    <string name="action_create_btc_account">创建BTC账号</string>
+    <string name="action_restore_btc_account">恢复BTC账号</string>
+
+    <!-- restore account-->
+    <string name="title_restore_account">恢复账号</string>
+    <string name="success_restore_account">恢复账号成功!</string>
 
     <string name="title_activity_import_account">导入账号</string>
     <string name="import_official_editor_hint">keystore内容</string>
@@ -398,11 +406,6 @@
     <string name="label_transaction_input_data">备注</string>
     <string name="label_copy_etherscan_url">复制Etherscan详情链接</string>
 
-    <!-- restore account-->
-    <string name="title_restore_account">恢复账号</string>
-    <string name="action_restore_account">恢复账号</string>
-    <string name="success_restore_account">恢复账号成功!</string>
-
     <!-- btc assets -->
     <string name="current_price">当前价格</string>
     <string name="prompt_send">发送</string>
@@ -421,6 +424,10 @@
     <string name="btc_child_address">子地址</string>
     <string name="transfer_btc">转入 BTC</string>
     <string name="enter_btc_amount">输入金额</string>
+    <string name="invalid_btc_address">非法的BTC地址</string>
+    <string name="current_block_height">当前同步区块</string>
+    <string name="private_key_num">私钥数</string>
+    <string name="transactions_num">交易数</string>
 
     <!-- btc transfer -->
     <string name="prompt_btc_fee">费用</string>

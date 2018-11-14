@@ -69,7 +69,7 @@
                     style="@style/RoundButtonSingle"
                     android:layout_marginTop="@dimen/space_larger"
                     android:layout_marginBottom="@dimen/space_larger"
-                    android:text="@string/action_import_account" />
+                    android:text="@string/action_restore_account" />
 
             </LinearLayout>
         </android.support.constraint.ConstraintLayout>

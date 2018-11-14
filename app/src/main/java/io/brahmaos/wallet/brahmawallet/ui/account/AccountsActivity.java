@@ -61,7 +61,7 @@ public class AccountsActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.menu_create_account) {
-            Intent intent = new Intent(this, CreateAccountActivity.class);
+            Intent intent = new Intent(this, CreateEthAccountActivity.class);
             startActivity(intent);
             return true;
         } else if (id == R.id.menu_import_account) {

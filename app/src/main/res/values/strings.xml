@@ -143,9 +143,9 @@
 
     <string name="error_account_exists">Account exists! Please check the input.</string>
     <string name="error_account_address">Error account address!</string>
-    <string name="success_import_account">Import account success!</string>
-    <string name="error_import_keystore">Import account error! please check keystore and password!</string>
-    <string name="error_import_private_key">Import account error! please check private key!</string>
+    <string name="success_import_account">Restore account success!</string>
+    <string name="error_import_keystore">Restore account error! please check keystore and password!</string>
+    <string name="error_import_private_key">Restore account error! please check private key!</string>
     <string name="error_keystore">Error keystore!</string>
     <string name="error_private_key">Error private key!</string>
     <string name="error_mnemonics">Error mnemonics!</string>
@@ -160,9 +160,17 @@
     <string name="menu_accounts">Accounts</string>
     <string name="menu_contacts">Contacts</string>
     <string name="action_create_account">Create Account</string>
-    <string name="action_import_account">Import Account</string>
+    <string name="action_restore_account">Restore Account</string>
+    <string name="action_create_eth_account">Create ETH Account</string>
+    <string name="action_restore_eth_account">Restore ETH Account</string>
+    <string name="action_create_btc_account">Create BTC Account</string>
+    <string name="action_restore_btc_account">Restore BTC Account</string>
+    `
+    <!-- restore account-->
+    <string name="title_restore_account">Restore Account</string>
+    <string name="success_restore_account">Restore account success!</string>
 
-    <string name="title_activity_import_account">Import Account</string>
+    <string name="title_activity_import_account">Restore Account</string>
     <string name="import_official_editor_hint">keystore content</string>
     <string name="import_mnemonics_hint">Please use space to separate mnemonic words.</string>
     <string name="import_private_key_hint">private key</string>
@@ -471,11 +479,6 @@
     <string name="label_transaction_time">Time</string>
     <string name="label_transaction_input_data">Remark</string>
     <string name="label_copy_etherscan_url">Copy Etherscan details url</string>
-
-    <!-- restore account-->
-    <string name="title_restore_account">Restore Account</string>
-    <string name="action_restore_account">Restore Account</string>
-    <string name="success_restore_account">Restore account success!</string>
 
     <!-- btc assets -->
     <string name="current_price">Current Price</string>

@@ -8,12 +8,12 @@
         app:showAsAction="always">
         <menu>
             <item android:id="@+id/menu_create_account"
-                android:title="@string/action_create_account"
+                android:title="@string/action_create_eth_account"
                 android:titleCondensed="Accept"
                 android:orderInCategory="70"
                 app:showAsAction="never"/>
             <item android:id="@+id/menu_import_account"
-                android:title="@string/action_import_account"
+                android:title="@string/action_restore_eth_account"
                 android:titleCondensed="Accept"
                 android:orderInCategory="80"
                 app:showAsAction="never" />

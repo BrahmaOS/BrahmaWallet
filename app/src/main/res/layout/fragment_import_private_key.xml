@@ -125,7 +125,7 @@
                 style="@style/ButtonSingle"
                 android:enabled="false"
                 android:layout_marginTop="@dimen/space_normal"
-                android:text="@string/action_import_account"
+                android:text="@string/action_restore_account"
                 android:textStyle="bold" />
         </LinearLayout>
     </ScrollView>

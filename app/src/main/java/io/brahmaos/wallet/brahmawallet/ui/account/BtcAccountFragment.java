@@ -14,7 +14,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -54,7 +56,10 @@ public class BtcAccountFragment extends Fragment {
 
     // UI references.
     private View parentView;
-    RecyclerView recyclerViewAccounts;
+    private RecyclerView recyclerViewAccounts;
+    private LinearLayout mLayoutCreateAccount;
+    private Button mBtnCreateBtcAccount;
+    private TextView mTvRestoreBtcAccount;
 
     private AccountViewModel mViewModel;
     private List<AccountEntity> accounts = new ArrayList<>();
@@ -110,7 +115,7 @@ public class BtcAccountFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         BLog.d(tag(), "onCreateView");
         if (parentView == null) {
-            parentView = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_accounts_eth, container, false);
+            parentView = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_accounts_btc, container, false);
             initView();
         } else {
             ViewGroup parent = (ViewGroup)parentView.getParent();
@@ -134,16 +139,36 @@ public class BtcAccountFragment extends Fragment {
                     }
                 }
             }
-            recyclerViewAccounts.getAdapter().notifyDataSetChanged();
+            if (accounts == null || accounts.size() == 0) {
+                BLog.e(tag(), "the account is null");
+                mLayoutCreateAccount.setVisibility(View.VISIBLE);
+                recyclerViewAccounts.setVisibility(View.GONE);
+            } else {
+                mLayoutCreateAccount.setVisibility(View.GONE);
+                recyclerViewAccounts.setVisibility(View.VISIBLE);
+                recyclerViewAccounts.getAdapter().notifyDataSetChanged();
+            }
         });
     }
 
     private void initView() {
+        mLayoutCreateAccount = parentView.findViewById(R.id.layout_new_account);
         recyclerViewAccounts = parentView.findViewById(R.id.accounts_recycler);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerViewAccounts.setLayoutManager(layoutManager);
         recyclerViewAccounts.setAdapter(new AccountRecyclerAdapter());
         cryptoCurrencies = MainService.getInstance().getCryptoCurrencies();
+
+        mBtnCreateBtcAccount = parentView.findViewById(R.id.btn_create_account);
+        mBtnCreateBtcAccount.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), CreateBtcAccountActivity.class);
+            startActivity(intent);
+        });
+        mTvRestoreBtcAccount = parentView.findViewById(R.id.tv_restore_account);
+        mTvRestoreBtcAccount.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), RestoreBtcAccountActivity.class);
+            startActivity(intent);
+        });
     }
 
     /**
