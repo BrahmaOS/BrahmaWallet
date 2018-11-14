@@ -9,15 +9,15 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space_small"
-        android:layout_marginBottom="@dimen/space_small"
+        android:layout_marginTop="@dimen/space_normal"
+        android:layout_marginBottom="@dimen/space_normal"
         android:paddingStart="@dimen/space_normal"
         android:paddingEnd="@dimen/space_normal">
 
         <ImageView
             android:id="@+id/iv_transaction_status_icon"
             android:layout_centerVertical="true"
-            android:layout_marginEnd="@dimen/space_normal"
+            android:layout_marginEnd="@dimen/space_larger"
             android:layout_width="@dimen/toolbar_icon_size"
             android:layout_height="@dimen/toolbar_icon_size"
             android:src="@drawable/icon_receive"/>
@@ -29,14 +29,13 @@
             android:orientation="vertical">
             <TextView
                 android:id="@+id/tv_transaction_time"
+                android:textSize="@dimen/font_size_subtitle"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="2018-08-08 10:10:10"/>
+                android:layout_height="wrap_content"/>
             <TextView
                 android:id="@+id/tv_confirm_status"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="confirmed"/>
+                android:layout_height="wrap_content"/>
         </LinearLayout>
 
         <TextView
@@ -48,6 +47,7 @@
             android:textSize="@dimen/font_size_title"/>
     </RelativeLayout>
     <LinearLayout
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginStart="@dimen/space_normal"

@@ -2,6 +2,7 @@ package io.brahmaos.wallet.brahmawallet.ui.transfer;
 
 import android.Manifest;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -455,8 +457,8 @@ public class EthTransferActivity extends BaseActivity {
         BigDecimal finalAmount = amount;
         confirmBtn.setOnClickListener(v -> {
             final View dialogView = getLayoutInflater().inflate(R.layout.dialog_account_password, null);
-
-            AlertDialog passwordDialog = new AlertDialog.Builder(EthTransferActivity.this)
+            EditText etPassword = dialogView.findViewById(R.id.et_password);
+            AlertDialog passwordDialog = new AlertDialog.Builder(EthTransferActivity.this, R.style.Theme_AppCompat_Light_Dialog_Alert_Self)
                     .setView(dialogView)
                     .setCancelable(false)
                     .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel())
@@ -465,7 +467,7 @@ public class EthTransferActivity extends BaseActivity {
                         // show transfer progress
                         layoutTransferStatus.setVisibility(View.VISIBLE);
                         customStatusView.loadLoading();
-                        String password = ((EditText) dialogView.findViewById(R.id.et_password)).getText().toString();
+                        String password = etPassword.getText().toString();
                         BrahmaWeb3jService.getInstance().sendTransfer(mAccount, mToken, password, receiverAddress,
                                 finalAmount, gasPrice, gasLimit, remark)
                                 .subscribeOn(Schedulers.io())
@@ -521,6 +523,10 @@ public class EthTransferActivity extends BaseActivity {
                                 });
                         })
                     .create();
+            passwordDialog.setOnShowListener(dialog -> {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(etPassword, InputMethodManager.SHOW_IMPLICIT);
+            });
             passwordDialog.show();
         });
     }

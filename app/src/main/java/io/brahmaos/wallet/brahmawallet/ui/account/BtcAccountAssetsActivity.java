@@ -31,6 +31,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -115,6 +116,10 @@ public class BtcAccountAssetsActivity extends BaseActivity {
     RelativeLayout mLayoutTransaction;
     @BindView(R.id.tv_transactions_num)
     TextView mTvTransactionNum;
+    @BindView(R.id.layout_pending_transaction_content)
+    RelativeLayout mLayoutPendingTransaction;
+    @BindView(R.id.tv_pending_transaction_content)
+    TextView mTvPendingTransaction;
 
     private int accountId;
     private AccountEntity account;
@@ -235,7 +240,7 @@ public class BtcAccountAssetsActivity extends BaseActivity {
                 .subscribe(new Observer<Transaction>() {
                     @Override
                     public void onNext(Transaction transaction) {
-                        BLog.d(tag(), transaction.toString());
+                        setBtcTransactionInfo();
                     }
 
                     @Override
@@ -377,6 +382,23 @@ public class BtcAccountAssetsActivity extends BaseActivity {
             mTvPrivateKeyNum.setText(String.valueOf(kit.wallet().getActiveKeyChain().getIssuedExternalKeys()
                     + kit.wallet().getActiveKeyChain().getIssuedInternalKeys()));
             mTvTransactionNum.setText(String.valueOf(kit.wallet().getTransactionsByTime().size()));
+
+            // exist pending transaction
+            if (!kit.wallet().getPendingTransactions().isEmpty()) {
+                mLayoutPendingTransaction.setVisibility(View.VISIBLE);
+                Iterator iterator = kit.wallet().getPendingTransactions().iterator();
+                if (iterator.hasNext()) {
+                    Transaction transaction = (Transaction) iterator.next();
+                    long txAmount = transaction.getValue(kit.wallet()).value;
+                    if (txAmount > 0) {
+                        mTvPendingTransaction.setText(String.format("%s %s %s", getString(R.string.prompt_receiving), CommonUtil.convertBTCFromSatoshi(txAmount).toString(), getString(R.string.account_btc)));
+                    } else {
+                        mTvPendingTransaction.setText(String.format("%s %s %s", getString(R.string.prompt_sending), CommonUtil.convertBTCFromSatoshi(txAmount * -1).toString(), getString(R.string.account_btc)));
+                    }
+                }
+            } else {
+                mLayoutPendingTransaction.setVisibility(View.GONE);
+            }
         }
     }
 

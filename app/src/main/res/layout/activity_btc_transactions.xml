@@ -42,43 +42,6 @@
                     android:layout_height="wrap_content"
                     android:descendantFocusability="blocksDescendants"
                     android:orientation="vertical">
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@color/white"
-                        android:paddingStart="@dimen/space_normal"
-                        android:paddingEnd="@dimen/space_normal"
-                        android:paddingTop="@dimen/space_normal"
-                        android:paddingBottom="@dimen/space_normal">
-                        <ImageView
-                            android:id="@+id/iv_account_avatar"
-                            android:layout_gravity="center"
-                            android:background="@drawable/icon_circle_bg"
-                            android:layout_width="@dimen/icon_normal_size"
-                            android:layout_height="@dimen/icon_normal_size"
-                            android:padding="@dimen/space_smaller"/>
-                        <LinearLayout
-                            android:layout_toEndOf="@id/iv_account_avatar"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/space_normal"
-                            android:layout_centerVertical="true"
-                            android:orientation="vertical">
-                            <TextView
-                                android:id="@+id/tv_account_name"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textSize="@dimen/font_size_subtitle"
-                                android:textColor="@color/black"
-                                android:text="@string/account_btc"/>
-                        </LinearLayout>
-                    </RelativeLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="16dp"
-                        android:background="@color/main_bg"/>
-
                     <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">

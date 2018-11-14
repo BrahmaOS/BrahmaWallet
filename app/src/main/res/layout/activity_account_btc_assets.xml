@@ -206,6 +206,22 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
                 <RelativeLayout
+                    android:id="@+id/layout_pending_transaction_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    android:paddingTop="@dimen/space_small"
+                    android:paddingBottom="@dimen/space_small">
+                    <TextView
+                        android:id="@+id/tv_pending_transaction_content"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:textSize="@dimen/font_size_body"
+                        android:textColor="@color/viewfinder_laser"
+                        android:text="Sending  0.01 BTC"/>
+                </RelativeLayout>
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/white"

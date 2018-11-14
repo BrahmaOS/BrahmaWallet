@@ -421,4 +421,16 @@
     <string name="btc_child_address">子地址</string>
     <string name="transfer_btc">转入 BTC</string>
     <string name="enter_btc_amount">输入金额</string>
+
+    <!-- btc transfer -->
+    <string name="prompt_btc_fee">费用</string>
+    <string name="prompt_btc_fee_unit">sat/b</string>
+    <string name="tip_invalid_fee">请输入正确的费用.</string>
+    <string name="title_btc_transfer_request">BTC转账</string>
+    <string name="tip_error_btc_address">提示: 非法的BTC地址</string>
+    <string name="title_btc_transactions">BTC交易列表</string>
+    <string name="prompt_sending">发送 </string>
+    <string name="prompt_receiving">接收 </string>
+    <string name="transaction_confirmed">确认成功</string>
+    <string name="transaction_confirming">确认中</string>
 </resources>

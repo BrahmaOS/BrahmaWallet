@@ -24,6 +24,7 @@ import org.bitcoinj.kits.WalletAppKit;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -46,10 +47,6 @@ public class BtcTransactionsActivity extends BaseActivity {
     SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.sv_content)
     NestedScrollView nestedScrollView;
-    @BindView(R.id.iv_account_avatar)
-    ImageView ivAccountAvatar;
-    @BindView(R.id.tv_account_name)
-    TextView tvAccountName;
 
     @BindView(R.id.transactions_recycler)
     RecyclerView recyclerViewTransactions;
@@ -80,7 +77,6 @@ public class BtcTransactionsActivity extends BaseActivity {
         swipeRefreshLayout.setColorSchemeResources(R.color.master);
         swipeRefreshLayout.setOnRefreshListener(this::getBtcTransactions);
 
-        showAccountInfo(mAccount);
         swipeRefreshLayout.setRefreshing(true);
         recyclerViewTransactions.setVisibility(View.GONE);
         layoutNoTransactions.setVisibility(View.GONE);
@@ -98,13 +94,6 @@ public class BtcTransactionsActivity extends BaseActivity {
         // Solve the sliding lag problem
         recyclerViewTransactions.setHasFixedSize(true);
         recyclerViewTransactions.setNestedScrollingEnabled(false);
-    }
-
-    private void showAccountInfo(AccountEntity account) {
-        if (account != null) {
-            ImageManager.showAccountAvatar(this, ivAccountAvatar, account);
-            tvAccountName.setText(account.getName());
-        }
     }
 
     private void getBtcTransactions() {
@@ -155,7 +144,13 @@ public class BtcTransactionsActivity extends BaseActivity {
                 startActivity(intent);*/
             });
             holder.tvTxTime.setText(CommonUtil.timestampToDate(transaction.getUpdateTime().getTime() / 1000, null));
-            holder.tvTxSendStatus.setText(String.valueOf(transaction.getConfidence().getDepthInBlocks()));
+            int depthInBlocks = transaction.getConfidence().getDepthInBlocks();
+            if (depthInBlocks >= BtcAccountManager.MIN_CONFIRM_BLOCK_HEIGHT) {
+                holder.tvTxSendStatus.setText(R.string.transaction_confirmed);
+            } else {
+                holder.tvTxSendStatus.setText(String.format(Locale.getDefault(), "%s %d/%d", getString(R.string.transaction_confirming), depthInBlocks, BtcAccountManager.MIN_CONFIRM_BLOCK_HEIGHT));
+                holder.tvTxSendStatus.setTextColor(getResources().getColor(R.color.master));
+            }
             String sendAmount = String.valueOf(CommonUtil.convertBTCFromSatoshi(transaction.getValue(kit.wallet()).value));
             holder.tvTxAmount.setText(sendAmount);
             if (transaction.getValue(kit.wallet()).value < 0) {

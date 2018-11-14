@@ -48,6 +48,7 @@ public class BtcAccountManager extends BaseService{
     }
 
     public static int BYTES_PER_BTC_KB = 1000;
+    public static int MIN_CONFIRM_BLOCK_HEIGHT = 6;
 
     private Map<String, WalletAppKit> btcAccountKit = new HashMap<>();
 
@@ -112,8 +113,9 @@ public class BtcAccountManager extends BaseService{
     private TransactionConfidenceEventListener txListener = new TransactionConfidenceEventListener() {
         @Override
         public void onTransactionConfidenceChanged(Wallet wallet, Transaction tx) {
-            BLog.d(tag(), tx.toString());
-            RxEventBus.get().post(EventTypeDef.BTC_TRANSACTION_CHANGE, tx);
+            if (tx.getConfidence().getDepthInBlocks() <= MIN_CONFIRM_BLOCK_HEIGHT) {
+                RxEventBus.get().post(EventTypeDef.BTC_TRANSACTION_CHANGE, tx);
+            }
         }
     };
 

@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -371,14 +372,14 @@ public class BtcTransferActivity extends BaseActivity {
         final BigDecimal finalAmount = amount;
         confirmBtn.setOnClickListener(v -> {
             final View dialogView = getLayoutInflater().inflate(R.layout.dialog_account_password, null);
-
-            AlertDialog passwordDialog = new AlertDialog.Builder(BtcTransferActivity.this)
+            EditText etPassword = dialogView.findViewById(R.id.et_password);
+            AlertDialog passwordDialog = new AlertDialog.Builder(BtcTransferActivity.this, R.style.Theme_AppCompat_Light_Dialog_Alert_Self)
                     .setView(dialogView)
                     .setCancelable(false)
                     .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel())
                     .setPositiveButton(R.string.ok, (dialog, which) -> {
                         dialog.cancel();
-                        String password = ((EditText) dialogView.findViewById(R.id.et_password)).getText().toString();
+                        String password = etPassword.getText().toString();
                         if (isValidPassword(password)) {
                             // show transfer progress
                             layoutTransferStatus.setVisibility(View.VISIBLE);
@@ -399,6 +400,10 @@ public class BtcTransferActivity extends BaseActivity {
                         }
                     })
                     .create();
+            passwordDialog.setOnShowListener(dialog -> {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(etPassword, InputMethodManager.SHOW_IMPLICIT);
+            });
             passwordDialog.show();
         });
     }

@@ -91,6 +91,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:textAlignment="viewEnd"
+                                android:layout_marginEnd="@dimen/space_smaller"
                                 android:textSize="@dimen/font_size_subheading"/>
                             <TextView
                                 android:layout_width="wrap_content"
