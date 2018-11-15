@@ -12,6 +12,7 @@
     <string name="unit_usd">USD</string>
     <string name="account_eth">ETH</string>
     <string name="account_btc">BTC</string>
+    <string name="create">Create</string>
 
     <string name="title_brahma_wallet">Wallet</string>
     <string name="brahma_wallet_desc">Your smart digital wallet</string>
@@ -514,4 +515,5 @@
     <string name="prompt_receiving">Receiving </string>
     <string name="transaction_confirmed">Confirmed</string>
     <string name="transaction_confirming">Confirming</string>
+    <string name="tip_no_btc_account">You don\'t have btc account yet, so you can\'t transfer BTC.</string>
 </resources>

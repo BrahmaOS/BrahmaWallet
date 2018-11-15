@@ -8,6 +8,7 @@
     <string name="delete">删除</string>
     <string name="unit_cny">CNY</string>
     <string name="unit_usd">USD</string>
+    <string name="create">立即创建</string>
 
     <string name="title_brahma_wallet">梵钱包</string>
     <string name="brahma_wallet_desc">您的数字智能钱包</string>
@@ -156,10 +157,10 @@
     <string name="menu_contacts">联系人</string>
     <string name="action_create_account">创建账号</string>
     <string name="action_restore_account">恢复账号</string>
-    <string name="action_create_eth_account">创建ETH账号</string>
-    <string name="action_restore_eth_account">恢复ETH账号</string>
-    <string name="action_create_btc_account">创建BTC账号</string>
-    <string name="action_restore_btc_account">恢复BTC账号</string>
+    <string name="action_create_eth_account">创建 ETH 账号</string>
+    <string name="action_restore_eth_account">恢复 ETH 账号</string>
+    <string name="action_create_btc_account">创建 BTC 账号</string>
+    <string name="action_restore_btc_account">恢复 BTC 账号</string>
 
     <!-- restore account-->
     <string name="title_restore_account">恢复账号</string>
@@ -434,10 +435,11 @@
     <string name="prompt_btc_fee_unit">sat/b</string>
     <string name="tip_invalid_fee">请输入正确的费用.</string>
     <string name="title_btc_transfer_request">BTC转账</string>
-    <string name="tip_error_btc_address">提示: 非法的BTC地址</string>
+    <string name="tip_error_btc_address">提示: 非法的 BTC 地址</string>
     <string name="title_btc_transactions">BTC交易列表</string>
     <string name="prompt_sending">发送 </string>
     <string name="prompt_receiving">接收 </string>
     <string name="transaction_confirmed">确认成功</string>
     <string name="transaction_confirming">确认中</string>
+    <string name="tip_no_btc_account">您还没有 BTC 账号，无法转账。</string>
 </resources>

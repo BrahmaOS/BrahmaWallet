@@ -12,6 +12,7 @@
     <string name="unit_usd">USD</string>
     <string name="account_eth">ETH</string>
     <string name="account_btc">BTC</string>
+    <string name="create">Create</string>
 
     <string name="title_brahma_wallet">Wallet</string>
     <string name="brahma_wallet_desc">Your smart digital wallet</string>
@@ -52,6 +53,7 @@
     <string name="title_dialog_export_keystore">Export Keystore</string>
     <string name="title_dialog_export_private_key">Export Private Key</string>
     <string name="title_dialog_export_mnemonics">Export Mnemonics</string>
+
     <string name="export_keystore_tip_1">
         Store offline. Please store keystore to a safe offline place. Never put it on internet.
     </string>
@@ -169,7 +171,7 @@
     <string name="title_restore_account">Restore Account</string>
     <string name="success_restore_account">Restore account success!</string>
 
-    <string name="title_activity_import_account">Import Account</string>
+    <string name="title_activity_import_account">Restore Account</string>
     <string name="import_official_editor_hint">keystore content</string>
     <string name="import_mnemonics_hint">Please use space to separate mnemonic words.</string>
     <string name="import_private_key_hint">private key</string>
@@ -513,4 +515,5 @@
     <string name="prompt_receiving">Receiving </string>
     <string name="transaction_confirmed">Confirmed</string>
     <string name="transaction_confirming">Confirming</string>
+    <string name="tip_no_btc_account">You don\'t have btc account yet.</string>
 </resources>

@@ -13,6 +13,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -63,6 +64,7 @@ import io.brahmaos.wallet.brahmawallet.service.MainService;
 import io.brahmaos.wallet.brahmawallet.service.VersionUpgradeService;
 import io.brahmaos.wallet.brahmawallet.ui.account.AccountsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.account.CreateAccountActivity;
+import io.brahmaos.wallet.brahmawallet.ui.account.CreateBtcAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.account.RestoreAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.ui.contact.ContactsActivity;
@@ -601,9 +603,29 @@ public class MainActivity extends BaseActivity
             }
             holder.layoutAssets.setOnClickListener(v -> {
                 if (tokenEntity.getName().toLowerCase().equals(BrahmaConst.BITCOIN)) {
-                    Intent intent = new Intent(MainActivity.this, BtcTransferActivity.class);
-                    intent.putExtra(IntentParam.PARAM_TOKEN_INFO, tokenEntity);
-                    startActivityForResult(intent, REQ_CODE_TRANSFER);
+                    List<AccountEntity> btcAccounts = new ArrayList<>();
+                    for (AccountEntity accountEntity : cacheAccounts) {
+                        if (accountEntity.getType() == BrahmaConst.BTC_ACCOUNT_TYPE) {
+                            btcAccounts.add(accountEntity);
+                        }
+                    }
+                    if (btcAccounts.size() > 0) {
+                        Intent intent = new Intent(MainActivity.this, BtcTransferActivity.class);
+                        intent.putExtra(IntentParam.PARAM_TOKEN_INFO, tokenEntity);
+                        startActivityForResult(intent, REQ_CODE_TRANSFER);
+                    } else {
+                        AlertDialog passwordDialog = new AlertDialog.Builder(MainActivity.this)
+                                .setMessage(R.string.tip_no_btc_account)
+                                .setCancelable(true)
+                                .setPositiveButton(R.string.create, (dialog, which) -> {
+                                    dialog.cancel();
+                                    Intent intent = new Intent(MainActivity.this, CreateBtcAccountActivity.class);
+                                    startActivity(intent);
+                                })
+                                .create();
+                        passwordDialog.show();
+                    }
+
                 } else {
                     Intent intent = new Intent(MainActivity.this, EthTransferActivity.class);
                     intent.putExtra(IntentParam.PARAM_TOKEN_INFO, tokenEntity);

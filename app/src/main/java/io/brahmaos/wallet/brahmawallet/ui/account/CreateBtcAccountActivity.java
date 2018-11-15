@@ -50,6 +50,8 @@ public class CreateBtcAccountActivity extends BaseActivity {
     TextView tvServiceAgreement;
     @BindView(R.id.privacy_policy_tv)
     TextView tvPrivacyPolicy;
+    @BindView(R.id.btn_restore_account)
+    TextView tvRestoreAccount;
 
     private CustomProgressDialog customProgressDialog;
     private AccountViewModel mViewModel;
@@ -63,7 +65,7 @@ public class CreateBtcAccountActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_account);
+        setContentView(R.layout.activity_create_btc_account);
         ButterKnife.bind(this);
         showNavBackBtn();
         mViewModel = ViewModelProviders.of(this).get(AccountViewModel.class);
@@ -74,14 +76,6 @@ public class CreateBtcAccountActivity extends BaseActivity {
                 accounts = accountEntities;
             }
         });
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
-            ActionBar ab = getSupportActionBar();
-            if (ab != null) {
-                ab.setTitle(getString(R.string.action_create_btc_account));
-            }
-        }
     }
 
     @Override
@@ -100,6 +94,12 @@ public class CreateBtcAccountActivity extends BaseActivity {
         tvPrivacyPolicy.setOnClickListener(v -> {
             Intent intent = new Intent(CreateBtcAccountActivity.this, PrivacyPolicyActivity.class);
             startActivity(intent);
+        });
+
+        tvRestoreAccount.setOnClickListener(v -> {
+            Intent intent = new Intent(CreateBtcAccountActivity.this, RestoreBtcAccountActivity.class);
+            startActivity(intent);
+            finish();
         });
     }
 
