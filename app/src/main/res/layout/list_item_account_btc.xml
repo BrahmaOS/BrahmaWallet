@@ -60,7 +60,7 @@
                         android:id="@+id/tv_account_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="@dimen/font_size_subheading"
+                        android:textSize="@dimen/font_size_subtitle"
                         android:textColor="@color/white"/>
                     <TextView
                         android:id="@+id/tv_account_address"
@@ -83,6 +83,7 @@
                 android:layout_width="match_parent"
                 android:layout_marginTop="@dimen/space_normal"
                 android:layout_marginBottom="@dimen/space_small"
+                android:layout_marginStart="56dp"
                 android:layout_height="1px"
                 android:background="#D9ffffff"/>
             <RelativeLayout

@@ -8,8 +8,8 @@ android {
         applicationId "io.brahmaos.wallet.brahmawallet"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 7000
-        versionName "Neptune (v1.0.0b3)"
+        versionCode 1000000
+        versionName "Neptune (v1.0.0)"
         multiDexEnabled true
 
         buildConfigField("String", "WALLET_API_URL", "\"${WALLET_API_URL}\"")

@@ -110,6 +110,8 @@
                         android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="1px"
+                        android:layout_marginStart="72dp"
+                        android:layout_marginEnd="@dimen/space_normal"
                         android:background="#66FFFFFF"/>
                     <RelativeLayout
                         android:layout_width="match_parent"

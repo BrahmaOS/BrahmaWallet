@@ -58,7 +58,7 @@ public class BtcAccountManager extends BaseService{
         return true;
     }
 
-    private NetworkParameters getNetworkParams() {
+    public NetworkParameters getNetworkParams() {
         return TestNet3Params.get();
     }
 

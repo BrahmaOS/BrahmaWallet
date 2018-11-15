@@ -43,7 +43,7 @@ import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class AddressQrcodeBtcActivity extends BaseActivity {
+public class BtcAddressQrcodeActivity extends BaseActivity {
 
     @BindView(R.id.iv_account_avatar)
     ImageView ivAccountAvatar;
@@ -76,7 +76,7 @@ public class AddressQrcodeBtcActivity extends BaseActivity {
 
     @Override
     protected String tag() {
-        return AddressQrcodeBtcActivity.class.getName();
+        return BtcAddressQrcodeActivity.class.getName();
     }
 
     @Override
@@ -130,7 +130,14 @@ public class AddressQrcodeBtcActivity extends BaseActivity {
             ImageManager.showAccountAvatar(this, ivAccountAvatar, account);
             tvAccountName.setText(account.getName());
             final Wallet wallet = kit.wallet();
-            final String mainAddress = wallet.currentChangeAddress().toBase58();
+            String firstAddress = wallet.currentChangeAddress().toBase58();
+            if (wallet.getActiveKeyChain() != null &&
+                    wallet.getActiveKeyChain().getIssuedReceiveKeys() != null &&
+                    wallet.getActiveKeyChain().getIssuedReceiveKeys().size() > 0) {
+                firstAddress = wallet.getActiveKeyChain().getIssuedReceiveKeys().get(0).
+                        toAddress(BtcAccountManager.getInstance().getNetworkParams()).toBase58();
+            }
+            final String mainAddress = firstAddress;
             final String childAddress = wallet.currentReceiveAddress().toBase58();
             currentAddress = mainAddress;
             tvAccountAddress.setText(CommonUtil.generateSimpleAddress(currentAddress));
@@ -222,7 +229,7 @@ public class AddressQrcodeBtcActivity extends BaseActivity {
                             ivAddressCode.requestLayout();
                         }
                         RequestOptions options = RequestOptions.placeholderOf(R.drawable.btc_address_bg);
-                        Glide.with(AddressQrcodeBtcActivity.this)
+                        Glide.with(BtcAddressQrcodeActivity.this)
                                 .load(bitmap)
                                 .apply(options)
                                 .into(ivAddressCode);

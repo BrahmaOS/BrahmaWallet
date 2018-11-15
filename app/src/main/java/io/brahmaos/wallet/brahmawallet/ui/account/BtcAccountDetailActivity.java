@@ -115,13 +115,13 @@ public class BtcAccountDetailActivity extends BaseActivity {
         });
 
         layoutAccountAddress.setOnClickListener(v -> {
-            Intent intent = new Intent(BtcAccountDetailActivity.this, AddressQrcodeBtcActivity.class);
+            Intent intent = new Intent(BtcAccountDetailActivity.this, BtcAddressQrcodeActivity.class);
             intent.putExtra(IntentParam.PARAM_ACCOUNT_ID, account.getId());
             startActivity(intent);
         });
 
         layoutAccountAddressQRCode.setOnClickListener(v -> {
-            Intent intent = new Intent(BtcAccountDetailActivity.this, AddressQrcodeBtcActivity.class);
+            Intent intent = new Intent(BtcAccountDetailActivity.this, BtcAddressQrcodeActivity.class);
             intent.putExtra(IntentParam.PARAM_ACCOUNT_ID, account.getId());
             startActivity(intent);
         });

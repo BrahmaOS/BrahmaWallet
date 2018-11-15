@@ -10,6 +10,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import org.bitcoinj.kits.WalletAppKit;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +21,7 @@ import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.common.ReqCode;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.ContactEntity;
+import io.brahmaos.wallet.brahmawallet.service.BtcAccountManager;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.viewmodel.ContactViewModel;
 import me.yokeyword.indexablerv.IndexableAdapter;
@@ -81,29 +84,6 @@ public class ChooseContactActivity extends BaseActivity {
             setResult(RESULT_OK, intent);
             finish();
         });
-
-        mHeaderAdapter.setOnItemHeaderClickListener((v, currentPosition, entity) -> {
-            String backAddress = "";
-            if (accountType == BrahmaConst.ETH_ACCOUNT_TYPE) {
-                if (entity.getType() != BrahmaConst.ETH_ACCOUNT_TYPE) {
-                    showLongToast(R.string.tip_no_ethereum_address);
-                    return;
-                }
-                backAddress = entity.getAddress();
-            }
-
-            if (accountType == BrahmaConst.BTC_ACCOUNT_TYPE) {
-                if (entity.getType() != BrahmaConst.BTC_ACCOUNT_TYPE) {
-                    showLongToast(R.string.tip_no_bitcoin_address);
-                    return;
-                }
-                backAddress = entity.getAddress();
-            }
-            Intent intent = ChooseContactActivity.this.getIntent();
-            intent.putExtra(IntentParam.PARAM_CONTACT_ADDRESS, backAddress);
-            setResult(RESULT_OK, intent);
-            finish();
-        });
     }
 
     private void initData() {
@@ -120,6 +100,35 @@ public class ChooseContactActivity extends BaseActivity {
             if (accountEntities != null) {
                 mHeaderAdapter = new ContactsHeaderAdapter(this, "☆", getString(R.string.title_my_accounts), accountEntities);
                 indexableLayout.addHeaderAdapter(mHeaderAdapter);
+
+                mHeaderAdapter.setOnItemHeaderClickListener((v, currentPosition, entity) -> {
+                    String backAddress = "";
+                    if (accountType == BrahmaConst.ETH_ACCOUNT_TYPE) {
+                        if (entity.getType() != BrahmaConst.ETH_ACCOUNT_TYPE) {
+                            showLongToast(R.string.tip_no_ethereum_address);
+                            return;
+                        }
+                        backAddress = entity.getAddress();
+                    }
+
+                    if (accountType == BrahmaConst.BTC_ACCOUNT_TYPE) {
+                        if (entity.getType() != BrahmaConst.BTC_ACCOUNT_TYPE) {
+                            showLongToast(R.string.tip_no_bitcoin_address);
+                            return;
+                        }
+                        WalletAppKit kit = BtcAccountManager.getInstance().getBtcWalletAppKit(entity.getFilename());
+                        if (kit != null && kit.wallet() != null && kit.wallet().getActiveKeyChain() != null &&
+                                kit.wallet().getActiveKeyChain().getIssuedReceiveKeys() != null &&
+                                kit.wallet().getActiveKeyChain().getIssuedReceiveKeys().size() > 0) {
+                            backAddress = kit.wallet().getActiveKeyChain().getIssuedReceiveKeys().get(0).
+                                    toAddress(BtcAccountManager.getInstance().getNetworkParams()).toBase58();
+                        }
+                    }
+                    Intent intent = ChooseContactActivity.this.getIntent();
+                    intent.putExtra(IntentParam.PARAM_CONTACT_ADDRESS, backAddress);
+                    setResult(RESULT_OK, intent);
+                    finish();
+                });
             }
         });
     }

@@ -357,7 +357,6 @@ public class AccountViewModel extends AndroidViewModel {
                     WalletAppKit kit = BtcAccountManager.getInstance().restoreWalletAppKit(btcFilePrefix, seed);
                     AccountEntity btcAccount = new AccountEntity();
                     btcAccount.setName(accountName);
-                    //btcAccount.setAddress(kit.wallet().getKeyByPath());
                     btcAccount.setFilename(btcFilePrefix);
                     btcAccount.setType(BrahmaConst.BTC_ACCOUNT_TYPE);
                     btcAccount.setCryptoMnemonics(encryptMnemonic);

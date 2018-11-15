@@ -127,7 +127,7 @@
         <activity android:name=".ui.account.RestoreAccountActivity" />
         <activity android:name=".ui.transfer.BtcTransferActivity" />
         <activity android:name=".ui.account.BtcAccountAssetsActivity" />
-        <activity android:name=".ui.account.AddressQrcodeBtcActivity" />
+        <activity android:name=".ui.account.BtcAddressQrcodeActivity" />
         <activity android:name=".ui.account.BtcAccountDetailActivity" />
         <activity android:name=".ui.account.BtcAccountChangePasswordActivity" />
         <activity android:name=".ui.transaction.BtcTransactionsActivity" />

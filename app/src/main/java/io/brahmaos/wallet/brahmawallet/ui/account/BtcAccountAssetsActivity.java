@@ -20,22 +20,17 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.hwangjr.rxbus.RxBus;
 
-import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.Utils;
 import org.bitcoinj.kits.WalletAppKit;
 import org.bitcoinj.wallet.Wallet;
-import org.bitcoinj.wallet.WalletTransaction;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.TreeSet;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -54,10 +49,8 @@ import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.ui.transaction.BtcTransactionsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.transfer.BtcTransferActivity;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
-import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
 import io.brahmaos.wallet.util.RxEventBus;
-import jnr.ffi.annotations.In;
 import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
@@ -292,7 +285,7 @@ public class BtcAccountAssetsActivity extends BaseActivity {
         });
 
         mLayoutReceiveBtc.setOnClickListener(v -> {
-            Intent intent = new Intent(BtcAccountAssetsActivity.this, AddressQrcodeBtcActivity.class);
+            Intent intent = new Intent(BtcAccountAssetsActivity.this, BtcAddressQrcodeActivity.class);
             intent.putExtra(IntentParam.PARAM_ACCOUNT_ID, account.getId());
             startActivity(intent);
         });

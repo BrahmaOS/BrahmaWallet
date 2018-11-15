@@ -263,7 +263,11 @@ public class BtcTransferActivity extends BaseActivity {
                         return;
                     }
                     etReceiverAddress.setText(bitcoinUri.getAddress());
-                    etAmount.setText(String.valueOf(bitcoinUri.getAmount()));
+                    if (bitcoinUri.getAmount() != null) {
+                        etAmount.setText(String.valueOf(bitcoinUri.getAmount()));
+                    } else {
+                        etAmount.setText("");
+                    }
                 }
             }
         } else if (requestCode == ReqCode.CHOOSE_TRANSFER_CONTACT) {
