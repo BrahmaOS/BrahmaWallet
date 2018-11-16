@@ -256,7 +256,6 @@ public class BtcAccountAssetsActivity extends BaseActivity {
                     if (accountEntity != null) {
                         account = accountEntity;
                         kit = BtcAccountManager.getInstance().getBtcWalletAppKit(account.getFilename());
-                        System.out.println(kit.wallet().toString());
                         initView();
                         initAssets();
                     } else {
