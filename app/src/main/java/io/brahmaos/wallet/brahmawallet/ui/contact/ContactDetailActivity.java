@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +47,8 @@ public class ContactDetailActivity extends BaseActivity {
     @BindView(R.id.tv_contact_name)
     TextView tvContactName;
 
+    // Ethereum
+
     @BindView(R.id.tv_contact_address)
     TextView tvContactAddress;
 
@@ -54,6 +57,23 @@ public class ContactDetailActivity extends BaseActivity {
 
     @BindView(R.id.iv_address_code)
     ImageView ivContactAddress;
+
+    @BindView(R.id.eth_account_layout)
+    LinearLayout layoutEthAccount;
+
+    @BindView(R.id.eth_btc_divider)
+    LinearLayout dividerEthBtc;
+
+    // Bitcoin
+
+    @BindView(R.id.btc_account_layout)
+    LinearLayout layoutBtcAccount;
+
+    @BindView(R.id.tv_btc_contact_address)
+    TextView tvContactBtcAddress;
+
+    @BindView(R.id.iv_btc_address_code)
+    ImageView ivContactBtcAddressCode;
 
     @Override
     protected String tag() {
@@ -87,9 +107,26 @@ public class ContactDetailActivity extends BaseActivity {
     @SuppressLint("SetTextI18n")
     private void initContactInfo() {
         tvContactName.setText(contact.getName() + " " + contact.getFamilyName());
-        tvContactAddress.setText(contact.getAddress());
+
+        if (contact.getAddress() != null && contact.getAddress().length() > 0) {
+            layoutEthAccount.setVisibility(View.VISIBLE);
+            tvContactAddress.setText(contact.getAddress());
+        } else {
+            layoutEthAccount.setVisibility(View.GONE);
+            dividerEthBtc.setVisibility(View.GONE);
+        }
+
+        if (contact.getBtcAddress() != null && contact.getBtcAddress().length() > 0) {
+            layoutBtcAccount.setVisibility(View.VISIBLE);
+            tvContactBtcAddress.setText(contact.getBtcAddress());
+        } else {
+            layoutBtcAccount.setVisibility(View.GONE);
+            dividerEthBtc.setVisibility(View.GONE);
+        }
+
         tvContactRemark.setText(contact.getRemark());
         ivContactAddress.setOnClickListener(v -> showQrcodeDialog(contact.getAddress()));
+        ivContactBtcAddressCode.setOnClickListener(v -> showBtcQrcodeDialog(contact.getBtcAddress()));
         if (contact.getAvatar() != null && contact.getAvatar().length() > 0 && !contact.getAvatar().equals("null")) {
             Uri uriAvatar = Uri.parse(contact.getAvatar());
             try {
@@ -155,6 +192,35 @@ public class ContactDetailActivity extends BaseActivity {
             if (cm != null) {
                 cm.setPrimaryClip(clipData);
                 //qrcodeDialog.cancel();
+                showLongToast(R.string.tip_success_copy);
+            }
+        });
+    }
+
+    private void showBtcQrcodeDialog(String btcAddress) {
+        final View dialogView = getLayoutInflater().inflate(R.layout.dialog_contact_address, null);
+        TextView tvContactAddress = dialogView.findViewById(R.id.tv_contact_address);
+        ImageView ivQrcode = dialogView.findViewById(R.id.iv_contact_address_code);
+        Button btnCopyAddress = dialogView.findViewById(R.id.btn_copy_address);
+        tvContactAddress.setText(btcAddress);
+        AlertDialog qrcodeDialog = new AlertDialog.Builder(this)
+                .setView(dialogView)
+                .setCancelable(true)
+                .create();
+        new Thread(() -> {
+            Bitmap bitmap = QRCodeUtil.createQRImageTransparentBg("bitcoin:" + btcAddress, 200, 200, null);
+            if (bitmap != null) {
+                runOnUiThread(() -> Glide.with(ContactDetailActivity.this)
+                        .load(bitmap)
+                        .into(ivQrcode));
+            }
+        }).start();
+        qrcodeDialog.show();
+        btnCopyAddress.setOnClickListener(v -> {
+            ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clipData = ClipData.newPlainText("text", btcAddress);
+            if (cm != null) {
+                cm.setPrimaryClip(clipData);
                 showLongToast(R.string.tip_success_copy);
             }
         });

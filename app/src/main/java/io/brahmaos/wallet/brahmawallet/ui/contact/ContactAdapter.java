@@ -3,8 +3,10 @@ package io.brahmaos.wallet.brahmawallet.ui.contact;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.v7.widget.DrawableUtils;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -56,7 +58,6 @@ public class ContactAdapter extends IndexableAdapter<ContactEntity> {
         Log.i(TAG, "entity - " + entity);
         ContentVH vh = (ContentVH) holder;
         vh.tvName.setText(entity.getName() + " " + entity.getFamilyName());
-        vh.tvAddress.setText(entity.getAddress());
 
         if (entity.getAvatar() != null && entity.getAvatar().length() > 0 && !entity.getAvatar().equals("null")) {
             Uri uriAvatar = Uri.parse(entity.getAvatar());
@@ -67,6 +68,23 @@ public class ContactAdapter extends IndexableAdapter<ContactEntity> {
                 e.printStackTrace();
                 Toast.makeText(context, "Crop failed", Toast.LENGTH_SHORT).show();
             }
+        } else {
+            vh.ivAvatar.setImageBitmap(BitmapFactory.decodeResource(
+                    context.getResources(), R.drawable.ic_default_account_avatar_grey));
+        }
+
+        String ethAddress = entity.getAddress();
+        if (ethAddress != null && ethAddress.length() > 0) {
+            vh.ivEthIcon.setVisibility(View.VISIBLE);
+        } else {
+            vh.ivEthIcon.setVisibility(View.GONE);
+        }
+
+        String btcAddress = entity.getBtcAddress();
+        if (btcAddress != null && btcAddress.length() > 0) {
+            vh.ivBtcIcon.setVisibility(View.VISIBLE);
+        } else {
+            vh.ivBtcIcon.setVisibility(View.GONE);
         }
     }
 
@@ -81,14 +99,16 @@ public class ContactAdapter extends IndexableAdapter<ContactEntity> {
 
     private class ContentVH extends RecyclerView.ViewHolder {
         TextView tvName;
-        TextView tvAddress;
         ImageView ivAvatar;
+        ImageView ivEthIcon;
+        ImageView ivBtcIcon;
 
         ContentVH(View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tv_name);
-            tvAddress = itemView.findViewById(R.id.tv_address);
             ivAvatar = itemView.findViewById(R.id.iv_avatar);
+            ivEthIcon = itemView.findViewById(R.id.eth_icon);
+            ivBtcIcon = itemView.findViewById(R.id.btc_icon);
         }
     }
 }

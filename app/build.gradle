@@ -81,9 +81,9 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     // fix the OOM error for web3j-3.x.x
-    implementation 'org.web3j:core-android:2.2.1'
+    // implementation 'org.web3j:core-android:2.2.1'
     implementation 'com.lambdaworks:scrypt:1.4.0'
-    // implementation 'org.web3j:core:3.3.1-android'
+    implementation 'org.web3j:core:3.3.1-android'
     implementation 'com.orhanobut:logger:1.15'
     implementation 'io.reactivex:rxandroid:1.2.1'
     implementation 'com.hwangjr.rxbus:rxbus:1.0.6'

@@ -30,6 +30,9 @@ public interface AccountDao {
     @Query("SELECT * FROM accounts order by id desc")
     LiveData<List<AccountEntity>> loadAllAccounts();
 
+    @Query("SELECT * FROM accounts where id = 2 order by id desc")
+    List<AccountEntity> loadBtcAccountsSync();
+
     @Insert
     void insertAll(List<AccountEntity> accounts);
 

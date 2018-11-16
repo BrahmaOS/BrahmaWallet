@@ -71,6 +71,10 @@ public class DataRepository {
         return mObservableAccounts;
     }
 
+    public List<AccountEntity> getBtcAccountsSync() {
+        return mDatabase.accountDao().loadBtcAccountsSync();
+    }
+
     public LiveData<AccountEntity> loadAccount(final int accountId) {
         return mDatabase.accountDao().loadAccount(accountId);
     }
@@ -182,7 +186,7 @@ public class DataRepository {
 
     public void updateContact(int contactId, ContactEntity contact) {
         mDatabase.contactDao().changeContact(contactId, contact.getFamilyName(),
-                contact.getName(), contact.getAddress(), contact.getAvatar(),
+                contact.getName(), contact.getAddress(), contact.getBtcAddress(), contact.getAvatar(),
                 contact.getRemark());
     }
 

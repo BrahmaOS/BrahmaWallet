@@ -1,23 +1,17 @@
 package io.brahmaos.wallet.brahmawallet.common;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.os.Build;
-import android.os.LocaleList;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
-import io.brahmaos.wallet.brahmawallet.model.Account;
 
 /**
  * the project common config
@@ -53,7 +47,10 @@ public class BrahmaConfig {
         this.context = context;
         sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         localKeystorePath = context.getFilesDir().toString();
+
+        // Ethereum network
         networkUrl = sharedPref.getString(context.getString(R.string.key_network_url), BrahmaConst.MAINNET_URL);
+
         languageLocale = sharedPref.getString(context.getString(R.string.key_wallet_language), null);
         currencyUnit = sharedPref.getString(context.getString(R.string.key_wallet_currency_unit), null);
         assetsVisible = sharedPref.getBoolean(KEY_ASSETS_VISIBLE, true);

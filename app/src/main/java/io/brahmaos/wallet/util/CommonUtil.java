@@ -123,13 +123,12 @@ public class CommonUtil {
     }
 
     public static boolean cryptoCurrencyCompareToken(CryptoCurrency cryptoCurrency, TokenEntity token) {
-        if (cryptoCurrency.getName().toLowerCase().equals(BrahmaConst.ETHEREUM) &&
-                token.getName().toLowerCase().equals(BrahmaConst.ETHEREUM)) {
-            return true;
-        } else if (cryptoCurrency.getTokenAddress().toLowerCase().equals(token.getAddress().toLowerCase())) {
-            return true;
+        if (cryptoCurrency.getName().toLowerCase().equals(BrahmaConst.ETHEREUM)) {
+            return token.getName().toLowerCase().equals(BrahmaConst.ETHEREUM);
+        } else if (cryptoCurrency.getName().toLowerCase().equals(BrahmaConst.BITCOIN)) {
+            return token.getName().toLowerCase().equals(BrahmaConst.BITCOIN);
         } else {
-            return false;
+            return cryptoCurrency.getTokenAddress().toLowerCase().equals(token.getAddress().toLowerCase());
         }
     }
 
