@@ -30,7 +30,6 @@ import org.bitcoinj.crypto.DeterministicKey;
 import org.bitcoinj.crypto.HDUtils;
 import org.bitcoinj.crypto.MnemonicCode;
 import org.bitcoinj.crypto.MnemonicException;
-import org.bitcoinj.kits.WalletAppKit;
 import org.bitcoinj.wallet.DeterministicKeyChain;
 import org.bitcoinj.wallet.DeterministicSeed;
 import org.bitcoinj.wallet.UnreadableWalletException;
@@ -352,10 +351,11 @@ public class AccountViewModel extends AndroidViewModel {
                     // encrypt mnemonic
                     String encryptMnemonic = DataCryptoUtils.aes128Encrypt(mnemonics.toString().trim(), password);
                     String btcFilePrefix = seed.toHexString();
+                    //seed.setCreationTimeSeconds(timeSeconds);
+                    WalletAppKit kit = BtcAccountManager.getInstance().restoreWalletAppKit(btcFilePrefix, seed);
                     AccountEntity btcAccount = new AccountEntity();
                     btcAccount.setName(accountName);
                     btcAccount.setFilename(btcFilePrefix);
-                    btcAccount.setAddress("");
                     btcAccount.setType(BrahmaConst.BTC_ACCOUNT_TYPE);
                     btcAccount.setCryptoMnemonics(encryptMnemonic);
                     ((WalletApp) getApplication()).getRepository().createAccount(btcAccount);
@@ -388,6 +388,7 @@ public class AccountViewModel extends AndroidViewModel {
                 // encrypt mnemonic
                 String encryptMnemonic = DataCryptoUtils.aes128Encrypt(mnemonics.toString().trim(), password);
                 String btcFilePrefix = seed.toHexString();
+                //seed.setCreationTimeSeconds(timeSeconds);
                 BtcAccountManager.getInstance().restoreWalletAppKit(btcFilePrefix, seed);
                 AccountEntity btcAccount = new AccountEntity();
                 btcAccount.setName(accountName);
