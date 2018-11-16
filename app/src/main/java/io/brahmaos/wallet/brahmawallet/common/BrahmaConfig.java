@@ -47,8 +47,6 @@ public class BrahmaConfig {
         this.context = context;
         sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         localKeystorePath = context.getFilesDir().toString();
-
-        // Ethereum network
         networkUrl = sharedPref.getString(context.getString(R.string.key_network_url), BrahmaConst.MAINNET_URL);
 
         languageLocale = sharedPref.getString(context.getString(R.string.key_wallet_language), null);

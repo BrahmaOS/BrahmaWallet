@@ -28,7 +28,7 @@ import android.widget.TextView;
 import com.hwangjr.rxbus.RxBus;
 
 import org.web3j.crypto.CipherException;
-import org.web3j.protocol.exceptions.TransactionException;
+import org.web3j.protocol.exceptions.TransactionTimeoutException;
 import org.web3j.utils.Convert;
 
 import java.math.BigDecimal;
@@ -505,7 +505,7 @@ public class EthTransferActivity extends BaseActivity {
                                             int resId = R.string.tip_error_transfer;
                                             if (e instanceof CipherException) {
                                                 resId = R.string.tip_error_password;
-                                            } else if (e instanceof TransactionException) {
+                                            } else if (e instanceof TransactionTimeoutException) {
                                                 resId = R.string.tip_error_net;
                                             }
                                             new AlertDialog.Builder(EthTransferActivity.this)

@@ -80,8 +80,6 @@ import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
 import io.brahmaos.wallet.util.PermissionUtil;
-import io.brahmaos.wallet.util.RxEventBus;
-import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -128,7 +126,6 @@ public class MainActivity extends BaseActivity
     private List<AccountAssets> cacheAssets = new ArrayList<>();
     private List<CryptoCurrency> cacheCryptoCurrencies = new ArrayList<>();
     private VersionInfo newVersionInfo;
-
     private BitcoinDownloadProgress bitcoinDownloadProgress;
     private Observable<BitcoinDownloadProgress> btcSyncStatus;
     private Observable<Boolean> btcAppkitSetup;
@@ -438,7 +435,7 @@ public class MainActivity extends BaseActivity
             }
             symbols = stringBuilder.toString();
         } else {
-            symbols = "ETH,BRM,BTC";
+            symbols = "ETH,BRM";
         }
         MainService.getInstance().fetchCurrenciesFromNet(symbols)
                 .subscribeOn(Schedulers.io())
@@ -484,18 +481,7 @@ public class MainActivity extends BaseActivity
      * Display the number of tokens and the corresponding legal currency value
      */
     private void showAssetsCurrency() {
-        int ethAccountCount = 0;
-        int btcAccountCount = 0;
-        for (AccountEntity account : cacheAccounts) {
-            if (account.getType() == BrahmaConst.BTC_ACCOUNT_TYPE) {
-                btcAccountCount++;
-            } else if (account.getType() == BrahmaConst.ETH_ACCOUNT_TYPE) {
-                ethAccountCount++;
-            }
-        }
-        int ethTokenCount = cacheTokens.size() - 1;
-        int totalCount = ethAccountCount * ethTokenCount + btcAccountCount;
-        if (cacheAssets.size() == totalCount) {
+        if (cacheAssets.size() == cacheAccounts.size() * cacheTokens.size()) {
             recyclerViewAssets.getAdapter().notifyDataSetChanged();
 
             BigDecimal totalValue = BigDecimal.ZERO;

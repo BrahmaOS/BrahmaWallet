@@ -221,11 +221,8 @@
 
     <!-- Strings related to Settings -->
     <string name="title_setting">设置</string>
-    <string name="title_setting_lang_currency">语言 &amp; 货币</string>
-    <string name="title_setting_network">区块链网络</string>
-    <string name="title_setting_other">其他</string>
 
-    <string name="pref_title_net_list">选择以太坊网络</string>
+    <string name="pref_title_net_list">网络</string>
     <string-array name="pref_net_list_titles">
         <item>Mainnet</item>
         <item>Ropsten(测试网络)</item>
@@ -239,16 +236,6 @@
         <item>https://infuranet.infura.io/Gy3Csyt4bzKIGsctm3g0</item>
         <item>https://kovan.infura.io/Gy3Csyt4bzKIGsctm3g0</item>
         <item>https://rinkeby.infura.io/Gy3Csyt4bzKIGsctm3g0</item>
-    </string-array>
-
-    <string name="pref_title_btc_net_list">选择比特币网络</string>
-    <string-array name="pref_btc_net_list_titles">
-        <item>MainNet</item>
-        <item>TestNet3(测试网络)</item>
-    </string-array>
-    <string-array name="pref_btc_net_list_values">
-        <item>MainNet</item>
-        <item>TestNet3(测试网络)</item>
     </string-array>
 
     <string name="pref_title_language">语言偏好设置</string>
@@ -275,7 +262,6 @@
 
     <!-- share -->
     <string name="key_network_url">ethereum.network.url</string>
-    <string name="key_btc_network_url">bitcoin.network.url</string>
     <string name="key_wallet_language">wallet.language</string>
     <string name="key_wallet_currency_unit">wallet.currency.unit</string>
 
@@ -333,13 +319,11 @@
     <string name="title_add_contact">添加联系人</string>
     <string name="prompt_contact_first_name">名</string>
     <string name="prompt_contact_last_name">姓</string>
-    <string name="prompt_contact_ethereum_address">以太坊账号地址</string>
-    <string name="prompt_contact_bitcoin_address">比特币账号地址</string>
+    <string name="prompt_contact_address">联系人地址</string>
     <string name="title_choose_contact">选择联系人</string>
     <string name="title_my_accounts">我的账号</string>
     <string name="success_create_contact">添加联系人成功!</string>
     <string name="error_create_contact">添加联系人失败! 请稍后重试!</string>
-    <string name="error_create_contact_least_one_address">至少需要提供一个账号地址</string>
     <string name="delete_contact_tip">要删除此联系人吗？</string>
     <string name="success_delete_contact">删除联系人成功。</string>
     <string name="error_delete_contact">删除联系人失败!!!</string>
