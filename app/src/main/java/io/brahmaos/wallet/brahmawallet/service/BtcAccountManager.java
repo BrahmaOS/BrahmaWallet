@@ -14,11 +14,11 @@ import org.bitcoinj.core.Utils;
 import org.bitcoinj.core.listeners.DownloadProgressTracker;
 import org.bitcoinj.core.listeners.TransactionConfidenceEventListener;
 import org.bitcoinj.kits.WalletAppKit;
-import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.params.TestNet3Params;
 import org.bitcoinj.wallet.DeterministicSeed;
 import org.bitcoinj.wallet.SendRequest;
 import org.bitcoinj.wallet.Wallet;
+import org.spongycastle.util.encoders.Hex;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -49,7 +49,6 @@ public class BtcAccountManager extends BaseService{
 
     public static int BYTES_PER_BTC_KB = 1000;
     public static int MIN_CONFIRM_BLOCK_HEIGHT = 6;
-    private String CHECK_POINTS_NAME = "checkpoints";
 
     private Map<String, WalletAppKit> btcAccountKit = new HashMap<>();
 
@@ -60,7 +59,7 @@ public class BtcAccountManager extends BaseService{
     }
 
     public NetworkParameters getNetworkParams() {
-        return MainNetParams.get();
+        return TestNet3Params.get();
     }
 
     private DownloadProgressTracker listener = new DownloadProgressTracker() {
@@ -155,7 +154,7 @@ public class BtcAccountManager extends BaseService{
         kit.setDownloadListener(listener);
 
         // set checkpoints
-        InputStream ins = context.getResources().openRawResource(context.getResources().getIdentifier(CHECK_POINTS_NAME,
+        InputStream ins = context.getResources().openRawResource(context.getResources().getIdentifier("checkpoints_testnet",
                 "raw", context.getPackageName()));
         kit.setCheckpoints(ins);
 
@@ -181,7 +180,7 @@ public class BtcAccountManager extends BaseService{
         kit.setDownloadListener(listener);
 
         // set checkpoints
-        InputStream ins = context.getResources().openRawResource(context.getResources().getIdentifier(CHECK_POINTS_NAME,
+        InputStream ins = context.getResources().openRawResource(context.getResources().getIdentifier("checkpoints_testnet",
                 "raw", context.getPackageName()));
         kit.setCheckpoints(ins);
 
