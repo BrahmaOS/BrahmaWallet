@@ -2,6 +2,7 @@ package io.brahmaos.wallet.brahmawallet.ui.transfer;
 
 import android.Manifest;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -59,11 +61,11 @@ import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class TransferActivity extends BaseActivity {
+public class EthTransferActivity extends BaseActivity {
 
     @Override
     protected String tag() {
-        return TransferActivity.class.getName();
+        return EthTransferActivity.class.getName();
     }
 
     // UI references.
@@ -148,19 +150,26 @@ public class TransferActivity extends BaseActivity {
 
         mViewModel = ViewModelProviders.of(this).get(AccountViewModel.class);
         mViewModel.getAccounts().observe(this, accountEntities -> {
-            mAccounts = accountEntities;
+            if (accountEntities == null || accountEntities.size() == 0) {
+                finish();
+            }
+            for (AccountEntity accountEntity : accountEntities) {
+                if (accountEntity.getType() == BrahmaConst.ETH_ACCOUNT_TYPE) {
+                    mAccounts.add(accountEntity);
+                }
+            }
+            // don't have eth account
+            if (mAccounts == null || mAccounts.size() == 0) {
+                finish();
+            }
 
             if (mAccounts != null && mAccounts.size() > 1) {
                 tvChangeAccount.setVisibility(View.VISIBLE);
             } else {
                 tvChangeAccount.setVisibility(View.GONE);
-                if (mAccounts == null || mAccounts.size() == 0) {
-                    finish();
-                }
             }
 
-            if ((mAccount == null || mAccount.getAddress().length() == 0) &&
-                    accountEntities != null) {
+            if (mAccount == null || mAccount.getAddress().length() == 0) {
                 mAccount = mAccounts.get(0);
             }
             showAccountInfo(mAccount);
@@ -207,7 +216,7 @@ public class TransferActivity extends BaseActivity {
         getGasPrice();
 
         ivContacts.setOnClickListener(v -> {
-            Intent intent = new Intent(TransferActivity.this, ChooseContactActivity.class);
+            Intent intent = new Intent(EthTransferActivity.this, ChooseContactActivity.class);
             startActivityForResult(intent, ReqCode.CHOOSE_TRANSFER_CONTACT);
         });
     }
@@ -448,8 +457,8 @@ public class TransferActivity extends BaseActivity {
         BigDecimal finalAmount = amount;
         confirmBtn.setOnClickListener(v -> {
             final View dialogView = getLayoutInflater().inflate(R.layout.dialog_account_password, null);
-
-            AlertDialog passwordDialog = new AlertDialog.Builder(TransferActivity.this)
+            EditText etPassword = dialogView.findViewById(R.id.et_password);
+            AlertDialog passwordDialog = new AlertDialog.Builder(EthTransferActivity.this, R.style.Theme_AppCompat_Light_Dialog_Alert_Self)
                     .setView(dialogView)
                     .setCancelable(false)
                     .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel())
@@ -458,7 +467,7 @@ public class TransferActivity extends BaseActivity {
                         // show transfer progress
                         layoutTransferStatus.setVisibility(View.VISIBLE);
                         customStatusView.loadLoading();
-                        String password = ((EditText) dialogView.findViewById(R.id.et_password)).getText().toString();
+                        String password = etPassword.getText().toString();
                         BrahmaWeb3jService.getInstance().sendTransfer(mAccount, mToken, password, receiverAddress,
                                 finalAmount, gasPrice, gasLimit, remark)
                                 .subscribeOn(Schedulers.io())
@@ -499,7 +508,7 @@ public class TransferActivity extends BaseActivity {
                                             } else if (e instanceof TransactionTimeoutException) {
                                                 resId = R.string.tip_error_net;
                                             }
-                                            new AlertDialog.Builder(TransferActivity.this)
+                                            new AlertDialog.Builder(EthTransferActivity.this)
                                                     .setMessage(resId)
                                                     .setNegativeButton(R.string.ok, (dialog1, which1) -> dialog1.cancel())
                                                     .create().show();
@@ -514,6 +523,10 @@ public class TransferActivity extends BaseActivity {
                                 });
                         })
                     .create();
+            passwordDialog.setOnShowListener(dialog -> {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(etPassword, InputMethodManager.SHOW_IMPLICIT);
+            });
             passwordDialog.show();
         });
     }

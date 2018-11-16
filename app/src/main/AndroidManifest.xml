@@ -55,16 +55,16 @@
             android:launchMode="singleTask" />
         <activity android:name=".ui.account.AccountsActivity" />
         <activity
-            android:name=".ui.account.ImportAccountActivity"
+            android:name=".ui.account.ImportEthereumAccountActivity"
             android:label="@string/title_activity_import_account"
             android:theme="@style/AppTheme" />
         <activity android:name=".ui.token.TokensActivity" />
         <activity
-            android:name=".ui.account.AccountAssetsActivity"
+            android:name=".ui.account.EthAccountAssetsActivity"
             android:label="@string/title_activity_account_detail"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".ui.transfer.TransferActivity"
+            android:name=".ui.transfer.EthTransferActivity"
             android:label="@string/title_activity_transfer"
             android:theme="@style/AppTheme" />
         <activity android:name=".ui.account.AccountDetailActivity" />
@@ -124,6 +124,16 @@
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity android:name=".ui.account.RestoreAccountActivity" />
+        <activity android:name=".ui.transfer.BtcTransferActivity" />
+        <activity android:name=".ui.account.BtcAccountAssetsActivity" />
+        <activity android:name=".ui.account.BtcAddressQrcodeActivity" />
+        <activity android:name=".ui.account.BtcAccountDetailActivity" />
+        <activity android:name=".ui.account.BtcAccountChangePasswordActivity" />
+        <activity android:name=".ui.transaction.BtcTransactionsActivity" />
+        <activity android:name=".ui.account.RestoreBtcAccountActivity" />
+        <activity android:name=".ui.account.CreateBtcAccountActivity" />
+        <activity android:name=".ui.account.CreateEthAccountActivity" />
     </application>
 
 </manifest>

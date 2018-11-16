@@ -3,7 +3,6 @@ package io.brahmaos.wallet.brahmawallet.ui.account;
 import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
@@ -15,7 +14,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -48,17 +46,16 @@ import io.brahmaos.wallet.brahmawallet.service.MainService;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.ui.transaction.EthTransactionsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.transaction.TransactionsActivity;
-import io.brahmaos.wallet.brahmawallet.ui.transfer.TransferActivity;
 import io.brahmaos.wallet.brahmawallet.view.CustomProgressDialog;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
 
-public class AccountAssetsActivity extends BaseActivity {
+public class EthAccountAssetsActivity extends BaseActivity {
 
     @Override
     protected String tag() {
-        return AccountAssetsActivity.class.getName();
+        return EthAccountAssetsActivity.class.getName();
     }
 
     public static final int REQ_CODE_TRANSFER = 10;
@@ -96,7 +93,7 @@ public class AccountAssetsActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_account_assets);
+        setContentView(R.layout.activity_account_eth_assets);
         ButterKnife.bind(this);
         showNavBackBtn();
         RxBus.get().register(this);
@@ -135,7 +132,12 @@ public class AccountAssetsActivity extends BaseActivity {
                         initAssets();
                         mViewModel.getTokens().observe(this, entities -> {
                             if (entities != null) {
-                                tokenEntities = entities;
+                                tokenEntities.clear();
+                                for (TokenEntity tokenEntity : entities) {
+                                    if (!tokenEntity.getName().toLowerCase().equals(BrahmaConst.BITCOIN)) {
+                                        tokenEntities.add(tokenEntity);
+                                    }
+                                }
                                 recyclerViewAssets.getAdapter().notifyDataSetChanged();
                             }
                         });
@@ -146,8 +148,8 @@ public class AccountAssetsActivity extends BaseActivity {
     }
 
     private void initView() {
-        ImageManager.showAccountAvatar(AccountAssetsActivity.this, ivAccountAvatar, account);
-        ImageManager.showAccountBackground(AccountAssetsActivity.this, ivAccountBg, account);
+        ImageManager.showAccountAvatar(EthAccountAssetsActivity.this, ivAccountAvatar, account);
+        ImageManager.showAccountBackground(EthAccountAssetsActivity.this, ivAccountBg, account);
         tvAccountName.setText(account.getName());
         tvAccountAddress.setText(CommonUtil.generateSimpleAddress(account.getAddress()));
 
@@ -177,7 +179,7 @@ public class AccountAssetsActivity extends BaseActivity {
         int id = item.getItemId();
         if (id == R.id.menu_qrcode) {
             if (account != null) {
-                Intent intent = new Intent(AccountAssetsActivity.this, AddressQrcodeActivity.class);
+                Intent intent = new Intent(EthAccountAssetsActivity.this, AddressQrcodeActivity.class);
                 intent.putExtra(IntentParam.PARAM_ACCOUNT_INFO, account);
                 startActivity(intent);
             }
@@ -284,12 +286,12 @@ public class AccountAssetsActivity extends BaseActivity {
 
             holder.layoutAssets.setOnClickListener(v -> {
                 if (tokenEntity.getName().toLowerCase().equals(BrahmaConst.ETHEREUM)) {
-                    Intent intent = new Intent(AccountAssetsActivity.this, EthTransactionsActivity.class);
+                    Intent intent = new Intent(EthAccountAssetsActivity.this, EthTransactionsActivity.class);
                     intent.putExtra(IntentParam.PARAM_ACCOUNT_INFO, account);
                     intent.putExtra(IntentParam.PARAM_TOKEN_INFO, tokenEntity);
                     startActivity(intent);
                 } else {
-                    Intent intent = new Intent(AccountAssetsActivity.this, TransactionsActivity.class);
+                    Intent intent = new Intent(EthAccountAssetsActivity.this, TransactionsActivity.class);
                     intent.putExtra(IntentParam.PARAM_ACCOUNT_INFO, account);
                     intent.putExtra(IntentParam.PARAM_TOKEN_INFO, tokenEntity);
                     startActivity(intent);
@@ -298,7 +300,7 @@ public class AccountAssetsActivity extends BaseActivity {
 
             holder.tvTokenName.setText(tokenEntity.getShortName());
             holder.tvTokenFullName.setText(tokenEntity.getName());
-            ImageManager.showTokenIcon(AccountAssetsActivity.this, holder.ivTokenIcon,
+            ImageManager.showTokenIcon(EthAccountAssetsActivity.this, holder.ivTokenIcon,
                     tokenEntity.getName(), tokenEntity.getAddress());
             BigInteger tokenCount = BigInteger.ZERO;
             for (AccountAssets accountAssets : accountAssetsList) {
@@ -314,17 +316,17 @@ public class AccountAssetsActivity extends BaseActivity {
                     double tokenPrice = cryptoCurrency.getPriceUsd();
                     if (BrahmaConfig.getInstance().getCurrencyUnit().equals(BrahmaConst.UNIT_PRICE_CNY)) {
                         tokenPrice = cryptoCurrency.getPriceCny();
-                        Glide.with(AccountAssetsActivity.this)
+                        Glide.with(EthAccountAssetsActivity.this)
                                 .load(R.drawable.currency_cny)
                                 .into(holder.ivTokenPrice);
-                        Glide.with(AccountAssetsActivity.this)
+                        Glide.with(EthAccountAssetsActivity.this)
                                 .load(R.drawable.currency_cny)
                                 .into(holder.ivTokenAssets);
                     } else {
-                        Glide.with(AccountAssetsActivity.this)
+                        Glide.with(EthAccountAssetsActivity.this)
                                 .load(R.drawable.currency_usd)
                                 .into(holder.ivTokenPrice);
-                        Glide.with(AccountAssetsActivity.this)
+                        Glide.with(EthAccountAssetsActivity.this)
                                 .load(R.drawable.currency_usd)
                                 .into(holder.ivTokenAssets);
                     }

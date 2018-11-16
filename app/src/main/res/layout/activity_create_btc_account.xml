@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.AppBarOverlay">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                app:titleTextAppearance="@style/ToolbarTitleText"
+                android:layout_height="?attr/actionBarSize"
+                app:title="@string/action_create_btc_account"
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+        </android.support.design.widget.AppBarLayout>
+
+        <ScrollView
+            android:id="@+id/create_form"
+            android:layout_marginTop="@dimen/height_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/layout_create_account_form"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/space_normal"
+                android:paddingEnd="@dimen/space_normal"
+                android:paddingTop="@dimen/space_small"
+                android:orientation="vertical">
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/customEditTextLineColor"
+                    app:hintTextAppearance="@style/customEditTextHint">
+
+                    <EditText
+                        android:id="@+id/et_account_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/prompt_account_name"
+                        android:maxLines="1"
+                        android:textSize="@dimen/font_size_subheading"
+                        android:inputType="text"
+                        android:singleLine="true" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/customEditTextLineColor"
+                    app:hintTextAppearance="@style/customEditTextHint">
+
+                    <EditText
+                        android:id="@+id/et_password"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/prompt_password"
+                        android:textSize="@dimen/font_size_subheading"
+                        android:inputType="textPassword"
+                        android:singleLine="true"/>
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/customEditTextLineColor"
+                    app:hintTextAppearance="@style/customEditTextHint">
+
+                    <EditText
+                        android:id="@+id/et_repeat_password"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/prompt_repeat_password"
+                        android:textSize="@dimen/font_size_subheading"
+                        android:inputType="textPassword"
+                        android:singleLine="true"/>
+
+                </android.support.design.widget.TextInputLayout>
+
+                <LinearLayout
+                    android:paddingTop="@dimen/space_normal"
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <CheckBox
+                        android:id="@+id/checkbox_read_protocol"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/action_agree"/>
+                    <TextView
+                        android:clickable="true"
+                        android:id="@+id/service_tv"
+                        android:textColor="@color/master"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/service_agreement"
+                        android:focusable="true" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/protocol_and"/>
+                    <TextView
+                        android:clickable="true"
+                        android:id="@+id/privacy_policy_tv"
+                        android:textColor="@color/master"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/privacy_policy"
+                        android:focusable="true" />
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/btn_create_account"
+                    style="@style/ButtonSingle"
+                    android:enabled="false"
+                    android:layout_marginTop="@dimen/space_normal"
+                    android:text="@string/action_create_account"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_normal"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tip_create_account_one"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tip_create_account_two"/>
+                </LinearLayout>
+                <TextView
+                    android:id="@+id/btn_restore_account"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:paddingTop="@dimen/space_normal"
+                    android:paddingBottom="@dimen/space_normal"
+                    android:paddingStart="@dimen/space_normal"
+                    android:textColor="@color/master"
+                    android:textSize="@dimen/font_size_subheading"
+                    android:text="@string/action_restore_account"/>
+
+            </LinearLayout>
+        </ScrollView>
+    </android.support.design.widget.CoordinatorLayout>
+</android.support.v4.widget.DrawerLayout>
+

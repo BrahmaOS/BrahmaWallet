@@ -13,16 +13,20 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -38,6 +42,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -51,6 +56,7 @@ import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 import io.brahmaos.wallet.brahmawallet.event.EventTypeDef;
 import io.brahmaos.wallet.brahmawallet.model.AccountAssets;
+import io.brahmaos.wallet.brahmawallet.model.BitcoinDownloadProgress;
 import io.brahmaos.wallet.brahmawallet.model.CryptoCurrency;
 import io.brahmaos.wallet.brahmawallet.model.VersionInfo;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
@@ -58,7 +64,8 @@ import io.brahmaos.wallet.brahmawallet.service.MainService;
 import io.brahmaos.wallet.brahmawallet.service.VersionUpgradeService;
 import io.brahmaos.wallet.brahmawallet.ui.account.AccountsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.account.CreateAccountActivity;
-import io.brahmaos.wallet.brahmawallet.ui.account.ImportAccountActivity;
+import io.brahmaos.wallet.brahmawallet.ui.account.CreateBtcAccountActivity;
+import io.brahmaos.wallet.brahmawallet.ui.account.RestoreAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.ui.contact.ContactsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.setting.AboutActivity;
@@ -66,8 +73,9 @@ import io.brahmaos.wallet.brahmawallet.ui.setting.CelestialBodyIntroActivity;
 import io.brahmaos.wallet.brahmawallet.ui.setting.HelpActivity;
 import io.brahmaos.wallet.brahmawallet.ui.setting.SettingsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.token.TokensActivity;
+import io.brahmaos.wallet.brahmawallet.ui.transfer.BtcTransferActivity;
 import io.brahmaos.wallet.brahmawallet.ui.transfer.InstantExchangeActivity;
-import io.brahmaos.wallet.brahmawallet.ui.transfer.TransferActivity;
+import io.brahmaos.wallet.brahmawallet.ui.transfer.EthTransferActivity;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
@@ -89,7 +97,7 @@ public class MainActivity extends BaseActivity
     @BindView(R.id.layout_header)
     LinearLayout layoutHeader;
     @BindView(R.id.layout_new_account)
-    ConstraintLayout createAccountLayout;
+    LinearLayout createAccountLayout;
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.tv_appro_equal)
@@ -118,6 +126,9 @@ public class MainActivity extends BaseActivity
     private List<AccountAssets> cacheAssets = new ArrayList<>();
     private List<CryptoCurrency> cacheCryptoCurrencies = new ArrayList<>();
     private VersionInfo newVersionInfo;
+    private BitcoinDownloadProgress bitcoinDownloadProgress;
+    private Observable<BitcoinDownloadProgress> btcSyncStatus;
+    private Observable<Boolean> btcAppkitSetup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,6 +138,57 @@ public class MainActivity extends BaseActivity
         ButterKnife.bind(this);
 
         RxBus.get().register(this);
+
+        // used to receive btc blocks sync progress
+        btcSyncStatus = RxEventBus.get().register(EventTypeDef.BTC_ACCOUNT_SYNC, BitcoinDownloadProgress.class);
+        btcSyncStatus.onBackpressureBuffer()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<BitcoinDownloadProgress>() {
+                    @Override
+                    public void onNext(BitcoinDownloadProgress progress) {
+                        bitcoinDownloadProgress = progress;
+                        if ((int)progress.getProgressPercentage() >= 100 ) {
+                            bitcoinDownloadProgress.setDownloaded(true);
+                        }
+                        if (bitcoinDownloadProgress.isDownloaded()) {
+                            mViewModel.getBtcAssets();
+                        } else {
+                            recyclerViewAssets.getAdapter().notifyDataSetChanged();
+                        }
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        Log.i(tag(), e.toString());
+                    }
+                });
+
+        btcAppkitSetup = RxEventBus.get().register(EventTypeDef.BTC_APP_KIT_INIT_SET_UP, Boolean.class);
+        btcAppkitSetup.observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Boolean>() {
+                    @Override
+                    public void onNext(Boolean flag) {
+                        if (flag) {
+                            // get the latest assets
+                            mViewModel.getTotalAssets();
+                        }
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        Log.i(tag(), e.toString());
+                    }
+                });
 
         VersionUpgradeService.getInstance().checkVersion(this, true, this);
         MainService.getInstance().getTokensLatestVersion();
@@ -203,9 +265,9 @@ public class MainActivity extends BaseActivity
             Intent intent = new Intent(this, CreateAccountActivity.class);
             startActivity(intent);
         });
-        Button importAccountBtn = findViewById(R.id.btn_import_account);
-        importAccountBtn.setOnClickListener(v -> {
-            Intent intent = new Intent(this, ImportAccountActivity.class);
+        TextView restoreAccountBtn = findViewById(R.id.btn_restore_account);
+        restoreAccountBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(this, RestoreAccountActivity.class);
             startActivity(intent);
         });
 
@@ -262,8 +324,6 @@ public class MainActivity extends BaseActivity
             }
         });
     }
-
-
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -434,7 +494,8 @@ public class MainActivity extends BaseActivity
                                 tokenPrice = cryptoCurrency.getPriceUsd();
                             }
                             BigDecimal value = new BigDecimal(tokenPrice)
-                                    .multiply(CommonUtil.getAccountFromWei(accountAssets.getBalance()));
+                                    .multiply(CommonUtil.convertUnit(accountAssets.getTokenEntity().getName(),
+                                            accountAssets.getBalance()));
                             totalValue = totalValue.add(value);
                             break;
                         }
@@ -481,6 +542,8 @@ public class MainActivity extends BaseActivity
     protected void onDestroy() {
         super.onDestroy();
         RxBus.get().unregister(this);
+        RxEventBus.get().unregister(EventTypeDef.BTC_ACCOUNT_SYNC, btcSyncStatus);
+        RxEventBus.get().unregister(EventTypeDef.BTC_APP_KIT_INIT_SET_UP, btcAppkitSetup);
     }
 
     @Subscribe(
@@ -525,9 +588,35 @@ public class MainActivity extends BaseActivity
                 return;
             }
             holder.layoutAssets.setOnClickListener(v -> {
-                Intent intent = new Intent(MainActivity.this, TransferActivity.class);
-                intent.putExtra(IntentParam.PARAM_TOKEN_INFO, tokenEntity);
-                startActivityForResult(intent, REQ_CODE_TRANSFER);
+                if (tokenEntity.getName().toLowerCase().equals(BrahmaConst.BITCOIN)) {
+                    List<AccountEntity> btcAccounts = new ArrayList<>();
+                    for (AccountEntity accountEntity : cacheAccounts) {
+                        if (accountEntity.getType() == BrahmaConst.BTC_ACCOUNT_TYPE) {
+                            btcAccounts.add(accountEntity);
+                        }
+                    }
+                    if (btcAccounts.size() > 0) {
+                        Intent intent = new Intent(MainActivity.this, BtcTransferActivity.class);
+                        intent.putExtra(IntentParam.PARAM_TOKEN_INFO, tokenEntity);
+                        startActivityForResult(intent, REQ_CODE_TRANSFER);
+                    } else {
+                        AlertDialog passwordDialog = new AlertDialog.Builder(MainActivity.this)
+                                .setMessage(R.string.tip_no_btc_account)
+                                .setCancelable(true)
+                                .setPositiveButton(R.string.create, (dialog, which) -> {
+                                    dialog.cancel();
+                                    Intent intent = new Intent(MainActivity.this, CreateBtcAccountActivity.class);
+                                    startActivity(intent);
+                                })
+                                .create();
+                        passwordDialog.show();
+                    }
+
+                } else {
+                    Intent intent = new Intent(MainActivity.this, EthTransferActivity.class);
+                    intent.putExtra(IntentParam.PARAM_TOKEN_INFO, tokenEntity);
+                    startActivityForResult(intent, REQ_CODE_TRANSFER);
+                }
             });
             holder.tvTokenName.setText(tokenEntity.getShortName());
             holder.tvTokenFullName.setText(tokenEntity.getName());
@@ -535,6 +624,7 @@ public class MainActivity extends BaseActivity
             ImageManager.showTokenIcon(MainActivity.this, holder.ivTokenIcon,
                     tokenEntity.getName(), tokenEntity.getAddress());
             BigInteger tokenCount = BigInteger.ZERO;
+
             for (AccountAssets accountAssets : cacheAssets) {
                 if (accountAssets.getTokenEntity().getAddress().toLowerCase().equals(tokenEntity.getAddress().toLowerCase())) {
                     tokenCount = tokenCount.add(accountAssets.getBalance());
@@ -561,7 +651,7 @@ public class MainActivity extends BaseActivity
                                     .load(R.drawable.currency_usd)
                                     .into(holder.ivTokenAssets);
                         }
-                        tokenValue = CommonUtil.getAccountFromWei(tokenCount).multiply(new BigDecimal(tokenPrice));
+                        tokenValue = CommonUtil.convertUnit(tokenEntity.getName(), tokenCount).multiply(new BigDecimal(tokenPrice));
                         holder.tvTokenPrice.setText(String.valueOf(new BigDecimal(tokenPrice).setScale(3, BigDecimal.ROUND_HALF_UP)));
                         break;
                     }
@@ -569,12 +659,43 @@ public class MainActivity extends BaseActivity
             }
             if (BrahmaConfig.getInstance().isAssetsVisible()) {
                 holder.tvTokenApproEqual.setText(R.string.asymptotic);
-                holder.tvTokenAccount.setText(String.valueOf(CommonUtil.getAccountFromWei(tokenCount)));
+                holder.tvTokenAccount.setText(String.valueOf(CommonUtil.convertUnit(tokenEntity.getName(), tokenCount)));
                 holder.tvTokenAssetsCount.setText(String.valueOf(tokenValue.setScale(2, BigDecimal.ROUND_HALF_UP)));
             } else {
                 holder.tvTokenApproEqual.setText("");
                 holder.tvTokenAccount.setText("****");
                 holder.tvTokenAssetsCount.setText("********");
+            }
+            if (tokenEntity.getName().toLowerCase().equals(BrahmaConst.BITCOIN)) {
+                if (bitcoinDownloadProgress != null) {
+                    if (bitcoinDownloadProgress.isDownloaded()) {
+                        holder.ivBtcSync.setVisibility(View.GONE);
+                        holder.tvBtcSyncStatus.setVisibility(View.GONE);
+                        holder.tvTokenAccount.setVisibility(View.VISIBLE);
+                    } else {
+                        holder.ivBtcSync.setVisibility(View.VISIBLE);
+                        holder.tvBtcSyncStatus.setVisibility(View.VISIBLE);
+                        holder.tvTokenAccount.setVisibility(View.GONE);
+                        Animation rotate = AnimationUtils.loadAnimation(MainActivity.this, R.anim.sync_rotate);
+                        if (rotate != null) {
+                            holder.ivBtcSync.startAnimation(rotate);
+                        }
+                        int progress = 1;
+                        if ((int) bitcoinDownloadProgress.getProgressPercentage() > progress) {
+                            progress = (int) bitcoinDownloadProgress.getProgressPercentage();
+                        }
+                        holder.tvBtcSyncStatus.setText(String.format(Locale.US, "%s %d%%",
+                                getResources().getString(R.string.sync), progress));
+                    }
+                } else {
+                    holder.ivBtcSync.setVisibility(View.GONE);
+                    holder.tvBtcSyncStatus.setVisibility(View.GONE);
+                    holder.tvTokenAccount.setVisibility(View.VISIBLE);
+                }
+            } else {
+                holder.ivBtcSync.setVisibility(View.GONE);
+                holder.tvBtcSyncStatus.setVisibility(View.GONE);
+                holder.tvTokenAccount.setVisibility(View.VISIBLE);
             }
         }
 
@@ -595,6 +716,8 @@ public class MainActivity extends BaseActivity
             TextView tvTokenAssetsCount;
             ImageView ivTokenPrice;
             ImageView ivTokenAssets;
+            TextView tvBtcSyncStatus;
+            ImageView ivBtcSync;
 
             ItemViewHolder(View itemView) {
                 super(itemView);
@@ -608,6 +731,8 @@ public class MainActivity extends BaseActivity
                 tvTokenPrice = itemView.findViewById(R.id.tv_token_price);
                 ivTokenPrice = itemView.findViewById(R.id.iv_currency_unit);
                 ivTokenAssets = itemView.findViewById(R.id.iv_currency_amount);
+                ivBtcSync = itemView.findViewById(R.id.iv_btc_sync);
+                tvBtcSyncStatus = itemView.findViewById(R.id.tv_btc_sync);
             }
         }
     }

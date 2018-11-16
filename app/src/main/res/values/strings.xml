@@ -8,6 +8,9 @@
     <string name="delete">Delete</string>
     <string name="unit_cny">CNY</string>
     <string name="unit_usd">USD</string>
+    <string name="account_eth">ETH</string>
+    <string name="account_btc">BTC</string>
+    <string name="create">Create</string>
 
     <string name="title_brahma_wallet">Wallet</string>
     <string name="brahma_wallet_desc">Your smart digital wallet</string>
@@ -45,6 +48,7 @@
     <string name="action_copy_address">Copy Address</string>
     <string name="title_dialog_export_keystore">Export Keystore</string>
     <string name="title_dialog_export_private_key">Export Private Key</string>
+    <string name="title_dialog_export_mnemonics">Export Mnemonics</string>
 
     <string name="export_keystore_tip_1">
         Store offline. Please store keystore to a safe offline place. Never put it on internet.
@@ -74,6 +78,9 @@
     <string name="export_private_key_tip_1">
         Warning: Export plain private key is very dangerous.
     </string>
+    <string name="export_mnemonics_tip_1">
+        Warning: Export plain mnemonics is very dangerous.
+    </string>
     <string name="delete_account_tip">
         Caution! This operation cannot be revoked!
     </string>
@@ -91,6 +98,7 @@
     <string name="action_export_private_key">Export Private Key</string>
     <string name="action_export_keystore">Export Keystore</string>
     <string name="action_delete_account">Delete Account</string>
+    <string name="action_export_mnemonics">Export Mnemonics</string>
 
     <string name="success_change_account_name">Change account name success!</string>
     <string name="error_change_account_name">Change account name error!!!</string>
@@ -132,9 +140,9 @@
 
     <string name="error_account_exists">Account exists! Please check the input.</string>
     <string name="error_account_address">Error account address!</string>
-    <string name="success_import_account">Import account success!</string>
-    <string name="error_import_keystore">Import account error! please check keystore and password!</string>
-    <string name="error_import_private_key">Import account error! please check private key!</string>
+    <string name="success_import_account">Restore account success!</string>
+    <string name="error_import_keystore">Restore account error! please check keystore and password!</string>
+    <string name="error_import_private_key">Restore account error! please check private key!</string>
     <string name="error_keystore">Error keystore!</string>
     <string name="error_private_key">Error private key!</string>
     <string name="error_mnemonics">Error mnemonics!</string>
@@ -149,9 +157,17 @@
     <string name="menu_accounts">Accounts</string>
     <string name="menu_contacts">Contacts</string>
     <string name="action_create_account">Create Account</string>
-    <string name="action_import_account">Import Account</string>
+    <string name="action_restore_account">Restore Account</string>
+    <string name="action_create_eth_account">Create ETH Account</string>
+    <string name="action_restore_eth_account">Restore ETH Account</string>
+    <string name="action_create_btc_account">Create BTC Account</string>
+    <string name="action_restore_btc_account">Restore BTC Account</string>
+    `
+    <!-- restore account-->
+    <string name="title_restore_account">Restore Account</string>
+    <string name="success_restore_account">Restore account success!</string>
 
-    <string name="title_activity_import_account">Import Account</string>
+    <string name="title_activity_import_account">Restore Account</string>
     <string name="import_official_editor_hint">keystore content</string>
     <string name="import_mnemonics_hint">Please use space to separate mnemonic words.</string>
     <string name="import_private_key_hint">private key</string>
@@ -390,6 +406,9 @@
     <string name="error_edit_contact">Edit contact error! please try again!</string>
     <string name="tip_contact_image_avatar">Contact Avatar</string>
     <string name="tip_contact_scan_address">Scan</string>
+    <string name="subtitle_contact_wallet_account">Wallet Account</string>
+    <string name="tip_no_ethereum_address">Please choose ethereum address</string>
+    <string name="tip_no_bitcoin_address">Please choose bitcoin address</string>
 
     <!-- fingerprint -->
     <string name="tip_fingerprint">Click to start verification</string>
@@ -442,4 +461,40 @@
     <string name="label_transaction_time">Time</string>
     <string name="label_transaction_input_data">Remark</string>
     <string name="label_copy_etherscan_url">Copy Etherscan details url</string>
+
+    <!-- btc assets -->
+    <string name="current_price">Current Price</string>
+    <string name="prompt_send">Send</string>
+    <string name="btc_transaction_unspent">Unspent</string>
+    <string name="btc_transaction_pending">Pending</string>
+    <string name="btc_transaction_spent">Spend</string>
+    <string name="btc_transaction_dead">Dead</string>
+    <string name="transaction_amount">Amount</string>
+    <string name="prompt_transactions">Transactions</string>
+    <string name="prompt_transacted_total">Total Transacted</string>
+    <string name="from">From </string>
+    <string name="start_sync">sync</string>
+
+    <!-- btc qrcode -->
+    <string name="btc_main_address">Main Address</string>
+    <string name="btc_child_address">Child Address</string>
+    <string name="transfer_btc">Please transfer BTC</string>
+    <string name="enter_btc_amount">Enter amount</string>
+    <string name="invalid_btc_address">Invalid bitcoin address</string>
+    <string name="current_block_height">Current Block Height</string>
+    <string name="private_key_num">Private Keys</string>
+    <string name="transactions_num">Transactions</string>
+
+    <!-- btc transfer -->
+    <string name="prompt_btc_fee">Miner Fee</string>
+    <string name="prompt_btc_fee_unit">sat/b</string>
+    <string name="tip_invalid_fee">Invalid miner fee.</string>
+    <string name="title_btc_transfer_request">BTC Transfer Request</string>
+    <string name="tip_error_btc_address">Tips: The invalid btc address.</string>
+    <string name="title_btc_transactions">BTC transactions</string>
+    <string name="prompt_sending">Sending </string>
+    <string name="prompt_receiving">Receiving </string>
+    <string name="transaction_confirmed">Confirmed</string>
+    <string name="transaction_confirming">Confirming</string>
+    <string name="tip_no_btc_account">You don\'t have btc account yet, so you can\'t transfer BTC.</string>
 </resources>

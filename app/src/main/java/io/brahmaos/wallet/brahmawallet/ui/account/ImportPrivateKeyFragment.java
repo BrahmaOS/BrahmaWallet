@@ -3,7 +3,6 @@ package io.brahmaos.wallet.brahmawallet.ui.account;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -20,22 +19,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.spongycastle.util.encoders.Hex;
-import org.web3j.crypto.CipherException;
-import org.web3j.crypto.ECKeyPair;
-import org.web3j.crypto.Wallet;
-import org.web3j.crypto.WalletFile;
 import org.web3j.crypto.WalletUtils;
-import org.web3j.protocol.ObjectMapperFactory;
 
-import java.io.IOException;
 import java.util.List;
 
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
-import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
 import io.brahmaos.wallet.brahmawallet.ui.setting.PrivacyPolicyActivity;
 import io.brahmaos.wallet.brahmawallet.ui.setting.ServiceTermsActivity;
 import io.brahmaos.wallet.brahmawallet.view.CustomProgressDialog;
@@ -201,7 +190,7 @@ public class ImportPrivateKeyFragment extends Fragment {
             customProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             customProgressDialog.setCancelable(false);
             customProgressDialog.show();
-            mViewModel.importAccountWithPrivateKey(privateKey, password, name)
+            mViewModel.importEthAccountWithPrivateKey(privateKey, password, name)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<String>() {

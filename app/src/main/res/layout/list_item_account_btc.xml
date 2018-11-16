@@ -39,7 +39,7 @@
             android:paddingBottom="@dimen/space_normal"
             android:orientation="vertical">
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -51,6 +51,7 @@
                     android:layout_height="@dimen/icon_normal_size"
                     android:padding="@dimen/space_smaller"/>
                 <LinearLayout
+                    android:layout_toEndOf="@id/iv_account_avatar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/space_normal"
@@ -59,7 +60,7 @@
                         android:id="@+id/tv_account_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="@dimen/font_size_subheading"
+                        android:textSize="@dimen/font_size_subtitle"
                         android:textColor="@color/white"/>
                     <TextView
                         android:id="@+id/tv_account_address"
@@ -68,12 +69,21 @@
                         android:textColor="@color/white"
                         android:layout_marginTop="@dimen/space_smaller"/>
                 </LinearLayout>
-            </LinearLayout>
+                <ImageView
+                    android:visibility="gone"
+                    android:id="@+id/iv_btc_sync_status"
+                    android:layout_width="@dimen/toolbar_icon_size"
+                    android:layout_height="@dimen/toolbar_icon_size"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/ic_sync_white"/>
+            </RelativeLayout>
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_marginTop="@dimen/space_normal"
                 android:layout_marginBottom="@dimen/space_small"
+                android:layout_marginStart="56dp"
                 android:layout_height="1px"
                 android:background="#D9ffffff"/>
             <RelativeLayout
@@ -82,51 +92,65 @@
                 android:layout_marginStart="56dp">
                 <TextView
                     android:id="@+id/tv_total_assets_desc"
+                    android:layout_marginTop="@dimen/space_unit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
                     android:textColor="@color/white"
                     android:text="@string/total_assets"/>
-                <TextView
-                    android:id="@+id/left_brackets"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/tv_total_assets_desc"
-                    android:layout_centerVertical="true"
-                    android:textColor="@color/white"
-                    android:layout_marginStart="@dimen/space_unit"
-                    android:text="("/>
-                <TextView
-                    android:id="@+id/tv_currency_unit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/left_brackets"
-                    android:layout_centerVertical="true"
-                    android:textColor="@color/white"
-                    android:text="@string/unit_cny"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/tv_currency_unit"
-                    android:layout_centerVertical="true"
-                    android:textColor="@color/white"
-                    android:text=")"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toStartOf="@id/tv_total_assets"
-                    android:layout_marginEnd="@dimen/space_smaller"
-                    android:layout_centerVertical="true"
-                    android:textColor="@color/white"
-                    android:text="@string/asymptotic"/>
-                <TextView
-                    android:id="@+id/tv_total_assets"
+                <LinearLayout
                     android:layout_alignParentEnd="true"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/font_size_subtitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0"/>
+                    android:orientation="vertical">
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/tv_account_balance"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/font_size_subtitle"
+                            android:layout_marginEnd="@dimen/space_smaller"
+                            android:textColor="@color/white"/>
+                        <TextView
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/font_size_subheading"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/account_btc"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_marginTop="@dimen/space_unit"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/space_unit"
+                            android:layout_gravity="center_vertical"
+                            android:textColor="@color/white"
+                            android:text="@string/asymptotic"/>
+                        <ImageView
+                            android:id="@+id/iv_currency_amount"
+                            android:layout_gravity="center_vertical"
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:layout_marginEnd="@dimen/space_smaller"
+                            android:src="@drawable/currency_cny_white"/>
+                        <TextView
+                            android:id="@+id/tv_total_assets"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/font_size_subtitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"/>
+                    </LinearLayout>
+                </LinearLayout>
+
             </RelativeLayout>
 
         </LinearLayout>

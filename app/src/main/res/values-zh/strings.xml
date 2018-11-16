@@ -8,6 +8,7 @@
     <string name="delete">删除</string>
     <string name="unit_cny">CNY</string>
     <string name="unit_usd">USD</string>
+    <string name="create">立即创建</string>
 
     <string name="title_brahma_wallet">梵钱包</string>
     <string name="brahma_wallet_desc">您的数字智能钱包</string>
@@ -38,6 +39,8 @@
 
     <!-- Strings related to accounts -->
     <string name="title_accounts">账号</string>
+    <string name="title_tab_account_ethereum">以太坊</string>
+    <string name="title_tab_account_bitcoin">比特币</string>
     <string name="title_account_assets">账号资产</string>
     <string name="title_account_detail">账号详情</string>
     <string name="title_account_change_name">更改账号名</string>
@@ -45,7 +48,7 @@
     <string name="action_copy_address">复制地址</string>
     <string name="title_dialog_export_keystore">导出Keystore</string>
     <string name="title_dialog_export_private_key">导出私钥</string>
-
+    <string name="title_dialog_export_mnemonics">导出助记词</string>
     <string name="export_keystore_tip_1">
         离线保存，复制Keystore文件到安全、离线的地方保存。切勿保存到邮箱、网盘、聊天工具等，非常危险。
     </string>
@@ -70,6 +73,9 @@
     <string name="export_private_key_tip_1">
         安全告警: 私钥未经加密，导出存在风险.
     </string>
+    <string name="export_mnemonics_tip_1">
+        安全告警: 助记词未经加密，导出存在风险.
+    </string>
     <string name="confirm_qr_code_show">
         已确认周围无人和摄像头。
     </string>
@@ -91,6 +97,7 @@
     <string name="action_export_private_key">导出私钥</string>
     <string name="action_export_keystore">导出Keystore</string>
     <string name="action_delete_account">删除账号</string>
+    <string name="action_export_mnemonics">导出助记词</string>
 
     <string name="success_change_account_name">更改账号名成功!</string>
     <string name="error_change_account_name">删除账号失败!!!</string>
@@ -149,7 +156,15 @@
     <string name="menu_accounts">账号</string>
     <string name="menu_contacts">联系人</string>
     <string name="action_create_account">创建账号</string>
-    <string name="action_import_account">导入账号</string>
+    <string name="action_restore_account">恢复账号</string>
+    <string name="action_create_eth_account">创建 ETH 账号</string>
+    <string name="action_restore_eth_account">恢复 ETH 账号</string>
+    <string name="action_create_btc_account">创建 BTC 账号</string>
+    <string name="action_restore_btc_account">恢复 BTC 账号</string>
+
+    <!-- restore account-->
+    <string name="title_restore_account">恢复账号</string>
+    <string name="success_restore_account">恢复账号成功!</string>
 
     <string name="title_activity_import_account">导入账号</string>
     <string name="import_official_editor_hint">keystore内容</string>
@@ -322,6 +337,9 @@
     <string name="error_edit_contact">编辑联系人失败! 请稍后重试!</string>
     <string name="tip_contact_image_avatar">联系人头像</string>
     <string name="tip_contact_scan_address">扫描联系人地址二维码</string>
+    <string name="subtitle_contact_wallet_account">钱包账号</string>
+    <string name="tip_no_ethereum_address">请选择有以太坊地址的联系人</string>
+    <string name="tip_no_bitcoin_address">请选择有比特币地址的联系人</string>
 
     <!-- fingerprint -->
     <string name="tip_fingerprint">点击开启验证</string>
@@ -372,4 +390,40 @@
     <string name="label_transaction_time">时间</string>
     <string name="label_transaction_input_data">备注</string>
     <string name="label_copy_etherscan_url">复制Etherscan详情链接</string>
+
+    <!-- btc assets -->
+    <string name="current_price">当前价格</string>
+    <string name="prompt_send">发送</string>
+    <string name="btc_transaction_unspent">未消费</string>
+    <string name="btc_transaction_pending">确认中</string>
+    <string name="btc_transaction_spent">已消费</string>
+    <string name="btc_transaction_dead">交易失败</string>
+    <string name="transaction_amount">Amount</string>
+    <string name="prompt_transactions">交易次数</string>
+    <string name="prompt_transacted_total">交易总金额</string>
+    <string name="from">从 </string>
+    <string name="start_sync">同步</string>
+
+    <!-- btc qrcode -->
+    <string name="btc_main_address">主地址</string>
+    <string name="btc_child_address">子地址</string>
+    <string name="transfer_btc">转入 BTC</string>
+    <string name="enter_btc_amount">输入金额</string>
+    <string name="invalid_btc_address">非法的BTC地址</string>
+    <string name="current_block_height">当前同步区块</string>
+    <string name="private_key_num">私钥数</string>
+    <string name="transactions_num">交易数</string>
+
+    <!-- btc transfer -->
+    <string name="prompt_btc_fee">费用</string>
+    <string name="prompt_btc_fee_unit">sat/b</string>
+    <string name="tip_invalid_fee">请输入正确的费用.</string>
+    <string name="title_btc_transfer_request">BTC转账</string>
+    <string name="tip_error_btc_address">提示: 非法的 BTC 地址</string>
+    <string name="title_btc_transactions">BTC交易列表</string>
+    <string name="prompt_sending">发送 </string>
+    <string name="prompt_receiving">接收 </string>
+    <string name="transaction_confirmed">确认成功</string>
+    <string name="transaction_confirming">确认中</string>
+    <string name="tip_no_btc_account">您还没有 BTC 账号，无法转账。</string>
 </resources>

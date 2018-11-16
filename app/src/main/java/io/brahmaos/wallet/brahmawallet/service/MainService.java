@@ -57,7 +57,7 @@ public class MainService extends BaseService{
     private List<CryptoCurrency> cryptoCurrencies = new ArrayList<>();
     private List<AccountAssets> accountAssetsList = new ArrayList<>();
     private List<KyberToken> kyberTokenList = new ArrayList<>();
-    private AccountEntity newMnemonicAccount = new AccountEntity();
+    private List<String> mnemonicCode = new ArrayList<>();
     private boolean isHaveAccount;
 
     public List<CryptoCurrency> getCryptoCurrencies() {
@@ -84,12 +84,12 @@ public class MainService extends BaseService{
         this.kyberTokenList = kyberTokenList;
     }
 
-    public AccountEntity getNewMnemonicAccount() {
-        return newMnemonicAccount;
+    public List<String> getMnemonicCode() {
+        return mnemonicCode;
     }
 
-    public void setNewMnemonicAccount(AccountEntity newMnemonicAccount) {
-        this.newMnemonicAccount = newMnemonicAccount;
+    public void setMnemonicCode(List<String> mnemonicCode) {
+        this.mnemonicCode = mnemonicCode;
     }
 
     public void loadCryptoCurrencies(List<CryptoCurrency> currencies) {

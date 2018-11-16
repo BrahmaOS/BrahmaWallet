@@ -1,0 +1,11 @@
+<resources>
+    <dimen name="font_size_display2">30sp</dimen>
+    <dimen name="font_size_display1">27sp</dimen>
+    <dimen name="font_size_headline">23sp</dimen>
+    <dimen name="font_size_title">19sp</dimen>
+    <dimen name="font_size_subtitle">17sp</dimen>
+    <dimen name="font_size_subheading">15sp</dimen>
+    <dimen name="font_size_body">13sp</dimen>
+    <dimen name="font_size_caption">12sp</dimen>
+    <dimen name="font_size_test_network">10sp</dimen>
+</resources>

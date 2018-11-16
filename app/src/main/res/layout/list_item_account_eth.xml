@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/space_smaller"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.v7.widget.CardView
+        app:cardCornerRadius="@dimen/space_unit"
+        app:cardElevation="@dimen/space_unit"
+        app:cardUseCompatPadding="true"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:layout_marginStart="@dimen/space_smaller"
+        android:layout_marginEnd="@dimen/space_smaller"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/iv_account_bg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/account_bg_apple"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:scaleType="centerInside"
+            android:src="@drawable/account_bg"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/space_small"
+            android:paddingEnd="@dimen/space_small"
+            android:paddingTop="@dimen/space_normal"
+            android:paddingBottom="@dimen/space_normal"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <ImageView
+                    android:id="@+id/iv_account_avatar"
+                    android:layout_gravity="center"
+                    android:background="@drawable/circle_bg_account_icon"
+                    android:layout_width="@dimen/icon_normal_size"
+                    android:layout_height="@dimen/icon_normal_size"
+                    android:padding="@dimen/space_smaller"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_normal"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/tv_account_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/font_size_subtitle"
+                        android:textColor="@color/white"/>
+                    <TextView
+                        android:id="@+id/tv_account_address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:layout_marginTop="@dimen/space_smaller"/>
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_marginTop="@dimen/space_normal"
+                android:layout_marginBottom="@dimen/space_small"
+                android:layout_marginStart="56dp"
+                android:layout_height="1px"
+                android:background="#D9ffffff"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="56dp">
+                <TextView
+                    android:id="@+id/tv_total_assets_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/white"
+                    android:text="@string/total_assets"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toStartOf="@id/iv_currency_amount"
+                    android:layout_marginEnd="@dimen/space_unit"
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/white"
+                    android:text="@string/asymptotic"/>
+                <ImageView
+                    android:id="@+id/iv_currency_amount"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@id/tv_total_assets"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:layout_marginEnd="@dimen/space_smaller"
+                    android:src="@drawable/currency_cny_white"/>
+                <TextView
+                    android:id="@+id/tv_total_assets"
+                    android:layout_alignParentEnd="true"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/font_size_subtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"/>
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>
+

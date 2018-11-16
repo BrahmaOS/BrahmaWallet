@@ -100,12 +100,32 @@
             android:gravity="end"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tv_token_count"
+            <LinearLayout
                 android:layout_width="wrap_content"
+                android:gravity="center_vertical"
                 android:layout_height="wrap_content"
-                android:textColor="@color/color_primary_text"
-                android:textSize="@dimen/font_size_title"/>
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/tv_token_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color_primary_text"
+                    android:textSize="@dimen/font_size_title"/>
+                <TextView
+                    android:id="@+id/tv_btc_sync"
+                    android:visibility="gone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color_secondary_text"
+                    android:textSize="@dimen/font_size_subheading"
+                    android:layout_marginEnd="@dimen/space_small"/>
+                <ImageView
+                    android:visibility="gone"
+                    android:id="@+id/iv_btc_sync"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_sync"/>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"

@@ -8,6 +8,7 @@ public class IntentParam {
     public static final String PARAM_ACCOUNT_ID = "account-id";
     public static final String PARAM_ACCOUNT_NAME = "account-name";
     public static final String PARAM_ACCOUNT_INFO = "account-info";
+    public static final String PARAM_ACCOUNT_TYPE = "account-type";
     public static final String PARAM_ACCOUNT_ADDRESS = "account_address";
     public static final String PARAM_TOKEN_INFO = "token-info";
     public static final String FLAG_CHANGE_NETWORK = "change-network";
@@ -20,4 +21,5 @@ public class IntentParam {
     public static final String PARAM_TOKEN_TX = "token-transaction";
     public static final String PARAM_TX_HASH = "tx-hash";
     public static final String PARAM_ETH_ADDRESS = "eth-account-address";
+    public static final String PARAM_MNEMONIC_CODE = "account-mnemonic-code";
 }

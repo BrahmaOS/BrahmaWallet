@@ -1,13 +1,9 @@
 package io.brahmaos.wallet.brahmawallet.ui.transaction;
 
-import android.Manifest;
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
@@ -40,7 +36,7 @@ import io.brahmaos.wallet.brahmawallet.model.EthTransaction;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.service.TransactionService;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
-import io.brahmaos.wallet.brahmawallet.ui.transfer.TransferActivity;
+import io.brahmaos.wallet.brahmawallet.ui.transfer.EthTransferActivity;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
 import rx.Observer;
@@ -137,7 +133,7 @@ public class EthTransactionsActivity extends BaseActivity {
         });
 
         fab.setOnClickListener(v -> {
-            Intent intent = new Intent(this, TransferActivity.class);
+            Intent intent = new Intent(this, EthTransferActivity.class);
             intent.putExtra(IntentParam.PARAM_ACCOUNT_INFO, mAccount);
             intent.putExtra(IntentParam.PARAM_TOKEN_INFO, mToken);
             startActivityForResult(intent, REQ_CODE_TRANSFER);
@@ -218,6 +214,7 @@ public class EthTransactionsActivity extends BaseActivity {
                     loadMoreFinished = true;
                 }
                 mEthTransactions = ethTxList;
+                Collections.sort(mEthTransactions);
                 recyclerViewTransactions.setVisibility(View.VISIBLE);
                 recyclerViewTransactions.getAdapter().notifyDataSetChanged();
             } else {

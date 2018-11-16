@@ -21,14 +21,13 @@ import android.widget.EditText;
 
 import butterknife.BindView;
 import io.brahmaos.wallet.brahmawallet.R;
-import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.common.ReqCode;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.ui.common.barcode.CaptureActivity;
 import io.brahmaos.wallet.brahmawallet.ui.common.barcode.Intents;
 import io.brahmaos.wallet.util.BLog;
 
-public class ImportAccountActivity extends BaseActivity {
+public class ImportEthereumAccountActivity extends BaseActivity {
 
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -40,13 +39,13 @@ public class ImportAccountActivity extends BaseActivity {
 
     @Override
     protected String tag() {
-        return ImportAccountActivity.class.getName();
+        return ImportEthereumAccountActivity.class.getName();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_import_account);
+        setContentView(R.layout.activity_import_ethereum_account);
         showNavBackBtn();
         initView();
     }
@@ -105,7 +104,7 @@ public class ImportAccountActivity extends BaseActivity {
                 finish();
             } else {
                 // dialog show tip
-                AlertDialog dialogTip = new AlertDialog.Builder(ImportAccountActivity.this)
+                AlertDialog dialogTip = new AlertDialog.Builder(ImportEthereumAccountActivity.this)
                         .setMessage(R.string.dialog_title_quit_import)
                         .setPositiveButton(R.string.quit, (dialog, which) -> {
                             dialog.cancel();

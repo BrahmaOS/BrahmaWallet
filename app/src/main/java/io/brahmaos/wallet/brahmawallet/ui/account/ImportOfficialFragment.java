@@ -209,7 +209,7 @@ public class ImportOfficialFragment extends Fragment {
             customProgressDialog.setCancelable(false);
             customProgressDialog.show();
             if (WalletUtils.isValidAddress(address)) {
-                mViewModel.importAccount(walletFile, password, name)
+                mViewModel.importEthAccountWithKeystore(walletFile, password, name)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new Observer<Boolean>() {
