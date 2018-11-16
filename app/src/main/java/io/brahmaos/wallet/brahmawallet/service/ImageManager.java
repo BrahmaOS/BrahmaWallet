@@ -87,10 +87,6 @@ public class ImageManager {
             Glide.with(Context)
                     .load(R.drawable.icon_eth)
                     .into(iv);
-        } else if (tokenName.toLowerCase().equals(BrahmaConst.BITCOIN)) {
-            Glide.with(Context)
-                    .load(R.drawable.icon_btc)
-                    .into(iv);
         } else {
             RequestOptions options = new RequestOptions()
                     .placeholder(R.drawable.token_default)

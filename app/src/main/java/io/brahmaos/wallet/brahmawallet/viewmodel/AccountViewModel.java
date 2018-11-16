@@ -25,14 +25,11 @@ import android.support.annotation.Nullable;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Splitter;
 
-import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.crypto.ChildNumber;
 import org.bitcoinj.crypto.DeterministicKey;
 import org.bitcoinj.crypto.HDUtils;
 import org.bitcoinj.crypto.MnemonicCode;
 import org.bitcoinj.crypto.MnemonicException;
-import org.bitcoinj.kits.WalletAppKit;
-import org.bitcoinj.params.TestNet3Params;
 import org.bitcoinj.wallet.DeterministicKeyChain;
 import org.bitcoinj.wallet.DeterministicSeed;
 import org.bitcoinj.wallet.UnreadableWalletException;
@@ -59,13 +56,11 @@ import java.util.Date;
 import java.util.List;
 
 import io.brahmaos.wallet.brahmawallet.WalletApp;
-import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.AllTokenEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 import io.brahmaos.wallet.brahmawallet.model.AccountAssets;
 import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
-import io.brahmaos.wallet.brahmawallet.service.BtcAccountManager;
 import io.brahmaos.wallet.brahmawallet.service.MainService;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.DataCryptoUtils;
@@ -193,6 +188,9 @@ public class AccountViewModel extends AndroidViewModel {
 
                     // set mnemonic code in cache for backup
                     MainService.getInstance().setMnemonicCode(mnemonicCode);
+                    account.setMnemonics(mnemonicCode);
+                    MainService.getInstance().setNewMnemonicAccount(account);
+                    ((WalletApp) getApplication()).getRepository().createAccount(account);
                 }
             } catch (IOException | CipherException | UnreadableWalletException e) {
                 e.printStackTrace();
@@ -607,14 +605,8 @@ public class AccountViewModel extends AndroidViewModel {
             // init the assets
             assetsList = new ArrayList<>();
             for (AccountEntity accountEntity : accounts) {
-                if (accountEntity.getType() == BrahmaConst.BTC_ACCOUNT_TYPE) {
-                    getBtcBalance(accountEntity);
-                } else {
-                    for (TokenEntity tokenEntity : tokens) {
-                        if (!tokenEntity.getName().toLowerCase().equals(BrahmaConst.BITCOIN)) {
-                            getTokenAssetsOnEthereumChain(accountEntity, tokenEntity);
-                        }
-                    }
+                for (TokenEntity tokenEntity : tokens) {
+                    getTokenAssets(accountEntity, tokenEntity);
                 }
             }
         }
@@ -637,7 +629,7 @@ public class AccountViewModel extends AndroidViewModel {
     /*
      * Get the specified token asset of the specified account
      */
-    private void getTokenAssetsOnEthereumChain(final AccountEntity account, final TokenEntity tokenEntity) {
+    private void getTokenAssets(final AccountEntity account, final TokenEntity tokenEntity) {
         if (tokenEntity.getShortName().equals("ETH")) {
             BrahmaWeb3jService.getInstance().getEthBalance(account)
                     .observable()
@@ -730,34 +722,16 @@ public class AccountViewModel extends AndroidViewModel {
      */
     private void checkTokenAsset(AccountAssets assets) {
         for (AccountAssets localAssets : assetsList) {
-            if (localAssets.getAccountEntity().getType() == assets.getAccountEntity().getType() &&
-                    localAssets.getAccountEntity().getType() == BrahmaConst.ETH_ACCOUNT_TYPE &&
-                    localAssets.getAccountEntity().getAddress().equals(assets.getAccountEntity().getAddress()) &&
+            if (localAssets.getAccountEntity().getAddress().equals(assets.getAccountEntity().getAddress()) &&
                     localAssets.getTokenEntity().getAddress().equals(assets.getTokenEntity().getAddress())) {
-                assetsList.remove(localAssets);
-                break;
-            } else if (localAssets.getAccountEntity().getType() == assets.getAccountEntity().getType() &&
-                    localAssets.getAccountEntity().getType() == BrahmaConst.BTC_ACCOUNT_TYPE &&
-                    localAssets.getAccountEntity().getFilename().equals(assets.getAccountEntity().getFilename()) &&
-                    localAssets.getTokenEntity().getName().equals(assets.getTokenEntity().getName()) &&
-                    localAssets.getTokenEntity().getName().toLowerCase().equals(BrahmaConst.BITCOIN)) {
                 assetsList.remove(localAssets);
                 break;
             }
         }
         assetsList.add(assets);
         if (mObservableAccounts.getValue() != null && mObservableTokens.getValue() != null) {
-            int ethAccountCount = 0;
-            int btcAccountCount = 0;
-            for (AccountEntity account : mObservableAccounts.getValue()) {
-                if (account.getType() == BrahmaConst.BTC_ACCOUNT_TYPE) {
-                    btcAccountCount++;
-                } else if (account.getType() == BrahmaConst.ETH_ACCOUNT_TYPE) {
-                    ethAccountCount++;
-                }
-            }
-            int ethTokenCount = mObservableTokens.getValue().size() - 1;
-            int totalCount = ethAccountCount * ethTokenCount + btcAccountCount;
+            int totalCount = mObservableAccounts.getValue().size() *
+                    mObservableTokens.getValue().size();
             if (totalCount == assetsList.size()) {
                 mObservableAssets.postValue(assetsList);
                 MainService.getInstance().setAccountAssetsList(assetsList);

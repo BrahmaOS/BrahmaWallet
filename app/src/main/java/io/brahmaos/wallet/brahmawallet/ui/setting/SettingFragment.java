@@ -12,7 +12,6 @@ import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -26,7 +25,6 @@ import io.brahmaos.wallet.util.CommonUtil;
  * Activities that contain this fragment must implement the PreferenceFragment
  */
 public class SettingFragment extends PreferenceFragment {
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +34,17 @@ public class SettingFragment extends PreferenceFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        bindPreferenceSummaryToValue(findPreference(getString(R.string.key_network_url)));
+
+        Preference networkUrl = findPreference(getString(R.string.key_network_url));
+        networkUrl.setOnPreferenceChangeListener((preference, value) -> {
+            BrahmaConfig.getInstance().setNetworkUrl(value.toString());
+            bindPreferenceSummaryToValue(findPreference(getString(R.string.key_network_url)));
+            Intent intent = new Intent(getActivity(), MainActivity.class);
+            intent.putExtra(IntentParam.FLAG_CHANGE_NETWORK, true);
+            startActivity(intent);
+            return true;
+        });
 
         Preference languageLocale = findPreference(getString(R.string.key_wallet_language));
         languageLocale.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
@@ -49,7 +58,6 @@ public class SettingFragment extends PreferenceFragment {
         languageLocale.setOnPreferenceChangeListener((preference, value) -> {
             // change SharedPreferences
             BrahmaConfig.getInstance().setLanguageLocale(value.toString());
-
             // change language locale
             BrahmaConfig.getInstance().setLocale();
             bindPreferenceSummaryToValue(findPreference(getString(R.string.key_wallet_language)));
@@ -61,7 +69,6 @@ public class SettingFragment extends PreferenceFragment {
 
         Preference currencyUnit = findPreference(getString(R.string.key_wallet_currency_unit));
         currencyUnit.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
-
         // Trigger the listener immediately with the preference's
         // current value.
         sBindPreferenceSummaryToValueListener.onPreferenceChange(currencyUnit,
@@ -114,6 +121,8 @@ public class SettingFragment extends PreferenceFragment {
             return true;
         }
     };
+
+
 
     /**
      * Binds a preference's summary to its value. More specifically, when the
