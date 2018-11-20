@@ -214,7 +214,8 @@ public class BtcAddressQrcodeActivity extends BaseActivity {
         System.out.println(receiveUri);
 
         Observable<Bitmap> observable = Observable.create(e -> {
-            Bitmap bitmap = QRCodeUtil.createQRImage(receiveUri, 220, 220, null);
+            int width = ivAddressCode.getWidth();
+            Bitmap bitmap = QRCodeUtil.createQRImage(receiveUri, width, width, null);
             e.onNext(bitmap);
             e.onCompleted();
         });

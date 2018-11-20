@@ -348,9 +348,10 @@ public class AccountViewModel extends AndroidViewModel {
                     ((WalletApp) getApplication()).getRepository().createAccount(account);
 
                     // restore btc account
+                    String btcFilePrefix = seed.toHexString();
+                    BtcAccountManager.getInstance().restoreWalletAppKit(btcFilePrefix, seed);
                     // encrypt mnemonic
                     String encryptMnemonic = DataCryptoUtils.aes128Encrypt(mnemonics.toString().trim(), password);
-                    String btcFilePrefix = seed.toHexString();
                     AccountEntity btcAccount = new AccountEntity();
                     btcAccount.setName(accountName);
                     btcAccount.setFilename(btcFilePrefix);

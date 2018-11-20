@@ -31,16 +31,16 @@
 
             <LinearLayout
                 android:layout_width="0dp"
-                android:layout_weight="1.5"
+                android:layout_weight="2"
                 android:layout_height="match_parent" />
             <LinearLayout
                 android:layout_width="0dp"
-                android:layout_weight="7"
+                android:layout_weight="6"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
                 <TextView
                     android:id="@+id/tv_account_address"
-                    android:layout_marginTop="@dimen/space_largest"
+                    android:layout_marginTop="@dimen/height_toolbar"
                     android:textSize="@dimen/font_size_body"
                     android:textColor="@color/color_secondary_text"
                     android:layout_width="match_parent"
@@ -55,8 +55,7 @@
                     android:layout_marginTop="@dimen/space_larger"
                     android:id="@+id/iv_address_code"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/gray_border"/>
+                    android:layout_height="wrap_content"/>
 
                 <Button
                     android:id="@+id/btn_copy_address"
@@ -67,7 +66,7 @@
 
             <LinearLayout
                 android:layout_width="0dp"
-                android:layout_weight="1.5"
+                android:layout_weight="2"
                 android:layout_height="match_parent" />
         </LinearLayout>
 

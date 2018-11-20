@@ -32,7 +32,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:background="@color/color_transparent"
-                android:layout_weight="1"
+                android:layout_weight="0.75"
                 android:layout_height="0dp" />
             <FrameLayout
                 android:layout_width="match_parent"
@@ -100,7 +100,7 @@
                         android:id="@+id/layout_account_address"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/space_smaller"
+                        android:layout_marginTop="@dimen/space_small"
                         android:layout_gravity="center"
                         android:orientation="horizontal">
                         <TextView
@@ -119,16 +119,16 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/space_large"
+                        android:layout_marginTop="@dimen/space_small"
                         android:orientation="horizontal">
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight="2"/>
+                            android:layout_weight="2.25"/>
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="6"
+                            android:layout_weight="5.5"
                             android:orientation="vertical">
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -142,22 +142,22 @@
                                 android:layout_height="wrap_content"
                                 android:textSize="@dimen/font_size_subheading"
                                 android:textColor="@color/color_primary_text"
-                                android:layout_marginTop="@dimen/space_large"
+                                android:layout_marginTop="@dimen/space_normal"
                                 android:textAlignment="center"
                                 android:text="@string/transfer_btc"/>
 
                             <ImageView
                                 android:id="@+id/iv_address_code"
-                                android:layout_marginTop="@dimen/space_large"
+                                android:layout_marginTop="@dimen/space_normal"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"/>
 
-                            <LinearLayout
+                            <!--<LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="1dp"
                                 android:orientation="vertical"
-                                android:layout_marginTop="@dimen/space_large"
-                                android:background="@color/color_divider"/>
+                                android:layout_marginTop="@dimen/space_normal"
+                                android:background="@color/color_divider"/>-->
                             <TextView
                                 android:id="@+id/tv_input_amount"
                                 android:layout_width="match_parent"
@@ -174,7 +174,7 @@
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight="2"/>
+                            android:layout_weight="2.25"/>
                     </LinearLayout>
                 </LinearLayout>
 
