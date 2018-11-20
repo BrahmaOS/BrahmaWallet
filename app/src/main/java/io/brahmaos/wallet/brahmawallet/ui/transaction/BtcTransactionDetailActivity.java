@@ -1,41 +1,34 @@
 package io.brahmaos.wallet.brahmawallet.ui.transaction;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.widget.NestedScrollView;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+import org.bitcoinj.core.Address;
+import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionInput;
+import org.bitcoinj.core.TransactionOutput;
+import org.bitcoinj.core.Utils;
 import org.bitcoinj.kits.WalletAppKit;
-import org.web3j.protocol.ObjectMapperFactory;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.service.BtcAccountManager;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
-import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
 
 public class BtcTransactionDetailActivity extends BaseActivity {
@@ -57,6 +50,14 @@ public class BtcTransactionDetailActivity extends BaseActivity {
     TextView mTvTxDatetime;
     @BindView(R.id.layout_input_transaction)
     LinearLayout mLayoutTransactionInput;
+    @BindView(R.id.layout_output_transaction)
+    LinearLayout mLayoutTransactionOutput;
+    @BindView(R.id.tv_transaction_fee)
+    TextView mTvTransactionFee;
+    @BindView(R.id.tv_transaction_fee_unit)
+    TextView mTvTransactionFeeUnit;
+    @BindView(R.id.layout_copy_blockchain_url)
+    LinearLayout mLayoutCopyBlockchainUrl;
 
     private Transaction mTransaction;
     private WalletAppKit kit;
@@ -88,15 +89,19 @@ public class BtcTransactionDetailActivity extends BaseActivity {
     private void initView() {
         String sendAmount = String.valueOf(CommonUtil.convertBTCFromSatoshi(mTransaction.getValue(kit.wallet()).value));
         try {
-            mTvBtcAmount.setText(sendAmount);
-            mTvTxHash.setText(mTransaction.getHashAsString());
+            String txHash = mTransaction.getHashAsString();
+            mTvBtcAmount.setText(String.format("%s %s", sendAmount, getString(R.string.account_btc)));
+            mTvTxHash.setText(txHash);
             mTvTxFirstConfirmedBlock.setText(String.valueOf(mTransaction.getConfidence().getAppearedAtChainHeight()));
             mTvConfirmations.setText(String.valueOf(mTransaction.getConfidence().getDepthInBlocks()));
             mTvTxDatetime.setText(mTransaction.getUpdateTime().toString());
+            Coin fee = mTransaction.getFee();
+            int size = mTransaction.unsafeBitcoinSerialize().length;
+            mTvTransactionFee.setText(new StringBuilder().append(fee.toFriendlyString()).append(" for ").append(size).append(" bytes"));
+            mTvTransactionFeeUnit.setText(new StringBuilder().append(fee.divide(size)).append(" sat/byte"));
 
             if (mTransaction.getInputs() != null && mTransaction.getInputs().size() > 0) {
                 for (TransactionInput input : mTransaction.getInputs()) {
-                    System.out.println(input.toString());
                     final ItemView itemView = new ItemView();
                     itemView.layoutItem = LayoutInflater.from(this).inflate(R.layout.item_transaction, null);
                     itemView.tvAddress = itemView.layoutItem.findViewById(R.id.tv_address);
@@ -105,11 +110,38 @@ public class BtcTransactionDetailActivity extends BaseActivity {
                     if (input.getValue() != null) {
                         itemView.tvAmount.setText(input.getValue().toFriendlyString());
                     }
-                    itemView.tvAddress.setText(Long.toHexString(input.getSequenceNumber()));
+                    itemView.tvAddress.setText(new Address(BtcAccountManager.getInstance().getNetworkParams(), Utils.sha256hash160(input.getScriptSig().getPubKey())).toBase58());
 
                     mLayoutTransactionInput.addView(itemView.layoutItem);
                 }
             }
+
+            if (mTransaction.getOutputs() != null && mTransaction.getOutputs().size() > 0) {
+                for (TransactionOutput output : mTransaction.getOutputs()) {
+                    final ItemView itemView = new ItemView();
+                    itemView.layoutItem = LayoutInflater.from(this).inflate(R.layout.item_transaction, null);
+                    itemView.tvAddress = itemView.layoutItem.findViewById(R.id.tv_address);
+                    itemView.tvAmount = itemView.layoutItem.findViewById(R.id.tv_amount);
+
+                    if (output.getValue() != null) {
+                        itemView.tvAmount.setText(output.getValue().toFriendlyString());
+                    }
+                    if (output.getAddressFromP2PKHScript(BtcAccountManager.getInstance().getNetworkParams()) != null) {
+                        itemView.tvAddress.setText(output.getAddressFromP2PKHScript(BtcAccountManager.getInstance().getNetworkParams()).toBase58());
+                    }
+
+                    mLayoutTransactionOutput.addView(itemView.layoutItem);
+                }
+            }
+
+            mLayoutCopyBlockchainUrl.setOnClickListener(v -> {
+                ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clipData = ClipData.newPlainText("text", BrahmaConfig.getInstance().getBlochchainTxDetailUrl(txHash));
+                if (cm != null) {
+                    cm.setPrimaryClip(clipData);
+                    showLongToast(R.string.tip_success_copy);
+                }
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -119,5 +151,24 @@ public class BtcTransactionDetailActivity extends BaseActivity {
         View layoutItem;
         TextView tvAmount;
         TextView tvAddress;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_tx_detail, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.menu_tx_detail) {
+            Intent intent = new Intent(BtcTransactionDetailActivity.this, BlockchainTxDetailActivity.class);
+            intent.putExtra(IntentParam.PARAM_TX_HASH, mTransaction.getHashAsString());
+            startActivity(intent);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -55,8 +55,15 @@
                         android:layout_centerVertical="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textColor="@color/color_primary_text"
                         android:textSize="@dimen/font_size_subheading"/>
                 </RelativeLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_marginStart="@dimen/space_normal"
+                    android:layout_marginEnd="@dimen/space_normal"
+                    android:background="@color/divider"/>
                 <RelativeLayout
                     android:background="@color/white"
                     android:layout_width="match_parent"
@@ -76,8 +83,15 @@
                         android:layout_centerVertical="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textColor="@color/color_primary_text"
                         android:textSize="@dimen/font_size_subheading"/>
                 </RelativeLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_marginStart="@dimen/space_normal"
+                    android:layout_marginEnd="@dimen/space_normal"
+                    android:background="@color/divider"/>
                 <RelativeLayout
                     android:background="@color/white"
                     android:layout_width="match_parent"
@@ -97,8 +111,15 @@
                         android:layout_centerVertical="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textColor="@color/color_primary_text"
                         android:textSize="@dimen/font_size_subheading"/>
                 </RelativeLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_marginStart="@dimen/space_normal"
+                    android:layout_marginEnd="@dimen/space_normal"
+                    android:background="@color/divider"/>
                 <RelativeLayout
                     android:background="@color/white"
                     android:layout_width="match_parent"
@@ -118,8 +139,15 @@
                         android:layout_centerVertical="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textColor="@color/color_primary_text"
                         android:textSize="@dimen/font_size_subheading"/>
                 </RelativeLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_marginStart="@dimen/space_normal"
+                    android:layout_marginEnd="@dimen/space_normal"
+                    android:background="@color/divider"/>
                 <RelativeLayout
                     android:background="@color/white"
                     android:layout_width="match_parent"
@@ -139,6 +167,7 @@
                         android:layout_centerVertical="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textColor="@color/color_primary_text"
                         android:textSize="@dimen/font_size_subheading"/>
                 </RelativeLayout>
                 <RelativeLayout
@@ -151,14 +180,94 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/font_size_subheading"
-                        android:text="@string/label_transaction_date"/>
+                        android:text="@string/label_transaction_input"/>
                     <LinearLayout
                         android:id="@+id/layout_input_transaction"
                         android:layout_marginStart="@dimen/width_left_content"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"></LinearLayout>
+                        android:orientation="vertical"/>
                 </RelativeLayout>
+                <RelativeLayout
+                    android:background="@color/white"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/space_normal"
+                    android:paddingEnd="@dimen/space_normal"
+                    android:paddingBottom="@dimen/space_normal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/font_size_subheading"
+                        android:text="@string/label_transaction_output"/>
+                    <LinearLayout
+                        android:id="@+id/layout_output_transaction"
+                        android:layout_marginStart="@dimen/width_left_content"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"/>
+                </RelativeLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_marginStart="@dimen/space_normal"
+                    android:layout_marginEnd="@dimen/space_normal"
+                    android:background="@color/divider"/>
+                <RelativeLayout
+                    android:background="@color/white"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/space_normal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/font_size_subheading"
+                        android:text="@string/prompt_btc_fee"/>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/width_left_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:gravity="end"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/tv_transaction_fee"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/color_primary_text"
+                            android:textSize="@dimen/font_size_subheading"/>
+                        <TextView
+                            android:id="@+id/tv_transaction_fee_unit"
+                            android:layout_marginTop="2dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/color_secondary_text"
+                            android:textSize="@dimen/font_size_subheading"/>
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:id="@+id/layout_copy_blockchain_url"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_large"
+                    android:layout_marginBottom="@dimen/space_large"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="@dimen/icon_small_size"
+                        android:layout_height="@dimen/icon_small_size"
+                        android:src="@drawable/blockchain"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/master"
+                        android:layout_marginStart="@dimen/space_unit"
+                        android:text="@string/label_copy_blockchain_url"/>
+                </LinearLayout>
             </LinearLayout>
         </ScrollView>
     </android.support.design.widget.CoordinatorLayout>

@@ -135,6 +135,7 @@
         <activity android:name=".ui.account.CreateBtcAccountActivity" />
         <activity android:name=".ui.account.CreateEthAccountActivity" />
         <activity android:name=".ui.transaction.BtcTransactionDetailActivity" />
+        <activity android:name=".ui.transaction.BlockchainTxDetailActivity" />
     </application>
 
 </manifest>

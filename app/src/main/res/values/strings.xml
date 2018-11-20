@@ -520,4 +520,7 @@
     <string name="label_block_height">Block Height</string>
     <string name="label_confirmations">Confirmations</string>
     <string name="label_transaction_date">Datetime</string>
+    <string name="label_transaction_input">Input</string>
+    <string name="label_transaction_output">Output</string>
+    <string name="label_copy_blockchain_url">Copy Blockchain details url</string>
 </resources>
