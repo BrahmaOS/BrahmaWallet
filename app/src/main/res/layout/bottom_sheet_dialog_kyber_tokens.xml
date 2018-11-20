@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:windowSoftInputMode="adjustResize"
     android:background="@color/white">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-        <TextView
-            android:id="@+id/title_kyber_tokens"
-            android:layout_width="match_parent"
-            android:gravity="center_vertical"
-            android:layout_height="@dimen/height_toolbar"
-            android:text="@string/choose_kyber_tokens"
+        <android.support.v7.widget.SearchView
+            android:id="@+id/view_search"
+            android:background="@drawable/bg_search_view"
             android:layout_marginStart="@dimen/space_normal"
-            android:textColor="@color/color_primary_text"
-            android:textSize="@dimen/font_size_subheading"/>
+            android:layout_marginEnd="@dimen/space_normal"
+            android:layout_marginTop="@dimen/space_normal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
         <android.support.v7.widget.RecyclerView
             android:id="@+id/tokens_recycler"
             android:layout_width="match_parent"
