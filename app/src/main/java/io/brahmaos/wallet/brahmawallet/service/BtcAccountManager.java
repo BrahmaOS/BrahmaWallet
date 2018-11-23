@@ -49,7 +49,7 @@ public class BtcAccountManager extends BaseService{
 
     public static int BYTES_PER_BTC_KB = 1000;
     public static int MIN_CONFIRM_BLOCK_HEIGHT = 6;
-    private String CHECK_POINTS_NAME = "checkpoints_testnet";
+    private String CHECK_POINTS_NAME = "checkpoints";
 
     private Map<String, WalletAppKit> btcAccountKit = new HashMap<>();
 
@@ -60,7 +60,7 @@ public class BtcAccountManager extends BaseService{
     }
 
     public NetworkParameters getNetworkParams() {
-        return TestNet3Params.get();
+        return MainNetParams.get();
     }
 
     private DownloadProgressTracker listener = new DownloadProgressTracker() {

@@ -97,8 +97,10 @@ public class BtcTransactionDetailActivity extends BaseActivity {
             mTvTxDatetime.setText(mTransaction.getUpdateTime().toString());
             Coin fee = mTransaction.getFee();
             int size = mTransaction.unsafeBitcoinSerialize().length;
-            mTvTransactionFee.setText(new StringBuilder().append(fee.toFriendlyString()).append(" for ").append(size).append(" bytes"));
-            mTvTransactionFeeUnit.setText(new StringBuilder().append(fee.divide(size)).append(" sat/byte"));
+            if (fee != null) {
+                mTvTransactionFee.setText(new StringBuilder().append(fee.toFriendlyString()).append(" for ").append(size).append(" bytes"));
+                mTvTransactionFeeUnit.setText(new StringBuilder().append(fee.divide(size)).append(" sat/byte"));
+            }
 
             if (mTransaction.getInputs() != null && mTransaction.getInputs().size() > 0) {
                 for (TransactionInput input : mTransaction.getInputs()) {

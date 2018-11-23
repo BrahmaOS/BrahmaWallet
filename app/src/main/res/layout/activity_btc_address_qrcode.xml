@@ -152,12 +152,6 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"/>
 
-                            <!--<LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="1dp"
-                                android:orientation="vertical"
-                                android:layout_marginTop="@dimen/space_normal"
-                                android:background="@color/color_divider"/>-->
                             <TextView
                                 android:id="@+id/tv_input_amount"
                                 android:layout_width="match_parent"
