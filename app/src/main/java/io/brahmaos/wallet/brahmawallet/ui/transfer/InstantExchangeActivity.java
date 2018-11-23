@@ -276,13 +276,18 @@ public class InstantExchangeActivity extends BaseActivity {
         mSendSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                sendChooseKyberTokens = searchKyberToken(mKyberTokens, query);
+                sendTokensRecyclerView.getAdapter().notifyDataSetChanged();
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                sendChooseKyberTokens = searchKyberToken(mKyberTokens, newText);
-                sendTokensRecyclerView.getAdapter().notifyDataSetChanged();
+                if (newText == null || newText.length() <= 0) {
+                    copySendKyberTokens();
+                    sendChooseKyberTokens.add(0, ethToken);
+                    sendTokensRecyclerView.getAdapter().notifyDataSetChanged();
+                }
                 return false;
             }
         });
@@ -296,9 +301,26 @@ public class InstantExchangeActivity extends BaseActivity {
         mReceiveSearchView.setQueryHint(getString(R.string.choose_receive_kyber_tokens));
         setUnderLineTransparent(mReceiveSearchView);
         receiveTokensRecyclerView = receiveView.findViewById(R.id.tokens_recycler);
-        LinearLayoutManager recevieLayoutManager = new LinearLayoutManager(this);
-        receiveTokensRecyclerView.setLayoutManager(recevieLayoutManager);
+        LinearLayoutManager receiveLayoutManager = new LinearLayoutManager(this);
+        receiveTokensRecyclerView.setLayoutManager(receiveLayoutManager);
         receiveTokensRecyclerView.setAdapter(new ReceiveKyberTokenRecyclerAdapter());
+        mReceiveSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                receiveChooseKyberTokens = searchKyberToken(mKyberTokens, query);
+                receiveTokensRecyclerView.getAdapter().notifyDataSetChanged();
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (newText == null || newText.length() <= 0) {
+                    copyReceiveKyberTokens();
+                    receiveTokensRecyclerView.getAdapter().notifyDataSetChanged();
+                }
+                return false;
+            }
+        });
 
         customProgressDialog = new CustomProgressDialog(this, R.style.CustomProgressDialogStyle, getString(R.string.progress_get_rate));
         customProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -338,17 +360,17 @@ public class InstantExchangeActivity extends BaseActivity {
                         @Override
                         public void onNext(List<KyberToken> apr) {
                             mKyberTokens = MainService.getInstance().getKyberTokenList();
-                            copyKyberTokens();
+                            copySendKyberTokens();
                             sendChooseKyberTokens.add(0, ethToken);
                             sendTokensRecyclerView.getAdapter().notifyDataSetChanged();
 
-                            receiveChooseKyberTokens = mKyberTokens;
+                            copyReceiveKyberTokens();
                             receiveTokensRecyclerView.getAdapter().notifyDataSetChanged();
                             BLog.i(tag(), "onNext");
                         }
                     });
         } else {
-            copyKyberTokens();
+            copySendKyberTokens();
             sendChooseKyberTokens.add(0, ethToken);
         }
     }
@@ -385,9 +407,14 @@ public class InstantExchangeActivity extends BaseActivity {
         getExpectedRate();
     }
 
-    private void copyKyberTokens() {
+    private void copySendKyberTokens() {
         sendChooseKyberTokens = new ArrayList<>();
         sendChooseKyberTokens.addAll(mKyberTokens);
+    }
+
+    private void copyReceiveKyberTokens() {
+        receiveChooseKyberTokens = new ArrayList<>();
+        receiveChooseKyberTokens.addAll(mKyberTokens);
     }
 
     private void showEre20TokenBalance() {
@@ -539,7 +566,7 @@ public class InstantExchangeActivity extends BaseActivity {
         }
 
         sendDialog.show();
-        copyKyberTokens();
+        copySendKyberTokens();
         sendChooseKyberTokens.add(0, ethToken);
         mSendSearchView.setQuery("", false);
         sendTokensRecyclerView.getAdapter().notifyDataSetChanged();
@@ -557,7 +584,7 @@ public class InstantExchangeActivity extends BaseActivity {
         }
 
         if (sendToken.getName().toLowerCase().equals(BrahmaConst.ETHEREUM)) {
-            receiveChooseKyberTokens = mKyberTokens;
+            copyReceiveKyberTokens();
             receiveDialog.show();
             receiveTokensRecyclerView.getAdapter().notifyDataSetChanged();
         }
