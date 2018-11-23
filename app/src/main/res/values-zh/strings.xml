@@ -442,4 +442,11 @@
     <string name="transaction_confirmed">确认成功</string>
     <string name="transaction_confirming">确认中</string>
     <string name="tip_no_btc_account">您还没有 BTC 账号，无法转账。</string>
+    <string name="title_btc_transaction_detail">BTC 交易详情</string>
+    <string name="label_block_height">区块</string>
+    <string name="label_confirmations">确认数</string>
+    <string name="label_transaction_date">时间</string>
+    <string name="label_transaction_input">输入</string>
+    <string name="label_transaction_output">输出</string>
+    <string name="label_copy_blockchain_url">复制Blockchain详情链接</string>
 </resources>

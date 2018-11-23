@@ -45,7 +45,7 @@ public class QRCodeUtil {
                         pixels[y * widthPix + x] = 0xff000000;
                     } else {
                         // the background color
-                        pixels[y * widthPix + x] = 0xfff2f1f1;
+                        pixels[y * widthPix + x] = 0x00f2f1f1;
                     }
                 }
             }

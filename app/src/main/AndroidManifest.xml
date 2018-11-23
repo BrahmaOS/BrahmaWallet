@@ -111,7 +111,8 @@
             android:name=".ui.FingerActivity"
             android:launchMode="singleInstance"
             android:theme="@style/FadeTheme" />
-        <activity android:name=".ui.transfer.InstantExchangeActivity" />
+        <activity android:name=".ui.transfer.InstantExchangeActivity"
+            android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".ui.setting.HelpActivity" />
         <activity android:name=".ui.transaction.TransactionsActivity" />
         <activity android:name=".ui.transaction.EthTransactionsActivity" />
@@ -134,6 +135,8 @@
         <activity android:name=".ui.account.RestoreBtcAccountActivity" />
         <activity android:name=".ui.account.CreateBtcAccountActivity" />
         <activity android:name=".ui.account.CreateEthAccountActivity" />
+        <activity android:name=".ui.transaction.BtcTransactionDetailActivity" />
+        <activity android:name=".ui.transaction.BlockchainTxDetailActivity" />
     </application>
 
 </manifest>

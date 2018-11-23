@@ -337,7 +337,13 @@ public class BtcAccountAssetsActivity extends BaseActivity {
         }
         BigDecimal totalAssets = BigDecimal.ZERO;
         long balance = 0;
-        if ( kit != null && kit.wallet() != null) {
+        if (account == null) {
+            finish();
+        }
+        if (kit == null) {
+            kit = BtcAccountManager.getInstance().getBtcWalletAppKit(account.getFilename());
+        }
+        if (kit != null && kit.wallet() != null) {
             setBtcTransactionInfo();
         } else {
             BtcAccountManager.getInstance().initExistsWalletAppKit(account);

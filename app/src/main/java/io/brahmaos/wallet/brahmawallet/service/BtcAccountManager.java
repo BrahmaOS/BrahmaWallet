@@ -180,11 +180,6 @@ public class BtcAccountManager extends BaseService{
         kit.restoreWalletFromSeed(seed);
         kit.setDownloadListener(listener);
 
-        // set checkpoints
-        InputStream ins = context.getResources().openRawResource(context.getResources().getIdentifier(CHECK_POINTS_NAME,
-                "raw", context.getPackageName()));
-        kit.setCheckpoints(ins);
-
         kit.setBlockingStartup(false);
         kit.startAsync();
         kit.awaitRunning();

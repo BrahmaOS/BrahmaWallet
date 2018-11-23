@@ -233,6 +233,10 @@ public class BrahmaConfig {
         return BrahmaConst.ETHERSCAN_BASE_URL + "tx/" + txHash;
     }
 
+    public String getBlochchainTxDetailUrl(String txHash) {
+        return BrahmaConst.BLOCKCHAIN_BASE_URL + txHash;
+    }
+
     public String getFeedbackUrl() {
         return BrahmaConst.FEEDBACK_URL;
     }

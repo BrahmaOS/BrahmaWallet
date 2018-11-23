@@ -8,8 +8,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -21,7 +19,6 @@ import com.bumptech.glide.Glide;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.kits.WalletAppKit;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -32,7 +29,6 @@ import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.service.BtcAccountManager;
-import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.util.CommonUtil;
 
@@ -139,9 +135,10 @@ public class BtcTransactionsActivity extends BaseActivity {
                 return;
             }
             holder.layoutTransaction.setOnClickListener(v -> {
-                /*Intent intent = new Intent(BtcTransactionsActivity.this, TransactionDetailActivity.class);
-                intent.putExtra(IntentParam.PARAM_TOKEN_TX, tokenTransaction);
-                startActivity(intent);*/
+                Intent intent = new Intent(BtcTransactionsActivity.this, BtcTransactionDetailActivity.class);
+                intent.putExtra(IntentParam.PARAM_ACCOUNT_INFO, mAccount);
+                intent.putExtra(IntentParam.PARAM_TX_HASH, transaction.getHash());
+                startActivity(intent);
             });
             holder.tvTxTime.setText(CommonUtil.timestampToDate(transaction.getUpdateTime().getTime() / 1000, null));
             int depthInBlocks = transaction.getConfidence().getDepthInBlocks();

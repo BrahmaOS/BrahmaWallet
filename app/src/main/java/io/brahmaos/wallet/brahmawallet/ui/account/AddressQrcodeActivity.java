@@ -19,6 +19,7 @@ import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
+import io.brahmaos.wallet.util.CommonUtil;
 import io.brahmaos.wallet.util.QRCodeUtil;
 
 public class AddressQrcodeActivity extends BaseActivity {
@@ -61,7 +62,8 @@ public class AddressQrcodeActivity extends BaseActivity {
         });
 
         new Thread(() -> {
-            Bitmap bitmap = QRCodeUtil.createQRImage(account.getAddress(), 200, 200, null);
+            int width = (int) (CommonUtil.getScreenWidth(AddressQrcodeActivity.this) * 0.6);
+            Bitmap bitmap = QRCodeUtil.createQRImage(account.getAddress(), width, width, null);
 
             if (bitmap != null) {
                 runOnUiThread(new Runnable() {

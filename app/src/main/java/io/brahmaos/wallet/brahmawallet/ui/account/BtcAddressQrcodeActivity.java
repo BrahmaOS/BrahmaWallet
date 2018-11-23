@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
 import org.bitcoinj.kits.WalletAppKit;
+import org.bitcoinj.wallet.KeyChain;
 import org.bitcoinj.wallet.Wallet;
 
 import java.util.Locale;
@@ -129,16 +130,15 @@ public class BtcAddressQrcodeActivity extends BaseActivity {
         if (kit != null && kit.wallet() != null) {
             ImageManager.showAccountAvatar(this, ivAccountAvatar, account);
             tvAccountName.setText(account.getName());
-            final Wallet wallet = kit.wallet();
-            String firstAddress = wallet.currentChangeAddress().toBase58();
-            if (wallet.getActiveKeyChain() != null &&
-                    wallet.getActiveKeyChain().getIssuedReceiveKeys() != null &&
-                    wallet.getActiveKeyChain().getIssuedReceiveKeys().size() > 0) {
-                firstAddress = wallet.getActiveKeyChain().getIssuedReceiveKeys().get(0).
+            String firstAddress = kit.wallet().currentChangeAddress().toBase58();
+            if (kit.wallet().getActiveKeyChain() != null &&
+                    kit.wallet().getActiveKeyChain().getIssuedReceiveKeys() != null &&
+                    kit.wallet().getActiveKeyChain().getIssuedReceiveKeys().size() > 0) {
+                firstAddress = kit.wallet().getActiveKeyChain().getIssuedReceiveKeys().get(0).
                         toAddress(BtcAccountManager.getInstance().getNetworkParams()).toBase58();
             }
             final String mainAddress = firstAddress;
-            final String childAddress = wallet.currentReceiveAddress().toBase58();
+            final String childAddress = kit.wallet().currentReceiveAddress().toBase58();
             currentAddress = mainAddress;
             tvAccountAddress.setText(CommonUtil.generateSimpleAddress(currentAddress));
 
@@ -214,7 +214,11 @@ public class BtcAddressQrcodeActivity extends BaseActivity {
         System.out.println(receiveUri);
 
         Observable<Bitmap> observable = Observable.create(e -> {
-            Bitmap bitmap = QRCodeUtil.createQRImage(receiveUri, 220, 220, null);
+            int width = ivAddressCode.getWidth();
+            if (width <= 0) {
+                width = (CommonUtil.getScreenWidth(BtcAddressQrcodeActivity.this) - CommonUtil.dip2px(BtcAddressQrcodeActivity.this, 80)) * 55 / 100;
+            }
+            Bitmap bitmap = QRCodeUtil.createQRImage(receiveUri, width, width, null);
             e.onNext(bitmap);
             e.onCompleted();
         });
