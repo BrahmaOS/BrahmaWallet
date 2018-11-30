@@ -19,6 +19,7 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/tokens_recycler"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:minHeight="512dp"/>
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

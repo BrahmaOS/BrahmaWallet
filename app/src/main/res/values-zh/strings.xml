@@ -156,15 +156,15 @@
     <string name="menu_accounts">账号</string>
     <string name="menu_contacts">联系人</string>
     <string name="action_create_account">创建账号</string>
-    <string name="action_restore_account">恢复账号</string>
+    <string name="action_restore_account">导入账号</string>
     <string name="action_create_eth_account">创建 ETH 账号</string>
-    <string name="action_restore_eth_account">恢复 ETH 账号</string>
+    <string name="action_restore_eth_account">导入 ETH 账号</string>
     <string name="action_create_btc_account">创建 BTC 账号</string>
-    <string name="action_restore_btc_account">恢复 BTC 账号</string>
+    <string name="action_restore_btc_account">导入 BTC 账号</string>
 
-    <!-- restore account-->
-    <string name="title_restore_account">恢复账号</string>
-    <string name="success_restore_account">恢复账号成功!</string>
+    <!-- import account-->
+    <string name="title_restore_account">导入账号</string>
+    <string name="success_restore_account">导入账号成功!</string>
 
     <string name="title_activity_import_account">导入账号</string>
     <string name="import_official_editor_hint">keystore内容</string>
