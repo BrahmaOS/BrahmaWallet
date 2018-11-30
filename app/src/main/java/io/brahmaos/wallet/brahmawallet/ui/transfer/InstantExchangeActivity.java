@@ -586,6 +586,7 @@ public class InstantExchangeActivity extends BaseActivity {
         if (sendToken.getName().toLowerCase().equals(BrahmaConst.ETHEREUM)) {
             copyReceiveKyberTokens();
             receiveDialog.show();
+            mReceiveSearchView.setQuery("", false);
             receiveTokensRecyclerView.getAdapter().notifyDataSetChanged();
         }
     }
