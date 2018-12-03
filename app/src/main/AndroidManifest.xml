@@ -103,6 +103,11 @@
         <activity android:name=".ui.contact.ChooseContactActivity" />
         <activity android:name=".ui.contact.ContactDetailActivity" />
         <activity android:name=".ui.contact.EditContactActivity" />
+        <activity
+            android:name=".ui.contact.ShowContactAvatarActivity"
+            android:label="@string/title_show_contact_avatar"
+            android:theme="@style/AppTheme"/>
+
         <activity android:name=".ui.setting.ServiceTermsActivity" />
         <activity android:name=".ui.account.MnemonicBackupActivity" />
         <activity android:name=".ui.account.ConfirmMnemonicActivity" />

@@ -427,6 +427,8 @@
     <string name="subtitle_contact_wallet_account">Wallet Account</string>
     <string name="tip_no_ethereum_address">Please choose ethereum address</string>
     <string name="tip_no_bitcoin_address">Please choose bitcoin address</string>
+    <string name="title_show_contact_avatar">Contact Photo</string>
+
     <!-- fingerprint -->
     <string name="tip_fingerprint">Click to start verification</string>
     <string name="fail_fingerprint_verification">Fingerprint verification failed</string>

@@ -356,6 +356,7 @@
     <string name="subtitle_contact_wallet_account">钱包账号</string>
     <string name="tip_no_ethereum_address">请选择有以太坊地址的联系人</string>
     <string name="tip_no_bitcoin_address">请选择有比特币地址的联系人</string>
+    <string name="title_show_contact_avatar">联系人头像</string>
 
     <!-- fingerprint -->
     <string name="tip_fingerprint">点击开启验证</string>

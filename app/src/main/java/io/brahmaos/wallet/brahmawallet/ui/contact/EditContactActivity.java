@@ -265,7 +265,7 @@ public class EditContactActivity extends BaseActivity {
                         options.setStatusBarColor(getResources().getColor(R.color.master));
                         UCrop uCrop = UCrop.of(imageUri, Uri.fromFile(tempFileContactAvatar));
                         uCrop.withAspectRatio(1, 1);
-                        uCrop.withMaxResultSize(256, 256);
+                        uCrop.withMaxResultSize(512, 512);
                         uCrop.withOptions(options);
                         uCrop.start(this, ReqCode.CROP_IMAGE);
                     }
