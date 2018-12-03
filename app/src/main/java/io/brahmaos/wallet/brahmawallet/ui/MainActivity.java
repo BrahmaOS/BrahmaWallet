@@ -25,6 +25,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -306,6 +307,7 @@ public class MainActivity extends BaseActivity
         mViewModel.getAccounts().observe(this, accountEntities -> {
             cacheAccounts = accountEntities;
             checkContentShow();
+            invalidateOptionsMenu();
         });
 
         mViewModel.getTokens().observe(this, tokenEntities -> {
@@ -339,7 +341,6 @@ public class MainActivity extends BaseActivity
             MainService.getInstance().setAccountAssetsList(new ArrayList<>());
             swipeRefreshLayout.setRefreshing(true);
             mViewModel.getTotalAssets();
-
             changeNetwork();
         }
         // change language; if change language, then recreate the activity to reload the resource.
@@ -365,8 +366,9 @@ public class MainActivity extends BaseActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.fragment_wallet, menu);
+        if (cacheAccounts != null && cacheAccounts.size() > 0) {
+            getMenuInflater().inflate(R.menu.fragment_wallet, menu);
+        }
         return true;
     }
 

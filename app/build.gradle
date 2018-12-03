@@ -9,7 +9,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 27
         versionCode 1001000
-        versionName "Uranus (v1.1.0b1002)"
+        versionName "Uranus (v1.1.0b1003)"
         multiDexEnabled true
 
         buildConfigField("String", "WALLET_API_URL", "\"${WALLET_API_URL}\"")
