@@ -23,12 +23,14 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.db.database.WalletDatabase;
 import io.brahmaos.wallet.brahmawallet.repository.DataRepository;
 import io.brahmaos.wallet.brahmawallet.service.MainService;
 import io.brahmaos.wallet.brahmawallet.ui.FingerActivity;
 import io.brahmaos.wallet.util.CommonUtil;
 import io.brahmaos.wallet.util.FileHelper;
+import io.rayup.sdk.RayUpApp;
 
 /**
  * Android Application class. Used for accessing singletons.
@@ -53,6 +55,7 @@ public class WalletApp extends Application {
         MainService.getInstance().init(getApplicationContext());
         BrahmaConfig.getInstance().init(getApplicationContext());
         FileHelper.getInstance().init(getApplicationContext());
+        RayUpApp app = RayUpApp.initialize(BrahmaConst.rayupAccessKeyId, BrahmaConst.rayupAccessKeySecret);
 
         AppFrontBackHelper helper = new AppFrontBackHelper();
         helper.register(WalletApp.this, new AppFrontBackHelper.OnAppStatusListener() {

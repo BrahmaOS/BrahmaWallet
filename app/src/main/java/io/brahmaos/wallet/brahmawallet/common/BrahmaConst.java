@@ -23,6 +23,9 @@ public class BrahmaConst {
     public static final int DEFAULT_TOKEN_SHOW_FLAG = 1;
     public static final int DEFAULT_TOKEN_HIDE_FLAG = 0;
 
+    public static final String rayupAccessKeyId = "727965f2c89511e8af75560001a43649";
+    public static final String rayupAccessKeySecret = "cnlo/siVEeivdVYAAaQ2SQ==";
+
     public static final String UNIT_PRICE_CNY = "CNY";
     public static final String UNIT_PRICE_USD = "USD";
 
