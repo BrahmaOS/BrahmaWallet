@@ -28,6 +28,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.Executors;
 
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.event.EventTypeDef;
 import io.brahmaos.wallet.brahmawallet.model.BitcoinDownloadProgress;
@@ -49,18 +51,27 @@ public class BtcAccountManager extends BaseService{
 
     public static int BYTES_PER_BTC_KB = 1000;
     public static int MIN_CONFIRM_BLOCK_HEIGHT = 6;
-    private String CHECK_POINTS_NAME = "checkpoints";
+    private String CHECK_POINTS_NAME = "checkpoints_testnet";
 
     private Map<String, WalletAppKit> btcAccountKit = new HashMap<>();
 
     @Override
     public boolean init(Context context) {
         super.init(context);
+        if (BrahmaConfig.debugFlag) {
+            CHECK_POINTS_NAME = "checkpoints_testnet";
+        } else {
+            CHECK_POINTS_NAME = "checkpoints";
+        }
         return true;
     }
 
     public NetworkParameters getNetworkParams() {
-        return MainNetParams.get();
+        if (BrahmaConfig.debugFlag) {
+            return TestNet3Params.get();
+        } else {
+            return MainNetParams.get();
+        }
     }
 
     private DownloadProgressTracker listener = new DownloadProgressTracker() {

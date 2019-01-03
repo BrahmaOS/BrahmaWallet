@@ -24,4 +24,5 @@ public class IntentParam {
     public static final String PARAM_TX_DETAIL = "tx-detail";
     public static final String PARAM_ETH_ADDRESS = "eth-account-address";
     public static final String PARAM_MNEMONIC_CODE = "account-mnemonic-code";
+    public static final String PARAM_DAPP_URL = "dapp-url";
 }

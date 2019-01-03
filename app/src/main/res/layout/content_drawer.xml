@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_marginTop="@dimen/height_toolbar"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <LinearLayout
@@ -54,7 +52,7 @@
     </LinearLayout>
 
     <android.support.v4.widget.SwipeRefreshLayout
-        android:visibility="gone"
+        android:visibility="visible"
         android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -179,33 +177,25 @@
                         android:paddingTop="@dimen/space_small"
                         android:paddingBottom="@dimen/space_smaller">
                         <TextView
-                            android:id="@+id/tv_assets_class"
+                            android:id="@+id/tv_add_assets"
                             android:layout_centerVertical="true"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="@dimen/font_size_body"
                             android:textColor="@color/white"
-                            android:text="@string/assets_class"/>
+                            android:text="@string/action_add_assets"/>
                         <TextView
-                            android:id="@+id/tv_assets_categories_num"
-                            android:layout_centerVertical="true"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/space_small"
-                            android:layout_toEndOf="@id/tv_assets_class"
-                            android:textSize="@dimen/font_size_body"
-                            android:textColor="@color/white"/>
-                        <ImageView
-                            android:id="@+id/iv_choose_token"
+                            android:id="@+id/tv_instant_exchange"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="@dimen/space_unit"
                             android:layout_alignParentEnd="true"
-                            android:src="@drawable/ic_add_circle_outline"/>
+                            android:textColor="@color/white"
+                            android:text="@string/menu_instant_exchange"/>
                     </RelativeLayout>
                 </LinearLayout>
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/assets_recycler"
+                    android:layout_marginBottom="@dimen/space_smaller"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
             </LinearLayout>

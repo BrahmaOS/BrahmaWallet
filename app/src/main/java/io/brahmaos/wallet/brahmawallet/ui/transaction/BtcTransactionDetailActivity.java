@@ -112,7 +112,12 @@ public class BtcTransactionDetailActivity extends BaseActivity {
                     if (input.getValue() != null) {
                         itemView.tvAmount.setText(input.getValue().toFriendlyString());
                     }
-                    itemView.tvAddress.setText(new Address(BtcAccountManager.getInstance().getNetworkParams(), Utils.sha256hash160(input.getScriptSig().getPubKey())).toBase58());
+                    try {
+                        byte[] bytes = input.getScriptSig().getPubKey();
+                        itemView.tvAddress.setText(new Address(BtcAccountManager.getInstance().getNetworkParams(), Utils.sha256hash160(bytes)).toBase58());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
                     mLayoutTransactionInput.addView(itemView.layoutItem);
                 }

@@ -356,38 +356,12 @@ public class BrahmaWeb3jService extends BaseService{
             try {
                 Web3j web3 = Web3jFactory.build(
                         new HttpService(BrahmaConfig.getInstance().getNetworkUrl()));
-                ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
-                WalletFile walletFile = objectMapper.readValue(BrahmaConst.DEFAULT_KEYSTORE, WalletFile.class);
-                Credentials credentials = Credentials.create(Wallet.decrypt("654321", walletFile));
-                TransactionManager transactionManager = new RawTransactionManager(web3, credentials);
 
                 String rateContractAddress = BrahmaConst.KYBER_MAIN_NETWORK_ADDRESS;
                 if (BrahmaConfig.getInstance().getNetworkUrl().equals(BrahmaConst.ROPSTEN_TEST_URL)) {
                     rateContractAddress = BrahmaConst.KYBER_ROPSTEN_NETWORK_ADDRESS;
                 }
 
-                /*Function function = new Function("getExpectedRates",
-                        Arrays.<Type>asList(new Address(BrahmaConst.KYBER_MAIN_NETWORK_ADDRESS),
-                                new DynamicArray<>(new Address(srcAddress), new Address(destAddress), new Address("0xdd974D5C2e2928deA5F71b9825b8b646686BD200")),
-                                new DynamicArray<>(new Address(destAddress), new Address(srcAddress), new Address("0xd26114cd6EE289AccF82350c8d8487fedB8A0C07")),
-                                new DynamicArray<>(new Uint256(new BigDecimal(Math.pow(10, 18)).toBigInteger()), new Uint256(new BigDecimal(Math.pow(10, 18)).toBigInteger()), new Uint256(new BigDecimal(Math.pow(10, 18)).toBigInteger()))),
-                        Arrays.<TypeReference<?>>asList(new TypeReference<DynamicArray<Uint256>>() {}, new TypeReference<DynamicArray<Uint256>>() {}));
-                String encodedFunction = FunctionEncoder.encode(function);
-                org.web3j.protocol.core.methods.response.EthCall ethCall = web3.ethCall(
-                        Transaction.createEthCallTransaction(
-                                transactionManager.getFromAddress(), BrahmaConst.KYBER_WRAPPER_ADDRESS, encodedFunction),
-                        DefaultBlockParameterName.LATEST)
-                        .send();
-                String rateValue = ethCall.getValue();
-                BLog.i(tag(), "the kyber wrapper contract rate origal result : " + rateValue);
-                List<Type> values = FunctionReturnDecoder.decode(rateValue, function.getOutputParameters());
-
-                for (Type rates : values) {
-                    DynamicArray<Uint256> rateList = (DynamicArray<Uint256>) rates;
-                    for (Uint256 rate : rateList.getValue()) {
-                        BLog.i(tag(), "rate is: " + rate.getValue().toString());
-                    }
-                }*/
                 BLog.i(tag(), "the srcAddress is: " + srcAddress);
                 BLog.i(tag(), "the destAddress is: " + destAddress);
                 Function function = new Function("getExpectedRate",
@@ -398,7 +372,7 @@ public class BrahmaWeb3jService extends BaseService{
                 String encodedFunction = FunctionEncoder.encode(function);
                 org.web3j.protocol.core.methods.response.EthCall ethCall = web3.ethCall(
                         Transaction.createEthCallTransaction(
-                                transactionManager.getFromAddress(), rateContractAddress, encodedFunction),
+                                BrahmaConst.TRANSACTION_ACCOUNT_ADDRESS, rateContractAddress, encodedFunction),
                         DefaultBlockParameterName.LATEST)
                         .send();
 

@@ -21,6 +21,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.db.entity.AllTokenEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
@@ -69,7 +70,9 @@ public class TokensActivity extends BaseActivity {
             if (allTokenEntities != null) {
                 BLog.i(tag(), "the length is:" + allTokenEntities.size());
                 allTokens = allTokenEntities;
-                //allTokens.add(ropstenKyberToken);
+                if (BrahmaConfig.debugFlag) {
+                    allTokens.add(ropstenKyberToken);
+                }
             }
             refreshTokenList();
         });

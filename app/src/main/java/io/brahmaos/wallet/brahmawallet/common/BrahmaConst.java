@@ -50,7 +50,7 @@ public class BrahmaConst {
 
     public static final String KYBER_NETWORK_MAINNET = "0x818e6fecd516ecc3849daf6845e3ec868087b755";
     public static final String KYBER_NETWORK_ROPSTEN = "0x85ecDf8803c35a271a87ad918B5927E5cA6a56D2";
-    //public static final String TRANSACTION_ACCOUNT_ADDRESS = "0x50FC3e2B2276E3a58AA696B5112Aa10775d42bd6";
+    public static final String TRANSACTION_ACCOUNT_ADDRESS = "0x50FC3e2B2276E3a58AA696B5112Aa10775d42bd6";
 
     public static final String LANGUAGE_ENGLISH = "1";
     public static final String LANGUAGE_CHINESE = "2";
@@ -79,4 +79,6 @@ public class BrahmaConst {
     // Account type
     public static final int ETH_ACCOUNT_TYPE = 1;
     public static final int BTC_ACCOUNT_TYPE = 2;
+
+    public static final String HASH_RATE_URL = "http://nebula.0592ing.com/index.html";
 }

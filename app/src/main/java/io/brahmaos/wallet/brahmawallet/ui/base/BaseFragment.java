@@ -37,9 +37,6 @@ public abstract class BaseFragment extends Fragment {
     // fragment layout resource id
     protected int layoutResId;
 
-    // toolbar id
-    protected int toolbarResId;
-
     // toolbar title resource id
     protected int titleResId;
 
@@ -48,10 +45,9 @@ public abstract class BaseFragment extends Fragment {
      *
      * @param layoutResId  the layout resource，：R.layout.fragment_home
      */
-    protected static Bundle newArguments(int layoutResId, int toolbarResId, int titleResId) {
+    protected static Bundle newArguments(int layoutResId, int titleResId) {
         Bundle args = new Bundle();
         args.putInt(ARGS_LAYOUT_RES, layoutResId);
-        args.putInt(ARGS_TOOLBAR_RES, toolbarResId);
         args.putInt(ARGS_TITLE_RES, titleResId);
         return args;
     }
@@ -63,13 +59,12 @@ public abstract class BaseFragment extends Fragment {
         Bundle args = getArguments();
         if (args != null) {
             layoutResId = args.getInt(ARGS_LAYOUT_RES);
-            toolbarResId = args.getInt(ARGS_TOOLBAR_RES);
             titleResId = args.getInt(ARGS_TITLE_RES);
         }
     }
 
     /**
-     * 保存 parent view，其他组件使用此 findView 和 加载
+     * save parent view.
      */
     protected View parentView;
 
@@ -94,17 +89,6 @@ public abstract class BaseFragment extends Fragment {
     public void onStart() {
         BLog.d(tag(), "onStart");
         super.onStart();
-        initToolbar();
-    }
-
-    /**
-     * 初始化 toolbar
-     */
-    protected void initToolbar() {
-        AppCompatActivity mAppCompatActivity = (AppCompatActivity) getActivity();
-        Toolbar toolbar = (Toolbar) mAppCompatActivity.findViewById(toolbarResId);
-        toolbar.getMenu().clear();
-        toolbar.setTitle(titleResId);
     }
 
     @Override

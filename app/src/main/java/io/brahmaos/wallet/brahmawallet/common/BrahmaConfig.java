@@ -31,8 +31,8 @@ public class BrahmaConfig {
     private static final String KEY_TOKEN_LIST_HASH = "token.list.hash";
     private static final String KEY_TOKEN_LIST_VERSION = "token.list.version";
 
-    // first user app, show the guide
-    private boolean firstOpenAppFlag = true;
+    // false: main net; false: ropsten testnet;
+    public static boolean debugFlag = true;
     private String networkUrl;
     private String languageLocale;
     private String currencyUnit;
@@ -41,15 +41,15 @@ public class BrahmaConfig {
     private boolean touchId = false;
     private int tokenListVersion = 0;
 
-    private String localKeystorePath;
-
     public void init(Context context) {
         this.context = context;
         sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        localKeystorePath = context.getFilesDir().toString();
-
         // Ethereum network
-        networkUrl = sharedPref.getString(context.getString(R.string.key_network_url), BrahmaConst.MAINNET_URL);
+        if (debugFlag) {
+            networkUrl = sharedPref.getString(context.getString(R.string.key_network_url), BrahmaConst.ROPSTEN_TEST_URL);
+        } else {
+            networkUrl = sharedPref.getString(context.getString(R.string.key_network_url), BrahmaConst.MAINNET_URL);
+        }
 
         languageLocale = sharedPref.getString(context.getString(R.string.key_wallet_language), null);
         currencyUnit = sharedPref.getString(context.getString(R.string.key_wallet_currency_unit), null);
@@ -58,10 +58,6 @@ public class BrahmaConfig {
         touchId = sharedPref.getBoolean(context.getString(R.string.key_touch_id_switch), false);
         tokenListVersion = sharedPref.getInt(KEY_TOKEN_LIST_VERSION, 0);
         initLocale();
-    }
-
-    public String getLocalKeystorePath() {
-        return localKeystorePath;
     }
 
     public String getNetworkUrl() {
@@ -239,5 +235,9 @@ public class BrahmaConfig {
 
     public String getFeedbackUrl() {
         return BrahmaConst.FEEDBACK_URL;
+    }
+
+    public String getHashRateUrl() {
+        return BrahmaConst.HASH_RATE_URL;
     }
 }

@@ -14,11 +14,15 @@
     <string name="account_btc">BTC</string>
     <string name="create">Create</string>
 
+    <string name="fragment_wallet">Wallet</string>
+    <string name="fragment_hash_rate">HashRate</string>
+    <string name="fragment_discover">Discover</string>
+
     <string name="title_brahma_wallet">Wallet</string>
     <string name="brahma_wallet_desc">Your smart digital wallet</string>
     <string name="title_activity_create_account">Create Account</string>
     <string name="total_assets">Total Assets</string>
-    <string name="assets_class">Assets Class</string>
+    <string name="action_add_assets">Add Assets</string>
     <string name="asymptotic">≈</string>
     <string name="blank_space">&#160;</string>
     <string name="error_network">Network connect error!</string>
@@ -159,6 +163,7 @@
     <!-- menu list -->
     <string name="menu_instant_exchange">FEX</string>
     <string name="menu_accounts">Accounts</string>
+    <string name="menu_all_accounts">Accounts</string>
     <string name="menu_contacts">Contacts</string>
     <string name="action_create_account">Create Account</string>
     <string name="action_restore_account">Import Account</string>
@@ -525,4 +530,16 @@
     <string name="label_transaction_input">Input</string>
     <string name="label_transaction_output">Output</string>
     <string name="label_copy_blockchain_url">Copy Blockchain details url</string>
+
+    <string name="title_dapp">Dapp</string>
+    <string name="dapp_name_etherscan">Etherscan</string>
+    <string name="dapp_desc_etherscan">Ethereum (ETH) Blockchain Explorer</string>
+    <string name="dapp_name_ethfans">EthFans</string>
+    <string name="dapp_desc_ethfans">EthFans | 以太坊爱好者</string>
+    <string name="dapp_name_blockcypher">BlockCypher</string>
+    <string name="dapp_desc_blockcypher">Bitcoin and Blockchain Web Services</string>
+    <string name="dapp_name_ddex">DDEX</string>
+    <string name="dapp_desc_ddex">The most user-friendly decentralized exchange for Ethereum and ERC-20 tokens</string>
+    <string name="dapp_name_kyberswap">KyberSwap</string>
+    <string name="dapp_desc_kyberswap">Instant and Secure Token to Token Swaps</string>
 </resources>
