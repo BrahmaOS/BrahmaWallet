@@ -31,7 +31,7 @@ public class BrahmaConfig {
     private static final String KEY_TOKEN_LIST_HASH = "token.list.hash";
     private static final String KEY_TOKEN_LIST_VERSION = "token.list.version";
 
-    // false: main net; false: ropsten testnet;
+    // false: main net; true: ropsten testnet;
     public static boolean debugFlag = true;
     private String networkUrl;
     private String languageLocale;

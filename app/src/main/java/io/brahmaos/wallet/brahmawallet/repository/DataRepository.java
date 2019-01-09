@@ -75,6 +75,10 @@ public class DataRepository {
         return mDatabase.accountDao().loadBtcAccountsSync();
     }
 
+    public List<AccountEntity> getAccountsSync() {
+        return mDatabase.accountDao().loadBAccountsSync();
+    }
+
     public LiveData<AccountEntity> loadAccount(final int accountId) {
         return mDatabase.accountDao().loadAccount(accountId);
     }
@@ -118,12 +122,20 @@ public class DataRepository {
         return mDatabase.tokenDao().loadToken(tokenId);
     }
 
+    public TokenEntity getTokenByCode(int coinCode) {
+        return mDatabase.tokenDao().loadTokenByCode(coinCode);
+    }
+
     public void createToken(TokenEntity token) {
         mDatabase.tokenDao().insertToken(token);
     }
 
     public void deleteToken(String address) {
         mDatabase.tokenDao().deleteToken(address);
+    }
+
+    public void deleteAllChooseTokens() {
+        mDatabase.tokenDao().deleteAllChooseToken();
     }
 
     /**

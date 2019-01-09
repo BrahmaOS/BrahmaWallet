@@ -78,7 +78,7 @@ public class ImageManager {
      * Avatar of token
      */
     public static void showTokenIcon(Context Context, ImageView iv,
-                                     String tokenName, String tokenAddress) {
+                                     String tokenName, String avatarPath) {
         if (tokenName.toLowerCase().equals(BrahmaConst.BRAHMAOS_TOKEN)) {
             Glide.with(Context)
                     .load(R.drawable.icon_brm)
@@ -95,11 +95,8 @@ public class ImageManager {
             RequestOptions options = new RequestOptions()
                     .placeholder(R.drawable.token_default)
                     .error(R.drawable.token_default);
-            BLog.i("icon url", BrahmaConst.IMAGE_BASE_URL + BrahmaConst.TOKEN_ICON_PREFIX +
-                    tokenAddress + BrahmaConst.TOKEN_ICON_SUFFIX);
             Glide.with(Context)
-                    .load(BrahmaConst.IMAGE_BASE_URL + BrahmaConst.TOKEN_ICON_PREFIX +
-                            tokenAddress + BrahmaConst.TOKEN_ICON_SUFFIX)
+                    .load(avatarPath)
                     .apply(options)
                     .into(iv);
         }

@@ -5,6 +5,7 @@
 
     <dimen name="toolbar_init_elevation">0dp</dimen>
 
+    <dimen name="font_size_display3">38sp</dimen>
     <dimen name="font_size_display2">30sp</dimen>
     <dimen name="font_size_display1">28sp</dimen>
     <dimen name="font_size_headline">24sp</dimen>

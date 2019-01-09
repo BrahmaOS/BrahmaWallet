@@ -44,9 +44,15 @@ public interface TokenDao {
     @Query("delete from tokens where LOWER(address) = LOWER(:address)")
     void deleteToken(String address);
 
+    @Query("delete from tokens")
+    void deleteAllChooseToken();
+
     @Query("select * from tokens where id = :tokenId")
     LiveData<TokenEntity> loadToken(int tokenId);
 
     @Query("select * from tokens where id = :tokenId")
     TokenEntity loadTokenSync(int tokenId);
+
+    @Query("select * from tokens where code = :coinCode")
+    TokenEntity loadTokenByCode(int coinCode);
 }

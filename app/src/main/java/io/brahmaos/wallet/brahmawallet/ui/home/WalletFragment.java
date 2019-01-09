@@ -235,8 +235,6 @@ public class WalletFragment extends BaseFragment {
                     }
                 });
 
-        MainService.getInstance().getTokensLatestVersion();
-
         if (MainService.getInstance().isHaveAccount()) {
             createAccountLayout.setVisibility(View.GONE);
             swipeRefreshLayout.setVisibility(View.VISIBLE);
@@ -265,7 +263,7 @@ public class WalletFragment extends BaseFragment {
     private void initData() {
         mViewModel.getAllTokensCount().observe(this, count -> {
             if (count == null || count <= 0) {
-                MainService.getInstance().getTokenListByIPFS();
+                MainService.getInstance().getAccountAssetsList();
             }
         });
         mViewModel.getAccounts().observe(this, accountEntities -> {
@@ -297,11 +295,12 @@ public class WalletFragment extends BaseFragment {
         if (cacheTokens != null && cacheTokens.size() > 0) {
             StringBuilder stringBuilder = new StringBuilder();
             for (TokenEntity token : cacheTokens) {
-                stringBuilder.append(token.getShortName()).append(",");
+                stringBuilder.append(token.getCode()).append(",");
             }
             symbols = stringBuilder.toString();
         } else {
-            symbols = "ETH,BRM,BTC";
+            symbols = String.format("%d,%d,%d", BrahmaConst.COIN_CODE_BRM,
+                    BrahmaConst.COIN_CODE_ETH, BrahmaConst.COIN_CODE_BTC);
         }
         MainService.getInstance().fetchCurrenciesFromNet(symbols)
                 .subscribeOn(Schedulers.io())

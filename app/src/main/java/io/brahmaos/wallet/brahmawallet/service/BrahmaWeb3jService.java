@@ -151,7 +151,7 @@ public class BrahmaWeb3jService extends BaseService{
      * for example: verifying the account, sending request
      * @return 1: verifying the account 2: sending request 10: transfer success
      */
-    public Observable<Integer> sendTransfer(AccountEntity account, TokenEntity token, String password,
+    public Observable<Object> sendTransfer(AccountEntity account, TokenEntity token, String password,
                                             String destinationAddress, BigDecimal amount,
                                             BigDecimal gasPrice, BigInteger gasLimit, String remark) {
         return Observable.create(e -> {
@@ -163,6 +163,7 @@ public class BrahmaWeb3jService extends BaseService{
                         password, context.getFilesDir() + "/" +  account.getFilename());
                 BLog.i(tag(), "load credential success");
                 e.onNext(2);
+                String transactionHash = "";
                 BigDecimal gasPriceWei = Convert.toWei(gasPrice, Convert.Unit.GWEI);
                 if (token.getName().toLowerCase().equals(BrahmaConst.ETHEREUM)) {
                     RawTransactionManager txManager = new RawTransactionManager(web3, credentials);
@@ -176,7 +177,7 @@ public class BrahmaWeb3jService extends BaseService{
                     BLog.i(tag(), "remark: "
                             + remark + "; hex remark:" + Numeric.toHexString(remark.getBytes()));
 
-                    String transactionHash = transactionResponse.getTransactionHash();
+                    transactionHash = transactionResponse.getTransactionHash();
                     BLog.i(tag(), "Transaction begin, view it at https://rinkeby.etherscan.io/tx/"
                             + transactionHash);
 
@@ -194,7 +195,6 @@ public class BrahmaWeb3jService extends BaseService{
                                 + ((SLEEP_DURATION * ATTEMPTS) / 1000
                                 + " seconds for transaction: " + transactionHash));
                     }
-
                     BLog.i(tag(), "Transaction complete, view it at https://rinkeby.etherscan.io/tx/"
                             + transferReceipt.getTransactionHash());
                 } else {
@@ -213,10 +213,11 @@ public class BrahmaWeb3jService extends BaseService{
                         throw new RuntimeException("Error processing transaction request: "
                                 + transactionResponse.getError().getMessage());
                     }
-                    String transactionHash = transactionResponse.getTransactionHash();
+                    transactionHash = transactionResponse.getTransactionHash();
                     BLog.i(tag(), "===> transactionHash: " + transactionHash);
                 }
-                e.onNext(10);
+                e.onNext(transactionHash);
+                e.onCompleted();
             } catch (IOException | CipherException | TransactionException | InterruptedException e1) {
                 e1.printStackTrace();
                 e.onError(e1);

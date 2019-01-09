@@ -229,7 +229,7 @@ public class BtcAccountManager extends BaseService{
                     // The wallet has changed now, it'll get auto saved shortly or when the app shuts down.
                     System.out.println("Sent coins onwards! Transaction hash is " +
                             sendResult.tx.getHashAsString());
-                    RxEventBus.get().post(EventTypeDef.BTC_TRANSACTION_BROADCAST_COMPLETE, true);
+                    RxEventBus.get().post(EventTypeDef.BTC_TRANSACTION_BROADCAST_COMPLETE, sendResult.tx.getHashAsString());
                 }
             }, executorService);
             return true;

@@ -53,7 +53,6 @@ import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.PermissionUtil;
 
-
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener, VersionUpgradeService.INewVerNotify {
     @Override

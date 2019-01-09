@@ -542,4 +542,15 @@
     <string name="dapp_desc_ddex">The most user-friendly decentralized exchange for Ethereum and ERC-20 tokens</string>
     <string name="dapp_name_kyberswap">KyberSwap</string>
     <string name="dapp_desc_kyberswap">Instant and Secure Token to Token Swaps</string>
+
+    <!-- quick transfer -->
+    <string name="label_confirm_transfer">Confirm Transfer</string>
+    <string name="label_choose_token">Choose Coin</string>
+    <string name="label_gas_price">Gas Price</string>
+    <string name="label_choose_account">Accounts</string>
+
+    <!-- brahma pay -->
+    <string name="pay_msg_invalid_blockchain">Invalid blockchain.</string>
+    <string name="pay_msg_no_account">No account</string>
+    <string name="tip_insufficient_balance">Insufficient balance.</string>
 </resources>

@@ -49,10 +49,10 @@ public class TokensActivity extends BaseActivity {
     private List<AllTokenEntity> allTokens = new ArrayList<>();
     // test rinkerby token
     private AllTokenEntity testToken = new AllTokenEntity(0, "BrahmaOS", "BRM(TEST)",
-                                          "0xb958c57d1896823b8f4178a21e1bf6796371eac4", "", 1);
+                                          "0xb958c57d1896823b8f4178a21e1bf6796371eac4", "", 1, 100000);
     // test ropsten
     private AllTokenEntity ropstenKyberToken = new AllTokenEntity(0, "Kyber Network Test", "KNC(TEST)",
-            "0x4E470dc7321E84CA96FcAEDD0C8aBCebbAEB68C6", "", 1);
+            "0x4E470dc7321E84CA96FcAEDD0C8aBCebbAEB68C6", "", 1, 1000001);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,20 +164,18 @@ public class TokensActivity extends BaseActivity {
             holder.tvTokenShoreName.setText(token.getShortName());
             holder.tvTokenAddress.setText(CommonUtil.generateSimpleAddress(token.getAddress()));
             holder.tvTokenName.setText(token.getName());
+            ImageManager.showTokenIcon(TokensActivity.this, holder.ivTokenAvatar,
+                    token.getName(), token.getAvatar());
             // BRM and ETH cannot be cancelled
             if (token.getShortName().equals("ETH")) {
                 holder.tvTokenAddress.setVisibility(View.GONE);
                 holder.switchToken.setVisibility(View.GONE);
-                ImageManager.showTokenIcon(TokensActivity.this, holder.ivTokenAvatar, R.drawable.icon_eth);
             } else if (token.getShortName().equals("BRM")) {
                 holder.tvTokenAddress.setVisibility(View.VISIBLE);
                 holder.switchToken.setVisibility(View.GONE);
-                ImageManager.showTokenIcon(TokensActivity.this, holder.ivTokenAvatar, R.drawable.icon_brm);
             } else {
                 holder.tvTokenAddress.setVisibility(View.VISIBLE);
                 holder.switchToken.setVisibility(View.VISIBLE);
-                ImageManager.showTokenIcon(TokensActivity.this, holder.ivTokenAvatar,
-                        token.getName(), token.getAddress());
 
                 // Determine if the token is selected
                 boolean checked = false;
@@ -194,6 +192,7 @@ public class TokensActivity extends BaseActivity {
                 currentToken.setName(token.getName());
                 currentToken.setShortName(token.getShortName());
                 currentToken.setAvatar(token.getAvatar());
+                currentToken.setCode(token.getCode());
                 holder.switchToken.setOnCheckedChangeListener(null);
                 holder.switchToken.setChecked(checked);
                 holder.switchToken.setOnCheckedChangeListener((buttonView, isChecked) -> {

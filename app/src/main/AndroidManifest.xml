@@ -143,6 +143,12 @@
         <activity android:name=".ui.transaction.BtcTransactionDetailActivity" />
         <activity android:name=".ui.transaction.BlockchainTxDetailActivity" />
         <activity android:name=".ui.dapp.DappActivity" />
+        <activity android:name=".ui.transfer.QuickTransferActivity"
+            android:theme="@style/transparent_activity">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND"/>
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

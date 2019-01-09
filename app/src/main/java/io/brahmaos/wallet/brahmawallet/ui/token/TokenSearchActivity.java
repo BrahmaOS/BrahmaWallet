@@ -205,20 +205,18 @@ public class TokenSearchActivity extends BaseActivity {
             holder.tvTokenShoreName.setText(token.getShortName());
             holder.tvTokenAddress.setText(CommonUtil.generateSimpleAddress(token.getAddress()));
             holder.tvTokenName.setText(token.getName());
+            ImageManager.showTokenIcon(TokenSearchActivity.this, holder.ivTokenAvatar,
+                    token.getName(), token.getAvatar());
             // BRM and ETH cannot be cancelled
             if (token.getShortName().equals("ETH")) {
                 holder.tvTokenAddress.setVisibility(View.GONE);
                 holder.switchToken.setVisibility(View.GONE);
-                ImageManager.showTokenIcon(TokenSearchActivity.this, holder.ivTokenAvatar, R.drawable.icon_eth);
             } else if (token.getShortName().equals("BRM")) {
                 holder.tvTokenAddress.setVisibility(View.VISIBLE);
                 holder.switchToken.setVisibility(View.GONE);
-                ImageManager.showTokenIcon(TokenSearchActivity.this, holder.ivTokenAvatar, R.drawable.icon_brm);
             } else {
                 holder.tvTokenAddress.setVisibility(View.VISIBLE);
                 holder.switchToken.setVisibility(View.VISIBLE);
-                ImageManager.showTokenIcon(TokenSearchActivity.this, holder.ivTokenAvatar,
-                        token.getName(), token.getAddress());
 
                 // Determine if the token is selected
                 boolean checked = false;
