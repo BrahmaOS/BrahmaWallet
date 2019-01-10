@@ -395,7 +395,7 @@ public class MainActivity extends BaseActivity
             Intent intent = new Intent(this, ContactsActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_settings) {
-            Intent intent = new Intent(this, SettingsActivity.class);
+            Intent intent = new Intent(this, DappActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_help) {
             Intent intent = new Intent(this, HelpActivity.class);

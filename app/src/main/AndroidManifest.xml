@@ -111,8 +111,9 @@
             android:name=".ui.FingerActivity"
             android:launchMode="singleInstance"
             android:theme="@style/FadeTheme" />
-        <activity android:name=".ui.transfer.InstantExchangeActivity"
-            android:windowSoftInputMode="adjustResize"/>
+        <activity
+            android:name=".ui.transfer.InstantExchangeActivity"
+            android:windowSoftInputMode="adjustResize" />
         <activity android:name=".ui.setting.HelpActivity" />
         <activity android:name=".ui.transaction.TransactionsActivity" />
         <activity android:name=".ui.transaction.EthTransactionsActivity" />
@@ -120,7 +121,6 @@
         <activity android:name=".ui.transaction.EtherscanTxDetailActivity" />
         <activity android:name=".ui.transaction.TransactionDetailActivity" />
         <activity android:name=".ui.setting.FeedbackActivity" />
-
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
@@ -137,6 +137,10 @@
         <activity android:name=".ui.account.CreateEthAccountActivity" />
         <activity android:name=".ui.transaction.BtcTransactionDetailActivity" />
         <activity android:name=".ui.transaction.BlockchainTxDetailActivity" />
+        <activity
+            android:name=".ui.DappActivity"
+            android:label="@string/title_activity_dapp"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>
