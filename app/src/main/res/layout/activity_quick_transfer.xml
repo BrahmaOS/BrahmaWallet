@@ -60,8 +60,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="@dimen/font_size_display3"
-                            android:textColor="@color/color_primary_text"
-                            android:text="12.002"/>
+                            android:textColor="@color/color_primary_text"/>
                         <EditText
                             android:id="@+id/et_transfer_amount"
                             android:layout_width="wrap_content"
@@ -69,6 +68,7 @@
                             android:textSize="@dimen/font_size_display3"
                             android:textColor="@color/color_primary_text"
                             android:hint="0.00"
+                            android:inputType="numberDecimal"
                             android:text=""/>
 
                         <ImageView
@@ -405,6 +405,7 @@
 
             <LinearLayout
                 android:id="@+id/layout_edit_eth_gas_price"
+                android:animateLayoutChanges="true"
                 android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -496,6 +497,7 @@
 
             <LinearLayout
                 android:id="@+id/layout_choose_account"
+                android:animateLayoutChanges="true"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"

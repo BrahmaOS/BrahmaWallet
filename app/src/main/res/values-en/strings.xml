@@ -528,4 +528,15 @@
     <string name="label_transaction_input">Input</string>
     <string name="label_transaction_output">Output</string>
     <string name="label_copy_blockchain_url">Copy Blockchain details url</string>
+
+    <!-- quick transfer -->
+    <string name="label_confirm_transfer">Confirm Transfer</string>
+    <string name="label_choose_token">Choose Coin</string>
+    <string name="label_gas_price">Gas Price</string>
+    <string name="label_choose_account">Accounts</string>
+
+    <!-- brahma pay -->
+    <string name="pay_msg_invalid_blockchain">Invalid blockchain.</string>
+    <string name="pay_msg_no_account">No account</string>
+    <string name="tip_insufficient_balance">Insufficient balance.</string>
 </resources>

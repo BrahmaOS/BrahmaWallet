@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <LinearLayout
+        android:visibility="gone"
         android:id="@+id/layout_new_account"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -181,13 +182,14 @@
                             android:layout_centerVertical="true"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:padding="@dimen/space_unit"
                             android:textColor="@color/white"
                             android:text="@string/action_add_assets"/>
                         <TextView
                             android:id="@+id/tv_instant_exchange"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_margin="@dimen/space_unit"
+                            android:padding="@dimen/space_unit"
                             android:layout_alignParentEnd="true"
                             android:textColor="@color/white"
                             android:text="@string/menu_instant_exchange"/>

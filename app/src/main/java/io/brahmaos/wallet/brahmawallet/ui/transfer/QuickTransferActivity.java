@@ -29,6 +29,7 @@ import org.web3j.crypto.CipherException;
 import org.web3j.protocol.core.methods.response.EthCall;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
 import org.web3j.protocol.exceptions.TransactionException;
+import org.web3j.utils.Convert;
 import org.web3j.utils.Numeric;
 
 import java.math.BigDecimal;
@@ -50,6 +51,7 @@ import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.service.MainService;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.view.CustomStatusView;
+import io.brahmaos.wallet.util.AnimationUtil;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
 import io.brahmaos.wallet.util.DataCryptoUtils;
@@ -143,10 +145,13 @@ public class QuickTransferActivity extends BaseActivity {
         intentParamSendValue = (BigInteger)getIntent().getSerializableExtra(IntentParam.PARAM_PAY_SEND_VALUE);
         tokenAddress = getIntent().getStringExtra(IntentParam.PARAM_PAY_TOKEN_ADDRESS);
 
+        initView();
+
         if (blockchainType == BrahmaConst.BTC_ACCOUNT_TYPE) {
             chosenToken.setName(BrahmaConst.COIN_BTC);
             chosenToken.setShortName(BrahmaConst.COIN_SYMBOL_BTC);
         } else {
+            getEthGasPrice();
             if (tokenAddress != null && tokenAddress.length() > 0) {
                 // only support brm
                 chosenToken.setName(BrahmaConst.COIN_BRM);
@@ -161,7 +166,6 @@ public class QuickTransferActivity extends BaseActivity {
                 chosenToken.setShortName(BrahmaConst.COIN_SYMBOL_ETH);
             }
         }
-        initView();
 
         // set receipt address
         mTvReceiptAddress.setText(receiptAddress);
@@ -303,6 +307,7 @@ public class QuickTransferActivity extends BaseActivity {
                                 mLayoutAccount.setOnClickListener(v -> {
                                     showAccounts();
                                     mLayoutChooseAccount.setVisibility(View.VISIBLE);
+                                    mLayoutChooseAccount.setAnimation(AnimationUtil.makeInAnimation());
                                 });
                             } else {
                                 mIvShowAccountsArrow.setVisibility(View.GONE);
@@ -329,6 +334,7 @@ public class QuickTransferActivity extends BaseActivity {
         mLayoutBtcFee.setOnClickListener(v -> {
             etBtcFee.setText(mTvBtcFee.getText());
             mLayoutEditBtcFee.setVisibility(View.VISIBLE);
+            mLayoutEditBtcFee.setAnimation(AnimationUtil.makeInAnimation());
         });
 
         mLayoutEditBtcFee = findViewById(R.id.layout_edit_btc_fee);
@@ -336,6 +342,7 @@ public class QuickTransferActivity extends BaseActivity {
         ivCloseBtcFee = findViewById(R.id.iv_close_btc_fee);
         ivCloseBtcFee.setOnClickListener(v -> {
             mLayoutEditBtcFee.setVisibility(View.GONE);
+            mLayoutEditBtcFee.setAnimation(AnimationUtil.makeOutAnimation());
         });
         btnConfirmBtcFee = findViewById(R.id.btn_commit_btc_fee);
         btnConfirmBtcFee.setOnClickListener(v -> {
@@ -344,6 +351,7 @@ public class QuickTransferActivity extends BaseActivity {
                 mTvBtcFee.setText(feePerByte);
             }
             mLayoutEditBtcFee.setVisibility(View.GONE);
+            mLayoutEditBtcFee.setAnimation(AnimationUtil.makeOutAnimation());
         });
 
         mLayoutChooseToken = findViewById(R.id.layout_choose_token);
@@ -358,6 +366,7 @@ public class QuickTransferActivity extends BaseActivity {
         ivCloseChooseAccount = findViewById(R.id.iv_close_choose_account);
         ivCloseChooseAccount.setOnClickListener(v -> {
             mLayoutChooseAccount.setVisibility(View.GONE);
+            mLayoutChooseAccount.setAnimation(AnimationUtil.makeOutAnimation());
         });
 
         mLayoutGasPrice = findViewById(R.id.layout_eth_gas_price);
@@ -367,12 +376,14 @@ public class QuickTransferActivity extends BaseActivity {
             etGasPrice.setText(mTvGasPrice.getText());
             etGasLimit.setText(mTvGasLimit.getText());
             mLayoutEditGasPrice.setVisibility(View.VISIBLE);
+            mLayoutEditGasPrice.setAnimation(AnimationUtil.makeInAnimation());
         });
         mLayoutGasLimit = findViewById(R.id.layout_eth_gas_limit);
         mLayoutGasLimit.setOnClickListener(v -> {
             etGasPrice.setText(mTvGasPrice.getText());
             etGasLimit.setText(mTvGasLimit.getText());
             mLayoutEditGasPrice.setVisibility(View.VISIBLE);
+            mLayoutEditGasPrice.setAnimation(AnimationUtil.makeInAnimation());
         });
         mLayoutEditGasPrice = findViewById(R.id.layout_edit_eth_gas_price);
         btnConfirmGas = findViewById(R.id.btn_commit_gas_price);
@@ -381,6 +392,7 @@ public class QuickTransferActivity extends BaseActivity {
         ivCloseGasPrice = findViewById(R.id.iv_close_eth_gas_price);
         ivCloseGasPrice.setOnClickListener(v -> {
             mLayoutEditGasPrice.setVisibility(View.GONE);
+            mLayoutEditGasPrice.setAnimation(AnimationUtil.makeOutAnimation());
         });
         btnConfirmGas.setOnClickListener(v -> {
             String gasPrice = etGasPrice.getText().toString().trim();
@@ -392,6 +404,7 @@ public class QuickTransferActivity extends BaseActivity {
                 mTvGasLimit.setText(gasLimit);
             }
             mLayoutEditGasPrice.setVisibility(View.GONE);
+            mLayoutEditGasPrice.setAnimation(AnimationUtil.makeOutAnimation());
         });
 
         mLayoutTransferStatus = findViewById(R.id.layout_transfer_status);
@@ -459,6 +472,7 @@ public class QuickTransferActivity extends BaseActivity {
                     chosenAccount = accountEntity;
                     showChosenAccountInfo(accountEntity);
                     mLayoutChooseAccount.setVisibility(View.GONE);
+                    mLayoutChooseAccount.setAnimation(AnimationUtil.makeOutAnimation());
                 });
 
                 mLayoutAccounts.addView(accountItemView.layoutAccountItem);
@@ -471,12 +485,16 @@ public class QuickTransferActivity extends BaseActivity {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (mLayoutEditBtcFee.getVisibility() == View.VISIBLE) {
                 mLayoutBtcFee.setVisibility(View.GONE);
+                mLayoutBtcFee.setAnimation(AnimationUtil.makeOutAnimation());
             } else if (mLayoutEditGasPrice.getVisibility() == View.VISIBLE) {
                 mLayoutEditGasPrice.setVisibility(View.GONE);
+                mLayoutEditGasPrice.setAnimation(AnimationUtil.makeOutAnimation());
             } else if (mLayoutChooseAccount.getVisibility() == View.VISIBLE) {
                 mLayoutChooseAccount.setVisibility(View.GONE);
+                mLayoutChooseAccount.setAnimation(AnimationUtil.makeOutAnimation());
             } else if (mLayoutTransferStatus.getVisibility() == View.VISIBLE) {
                 mLayoutTransferStatus.setVisibility(View.GONE);
+                mLayoutTransferStatus.setAnimation(AnimationUtil.makeOutAnimation());
             } else {
                 finish();
             }
@@ -771,6 +789,31 @@ public class QuickTransferActivity extends BaseActivity {
             showTipDialog(R.string.error_current_password);
             return false;
         }
+    }
+
+    public void getEthGasPrice() {
+        BrahmaWeb3jService.getInstance()
+                .getGasPrice()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<BigInteger>() {
+                    @Override
+                    public void onNext(BigInteger gasPrice) {
+                        BLog.d(tag(), "the gas price is: " + String.valueOf(gasPrice));
+                        BigDecimal gasPriceGwei = Convert.fromWei(new BigDecimal(gasPrice), Convert.Unit.GWEI);
+                        mTvGasPrice.setText(String.valueOf(gasPriceGwei));
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onCompleted() {
+
+                    }
+                });
     }
 
     @Override
