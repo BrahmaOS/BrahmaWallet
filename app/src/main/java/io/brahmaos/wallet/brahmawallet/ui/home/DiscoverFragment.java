@@ -21,6 +21,7 @@ import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.model.Dapp;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseFragment;
 import io.brahmaos.wallet.brahmawallet.ui.dapp.DappActivity;
+import io.brahmaos.wallet.brahmawallet.ui.dapp.DappTestActivity;
 
 public class DiscoverFragment extends BaseFragment {
     @Override
@@ -68,12 +69,15 @@ public class DiscoverFragment extends BaseFragment {
         Dapp ddex = new Dapp(R.drawable.icon_ddex, getString(R.string.dapp_name_ddex),
                 getString(R.string.dapp_desc_ddex), "https://ddex.io/");
         Dapp kyberSwap = new Dapp(R.drawable.icon_kyber, getString(R.string.dapp_name_kyberswap),
-                getString(R.string.dapp_desc_kyberswap), "https://kyber.network/swap/eth_knc");
+                getString(R.string.dapp_desc_kyberswap), "https://kyber.network/swap/eth_knc?utm_source=imtoken");
+        Dapp JSTest = new Dapp(R.drawable.icon_brm, getString(R.string.dapp_name_kyberswap),
+                getString(R.string.dapp_desc_kyberswap), "");
         dapps.add(etherscan);
         dapps.add(ethFans);
         dapps.add(blockcypher);
         dapps.add(ddex);
         dapps.add(kyberSwap);
+        dapps.add(JSTest);
 
         recyclerViewDapp.getAdapter().notifyDataSetChanged();
     }
@@ -110,6 +114,9 @@ public class DiscoverFragment extends BaseFragment {
                 if (dapp.getUrl() != null && dapp.getUrl().length() > 0) {
                     Intent intent = new Intent(getActivity(), DappActivity.class);
                     intent.putExtra(IntentParam.PARAM_DAPP_URL, dapp.getUrl());
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent(getActivity(), DappTestActivity.class);
                     startActivity(intent);
                 }
             });

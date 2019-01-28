@@ -7,10 +7,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 import io.brahmaos.wallet.brahmawallet.R;
+import io.brahmaos.wallet.brahmawallet.common.Brahma;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.ui.setting.HelpActivity;
@@ -19,6 +19,7 @@ public class DappActivity extends BaseActivity {
 
     private ProgressBar pbarLoading;
     private WebView wvDapp;
+    private Brahma mImToken;
 
     @Override
     protected String tag() {
@@ -37,25 +38,17 @@ public class DappActivity extends BaseActivity {
     private void initView() {
 
         pbarLoading = findViewById(R.id.loading_pbar);
-        pbarLoading.setVisibility(View.VISIBLE);
+        pbarLoading.setVisibility(View.GONE);
 
         wvDapp = findViewById(R.id.dapp_wv);
-        wvDapp.setVisibility(View.GONE);
+        wvDapp.setVisibility(View.VISIBLE);
 
-        wvDapp.setWebViewClient(new PrivacyWebViewClient());
         WebSettings webSettings = wvDapp.getSettings();
         webSettings.setJavaScriptEnabled(true);
         String url = getIntent().getStringExtra(IntentParam.PARAM_DAPP_URL);
+        mImToken = new Brahma(DappActivity.this, wvDapp);
+        wvDapp.addJavascriptInterface(mImToken, "brahma");
         wvDapp.loadUrl(url);
-    }
-
-    public class PrivacyWebViewClient extends WebViewClient {
-        @Override
-        public void onPageFinished(WebView view, String url) {
-            pbarLoading.setVisibility(View.GONE);
-            wvDapp.setVisibility(View.VISIBLE);
-            super.onPageFinished(view, url);
-        }
     }
 
     @Override
