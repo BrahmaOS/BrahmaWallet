@@ -62,4 +62,7 @@ public interface AllTokenDao {
 
     @Query("select * from all_tokens where id = :tokenId")
     AllTokenEntity loadTokenSync(int tokenId);
+
+    @Query("select * from all_tokens where LOWER(address) = LOWER(:address)")
+    AllTokenEntity queryAllTokenByAddress(String address);
 }

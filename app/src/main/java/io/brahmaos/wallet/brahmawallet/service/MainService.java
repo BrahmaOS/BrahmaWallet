@@ -331,4 +331,13 @@ public class MainService extends BaseService{
             e.onCompleted();
         });
     }
+
+    // Get alltokenEntity
+    public Observable<AllTokenEntity> queryAllTokenEntity(String address) {
+        return Observable.create(e -> {
+            AllTokenEntity allTokenEntity = ((WalletApp) context.getApplicationContext()).getRepository().queryAllTokenByAddress(address);
+            e.onNext(allTokenEntity);
+            e.onCompleted();
+        });
+    }
 }

@@ -51,6 +51,7 @@ import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
+import io.brahmaos.wallet.brahmawallet.db.entity.AllTokenEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 import io.brahmaos.wallet.brahmawallet.model.AccountAssets;
 import io.brahmaos.wallet.brahmawallet.model.KyberToken;
@@ -62,6 +63,7 @@ import io.brahmaos.wallet.brahmawallet.ui.setting.HelpActivity;
 import io.brahmaos.wallet.brahmawallet.view.CustomProgressDialog;
 import io.brahmaos.wallet.brahmawallet.view.CustomStatusView;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
+import io.brahmaos.wallet.util.AnimationUtil;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
 import rx.Observer;
@@ -100,12 +102,16 @@ public class InstantExchangeActivity extends BaseActivity {
 
     @BindView(R.id.et_send_token_num)
     EditText etSendTokenNum;
+    @BindView(R.id.iv_send_token_icon)
+    ImageView ivSendTokenIcon;
     @BindView(R.id.tv_send_token_name)
     TextView tvSendTokenName;
     @BindView(R.id.layout_send_token)
     LinearLayout layoutSendToken;
     @BindView(R.id.et_receive_token_num)
     EditText etReceiveTokenNum;
+    @BindView(R.id.iv_receive_token_icon)
+    ImageView ivReceiveTokenIcon;
     @BindView(R.id.tv_receive_token_name)
     TextView tvReceiveTokenName;
     @BindView(R.id.layout_receive_token)
@@ -388,6 +394,34 @@ public class InstantExchangeActivity extends BaseActivity {
     private void initSendToken(KyberToken token) {
         sendToken = token;
         tvSendTokenName.setText(token.getSymbol());
+        // ETH cannot be cancelled
+        if (token.getSymbol().equals("ETH")) {
+            ImageManager.showTokenIcon(InstantExchangeActivity.this, ivSendTokenIcon, R.drawable.icon_eth);
+        } else {
+            MainService.getInstance().queryAllTokenEntity(token.getContractAddress().toLowerCase())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<AllTokenEntity>() {
+                        @Override
+                        public void onCompleted() {
+                        }
+                        @Override
+                        public void onError(Throwable throwable) {
+                            throwable.printStackTrace();
+                        }
+                        @Override
+                        public void onNext(AllTokenEntity allTokenEntity) {
+                            if (allTokenEntity != null && allTokenEntity.getAvatar() != null) {
+                                ImageManager.showTokenIcon(InstantExchangeActivity.this, ivSendTokenIcon,
+                                        token.getName(), allTokenEntity.getAvatar());
+                            } else {
+                                ImageManager.showTokenIcon(InstantExchangeActivity.this, ivSendTokenIcon,
+                                        token.getName(), "");
+                            }
+                        }
+                    });
+        }
+
         tvRateSendTokenName.setText(token.getSymbol());
         if (token.getSymbol().equals("ETH")) {
             initReceiveToken(kncToken);
@@ -402,6 +436,33 @@ public class InstantExchangeActivity extends BaseActivity {
     private void initReceiveToken(KyberToken token) {
         receiveToken = token;
         tvReceiveTokenName.setText(token.getSymbol());
+        if (token.getSymbol().equals("ETH")) {
+            ImageManager.showTokenIcon(InstantExchangeActivity.this, ivReceiveTokenIcon, R.drawable.icon_eth);
+        } else {
+            MainService.getInstance().queryAllTokenEntity(token.getContractAddress().toLowerCase())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<AllTokenEntity>() {
+                        @Override
+                        public void onCompleted() {
+                        }
+                        @Override
+                        public void onError(Throwable throwable) {
+                            throwable.printStackTrace();
+                        }
+                        @Override
+                        public void onNext(AllTokenEntity allTokenEntity) {
+                            if (allTokenEntity != null && allTokenEntity.getAvatar() != null) {
+                                ImageManager.showTokenIcon(InstantExchangeActivity.this, ivReceiveTokenIcon,
+                                        token.getName(), allTokenEntity.getAvatar());
+                            } else {
+                                ImageManager.showTokenIcon(InstantExchangeActivity.this, ivReceiveTokenIcon,
+                                        token.getName(), "");
+                            }
+                        }
+                    });;
+        }
+
         tvRateReceiveTokenName.setText(token.getSymbol());
         tvRateReceiveTokenNum.setText("");
         getExpectedRate();
@@ -628,8 +689,31 @@ public class InstantExchangeActivity extends BaseActivity {
                 ImageManager.showTokenIcon(InstantExchangeActivity.this, holder.ivTokenAvatar, R.drawable.icon_eth);
             } else {
                 holder.tvTokenAddress.setVisibility(View.VISIBLE);
-                ImageManager.showTokenIcon(InstantExchangeActivity.this, holder.ivTokenAvatar, token.getName(), token.getContractAddress().toLowerCase());
+                MainService.getInstance().queryAllTokenEntity(token.getContractAddress().toLowerCase())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Observer<AllTokenEntity>() {
+                            @Override
+                            public void onCompleted() {
+                            }
+                            @Override
+                            public void onError(Throwable throwable) {
+                                throwable.printStackTrace();
+                            }
+                            @Override
+                            public void onNext(AllTokenEntity allTokenEntity) {
+                                if (allTokenEntity != null && allTokenEntity.getAvatar() != null) {
+                                    ImageManager.showTokenIcon(InstantExchangeActivity.this, holder.ivTokenAvatar,
+                                            token.getName(), allTokenEntity.getAvatar());
+
+                                } else {
+                                    ImageManager.showTokenIcon(InstantExchangeActivity.this, holder.ivTokenAvatar,
+                                            token.getName(), "");
+                                }
+                            }
+                        });
             }
+
             holder.layoutKyberToken.setOnClickListener(v -> {
                 if (BrahmaConfig.getInstance().getNetworkUrl().equals(BrahmaConst.MAINNET_URL)) {
                     initSendToken(token);
@@ -705,7 +789,29 @@ public class InstantExchangeActivity extends BaseActivity {
                 ImageManager.showTokenIcon(InstantExchangeActivity.this, holder.ivTokenAvatar, R.drawable.icon_eth);
             } else {
                 holder.tvTokenAddress.setVisibility(View.VISIBLE);
-                ImageManager.showTokenIcon(InstantExchangeActivity.this, holder.ivTokenAvatar, token.getName(), token.getContractAddress().toLowerCase());
+                MainService.getInstance().queryAllTokenEntity(token.getContractAddress().toLowerCase())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Observer<AllTokenEntity>() {
+                            @Override
+                            public void onCompleted() {
+                            }
+                            @Override
+                            public void onError(Throwable throwable) {
+                                throwable.printStackTrace();
+                            }
+                            @Override
+                            public void onNext(AllTokenEntity allTokenEntity) {
+                                if (allTokenEntity != null && allTokenEntity.getAvatar() != null) {
+                                    ImageManager.showTokenIcon(InstantExchangeActivity.this, holder.ivTokenAvatar,
+                                            token.getName(), allTokenEntity.getAvatar());
+
+                                } else {
+                                    ImageManager.showTokenIcon(InstantExchangeActivity.this, holder.ivTokenAvatar,
+                                            token.getName(), "");
+                                }
+                            }
+                        });
             }
             holder.layoutKyberToken.setOnClickListener(v -> {
                 if (BrahmaConfig.getInstance().getNetworkUrl().equals(BrahmaConst.MAINNET_URL)) {

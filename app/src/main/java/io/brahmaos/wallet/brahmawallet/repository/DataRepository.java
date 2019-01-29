@@ -166,6 +166,10 @@ public class DataRepository {
         return mDatabase.allTokenDao().queryTokenSync(param);
     }
 
+    public AllTokenEntity queryAllTokenByAddress(String address) {
+        return mDatabase.allTokenDao().queryAllTokenByAddress(address);
+    }
+
     public void showAllToken(AllTokenEntity allTokenEntity) {
         mDatabase.allTokenDao().updateTokenShowFlag(allTokenEntity.getAddress(),
                 BrahmaConst.DEFAULT_TOKEN_SHOW_FLAG);

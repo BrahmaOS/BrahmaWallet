@@ -20,6 +20,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
@@ -114,8 +115,8 @@ public class MainActivity extends BaseActivity
 
         // Add items
         bottomNavigation.addItem(item1);
-        bottomNavigation.addItem(item2);
-        bottomNavigation.addItem(item3);
+        /*bottomNavigation.addItem(item2);
+        bottomNavigation.addItem(item3);*/
 
         // Set background color
         bottomNavigation.setDefaultBackgroundColor(Color.parseColor("#F9F9F9"));
