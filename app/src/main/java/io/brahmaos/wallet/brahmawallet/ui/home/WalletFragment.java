@@ -495,7 +495,7 @@ public class WalletFragment extends BaseFragment {
             holder.tvTokenFullName.setText(tokenEntity.getName());
             holder.tvTokenPrice.setText("0");
             ImageManager.showTokenIcon(getActivity(), holder.ivTokenIcon,
-                    tokenEntity.getName(), tokenEntity.getAddress());
+                    tokenEntity.getName(), tokenEntity.getAvatar());
             BigInteger tokenCount = BigInteger.ZERO;
 
             for (AccountAssets accountAssets : cacheAssets) {

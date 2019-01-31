@@ -257,10 +257,10 @@ public class MainActivity extends BaseActivity
             fragments.clear();
             fragments.add(WalletFragment.newInstance(R.layout.fragment_wallet,
                     R.string.fragment_wallet));
-            fragments.add(HashRateFragment.newInstance(R.layout.fragment_hash_rate,
+            /*fragments.add(HashRateFragment.newInstance(R.layout.fragment_hash_rate,
                     R.string.fragment_hash_rate));
             fragments.add(DiscoverFragment.newInstance(R.layout.fragment_discover,
-                    R.string.fragment_discover));
+                    R.string.fragment_discover));*/
         }
 
         @Override
