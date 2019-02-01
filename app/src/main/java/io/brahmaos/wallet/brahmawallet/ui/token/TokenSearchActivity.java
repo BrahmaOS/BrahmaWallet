@@ -233,6 +233,7 @@ public class TokenSearchActivity extends BaseActivity {
                 currentToken.setName(token.getName());
                 currentToken.setShortName(token.getShortName());
                 currentToken.setAvatar(token.getAvatar());
+                currentToken.setCode(token.getCode());
                 holder.switchToken.setOnCheckedChangeListener(null);
                 holder.switchToken.setChecked(checked);
                 holder.switchToken.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -241,6 +242,7 @@ public class TokenSearchActivity extends BaseActivity {
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(() -> {
                                             BLog.e(tag(), "Success to check token:" + token.getName());
+                                            addChooseToken(currentToken);
                                         },
                                         throwable -> {
                                             BLog.e(tag(), "Unable to check token", throwable);
@@ -250,6 +252,7 @@ public class TokenSearchActivity extends BaseActivity {
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(() -> {
                                             BLog.e(tag(), "Success to uncheck token" + token.getName());
+                                            removeChooseToken(currentToken);
                                         },
                                         throwable -> {
                                             BLog.e(tag(), "Unable to uncheck token", throwable);
@@ -279,6 +282,24 @@ public class TokenSearchActivity extends BaseActivity {
                 tvTokenName = itemView.findViewById(R.id.tv_token_name);
                 tvTokenAddress = itemView.findViewById(R.id.tv_token_address);
                 switchToken = itemView.findViewById(R.id.switch_token);
+            }
+        }
+    }
+
+    private void addChooseToken(TokenEntity token) {
+        for (TokenEntity chooseToken : chooseTokes) {
+            if (chooseToken.getAddress().toLowerCase().equals(token.getAddress().toLowerCase())) {
+                return;
+            }
+        }
+        chooseTokes.add(token);
+    }
+
+    private void removeChooseToken(TokenEntity token) {
+        for (TokenEntity chooseToken : chooseTokes) {
+            if (chooseToken.getAddress().toLowerCase().equals(token.getAddress().toLowerCase())) {
+                chooseTokes.remove(chooseToken);
+                break;
             }
         }
     }
