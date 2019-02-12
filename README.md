@@ -34,14 +34,14 @@ The project layout is designed to be used with a recent version of Android Studi
 On the console type:
 
 ```
-git clone https://github.com/BrahmaOS/wallet.git
-cd wallet
+git clone https://github.com/BrahmaOS/BrahmaWallet
+cd BrahmaWallet
 ```
 
 Linux/Mac type:
 
 ```
-./gradle build
+./gradlew build
 ```
 
 Windows type:
