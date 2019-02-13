@@ -235,6 +235,8 @@ public class MainService extends BaseService{
             }
 
             List<AllTokenEntity> allTokenEntities = new ArrayList<>();
+            // remove duplicate addresses in token list
+            List<String> addressList = new ArrayList<>();
             // add BRM and ETH
             AllTokenEntity ethToken = new AllTokenEntity(0, "Ethereum", "ETH",
                     "", "", BrahmaConst.DEFAULT_TOKEN_SHOW_FLAG, BrahmaConst.COIN_CODE_ETH);
@@ -242,7 +244,15 @@ public class MainService extends BaseService{
                     "0xd7732e3783b0047aa251928960063f863ad022d8", "", BrahmaConst.DEFAULT_TOKEN_SHOW_FLAG, BrahmaConst.COIN_CODE_BRM);
             allTokenEntities.add(brmToken);
             allTokenEntities.add(ethToken);
+            addressList.add("");
+            addressList.add("0xd7732e3783b0047aa251928960063f863ad022d8");
             for (EthToken coin : coins) {
+                if (coin.getAddress().length() < 1) {
+                    BLog.i(tag(), "the no address token is: " + coin.toString());
+                }
+                if (addressList.contains(coin.getAddress())) {
+                    continue;
+                }
                 AllTokenEntity tokenEntity = new AllTokenEntity();
                 tokenEntity.setAddress(coin.getAddress());
                 tokenEntity.setShortName(coin.getSymbol());
@@ -255,6 +265,7 @@ public class MainService extends BaseService{
                 if (coin.getCoinCode() != BrahmaConst.COIN_CODE_ETH &&
                         coin.getCoinCode() != BrahmaConst.COIN_CODE_BRM) {
                     allTokenEntities.add(tokenEntity);
+                    addressList.add(coin.getAddress());
                 }
 
             }
