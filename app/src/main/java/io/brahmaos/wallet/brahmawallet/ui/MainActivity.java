@@ -39,6 +39,7 @@ import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.model.VersionInfo;
 import io.brahmaos.wallet.brahmawallet.service.VersionUpgradeService;
 import io.brahmaos.wallet.brahmawallet.ui.account.AccountsActivity;
+import io.brahmaos.wallet.brahmawallet.ui.account.CreateAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseFragment;
 import io.brahmaos.wallet.brahmawallet.ui.contact.ContactsActivity;
@@ -225,8 +226,13 @@ public class MainActivity extends BaseActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_accounts) {
-            Intent intent = new Intent(this, AccountsActivity.class);
-            startActivity(intent);
+            if (cacheAccounts != null && cacheAccounts.size() > 0) {
+                Intent intent = new Intent(this, AccountsActivity.class);
+                startActivity(intent);
+            } else {
+                Intent intent = new Intent(this, CreateAccountActivity.class);
+                startActivity(intent);
+            }
         } else if (id == R.id.nav_contacts) {
             Intent intent = new Intent(this, ContactsActivity.class);
             startActivity(intent);

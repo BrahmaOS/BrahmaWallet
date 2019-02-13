@@ -25,21 +25,71 @@
 
         </android.support.design.widget.AppBarLayout>
 
-        <android.support.design.widget.TabLayout
-            android:id="@+id/sliding_tabs"
+        <android.support.v4.widget.NestedScrollView
             android:layout_marginTop="@dimen/height_toolbar"
-            android:layout_width="match_parent"
             android:background="@color/main_bg"
-            app:tabIndicatorColor="@color/colorPrimary"
-            app:tabSelectedTextColor="@color/colorPrimary"
-            android:layout_height="48dp" />
-        <android.support.v4.view.ViewPager
-            android:layout_marginTop="48dp"
-            android:id="@+id/viewpager"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            android:background="@android:color/white" />
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:paddingStart="@dimen/space_normal"
+                    android:paddingEnd="@dimen/space_normal"
+                    android:paddingTop="@dimen/space_small"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="@dimen/toolbar_icon_size_smaller"
+                        android:layout_height="@dimen/toolbar_icon_size_smaller"
+                        android:src="@drawable/icon_btc"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_marginStart="@dimen/space_small"
+                        android:layout_height="@dimen/toolbar_icon_size_smaller"
+                        android:gravity="center"
+                        android:text="@string/title_tab_account_bitcoin"/>
+                </LinearLayout>
+                <android.support.v7.widget.RecyclerView
+                    android:background="@color/white"
+                    android:id="@+id/btc_accounts_recycler"
+                    android:paddingTop="@dimen/space_unit"
+                    android:paddingBottom="@dimen/space_unit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_normal"
+                    android:paddingStart="@dimen/space_normal"
+                    android:paddingEnd="@dimen/space_normal"
+                    android:paddingTop="@dimen/space_small"
+                    android:background="@color/white"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="@dimen/toolbar_icon_size_smaller"
+                        android:layout_height="@dimen/toolbar_icon_size_smaller"
+                        android:src="@drawable/icon_eth"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/toolbar_icon_size_smaller"
+                        android:layout_marginStart="@dimen/space_small"
+                        android:gravity="center"
+                        android:text="@string/title_tab_account_ethereum"/>
+                </LinearLayout>
+                <android.support.v7.widget.RecyclerView
+                    android:background="@color/white"
+                    android:id="@+id/eth_accounts_recycler"
+                    android:paddingTop="@dimen/space_unit"
+                    android:paddingBottom="@dimen/space_unit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+        </android.support.v4.widget.NestedScrollView>
     </android.support.design.widget.CoordinatorLayout>
 </android.support.v4.widget.DrawerLayout>
 
