@@ -17,7 +17,7 @@
         <ImageView
             android:id="@+id/iv_transaction_status_icon"
             android:layout_centerVertical="true"
-            android:layout_marginEnd="@dimen/space_larger"
+            android:layout_marginEnd="@dimen/space_normal"
             android:layout_width="@dimen/toolbar_icon_size"
             android:layout_height="@dimen/toolbar_icon_size"
             android:src="@drawable/icon_receive"/>
