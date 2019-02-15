@@ -19,72 +19,76 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:titleTextAppearance="@style/ToolbarTitleText"
+                app:popupTheme="@style/AppTheme.PopupOverlay"
                 app:title="@string/title_confirm_mnemonic"
-                app:popupTheme="@style/AppTheme.PopupOverlay" />
+                app:titleTextAppearance="@style/ToolbarTitleText" />
 
         </android.support.design.widget.AppBarLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
+            android:layout_marginTop="@dimen/height_toolbar"
             android:background="@color/white"
-            android:paddingStart="@dimen/space_normal"
+            android:orientation="vertical"
             android:paddingEnd="@dimen/space_normal"
-            android:layout_marginTop="@dimen/height_toolbar">
+            android:paddingStart="@dimen/space_normal">
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_larger"
-                android:textSize="@dimen/font_size_subheading"
-                android:paddingStart="@dimen/space_small"
                 android:paddingEnd="@dimen/space_small"
+                android:paddingStart="@dimen/space_small"
+                android:text="@string/confirm_prof"
                 android:textColor="@color/color_primary_text"
-                android:text="@string/desc_confirm_mnemonic"/>
+                android:textSize="@dimen/font_size_subheading" />
+
             <TextView
+                android:id="@+id/tv_confirm_error_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_smaller"
+                android:gravity="center"
+                android:text="@string/confirm_error"
+                android:textColor="#FFFF0000"
                 android:textSize="@dimen/font_size_subheading"
-                android:paddingStart="@dimen/space_small"
-                android:paddingEnd="@dimen/space_small"
-                android:textColor="@color/color_primary_text"
-                android:text="@string/tip_confirm_mnemonic"/>
+                android:visibility="invisible" />
 
-            <EditText
-                android:id="@+id/et_account_mnemonic"
+            <io.brahmaos.wallet.brahmawallet.view.MyAutoLineLayout
+                android:id="@+id/layout_confirmed_mnemonic"
+                android:layout_marginTop="@dimen/space_larger"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_large"
-                android:layout_marginBottom="@dimen/space_normal"
-                android:padding="@dimen/space_small"
-                android:inputType="textMultiLine"
-                android:lines="4"
-                android:gravity="start|top"
-                android:textSize="@dimen/font_size_subheading"
-                android:background="@drawable/editor_normal_bg"
-                android:hint="@string/prompt_account_mnemonic"
-                android:lineSpacingMultiplier="1.2"/>
+                android:background="@drawable/layout_border" />
+
+            <io.brahmaos.wallet.brahmawallet.view.MyAutoLineLayout
+                android:id="@+id/layout_mnemonic_total"
+                android:layout_marginTop="@dimen/space_larger"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
             <LinearLayout
                 android:id="@+id/layout_backup_success"
-                android:visibility="invisible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="invisible">
+
                 <TextView
-                    android:layout_marginTop="@dimen/space_normal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingStart="@dimen/space_small"
+                    android:layout_marginTop="@dimen/space_normal"
                     android:paddingEnd="@dimen/space_small"
-                    android:textColor="@color/color_primary_text"
-                    android:text="@string/tip_backup_mnemonic"/>
+                    android:paddingStart="@dimen/space_small"
+                    android:text="@string/tip_backup_mnemonic"
+                    android:textColor="@color/color_primary_text" />
+
                 <Button
                     android:id="@+id/btn_finish"
                     style="@style/ButtonSingle"
                     android:layout_marginTop="@dimen/space_larger"
-                    android:text="@string/backup_success"/>
+                    android:text="@string/backup_success" />
             </LinearLayout>
         </LinearLayout>
     </android.support.design.widget.CoordinatorLayout>

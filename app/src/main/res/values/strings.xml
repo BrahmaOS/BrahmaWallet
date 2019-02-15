@@ -387,6 +387,8 @@
     <string name="success_enter_mnemonic">Success!</string>
     <string name="tip_backup_mnemonic">Keep your written copy private in a secure and safe location. This is a key, should you ever need to restore your account.</string>
     <string name="backup_success">Backup Success</string>
+    <string name="confirm_prof">Please click on the mnemonic in order to confirm that you have backed up correctly.</string>
+    <string name="confirm_error">Wrong mnemonic order, please check.</string>
 
     <!-- string about us -->
     <string name="title_about_us">About</string>
