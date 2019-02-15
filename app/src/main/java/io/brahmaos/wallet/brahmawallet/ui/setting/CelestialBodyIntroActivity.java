@@ -28,16 +28,16 @@ public class CelestialBodyIntroActivity extends BaseActivity {
         return CelestialBodyIntroActivity.class.getName();
     }
 
-    public static final String PLANET = "neptune";
+    public static final String PLANET = "uranus";
 
     // planet -> [language -> wiki]
     private static Map<String, Map<String, String>> planetsWiki;
     static {
         planetsWiki = new HashMap<>();
         Map<String, String> langWiki = new HashMap<>();
-        langWiki.put(BrahmaConst.LANGUAGE_ENGLISH, "https://en.wikipedia.org/wiki/Neptune");
-        langWiki.put(BrahmaConst.LANGUAGE_CHINESE, "https://baike.baidu.com/item/%E6%B5%B7%E7%8E%8B%E6%98%9F/30351");
-        planetsWiki.put("neptune", langWiki);
+        langWiki.put(BrahmaConst.LANGUAGE_ENGLISH, "https://en.wikipedia.org/wiki/Uranus");
+        langWiki.put(BrahmaConst.LANGUAGE_CHINESE, "https://baike.baidu.com/item/%E5%A4%A9%E7%8E%8B%E6%98%9F/21805");
+        planetsWiki.put("uranus", langWiki);
     }
 
     @Override

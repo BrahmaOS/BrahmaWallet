@@ -14,12 +14,14 @@ import android.widget.TextView;
 
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Coin;
+import org.bitcoinj.core.ScriptException;
 import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.core.Utils;
 import org.bitcoinj.kits.WalletAppKit;
+import org.bitcoinj.script.Script;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -112,7 +114,12 @@ public class BtcTransactionDetailActivity extends BaseActivity {
                     if (input.getValue() != null) {
                         itemView.tvAmount.setText(input.getValue().toFriendlyString());
                     }
-                    itemView.tvAddress.setText(new Address(BtcAccountManager.getInstance().getNetworkParams(), Utils.sha256hash160(input.getScriptSig().getPubKey())).toBase58());
+                    try {
+                        byte[] bytes = input.getScriptSig().getPubKey();
+                        itemView.tvAddress.setText(new Address(BtcAccountManager.getInstance().getNetworkParams(), Utils.sha256hash160(bytes)).toBase58());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
                     mLayoutTransactionInput.addView(itemView.layoutItem);
                 }
@@ -128,8 +135,15 @@ public class BtcTransactionDetailActivity extends BaseActivity {
                     if (output.getValue() != null) {
                         itemView.tvAmount.setText(output.getValue().toFriendlyString());
                     }
-                    if (output.getAddressFromP2PKHScript(BtcAccountManager.getInstance().getNetworkParams()) != null) {
-                        itemView.tvAddress.setText(output.getAddressFromP2PKHScript(BtcAccountManager.getInstance().getNetworkParams()).toBase58());
+                    try {
+                        Script script = output.getScriptPubKey();
+                        if (script.isSentToAddress() || script.isPayToScriptHash()) {
+                            itemView.tvAddress.setText(script.getToAddress(BtcAccountManager.getInstance().getNetworkParams()).toBase58());
+                        } else {
+                            itemView.tvAddress.setText("");
+                        }
+                    } catch (ScriptException e) {
+                        itemView.tvAddress.setText("");
                     }
 
                     mLayoutTransactionOutput.addView(itemView.layoutItem);

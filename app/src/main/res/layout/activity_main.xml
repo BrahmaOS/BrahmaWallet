@@ -8,10 +8,45 @@
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
-    <include
-        layout="@layout/app_bar_drawer"
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:elevation="@dimen/toolbar_init_elevation"
+            android:theme="@style/AppTheme.AppBarOverlay">
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:titleTextAppearance="@style/MainToolbarTitleText"
+                app:title="@string/title_brahma_wallet"
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
+        </android.support.design.widget.AppBarLayout>
+
+        <io.brahmaos.wallet.brahmawallet.view.HomeViewPager
+            android:id="@+id/content_pager"
+            android:layout_marginTop="@dimen/height_toolbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <!-- shadow -->
+        <View
+            android:layout_width="match_parent"
+            android:visibility="gone"
+            android:layout_height="1dp"
+            android:layout_marginBottom="56dp"
+            android:layout_gravity="bottom"
+            android:background="@color/color_tab_divider"/>
+        <com.aurelhubert.ahbottomnavigation.AHBottomNavigation
+            android:visibility="gone"
+            android:id="@+id/bottom_navigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom" />
+    </android.support.design.widget.CoordinatorLayout>
 
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"
@@ -21,5 +56,4 @@
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_drawer"
         app:menu="@menu/activity_drawer_drawer" />
-
 </android.support.v4.widget.DrawerLayout>

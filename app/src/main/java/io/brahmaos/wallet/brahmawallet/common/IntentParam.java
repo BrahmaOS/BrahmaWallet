@@ -24,4 +24,16 @@ public class IntentParam {
     public static final String PARAM_TX_DETAIL = "tx-detail";
     public static final String PARAM_ETH_ADDRESS = "eth-account-address";
     public static final String PARAM_MNEMONIC_CODE = "account-mnemonic-code";
+    public static final String PARAM_DAPP_URL = "dapp-url";
+
+    // brahma pay
+    public static final String PARAM_PAY_BLOCKCHAIN_TYPE = "blockchain";
+    public static final String PARAM_PAY_RECEIPT_ADDRESS = "receipt.address";
+    public static final String PARAM_PAY_TOKEN_ADDRESS = "token.address";
+    public static final String PARAM_PAY_SEND_VALUE = "send.value";
+    public static final String PARAM_PAY_REMARK = "remark";
+
+    public static final String PARAM_PAY_ERROR_CODE = "error.code";
+    public static final String PARAM_PAY_MSG = "msg";
+    public static final String PARAM_PAY_HASH = "hash";
 }

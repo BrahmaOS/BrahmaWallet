@@ -163,6 +163,6 @@
         android:layout_width="match_parent"
         android:layout_height="1px"
         android:orientation="horizontal"
-        android:background="@color/horizontal_divider">
+        android:background="@color/viewfinder_btn_bg">
     </LinearLayout>
 </LinearLayout>

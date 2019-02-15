@@ -32,18 +32,21 @@ public class AllTokenEntity implements Serializable{
     private String address;
     private String avatar;
     private int showFlag;
+    private int code;
 
     public AllTokenEntity() {
     }
 
     @Ignore
-    public AllTokenEntity(int id, String name, String shortName, String address, String avatar, int showFlag) {
+    public AllTokenEntity(int id, String name, String shortName, String address, String avatar,
+                          int showFlag, int code) {
         this.id = id;
         this.name = name;
         this.shortName = shortName;
         this.address = address;
         this.avatar = avatar;
         this.showFlag = showFlag;
+        this.code = code;
     }
 
     public int getId() {
@@ -94,6 +97,14 @@ public class AllTokenEntity implements Serializable{
         this.showFlag = showFlag;
     }
 
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
+
     @Override
     public String toString() {
         return "AllTokenEntity{" +
@@ -103,6 +114,7 @@ public class AllTokenEntity implements Serializable{
                 ", address='" + address + '\'' +
                 ", avatar='" + avatar + '\'' +
                 ", showFlag=" + showFlag +
+                ", code=" + code +
                 '}';
     }
 }

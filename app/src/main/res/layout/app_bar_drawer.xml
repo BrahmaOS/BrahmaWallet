@@ -22,6 +22,23 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_drawer" />
+    <io.brahmaos.wallet.brahmawallet.view.HomeViewPager
+        android:id="@+id/content_pager"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="57dp"/>
+    <!-- shadow -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="56dp"
+        android:layout_gravity="bottom"
+        android:background="@drawable/bottom_navigation_view_shadow"/>
+
+    <com.aurelhubert.ahbottomnavigation.AHBottomNavigation
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom" />
 
 </android.support.design.widget.CoordinatorLayout>

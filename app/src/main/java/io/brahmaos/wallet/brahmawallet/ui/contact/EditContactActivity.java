@@ -153,7 +153,7 @@ public class EditContactActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        //noinspection SimplifiableIfStatement
+
         if (item.getItemId() == R.id.action_save) {
             String name = etContactName.getText().toString();
             if (TextUtils.isEmpty(name)) {
@@ -174,21 +174,23 @@ public class EditContactActivity extends BaseActivity {
                 return false;
             }
             String remark = etContactRemark.getText().toString();
-            ContactEntity contact = new ContactEntity();
-            contact.setAddress(address);
-            contact.setBtcAddress(btcAddress);
-            contact.setName(name);
-            contact.setFamilyName(familyName);
-            contact.setRemark(remark);
+            ContactEntity contactEdited = new ContactEntity();
+            contactEdited.setAddress(address);
+            contactEdited.setBtcAddress(btcAddress);
+            contactEdited.setName(name);
+            contactEdited.setFamilyName(familyName);
+            contactEdited.setRemark(remark);
             if (urlContactAvatar != null) {
-                contact.setAvatar(urlContactAvatar.toString());
+                contactEdited.setAvatar(urlContactAvatar.toString());
+            } else {
+                contactEdited.setAvatar(contact.getAvatar());
             }
 
             CustomProgressDialog progressDialog = new CustomProgressDialog(this, R.style.CustomProgressDialogStyle, "");
             progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             progressDialog.show();
 
-            mViewModel.updateContact(contactId, contact)
+            mViewModel.updateContact(contactId, contactEdited)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(() -> {
@@ -265,7 +267,7 @@ public class EditContactActivity extends BaseActivity {
                         options.setStatusBarColor(getResources().getColor(R.color.master));
                         UCrop uCrop = UCrop.of(imageUri, Uri.fromFile(tempFileContactAvatar));
                         uCrop.withAspectRatio(1, 1);
-                        uCrop.withMaxResultSize(256, 256);
+                        uCrop.withMaxResultSize(512, 512);
                         uCrop.withOptions(options);
                         uCrop.start(this, ReqCode.CROP_IMAGE);
                     }

@@ -132,6 +132,11 @@ public class ContactDetailActivity extends BaseActivity {
             try {
                 Bitmap bmpAvatar = MediaStore.Images.Media.getBitmap(getContentResolver(), uriAvatar);
                 ivContactAvatar.setImageBitmap(ImageUtil.getCircleBitmap(bmpAvatar));
+                ivContactAvatar.setOnClickListener(v -> {
+                    Intent intent = new Intent(this, ShowContactAvatarActivity.class);
+                    intent.putExtra(IntentParam.PARAM_CONTACT_ID, contactId);
+                    startActivity(intent);
+                });
             } catch (Exception e) {
                 e.printStackTrace();
                 Toast.makeText(this, "show failed", Toast.LENGTH_SHORT).show();

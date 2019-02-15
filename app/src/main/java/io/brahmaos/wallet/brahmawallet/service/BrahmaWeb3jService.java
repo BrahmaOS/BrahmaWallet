@@ -151,7 +151,7 @@ public class BrahmaWeb3jService extends BaseService{
      * for example: verifying the account, sending request
      * @return 1: verifying the account 2: sending request 10: transfer success
      */
-    public Observable<Integer> sendTransfer(AccountEntity account, TokenEntity token, String password,
+    public Observable<Object> sendTransfer(AccountEntity account, TokenEntity token, String password,
                                             String destinationAddress, BigDecimal amount,
                                             BigDecimal gasPrice, BigInteger gasLimit, String remark) {
         return Observable.create(e -> {
@@ -163,6 +163,7 @@ public class BrahmaWeb3jService extends BaseService{
                         password, context.getFilesDir() + "/" +  account.getFilename());
                 BLog.i(tag(), "load credential success");
                 e.onNext(2);
+                String transactionHash = "";
                 BigDecimal gasPriceWei = Convert.toWei(gasPrice, Convert.Unit.GWEI);
                 if (token.getName().toLowerCase().equals(BrahmaConst.ETHEREUM)) {
                     RawTransactionManager txManager = new RawTransactionManager(web3, credentials);
@@ -176,7 +177,7 @@ public class BrahmaWeb3jService extends BaseService{
                     BLog.i(tag(), "remark: "
                             + remark + "; hex remark:" + Numeric.toHexString(remark.getBytes()));
 
-                    String transactionHash = transactionResponse.getTransactionHash();
+                    transactionHash = transactionResponse.getTransactionHash();
                     BLog.i(tag(), "Transaction begin, view it at https://rinkeby.etherscan.io/tx/"
                             + transactionHash);
 
@@ -194,7 +195,6 @@ public class BrahmaWeb3jService extends BaseService{
                                 + ((SLEEP_DURATION * ATTEMPTS) / 1000
                                 + " seconds for transaction: " + transactionHash));
                     }
-
                     BLog.i(tag(), "Transaction complete, view it at https://rinkeby.etherscan.io/tx/"
                             + transferReceipt.getTransactionHash());
                 } else {
@@ -213,10 +213,11 @@ public class BrahmaWeb3jService extends BaseService{
                         throw new RuntimeException("Error processing transaction request: "
                                 + transactionResponse.getError().getMessage());
                     }
-                    String transactionHash = transactionResponse.getTransactionHash();
+                    transactionHash = transactionResponse.getTransactionHash();
                     BLog.i(tag(), "===> transactionHash: " + transactionHash);
                 }
-                e.onNext(10);
+                e.onNext(transactionHash);
+                e.onCompleted();
             } catch (IOException | CipherException | TransactionException | InterruptedException e1) {
                 e1.printStackTrace();
                 e.onError(e1);
@@ -356,38 +357,12 @@ public class BrahmaWeb3jService extends BaseService{
             try {
                 Web3j web3 = Web3jFactory.build(
                         new HttpService(BrahmaConfig.getInstance().getNetworkUrl()));
-                ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
-                WalletFile walletFile = objectMapper.readValue(BrahmaConst.DEFAULT_KEYSTORE, WalletFile.class);
-                Credentials credentials = Credentials.create(Wallet.decrypt("654321", walletFile));
-                TransactionManager transactionManager = new RawTransactionManager(web3, credentials);
 
                 String rateContractAddress = BrahmaConst.KYBER_MAIN_NETWORK_ADDRESS;
                 if (BrahmaConfig.getInstance().getNetworkUrl().equals(BrahmaConst.ROPSTEN_TEST_URL)) {
                     rateContractAddress = BrahmaConst.KYBER_ROPSTEN_NETWORK_ADDRESS;
                 }
 
-                /*Function function = new Function("getExpectedRates",
-                        Arrays.<Type>asList(new Address(BrahmaConst.KYBER_MAIN_NETWORK_ADDRESS),
-                                new DynamicArray<>(new Address(srcAddress), new Address(destAddress), new Address("0xdd974D5C2e2928deA5F71b9825b8b646686BD200")),
-                                new DynamicArray<>(new Address(destAddress), new Address(srcAddress), new Address("0xd26114cd6EE289AccF82350c8d8487fedB8A0C07")),
-                                new DynamicArray<>(new Uint256(new BigDecimal(Math.pow(10, 18)).toBigInteger()), new Uint256(new BigDecimal(Math.pow(10, 18)).toBigInteger()), new Uint256(new BigDecimal(Math.pow(10, 18)).toBigInteger()))),
-                        Arrays.<TypeReference<?>>asList(new TypeReference<DynamicArray<Uint256>>() {}, new TypeReference<DynamicArray<Uint256>>() {}));
-                String encodedFunction = FunctionEncoder.encode(function);
-                org.web3j.protocol.core.methods.response.EthCall ethCall = web3.ethCall(
-                        Transaction.createEthCallTransaction(
-                                transactionManager.getFromAddress(), BrahmaConst.KYBER_WRAPPER_ADDRESS, encodedFunction),
-                        DefaultBlockParameterName.LATEST)
-                        .send();
-                String rateValue = ethCall.getValue();
-                BLog.i(tag(), "the kyber wrapper contract rate origal result : " + rateValue);
-                List<Type> values = FunctionReturnDecoder.decode(rateValue, function.getOutputParameters());
-
-                for (Type rates : values) {
-                    DynamicArray<Uint256> rateList = (DynamicArray<Uint256>) rates;
-                    for (Uint256 rate : rateList.getValue()) {
-                        BLog.i(tag(), "rate is: " + rate.getValue().toString());
-                    }
-                }*/
                 BLog.i(tag(), "the srcAddress is: " + srcAddress);
                 BLog.i(tag(), "the destAddress is: " + destAddress);
                 Function function = new Function("getExpectedRate",
@@ -398,7 +373,7 @@ public class BrahmaWeb3jService extends BaseService{
                 String encodedFunction = FunctionEncoder.encode(function);
                 org.web3j.protocol.core.methods.response.EthCall ethCall = web3.ethCall(
                         Transaction.createEthCallTransaction(
-                                transactionManager.getFromAddress(), rateContractAddress, encodedFunction),
+                                BrahmaConst.TRANSACTION_ACCOUNT_ADDRESS, rateContractAddress, encodedFunction),
                         DefaultBlockParameterName.LATEST)
                         .send();
 

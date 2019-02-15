@@ -34,18 +34,21 @@ public class TokenEntity implements Serializable{
     // deprecated, Please use avatar
     private Integer icon;
     private String avatar;
+    private int code;
 
     public TokenEntity() {
     }
 
     @Ignore
-    public TokenEntity(int id, String name, String shortName, String address, Integer icon, String avatar) {
+    public TokenEntity(int id, String name, String shortName, String address, Integer icon,
+                       String avatar, int code) {
         this.id = id;
         this.name = name;
         this.shortName = shortName;
         this.address = address;
         this.icon = icon;
         this.avatar = avatar;
+        this.code = code;
     }
 
     public int getId() {
@@ -96,6 +99,14 @@ public class TokenEntity implements Serializable{
         this.avatar = avatar;
     }
 
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
+
     @Override
     public String toString() {
         return "TokenEntity{" +
@@ -105,6 +116,7 @@ public class TokenEntity implements Serializable{
                 ", address='" + address + '\'' +
                 ", icon=" + icon +
                 ", avatar='" + avatar + '\'' +
+                ", code=" + code +
                 '}';
     }
 }

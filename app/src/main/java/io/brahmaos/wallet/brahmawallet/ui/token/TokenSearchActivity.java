@@ -205,20 +205,18 @@ public class TokenSearchActivity extends BaseActivity {
             holder.tvTokenShoreName.setText(token.getShortName());
             holder.tvTokenAddress.setText(CommonUtil.generateSimpleAddress(token.getAddress()));
             holder.tvTokenName.setText(token.getName());
+            ImageManager.showTokenIcon(TokenSearchActivity.this, holder.ivTokenAvatar,
+                    token.getName(), token.getAvatar());
             // BRM and ETH cannot be cancelled
             if (token.getShortName().equals("ETH")) {
                 holder.tvTokenAddress.setVisibility(View.GONE);
                 holder.switchToken.setVisibility(View.GONE);
-                ImageManager.showTokenIcon(TokenSearchActivity.this, holder.ivTokenAvatar, R.drawable.icon_eth);
             } else if (token.getShortName().equals("BRM")) {
                 holder.tvTokenAddress.setVisibility(View.VISIBLE);
                 holder.switchToken.setVisibility(View.GONE);
-                ImageManager.showTokenIcon(TokenSearchActivity.this, holder.ivTokenAvatar, R.drawable.icon_brm);
             } else {
                 holder.tvTokenAddress.setVisibility(View.VISIBLE);
                 holder.switchToken.setVisibility(View.VISIBLE);
-                ImageManager.showTokenIcon(TokenSearchActivity.this, holder.ivTokenAvatar,
-                        token.getName(), token.getAddress());
 
                 // Determine if the token is selected
                 boolean checked = false;
@@ -235,6 +233,7 @@ public class TokenSearchActivity extends BaseActivity {
                 currentToken.setName(token.getName());
                 currentToken.setShortName(token.getShortName());
                 currentToken.setAvatar(token.getAvatar());
+                currentToken.setCode(token.getCode());
                 holder.switchToken.setOnCheckedChangeListener(null);
                 holder.switchToken.setChecked(checked);
                 holder.switchToken.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -243,6 +242,7 @@ public class TokenSearchActivity extends BaseActivity {
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(() -> {
                                             BLog.e(tag(), "Success to check token:" + token.getName());
+                                            addChooseToken(currentToken);
                                         },
                                         throwable -> {
                                             BLog.e(tag(), "Unable to check token", throwable);
@@ -252,6 +252,7 @@ public class TokenSearchActivity extends BaseActivity {
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(() -> {
                                             BLog.e(tag(), "Success to uncheck token" + token.getName());
+                                            removeChooseToken(currentToken);
                                         },
                                         throwable -> {
                                             BLog.e(tag(), "Unable to uncheck token", throwable);
@@ -281,6 +282,24 @@ public class TokenSearchActivity extends BaseActivity {
                 tvTokenName = itemView.findViewById(R.id.tv_token_name);
                 tvTokenAddress = itemView.findViewById(R.id.tv_token_address);
                 switchToken = itemView.findViewById(R.id.switch_token);
+            }
+        }
+    }
+
+    private void addChooseToken(TokenEntity token) {
+        for (TokenEntity chooseToken : chooseTokes) {
+            if (chooseToken.getAddress().toLowerCase().equals(token.getAddress().toLowerCase())) {
+                return;
+            }
+        }
+        chooseTokes.add(token);
+    }
+
+    private void removeChooseToken(TokenEntity token) {
+        for (TokenEntity chooseToken : chooseTokes) {
+            if (chooseToken.getAddress().toLowerCase().equals(token.getAddress().toLowerCase())) {
+                chooseTokes.remove(chooseToken);
+                break;
             }
         }
     }

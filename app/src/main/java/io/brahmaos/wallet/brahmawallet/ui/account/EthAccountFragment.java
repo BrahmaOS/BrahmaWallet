@@ -102,7 +102,7 @@ public class EthAccountFragment extends Fragment {
         recyclerViewAccounts = parentView.findViewById(R.id.accounts_recycler);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerViewAccounts.setLayoutManager(layoutManager);
-        recyclerViewAccounts.setAdapter(new AccountRecyclerAdapter());
+        recyclerViewAccounts.setAdapter(new EthAccountRecyclerAdapter());
         accountAssetsList = MainService.getInstance().getAccountAssetsList();
         cryptoCurrencies = MainService.getInstance().getCryptoCurrencies();
     }
@@ -110,7 +110,7 @@ public class EthAccountFragment extends Fragment {
     /**
      * list item account
      */
-    private class AccountRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private class EthAccountRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         @NonNull
         @Override
@@ -123,13 +123,13 @@ public class EthAccountFragment extends Fragment {
                 intent.putExtra(IntentParam.PARAM_ACCOUNT_ID, account.getId());
                 startActivity(intent);
             });
-            return new AccountRecyclerAdapter.ItemViewHolder(rootView);
+            return new EthAccountRecyclerAdapter.ItemViewHolder(rootView);
         }
 
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-            if (holder instanceof AccountRecyclerAdapter.ItemViewHolder) {
-                AccountRecyclerAdapter.ItemViewHolder itemViewHolder = (AccountRecyclerAdapter.ItemViewHolder) holder;
+            if (holder instanceof EthAccountRecyclerAdapter.ItemViewHolder) {
+                EthAccountRecyclerAdapter.ItemViewHolder itemViewHolder = (EthAccountRecyclerAdapter.ItemViewHolder) holder;
                 AccountEntity accountEntity = accounts.get(position);
                 setData(itemViewHolder, accountEntity);
             }
@@ -138,7 +138,7 @@ public class EthAccountFragment extends Fragment {
         /**
          * set account view
          */
-        private void setData(AccountRecyclerAdapter.ItemViewHolder holder, final AccountEntity account) {
+        private void setData(EthAccountRecyclerAdapter.ItemViewHolder holder, final AccountEntity account) {
             if (account == null) {
                 return ;
             }

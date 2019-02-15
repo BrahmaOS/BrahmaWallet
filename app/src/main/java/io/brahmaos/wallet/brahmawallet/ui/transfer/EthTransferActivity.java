@@ -472,10 +472,17 @@ public class EthTransferActivity extends BaseActivity {
                                 finalAmount, gasPrice, gasLimit, remark)
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(new Observer<Integer>() {
+                                .subscribe(new Observer<Object>() {
                                     @Override
-                                    public void onNext(Integer flag) {
-                                        if (flag == 10) {
+                                    public void onNext(Object result) {
+                                        if (result instanceof Integer) {
+                                            int flag = (Integer) result;
+                                            if (flag == 1) {
+                                                tvTransferStatus.setText(R.string.progress_verify_account);
+                                            } else if (flag == 2) {
+                                                tvTransferStatus.setText(R.string.progress_send_request);
+                                            }
+                                        } else if (result instanceof String) {
                                             tvTransferStatus.setText(R.string.progress_transfer_success);
                                             BLog.i(tag(), "the transfer success");
                                             customStatusView.loadSuccess();
@@ -488,10 +495,6 @@ public class EthTransferActivity extends BaseActivity {
                                                 }
                                                 finish();
                                             }, 1200);
-                                        } else if (flag == 1) {
-                                            tvTransferStatus.setText(R.string.progress_verify_account);
-                                        } else if (flag == 2) {
-                                            tvTransferStatus.setText(R.string.progress_send_request);
                                         }
                                     }
 

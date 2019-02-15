@@ -115,7 +115,7 @@ public class BtcTransferActivity extends BaseActivity {
     private AccountViewModel mViewModel;
     private WalletAppKit kit;
     private List<AccountEntity> mAccounts = new ArrayList<>();
-    private Observable<Boolean> btcTxBroadcastComplete;
+    private Observable<String> btcTxBroadcastComplete;
 
     private BottomSheetDialog transferInfoDialog;
     private TextView tvTransferStatus;
@@ -129,14 +129,14 @@ public class BtcTransferActivity extends BaseActivity {
         showNavBackBtn();
         mAccount = (AccountEntity) getIntent().getSerializableExtra(IntentParam.PARAM_ACCOUNT_INFO);
 
-        btcTxBroadcastComplete = RxEventBus.get().register(EventTypeDef.BTC_TRANSACTION_BROADCAST_COMPLETE, Boolean.class);
+        btcTxBroadcastComplete = RxEventBus.get().register(EventTypeDef.BTC_TRANSACTION_BROADCAST_COMPLETE, String.class);
         btcTxBroadcastComplete.onBackpressureBuffer()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Boolean>() {
+                .subscribe(new Observer<String>() {
                     @Override
-                    public void onNext(Boolean flag) {
-                        if (flag && transferInfoDialog != null && tvTransferStatus != null
-                                && customStatusView != null) {
+                    public void onNext(String hash) {
+                        if (hash != null && hash.length() > 0 && transferInfoDialog != null
+                                && tvTransferStatus != null && customStatusView != null) {
                             tvTransferStatus.setText(R.string.progress_transfer_success);
                             BLog.i(tag(), "the transfer success");
                             customStatusView.loadSuccess();

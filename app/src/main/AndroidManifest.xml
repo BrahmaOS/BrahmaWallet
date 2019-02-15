@@ -103,6 +103,11 @@
         <activity android:name=".ui.contact.ChooseContactActivity" />
         <activity android:name=".ui.contact.ContactDetailActivity" />
         <activity android:name=".ui.contact.EditContactActivity" />
+        <activity
+            android:name=".ui.contact.ShowContactAvatarActivity"
+            android:label="@string/title_show_contact_avatar"
+            android:theme="@style/AppTheme"/>
+
         <activity android:name=".ui.setting.ServiceTermsActivity" />
         <activity android:name=".ui.account.MnemonicBackupActivity" />
         <activity android:name=".ui.account.ConfirmMnemonicActivity" />
@@ -137,6 +142,14 @@
         <activity android:name=".ui.account.CreateEthAccountActivity" />
         <activity android:name=".ui.transaction.BtcTransactionDetailActivity" />
         <activity android:name=".ui.transaction.BlockchainTxDetailActivity" />
+        <activity android:name=".ui.dapp.DappActivity" />
+        <activity android:name=".ui.transfer.QuickTransferActivity"
+            android:theme="@style/transparent_activity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+            </intent-filter>
+        </activity>
+        <activity android:name=".ui.dapp.DappTestActivity" />
     </application>
 
 </manifest>

@@ -156,7 +156,7 @@ public class BtcAccountFragment extends Fragment {
         recyclerViewAccounts = parentView.findViewById(R.id.accounts_recycler);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerViewAccounts.setLayoutManager(layoutManager);
-        recyclerViewAccounts.setAdapter(new AccountRecyclerAdapter());
+        recyclerViewAccounts.setAdapter(new BtcAccountRecyclerAdapter());
         cryptoCurrencies = MainService.getInstance().getCryptoCurrencies();
 
         mBtnCreateBtcAccount = parentView.findViewById(R.id.btn_create_account);
@@ -174,7 +174,7 @@ public class BtcAccountFragment extends Fragment {
     /**
      * list item account
      */
-    private class AccountRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private class BtcAccountRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         @NonNull
         @Override
@@ -187,13 +187,13 @@ public class BtcAccountFragment extends Fragment {
                 intent.putExtra(IntentParam.PARAM_ACCOUNT_ID, account.getId());
                 startActivity(intent);
             });
-            return new AccountRecyclerAdapter.ItemViewHolder(rootView);
+            return new BtcAccountRecyclerAdapter.ItemViewHolder(rootView);
         }
 
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-            if (holder instanceof AccountRecyclerAdapter.ItemViewHolder) {
-                AccountRecyclerAdapter.ItemViewHolder itemViewHolder = (AccountRecyclerAdapter.ItemViewHolder) holder;
+            if (holder instanceof BtcAccountRecyclerAdapter.ItemViewHolder) {
+                BtcAccountRecyclerAdapter.ItemViewHolder itemViewHolder = (BtcAccountRecyclerAdapter.ItemViewHolder) holder;
                 AccountEntity accountEntity = accounts.get(position);
                 setData(itemViewHolder, accountEntity);
             }
@@ -202,7 +202,7 @@ public class BtcAccountFragment extends Fragment {
         /**
          * set account view
          */
-        private void setData(AccountRecyclerAdapter.ItemViewHolder holder, final AccountEntity account) {
+        private void setData(BtcAccountRecyclerAdapter.ItemViewHolder holder, final AccountEntity account) {
             if (account == null) {
                 return ;
             }
