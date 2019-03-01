@@ -27,6 +27,9 @@ import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.db.database.WalletDatabase;
 import io.brahmaos.wallet.brahmawallet.repository.DataRepository;
 import io.brahmaos.wallet.brahmawallet.service.MainService;
+import io.brahmaos.wallet.brahmawallet.statistic.utils.StatisticCrashHandler;
+import io.brahmaos.wallet.brahmawallet.statistic.utils.StatisticEventAgent;
+import io.brahmaos.wallet.brahmawallet.statistic.utils.StatisticLog;
 import io.brahmaos.wallet.brahmawallet.ui.FingerActivity;
 import io.brahmaos.wallet.util.CommonUtil;
 import io.brahmaos.wallet.util.FileHelper;
@@ -85,6 +88,12 @@ public class WalletApp extends Application {
                 timerTimeOut.schedule(timerTask, 5000);
             }
         });
+        //azalea
+        StatisticLog.setDEBUG(BrahmaConfig.debugFlag);
+        StatisticEventAgent.getInstance(this).init();
+        StatisticCrashHandler.getInstance().init(this);
+
+        StatisticEventAgent.onApplicationStart(this/*getClass().getName()*/);
     }
 
     public RayUpApp getRayUpApp() {

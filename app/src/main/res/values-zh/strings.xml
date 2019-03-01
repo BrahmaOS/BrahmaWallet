@@ -277,6 +277,8 @@
     </string-array>
     <string name="pref_title_touch_id">Touch ID</string>
     <string name="pref_summary_touch_id">无操作5s后</string>
+    <string name="pref_title_statistic">统计模块</string>
+    <string name="pref_summary_statistic">是否允许收集用户行为和崩溃日志</string>
 
     <!-- share -->
     <string name="key_network_url">ethereum.network.url</string>
@@ -316,6 +318,8 @@
     <string name="success_enter_mnemonic">成功!</string>
     <string name="tip_backup_mnemonic">助记词可以用于恢复钱包或者重置密码，请将备份放在只有你知道的安全地方。</string>
     <string name="backup_success">备份助记词成功</string>
+    <string name="confirm_prof">请按顺序点击助记词，以确认您正确备份。</string>
+    <string name="confirm_error">助记词顺序错误，请核对！</string>
 
     <!-- string about us -->
     <string name="title_about_us">关于</string>

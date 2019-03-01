@@ -283,6 +283,8 @@
     </string-array>
     <string name="pref_title_touch_id">Touch ID</string>
     <string name="pref_summary_touch_id">No operation after 5s</string>
+    <string name="pref_title_statistic">Statistic Module</string>
+    <string name="pref_summary_statistic">Collecting user behavior data and crash log</string>
 
     <!-- shared preferences -->
     <string name="key_network_url">ethereum.network.url</string>
@@ -290,6 +292,7 @@
     <string name="key_wallet_language">wallet.language</string>
     <string name="key_wallet_currency_unit">wallet.currency.unit</string>
     <string name="key_touch_id_switch">wallet.touch.id.switch</string>
+    <string name="key_statistic_switch">wallet.statistic.switch</string>
 
     <!-- strings about address code -->
     <string name="title_address_qrcode">Address Code</string>
@@ -387,6 +390,8 @@
     <string name="success_enter_mnemonic">Success!</string>
     <string name="tip_backup_mnemonic">Keep your written copy private in a secure and safe location. This is a key, should you ever need to restore your account.</string>
     <string name="backup_success">Backup Success</string>
+    <string name="confirm_prof">Please click on the mnemonic in order to confirm that you have backed up correctly.</string>
+    <string name="confirm_error">Wrong mnemonic order, please check.</string>
 
     <!-- string about us -->
     <string name="title_about_us">About</string>

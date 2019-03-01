@@ -23,6 +23,11 @@
             android:key="@string/key_touch_id_switch"
             android:title="@string/pref_title_touch_id"
             android:summary="@string/pref_summary_touch_id"/>
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="@string/key_statistic_switch"
+            android:title="@string/pref_title_statistic"
+            android:summary="@string/pref_summary_statistic"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

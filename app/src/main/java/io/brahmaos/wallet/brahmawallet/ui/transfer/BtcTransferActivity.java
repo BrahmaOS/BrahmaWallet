@@ -61,6 +61,7 @@ import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
 import io.brahmaos.wallet.brahmawallet.service.BtcAccountManager;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.service.MainService;
+import io.brahmaos.wallet.brahmawallet.statistic.utils.StatisticEventAgent;
 import io.brahmaos.wallet.brahmawallet.ui.account.BtcAccountAssetsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.ui.common.barcode.CaptureActivity;
@@ -204,7 +205,10 @@ public class BtcTransferActivity extends BaseActivity {
         });
 
         etBtcMinerFee.setText(String.valueOf(BrahmaConst.DEFAULT_MINER_FEE));
-        btnShowTransfer.setOnClickListener(v -> showTransferInfo());
+        btnShowTransfer.setOnClickListener(v -> {
+            StatisticEventAgent.onClick(this, "btn_show_transfer_info");
+            showTransferInfo();
+        });
 
         ivContacts.setOnClickListener(v -> {
             Intent intent = new Intent(BtcTransferActivity.this, ChooseContactActivity.class);
@@ -223,6 +227,7 @@ public class BtcTransferActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.menu_scan) {
+            StatisticEventAgent.onClick(this, "menu_scan");
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                     != PackageManager.PERMISSION_GRANTED) {
                 requestCameraScanPermission();
@@ -375,6 +380,7 @@ public class BtcTransferActivity extends BaseActivity {
         Button confirmBtn = view.findViewById(R.id.btn_commit_transfer);
         final BigDecimal finalAmount = amount;
         confirmBtn.setOnClickListener(v -> {
+            StatisticEventAgent.onClick(BtcTransferActivity.this, "btn_commit_transfer");
             final View dialogView = getLayoutInflater().inflate(R.layout.dialog_account_password, null);
             EditText etPassword = dialogView.findViewById(R.id.et_password);
             AlertDialog passwordDialog = new AlertDialog.Builder(BtcTransferActivity.this, R.style.Theme_AppCompat_Light_Dialog_Alert_Self)
