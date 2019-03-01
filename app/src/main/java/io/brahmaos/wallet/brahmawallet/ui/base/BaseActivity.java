@@ -22,6 +22,7 @@ import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
+import io.brahmaos.wallet.brahmawallet.statistic.utils.StatisticEventAgent;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.PermissionUtil;
 
@@ -53,6 +54,18 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         BLog.d(tag(), "onCreate");
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        StatisticEventAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        StatisticEventAgent.onPause(this);
     }
 
     @Override

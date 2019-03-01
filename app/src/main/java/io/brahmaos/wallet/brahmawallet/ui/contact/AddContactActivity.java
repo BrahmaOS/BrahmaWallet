@@ -29,6 +29,7 @@ import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.common.ReqCode;
 import io.brahmaos.wallet.brahmawallet.db.entity.ContactEntity;
 import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
+import io.brahmaos.wallet.brahmawallet.statistic.utils.StatisticEventAgent;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.ui.common.barcode.CaptureActivity;
 import io.brahmaos.wallet.brahmawallet.ui.common.barcode.Intents;
@@ -85,6 +86,7 @@ public class AddContactActivity extends BaseActivity {
         showNavBackBtn();
         ButterKnife.bind(this);
         ivScan.setOnClickListener(v -> {
+            StatisticEventAgent.onClick(AddContactActivity.this, "iv_scan");
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                     != PackageManager.PERMISSION_GRANTED) {
                 requestCameraScanPermission();
@@ -94,6 +96,7 @@ public class AddContactActivity extends BaseActivity {
         });
 
         ivBtcScan.setOnClickListener(v -> {
+            StatisticEventAgent.onClick(AddContactActivity.this, "iv_btc_scan");
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                     != PackageManager.PERMISSION_GRANTED) {
                 requestCameraScanPermission();
@@ -103,6 +106,7 @@ public class AddContactActivity extends BaseActivity {
         });
 
         ivContactAvatar.setOnClickListener(v -> {
+            StatisticEventAgent.onClick(AddContactActivity.this, "img_avatar");
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) {
                 requestExternalStorage();

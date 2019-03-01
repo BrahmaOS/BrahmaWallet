@@ -85,6 +85,12 @@ public class SettingFragment extends PreferenceFragment {
             BrahmaConfig.getInstance().setTouchId((Boolean) value);
             return true;
         });
+
+        Preference statisticModule = findPreference(getString(R.string.key_statistic_switch));
+        statisticModule.setOnPreferenceChangeListener((preference, newValue) -> {
+            BrahmaConfig.getInstance().setStatistic((Boolean) newValue);
+            return true;
+        });
     }
 
     /**

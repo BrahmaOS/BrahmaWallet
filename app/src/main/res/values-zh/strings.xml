@@ -277,6 +277,8 @@
     </string-array>
     <string name="pref_title_touch_id">Touch ID</string>
     <string name="pref_summary_touch_id">无操作5s后</string>
+    <string name="pref_title_statistic">统计模块</string>
+    <string name="pref_summary_statistic">是否允许收集用户行为和崩溃日志</string>
 
     <!-- share -->
     <string name="key_network_url">ethereum.network.url</string>

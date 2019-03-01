@@ -12,6 +12,7 @@ import java.util.Locale;
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
+import io.brahmaos.wallet.brahmawallet.statistic.utils.StatisticEventAgent;
 
 /**
  * the project common config
@@ -40,6 +41,7 @@ public class BrahmaConfig {
     private String tokenListHash;
     private boolean touchId = false;
     private int tokenListVersion = 0;
+    private boolean allowStatistic = true;
 
     public void init(Context context) {
         this.context = context;
@@ -57,6 +59,7 @@ public class BrahmaConfig {
         tokenListHash = sharedPref.getString(KEY_TOKEN_LIST_HASH, "");
         touchId = sharedPref.getBoolean(context.getString(R.string.key_touch_id_switch), false);
         tokenListVersion = sharedPref.getInt(KEY_TOKEN_LIST_VERSION, 0);
+        allowStatistic = sharedPref.getBoolean(context.getString(R.string.key_statistic_switch), true);
         initLocale();
     }
 
@@ -199,11 +202,23 @@ public class BrahmaConfig {
         return touchId;
     }
 
+    public boolean isStatisticAllowed() {
+        return allowStatistic;
+    }
+
     public void setTouchId(boolean touchId) {
         this.touchId = touchId;
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putBoolean(context.getString(R.string.key_touch_id_switch), touchId);
         editor.apply();
+    }
+
+    public void setStatistic(boolean allow) {
+        this.allowStatistic = allow;
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putBoolean(context.getString(R.string.key_statistic_switch), allow);
+        editor.apply();
+        StatisticEventAgent.allowStatistic(context, allow);
     }
 
     public int getTokenListVersion() {
