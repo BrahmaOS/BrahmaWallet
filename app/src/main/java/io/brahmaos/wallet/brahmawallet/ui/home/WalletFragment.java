@@ -71,7 +71,6 @@ public class WalletFragment extends BaseFragment {
     public static int REQ_CODE_TRANSFER = 10;
 
     private LinearLayout layoutHeader;
-    private LinearLayout createAccountLayout;
     private SwipeRefreshLayout swipeRefreshLayout;
     private TextView tvApproEqual;
     private TextView tvTestNetwork;
@@ -107,7 +106,6 @@ public class WalletFragment extends BaseFragment {
         RxBus.get().register(this);
 
         layoutHeader = parentView.findViewById(R.id.layout_header);
-        createAccountLayout = parentView.findViewById(R.id.layout_new_account);
         swipeRefreshLayout = parentView.findViewById(R.id.swipe_refresh_layout);
         tvApproEqual = parentView.findViewById(R.id.tv_appro_equal);
         tvTestNetwork = parentView.findViewById(R.id.tv_test_network);
@@ -159,17 +157,6 @@ public class WalletFragment extends BaseFragment {
         TextView tvInstantExchange = parentView.findViewById(R.id.tv_instant_exchange);
         tvInstantExchange.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), InstantExchangeActivity.class);
-            startActivity(intent);
-        });
-
-        Button createWalletBtn = parentView.findViewById(R.id.btn_create_account);
-        createWalletBtn.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), CreateAccountActivity.class);
-            startActivity(intent);
-        });
-        TextView restoreAccountBtn = parentView.findViewById(R.id.btn_restore_account);
-        restoreAccountBtn.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), RestoreAccountActivity.class);
             startActivity(intent);
         });
 
@@ -234,14 +221,6 @@ public class WalletFragment extends BaseFragment {
                         Log.i(tag(), e.toString());
                     }
                 });
-
-        if (MainService.getInstance().isHaveAccount()) {
-            createAccountLayout.setVisibility(View.GONE);
-            swipeRefreshLayout.setVisibility(View.VISIBLE);
-        } else {
-            createAccountLayout.setVisibility(View.VISIBLE);
-            swipeRefreshLayout.setVisibility(View.GONE);
-        }
         mViewModel = ViewModelProviders.of(this).get(AccountViewModel.class);
 
         initData();
@@ -268,7 +247,6 @@ public class WalletFragment extends BaseFragment {
         });
         mViewModel.getAccounts().observe(this, accountEntities -> {
             cacheAccounts = accountEntities;
-            checkContentShow();
         });
 
         mViewModel.getTokens().observe(this, tokenEntities -> {
@@ -323,23 +301,6 @@ public class WalletFragment extends BaseFragment {
 
                     }
                 });
-    }
-
-    /**
-     *  if account's length > 0, show the total assets;
-     *  else show the create account.
-     */
-    private void checkContentShow() {
-        if (cacheAccounts == null || cacheAccounts.size() == 0) {
-            BLog.e(tag(), "the account is null");
-            createAccountLayout.setVisibility(View.VISIBLE);
-            swipeRefreshLayout.setVisibility(View.GONE);
-        } else {
-            swipeRefreshLayout.setRefreshing(true);
-            BLog.e(tag(), "the account size is: " + cacheAccounts.size());
-            createAccountLayout.setVisibility(View.GONE);
-            swipeRefreshLayout.setVisibility(View.VISIBLE);
-        }
     }
 
     /**

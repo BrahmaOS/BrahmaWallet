@@ -78,6 +78,15 @@ public class Networks {
         return kyperApi;
     }
 
+    // brm pay
+    private PayApi payApi;
+    public PayApi getPayApi() {
+        if (payApi == null) {
+            payApi = PayConfigRetrofit(PayApi.class, false);
+        }
+        return payApi;
+    }
+
     private <T> T configRetrofit(Class<T> service, boolean isAddCommonParam) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BuildConfig.WALLET_API_URL)
@@ -101,6 +110,17 @@ public class Networks {
     }
 
     private <T> T kyperConfigRetrofit(Class<T> service, boolean isAddCommonParam) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BrahmaConst.KYBER_NETWORK_URL)
+                .client(configClient(isAddCommonParam))
+                .addConverterFactory(JacksonConverterFactory.create(mapper))
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .build();
+
+        return retrofit.create(service);
+    }
+
+    private <T> T PayConfigRetrofit(Class<T> service, boolean isAddCommonParam) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BrahmaConst.KYBER_NETWORK_URL)
                 .client(configClient(isAddCommonParam))

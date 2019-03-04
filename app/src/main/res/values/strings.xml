@@ -558,4 +558,6 @@
     <string name="pay_msg_invalid_blockchain">Invalid blockchain.</string>
     <string name="pay_msg_no_account">No account</string>
     <string name="tip_insufficient_balance">Insufficient balance.</string>
+    <string name="quick_pay_account_help">What\'s quick pay account?</string>
+    <string name="label_choose_eth_account">Choose from existing ETH accounts</string>
 </resources>

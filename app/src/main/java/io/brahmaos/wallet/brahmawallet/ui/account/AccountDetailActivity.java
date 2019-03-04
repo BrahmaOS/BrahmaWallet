@@ -14,13 +14,19 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
+import io.brahmaos.wallet.brahmawallet.model.Account;
 import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
+import io.brahmaos.wallet.brahmawallet.service.MainService;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.view.CustomProgressDialog;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
@@ -61,6 +67,8 @@ public class AccountDetailActivity extends BaseActivity {
 
     private int accountId;
     private AccountEntity account;
+    private List<AccountEntity> accounts = new ArrayList<>();
+
     private AccountViewModel mViewModel;
     private CustomProgressDialog progressDialog;
 
@@ -92,6 +100,19 @@ public class AccountDetailActivity extends BaseActivity {
                         initAccountInfo(accountEntity);
                     }
                 });
+        mViewModel.getAccounts().observe(this, accountEntities -> {
+            if (accountEntities != null && accountEntities.size() > 0) {
+                List<AccountEntity> accounts = new ArrayList<>();
+                for (AccountEntity account : accountEntities) {
+                    if (account.getType() == BrahmaConst.ETH_ACCOUNT_TYPE) {
+                        accounts.add(account);
+                    }
+                }
+                if (accounts.size() == 1) {
+                    tvDeleteAccount.setVisibility(View.GONE);
+                }
+            }
+        });
     }
 
     private void initAccountInfo(AccountEntity account) {

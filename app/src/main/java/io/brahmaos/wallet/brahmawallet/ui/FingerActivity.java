@@ -21,6 +21,9 @@ import java.util.TimerTask;
 
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.WalletApp;
+import io.brahmaos.wallet.brahmawallet.service.MainService;
+import io.brahmaos.wallet.brahmawallet.ui.account.AccountGuideActivity;
+import io.brahmaos.wallet.brahmawallet.ui.account.CreateAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.util.BLog;
 
@@ -106,7 +109,11 @@ public class FingerActivity extends BaseActivity {
         public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult result) {
             if (((WalletApp)getApplication()).isFirstOpenApp()) {
                 Intent intent = new Intent();
-                intent.setClass(FingerActivity.this, MainActivity.class);
+                if (MainService.getInstance().isHaveAccount()) {
+                    intent.setClass(FingerActivity.this, MainActivity.class);
+                } else {
+                    intent.setClass(FingerActivity.this, AccountGuideActivity.class);
+                }
                 startActivity(intent);
             }
             finish();
