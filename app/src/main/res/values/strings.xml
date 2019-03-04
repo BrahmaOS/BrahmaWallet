@@ -15,8 +15,8 @@
     <string name="create">Create</string>
 
     <string name="fragment_wallet">Wallet</string>
-    <string name="fragment_hash_rate">HashRate</string>
-    <string name="fragment_discover">Discover</string>
+    <string name="fragment_pay">QuickPay</string>
+    <string name="fragment_me">Me</string>
 
     <string name="title_brahma_wallet">Wallet</string>
     <string name="brahma_wallet_desc">Your smart digital wallet</string>

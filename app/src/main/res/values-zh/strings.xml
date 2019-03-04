@@ -20,8 +20,8 @@
     <string name="error_network">网络异常!</string>
 
     <string name="fragment_wallet">钱包</string>
-    <string name="fragment_hash_rate">算力</string>
-    <string name="fragment_discover">发现</string>
+    <string name="fragment_pay">快速支付</string>
+    <string name="fragment_me">我</string>
 
     <string name="action_next">下一步</string>
     <string name="action_confirm">确认</string>

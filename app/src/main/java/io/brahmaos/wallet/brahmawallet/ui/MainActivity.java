@@ -20,7 +20,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
@@ -43,8 +42,8 @@ import io.brahmaos.wallet.brahmawallet.ui.account.CreateAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseFragment;
 import io.brahmaos.wallet.brahmawallet.ui.contact.ContactsActivity;
-import io.brahmaos.wallet.brahmawallet.ui.home.DiscoverFragment;
-import io.brahmaos.wallet.brahmawallet.ui.home.HashRateFragment;
+import io.brahmaos.wallet.brahmawallet.ui.home.MeFragment;
+import io.brahmaos.wallet.brahmawallet.ui.home.QuickPayFragment;
 import io.brahmaos.wallet.brahmawallet.ui.home.WalletFragment;
 import io.brahmaos.wallet.brahmawallet.ui.setting.AboutActivity;
 import io.brahmaos.wallet.brahmawallet.ui.setting.CelestialBodyIntroActivity;
@@ -68,15 +67,13 @@ public class MainActivity extends BaseActivity
     AHBottomNavigation bottomNavigation;
     @BindView(R.id.drawer_layout)
     DrawerLayout drawer;
-    @BindView(R.id.nav_view)
-    NavigationView navigationView;
 
     private VersionInfo newVersionInfo;
     private AccountViewModel mViewModel;
     private int currentFragmentPosition = 0;
     private int WALLET_FRAGMENT_POSITION = 0;
-    private int HASH_RATE_FRAGMENT_POSITION = 1;
-    private int DISCOVER_FRAGMENT_POSITION = 2;
+    private int PAY_FRAGMENT_POSITION = 1;
+    private int ME_FRAGMENT_POSITION = 2;
     private List<AccountEntity> cacheAccounts = new ArrayList<>();
 
     @Override
@@ -94,30 +91,19 @@ public class MainActivity extends BaseActivity
     private void initView() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-        navigationView.setNavigationItemSelectedListener(this);
-
-        ImageView ivCelestialBody = navigationView.getHeaderView(0).findViewById(R.id.iv_celestial_body);
-        ivCelestialBody.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, CelestialBodyIntroActivity.class);
-            startActivity(intent);
-        });
 
         // Create items
         AHBottomNavigationItem item1 = new AHBottomNavigationItem(getResources().getString(R.string.fragment_wallet),
                 R.drawable.icon_bottom_tab_wallet);
-        AHBottomNavigationItem item2 = new AHBottomNavigationItem(getResources().getString(R.string.fragment_hash_rate),
-                R.drawable.icon_bottom_tab_power);
-        AHBottomNavigationItem item3 = new AHBottomNavigationItem(getResources().getString(R.string.fragment_discover),
-                R.drawable.icon_bottom_tab_search);
+        AHBottomNavigationItem item2 = new AHBottomNavigationItem(getResources().getString(R.string.fragment_pay),
+                R.drawable.icon_bottom_tab_pay_a);
+        AHBottomNavigationItem item3 = new AHBottomNavigationItem(getResources().getString(R.string.fragment_me),
+                R.drawable.icon_bottom_tab_account);
 
         // Add items
         bottomNavigation.addItem(item1);
-        /*bottomNavigation.addItem(item2);
-        bottomNavigation.addItem(item3);*/
+        bottomNavigation.addItem(item2);
+        bottomNavigation.addItem(item3);
 
         // Set background color
         bottomNavigation.setDefaultBackgroundColor(Color.parseColor("#F9F9F9"));
@@ -139,10 +125,10 @@ public class MainActivity extends BaseActivity
 
             if (position == WALLET_FRAGMENT_POSITION) {
                 toolbar.setTitle(getString(R.string.title_brahma_wallet));
-            } else if (position == HASH_RATE_FRAGMENT_POSITION) {
-                toolbar.setTitle(getString(R.string.fragment_hash_rate));
-            } else if (position == DISCOVER_FRAGMENT_POSITION) {
-                toolbar.setTitle(getString(R.string.fragment_discover));
+            } else if (position == PAY_FRAGMENT_POSITION) {
+                toolbar.setTitle(getString(R.string.fragment_pay));
+            } else if (position == ME_FRAGMENT_POSITION) {
+                toolbar.setTitle(getString(R.string.fragment_me));
             }
             return true;
         });
@@ -206,6 +192,8 @@ public class MainActivity extends BaseActivity
         if (cacheAccounts != null && cacheAccounts.size() > 0 &&
                 currentFragmentPosition == WALLET_FRAGMENT_POSITION) {
             getMenuInflater().inflate(R.menu.menu_accounts, menu);
+        } else if (currentFragmentPosition == ME_FRAGMENT_POSITION) {
+            getMenuInflater().inflate(R.menu.menu_settings, menu);
         }
         return true;
     }
@@ -214,6 +202,9 @@ public class MainActivity extends BaseActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_accounts) {
             Intent intent = new Intent(this, AccountsActivity.class);
+            startActivity(intent);
+        } else if (item.getItemId() == R.id.menu_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
@@ -263,10 +254,10 @@ public class MainActivity extends BaseActivity
             fragments.clear();
             fragments.add(WalletFragment.newInstance(R.layout.fragment_wallet,
                     R.string.fragment_wallet));
-            /*fragments.add(HashRateFragment.newInstance(R.layout.fragment_hash_rate,
-                    R.string.fragment_hash_rate));
-            fragments.add(DiscoverFragment.newInstance(R.layout.fragment_discover,
-                    R.string.fragment_discover));*/
+            fragments.add(QuickPayFragment.newInstance(R.layout.fragment_hash_rate,
+                    R.string.fragment_pay));
+            fragments.add(MeFragment.newInstance(R.layout.fragment_discover,
+                    R.string.fragment_me));
         }
 
         @Override

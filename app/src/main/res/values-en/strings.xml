@@ -22,8 +22,8 @@
     <string name="error_network">Network connect error!</string>
 
     <string name="fragment_wallet">Wallet</string>
-    <string name="fragment_hash_rate">HashRate</string>
-    <string name="fragment_discover">Discover</string>
+    <string name="fragment_pay">QuickPay</string>
+    <string name="fragment_me">Me</string>
 
     <string name="action_next">Next</string>
     <string name="action_confirm">Confirm</string>

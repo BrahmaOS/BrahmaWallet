@@ -10,10 +10,10 @@ import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseFragment;
 
-public class HashRateFragment extends BaseFragment {
+public class QuickPayFragment extends BaseFragment {
     @Override
     protected String tag() {
-        return HashRateFragment.class.getName();
+        return QuickPayFragment.class.getName();
     }
 
     private ProgressBar pbarLoading;
@@ -25,8 +25,8 @@ public class HashRateFragment extends BaseFragment {
      * @param layoutResId  layout resource，e.g. R.layout.fragment_home
      * @return  return fragment
      */
-    public static HashRateFragment newInstance(int layoutResId, int titleResId) {
-        HashRateFragment fragment = new HashRateFragment();
+    public static QuickPayFragment newInstance(int layoutResId, int titleResId) {
+        QuickPayFragment fragment = new QuickPayFragment();
         fragment.setArguments(newArguments(layoutResId, titleResId));
         return fragment;
     }

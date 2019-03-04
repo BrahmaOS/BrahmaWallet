@@ -47,9 +47,13 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="MainToolbarTitleText" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title"></style>
+    <style name="MainToolbarTitleText" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">18sp</item>
+    </style>
 
-    <style name="ToolbarTitleText" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title"></style>
+    <style name="ToolbarTitleText" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">18sp</item>
+    </style>
 
     <!-- material edit text input -->
     <style name="customEditTextLineColor" parent="Theme.AppCompat.Light">

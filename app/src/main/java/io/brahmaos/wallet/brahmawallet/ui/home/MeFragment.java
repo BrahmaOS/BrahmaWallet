@@ -23,10 +23,10 @@ import io.brahmaos.wallet.brahmawallet.ui.base.BaseFragment;
 import io.brahmaos.wallet.brahmawallet.ui.dapp.DappActivity;
 import io.brahmaos.wallet.brahmawallet.ui.dapp.DappTestActivity;
 
-public class DiscoverFragment extends BaseFragment {
+public class MeFragment extends BaseFragment {
     @Override
     protected String tag() {
-        return DiscoverFragment.class.getName();
+        return MeFragment.class.getName();
     }
 
     private RecyclerView recyclerViewDapp;
@@ -38,8 +38,8 @@ public class DiscoverFragment extends BaseFragment {
      * @param layoutResId  layout resource，e.g. R.layout.fragment_home
      * @return  return fragment
      */
-    public static DiscoverFragment newInstance(int layoutResId, int titleResId) {
-        DiscoverFragment fragment = new DiscoverFragment();
+    public static MeFragment newInstance(int layoutResId, int titleResId) {
+        MeFragment fragment = new MeFragment();
         fragment.setArguments(newArguments(layoutResId, titleResId));
         return fragment;
     }
