@@ -15,12 +15,10 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
@@ -46,7 +44,6 @@ import io.brahmaos.wallet.brahmawallet.ui.home.MeFragment;
 import io.brahmaos.wallet.brahmawallet.ui.home.QuickPayFragment;
 import io.brahmaos.wallet.brahmawallet.ui.home.WalletFragment;
 import io.brahmaos.wallet.brahmawallet.ui.setting.AboutActivity;
-import io.brahmaos.wallet.brahmawallet.ui.setting.CelestialBodyIntroActivity;
 import io.brahmaos.wallet.brahmawallet.ui.setting.HelpActivity;
 import io.brahmaos.wallet.brahmawallet.ui.setting.SettingsActivity;
 import io.brahmaos.wallet.brahmawallet.view.HomeViewPager;
@@ -254,9 +251,9 @@ public class MainActivity extends BaseActivity
             fragments.clear();
             fragments.add(WalletFragment.newInstance(R.layout.fragment_wallet,
                     R.string.fragment_wallet));
-            fragments.add(QuickPayFragment.newInstance(R.layout.fragment_hash_rate,
+            fragments.add(QuickPayFragment.newInstance(R.layout.fragment_pay,
                     R.string.fragment_pay));
-            fragments.add(MeFragment.newInstance(R.layout.fragment_discover,
+            fragments.add(MeFragment.newInstance(R.layout.fragment_me,
                     R.string.fragment_me));
         }
 
