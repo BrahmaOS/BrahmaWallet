@@ -144,12 +144,32 @@
         <activity android:name=".ui.transaction.BlockchainTxDetailActivity" />
         <activity android:name=".ui.dapp.DappActivity" />
         <activity android:name=".ui.transfer.QuickTransferActivity"
+            android:exported="true"
             android:theme="@style/transparent_activity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.APP_BROWSER"/>
+                <data android:scheme="brahmaos"
+                    android:host="wallet"
+                    android:path="/transfer"/>
             </intent-filter>
         </activity>
         <activity android:name=".ui.dapp.DappTestActivity" />
+        <activity android:name=".ui.pay.PayActivity"
+            android:exported="true"
+            android:theme="@style/transparent_activity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.APP_BROWSER"/>
+                <data android:scheme="brahmaos"
+                    android:host="wallet"
+                    android:path="/pay"/>
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

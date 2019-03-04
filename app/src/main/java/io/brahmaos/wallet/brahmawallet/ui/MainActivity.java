@@ -43,6 +43,7 @@ import io.brahmaos.wallet.brahmawallet.ui.account.CreateAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseFragment;
 import io.brahmaos.wallet.brahmawallet.ui.contact.ContactsActivity;
+import io.brahmaos.wallet.brahmawallet.ui.dapp.DappTestActivity;
 import io.brahmaos.wallet.brahmawallet.ui.home.DiscoverFragment;
 import io.brahmaos.wallet.brahmawallet.ui.home.HashRateFragment;
 import io.brahmaos.wallet.brahmawallet.ui.home.WalletFragment;
@@ -244,6 +245,9 @@ public class MainActivity extends BaseActivity
             startActivity(intent);
         } else if (id == R.id.nav_info) {
             Intent intent = new Intent(this, AboutActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_dapp) {
+            Intent intent = new Intent(this, DappTestActivity.class);
             startActivity(intent);
         }
 
