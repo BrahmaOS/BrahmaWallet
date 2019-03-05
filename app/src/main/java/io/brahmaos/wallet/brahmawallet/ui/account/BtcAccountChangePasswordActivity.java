@@ -8,13 +8,17 @@ import android.widget.EditText;
 
 import com.google.common.base.Splitter;
 
+import org.bitcoinj.kits.WalletAppKit;
+
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
+import io.brahmaos.wallet.brahmawallet.service.BtcAccountManager;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.view.CustomProgressDialog;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
@@ -118,6 +122,20 @@ public class BtcAccountChangePasswordActivity extends BaseActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {
                     showLongToast(R.string.success_change_password);
+
+                    WalletAppKit kit = BtcAccountManager.getInstance().getBtcWalletAppKit(account.getFilename());
+                    if (kit != null && kit.wallet() != null) {
+                        final String mainAddress;
+                        if (kit.wallet().getActiveKeyChain() != null &&
+                                kit.wallet().getActiveKeyChain().getIssuedReceiveKeys() != null &&
+                                kit.wallet().getActiveKeyChain().getIssuedReceiveKeys().size() > 0) {
+                            mainAddress = kit.wallet().getActiveKeyChain().getIssuedReceiveKeys().get(0).
+                                    toAddress(BtcAccountManager.getInstance().getNetworkParams()).toBase58();
+                        } else {
+                            mainAddress = kit.wallet().currentChangeAddress().toBase58();
+                        }
+                        BrahmaConfig.getInstance().setTouchIDPayState(mainAddress, false);
+                    }
                     finish();
                 },
                 throwable -> {

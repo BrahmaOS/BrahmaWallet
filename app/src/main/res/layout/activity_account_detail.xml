@@ -118,6 +118,30 @@
                         android:src="@drawable/qrcode"/>
                 </RelativeLayout>
 
+                <RelativeLayout
+                    android:id="@+id/layout_account_touch_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="@dimen/space_normal"
+                    android:background="@drawable/list_item_bg">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:text="@string/label_touch_id"/>
+                    <Switch
+                        android:id="@+id/switch_touch_id"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"/>
+                </RelativeLayout>
+
+                <include layout="@layout/horizontal_divider"/>
+
                 <TextView
                     android:id="@+id/tv_change_password"
                     android:layout_width="match_parent"

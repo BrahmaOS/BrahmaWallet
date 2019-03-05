@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="@dimen/icon_large_size"
+        android:layout_height="@dimen/icon_large_size"
+        android:scaleType="fitCenter"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/space_larger"
+        android:src="@drawable/fingerprint" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/space_normal"
+        android:textSize="@dimen/font_size_body"
+        android:textStyle="bold"
+        android:text="@string/verify_fingerprint" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="@dimen/space_normal"
+        android:background="#696969" />
+
+    <TextView
+        android:id="@+id/fingerprint_cancel_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_normal"
+        android:layout_marginBottom="@dimen/space_normal"
+        android:textColor="@color/colorPrimary"
+        android:gravity="center"
+        android:text="@string/cancel"
+        android:textStyle="bold"
+        android:textSize="@dimen/font_size_subtitle" />
+
+</LinearLayout>

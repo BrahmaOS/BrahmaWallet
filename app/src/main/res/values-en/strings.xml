@@ -99,6 +99,7 @@
     <string name="label_account_name">Name</string>
     <string name="label_account_address">Address</string>
     <string name="label_qrcode">Address Code</string>
+    <string name="label_touch_id">Touch ID Pay</string>
     <string name="action_change_account_name">Change Name</string>
     <string name="action_change_password">Change Password</string>
     <string name="action_export_private_key">Export Private Key</string>
@@ -106,6 +107,10 @@
     <string name="action_delete_account">Delete Account</string>
     <string name="action_export_mnemonics">Export Mnemonics</string>
 
+    <string name="touch_id_no_hardware">The device has not detected the fingerprint hardware!</string>
+    <string name="touch_id_no_fingerprint">The device does not enter fingerprints, please go to the system -> settings to add fingerprints.</string>
+    <string name="verify_fingerprint">Verify Fingerprint</string>
+    <string name="touch_id_failed_to_get_key">Can not get key for this account!</string>
     <string name="success_change_account_name">Change account name success!</string>
     <string name="error_change_account_name">Change account name error!!!</string>
     <string name="success_change_password">Change password success!</string>
@@ -117,6 +122,7 @@
     <string name="prompt_current_password">Current Password</string>
     <string name="prompt_new_password">New Password</string>
     <string name="tip_reset_password">Forget account password? You can reset password by using private key import.</string>
+    <string name="tip_reset_finger">Note: If you have open Touch ID Pay, you need reopen it after changing password.</string>
 
     <!-- Strings related to progress -->
     <string name="sync">sync…</string>
@@ -223,6 +229,7 @@
     <string name="tip_camera_permission">You have not authorized the camera yet. Please go to the settings page.</string>
     <string name="tip_external_storage_permission">You have not authorized the external storage yet. Please go to the settings page.</string>
     <string name="label_balance">Balance</string>
+    <string name="btn_use_password">Use Password</string>
 
     <!-- Strings related to login -->
     <string name="title_activity_account_change_password">Change Password</string>

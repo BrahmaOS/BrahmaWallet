@@ -96,6 +96,7 @@
     <string name="label_account_name">账号名</string>
     <string name="label_account_address">账号地址</string>
     <string name="label_qrcode">地址二维码</string>
+    <string name="label_touch_id">指纹支付</string>
     <string name="action_change_account_name">更改账号名</string>
     <string name="action_change_password">更改密码</string>
     <string name="action_export_private_key">导出私钥</string>
@@ -103,6 +104,12 @@
     <string name="action_delete_account">删除账号</string>
     <string name="action_export_mnemonics">导出助记词</string>
 
+    <string name="touch_id_no_hardware">该设备尚未检测到指纹硬件！</string>
+    <string name="touch_id_no_fingerprint">该设备未录入指纹，请去系统->设置中添加指纹。</string>
+    <string name="verify_fingerprint">验证指纹</string>
+    <string name="touch_id_failed_to_get_key">无法获取该账户对应的秘钥！</string>
+    <string name="touch_id_auth_succ">成功开启指纹支付！</string>
+    <string name="touch_id_auth_fail">开启指纹支付失败！</string>
     <string name="success_change_account_name">更改账号名成功!</string>
     <string name="error_change_account_name">删除账号失败!!!</string>
     <string name="success_change_password">更改密码成功!</string>
@@ -114,6 +121,7 @@
     <string name="prompt_current_password">当前密码</string>
     <string name="prompt_new_password">新密码</string>
     <string name="tip_reset_password">忘记密码? 导入私钥可重置密码.</string>
+    <string name="tip_reset_finger">注意：更改密码后之前设置的指纹支付会关闭，需要重新打开。</string>
 
     <!-- Strings related to progress -->
     <string name="sync">同步中…</string>
@@ -219,6 +227,7 @@
     <string name="prompt_gas_limit">Gas Limit</string>
     <string name="unit_gas_price">Gwei</string>
     <string name="label_balance">余额</string>
+    <string name="btn_use_password">使用密码</string>
 
     <!-- Strings related to login -->
     <string name="title_activity_account_change_password">更改密码</string>

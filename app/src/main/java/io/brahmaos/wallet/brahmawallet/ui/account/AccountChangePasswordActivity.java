@@ -44,6 +44,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
@@ -182,6 +183,7 @@ public class AccountChangePasswordActivity extends BaseActivity {
                         }
                         if (address != null && WalletUtils.isValidAddress(address)) {
                             showLongToast(R.string.success_change_password);
+                            BrahmaConfig.getInstance().setTouchIDPayState(address, false);
                             finish();
                         } else {
                             showLongToast(R.string.error_change_password);

@@ -33,7 +33,7 @@ public class BrahmaConfig {
     private static final String KEY_TOKEN_LIST_VERSION = "token.list.version";
 
     // false: main net; true: ropsten testnet;
-    public static boolean debugFlag = false;
+    public static boolean debugFlag = true;//false;
     private String networkUrl;
     private String languageLocale;
     private String currencyUnit;
@@ -206,6 +206,11 @@ public class BrahmaConfig {
         return allowStatistic;
     }
 
+    public boolean getTouchIDPayState(String accountAddr) {
+        // Touch ID pay is default closed.
+        return sharedPref.getBoolean(accountAddr, false);
+    }
+
     public void setTouchId(boolean touchId) {
         this.touchId = touchId;
         SharedPreferences.Editor editor = sharedPref.edit();
@@ -219,6 +224,12 @@ public class BrahmaConfig {
         editor.putBoolean(context.getString(R.string.key_statistic_switch), allow);
         editor.apply();
         StatisticEventAgent.allowStatistic(context, allow);
+    }
+
+    public void setTouchIDPayState(String accountAddr, boolean state) {
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putBoolean(accountAddr, state);
+        editor.apply();
     }
 
     public int getTokenListVersion() {
