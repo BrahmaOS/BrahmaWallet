@@ -19,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
@@ -36,6 +37,7 @@ import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.model.VersionInfo;
 import io.brahmaos.wallet.brahmawallet.service.PayService;
 import io.brahmaos.wallet.brahmawallet.service.VersionUpgradeService;
+import io.brahmaos.wallet.brahmawallet.ui.account.AccountDetailActivity;
 import io.brahmaos.wallet.brahmawallet.ui.account.AccountsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.account.CreateAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
@@ -44,6 +46,7 @@ import io.brahmaos.wallet.brahmawallet.ui.contact.ContactsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.home.MeFragment;
 import io.brahmaos.wallet.brahmawallet.ui.home.QuickPayFragment;
 import io.brahmaos.wallet.brahmawallet.ui.home.WalletFragment;
+import io.brahmaos.wallet.brahmawallet.ui.pay.AccountInfoActivity;
 import io.brahmaos.wallet.brahmawallet.ui.setting.AboutActivity;
 import io.brahmaos.wallet.brahmawallet.ui.setting.HelpActivity;
 import io.brahmaos.wallet.brahmawallet.ui.setting.SettingsActivity;
@@ -239,6 +242,38 @@ public class MainActivity extends BaseActivity
 
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void onClickLayout(View v) {
+        BLog.d(tag(), "onClickLayout--" + v.getId());
+        switch (v.getId()){
+            case R.id.layout_account_info:
+                Intent accInfoIntent = new Intent(this, AccountInfoActivity.class);
+                startActivity(accInfoIntent);
+                break;
+//            case R.id.layout_transactions:
+//                Intent transListIntent = new Intent(this, TransactionsList.class);
+//                startActivity(transListIntent);
+//                break;
+            case R.id.layout_address:
+                Intent addrIntent = new Intent(this, ContactsActivity.class);
+                startActivity(addrIntent);
+                break;
+            case R.id.layout_help:
+                Intent helpIntent = new Intent(this, HelpActivity.class);
+                startActivity(helpIntent);
+                break;
+            case R.id.layout_about_us:
+                Intent aboutIntent = new Intent(this, AboutActivity.class);
+                startActivity(aboutIntent);
+                break;
+//            case R.id.layout_pay_test:
+//                Intent payTestIntent = new Intent(this, PayTestActivity.class);
+//                startActivity(payTestIntent);
+//                break;
+            default:
+                break;
+        }
     }
 
     /**

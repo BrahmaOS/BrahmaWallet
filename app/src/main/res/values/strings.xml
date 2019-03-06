@@ -39,7 +39,7 @@
     <string name="nav_menu_other">Other</string>
     <string name="nav_menu_setting">Settings</string>
     <string name="nav_menu_help">FAQ</string>
-    <string name="nav_menu_info">About</string>
+    <string name="nav_menu_info">About Us</string>
 
     <!-- Strings related to dialog -->
     <string name="dialog_title_quit_import">Quit the import?</string>
@@ -241,8 +241,9 @@
 
     <!-- Strings related to Settings -->
     <string name="title_setting">Settings</string>
-    <string name="title_setting_lang_currency">Language &amp; Currency</string>
+    <string name="title_setting_lang_currency">General</string>
     <string name="title_setting_network">Blockchain Network</string>
+    <string name="title_setting_privacy">Privacy</string>
     <string name="title_setting_other">Other</string>
 
     <string name="pref_title_net_list">Ethereum Network</string>
@@ -292,8 +293,8 @@
     </string-array>
     <string name="pref_title_touch_id">Touch ID</string>
     <string name="pref_summary_touch_id">No operation after 5s</string>
-    <string name="pref_title_statistic">Statistic Module</string>
-    <string name="pref_summary_statistic">Collecting user behavior data and crash log</string>
+    <string name="pref_title_statistic">Usage statistics and crash reports</string>
+    <string name="pref_summary_statistic">Help to improve the use experience</string>
 
     <!-- shared preferences -->
     <string name="key_network_url">ethereum.network.url</string>
@@ -573,4 +574,8 @@
     <string name="label_set_payment_password">Set a 6-digit payment password</string>
     <string name="label_repeat_password">Please enter your password again</string>
     <string name="tip_repeat_password_error">Inconsistent password entered twice</string>
+    <string name="menu_transactions">Transactions</string>
+    <string name="menu_address_book">Address Book</string>
+    <string name="menu_pay_test">模拟用户支付场景</string>
+    <string name="info_account_id">Account ID</string>
 </resources>

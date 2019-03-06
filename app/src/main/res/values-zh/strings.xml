@@ -34,8 +34,8 @@
     <!-- Drawer menu -->
     <string name="nav_menu_other">其余</string>
     <string name="nav_menu_setting">设置</string>
-    <string name="nav_menu_help">帮助</string>
-    <string name="nav_menu_info">关于</string>
+    <string name="nav_menu_help">使用帮助</string>
+    <string name="nav_menu_info">关于我们</string>
 
     <!-- Strings related to dialog -->
     <string name="dialog_title_quit_import">退出导入?</string>
@@ -235,8 +235,9 @@
 
     <!-- Strings related to Settings -->
     <string name="title_setting">设置</string>
-    <string name="title_setting_lang_currency">语言 &amp; 货币</string>
+    <string name="title_setting_lang_currency">基本设置</string>
     <string name="title_setting_network">区块链网络</string>
+    <string name="title_setting_privacy">隐私设置</string>
     <string name="title_setting_other">其他</string>
 
     <string name="pref_title_net_list">选择以太坊网络</string>
@@ -286,8 +287,8 @@
     </string-array>
     <string name="pref_title_touch_id">Touch ID</string>
     <string name="pref_summary_touch_id">无操作5s后</string>
-    <string name="pref_title_statistic">统计模块</string>
-    <string name="pref_summary_statistic">是否允许收集用户行为和崩溃日志</string>
+    <string name="pref_title_statistic">使用情况统计和崩溃报告</string>
+    <string name="pref_summary_statistic">帮助改进使用体验</string>
 
     <!-- share -->
     <string name="key_network_url">ethereum.network.url</string>
@@ -485,4 +486,7 @@
     <string name="label_set_payment_password">请为此快捷支付账号设置6位数字支付密码</string>
     <string name="label_repeat_password">请再次输入密码</string>
     <string name="tip_repeat_password_error">两次输入的密码不一致</string>
+    <string name="menu_transactions">账单</string>
+    <string name="menu_address_book">地址本</string>
+    <string name="info_account_id">账号标识</string>
 </resources>

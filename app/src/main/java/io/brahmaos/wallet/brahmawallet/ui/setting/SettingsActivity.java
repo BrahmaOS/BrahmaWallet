@@ -19,6 +19,7 @@ import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.text.TextUtils;
 import android.view.MenuItem;
+import android.view.View;
 
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
@@ -49,5 +50,10 @@ public class SettingsActivity extends BaseActivity {
         showNavBackBtn();
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_setting, new SettingFragment()).commit();
+    }
+
+    public void onClickPrivacy(View view) {
+        Intent i = new Intent(this, PrivacyPolicyActivity.class);
+        startActivity(i);
     }
 }
