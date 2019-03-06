@@ -20,13 +20,13 @@ public interface PayApi {
      * Get pay request token
      */
     @POST("/pay/util/request/token")
-    Observable<ApiRespResult> getPayRequestToken(@Body Map<String, Object> params);;
+    Observable<ApiRespResult> getPayRequestToken(@Body Map<String, Object> params);
 
     /**
-     * Get all tokens
+     * Create quick pay account
      */
-    @GET("/assets/erc20-tokens.json")
-    Observable<List<List<Object>>> getAllTokens();
+    @POST("/account/create")
+    Observable<ApiRespResult> setQuickPayAccount(@Body Map<String, Object> params);
 
     /**
      * Get the currency of the specified tokens

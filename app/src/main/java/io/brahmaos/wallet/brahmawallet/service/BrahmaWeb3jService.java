@@ -58,6 +58,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.brahmaos.wallet.brahmawallet.WalletApp;
 import io.brahmaos.wallet.brahmawallet.api.Networks;
@@ -248,6 +249,29 @@ public class BrahmaWeb3jService extends BaseService{
                     e.onNext(privateKey.toString(16));
                 } else {
                     e.onNext("");
+                }
+            } catch (IOException | CipherException e1) {
+                e1.printStackTrace();
+                e.onError(e1);
+            }
+            e.onCompleted();
+        });
+    }
+
+    public Observable<Map> getEcKeyByPassword(String fileName, String password) {
+        return Observable.create(e -> {
+            try {
+                Credentials credentials = WalletUtils.loadCredentials(
+                        password, context.getFilesDir() + "/" +  fileName);
+                BigInteger privateKey = credentials.getEcKeyPair().getPrivateKey();
+                BigInteger publicKey = credentials.getEcKeyPair().getPublicKey();
+                Map<String, String> ecKeys = new HashMap<>();
+                if (WalletUtils.isValidPrivateKey(privateKey.toString(16))) {
+                    ecKeys.put(BrahmaConst.PRIVATE_KEY, privateKey.toString(16));
+                    ecKeys.put(BrahmaConst.PUBLIC_KEY, publicKey.toString(16));
+                    e.onNext(ecKeys);
+                } else {
+                    e.onNext(null);
                 }
             } catch (IOException | CipherException e1) {
                 e1.printStackTrace();

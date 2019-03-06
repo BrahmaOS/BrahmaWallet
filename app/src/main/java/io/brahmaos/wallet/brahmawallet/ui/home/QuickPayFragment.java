@@ -1,20 +1,25 @@
 package io.brahmaos.wallet.brahmawallet.ui.home;
 
+import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -24,6 +29,7 @@ import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
@@ -34,6 +40,7 @@ import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 import io.brahmaos.wallet.brahmawallet.model.AccountAssets;
 import io.brahmaos.wallet.brahmawallet.model.BitcoinDownloadProgress;
 import io.brahmaos.wallet.brahmawallet.model.CryptoCurrency;
+import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.ui.account.CreateAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.account.RestoreAccountActivity;
@@ -41,10 +48,14 @@ import io.brahmaos.wallet.brahmawallet.ui.base.BaseFragment;
 import io.brahmaos.wallet.brahmawallet.ui.pay.SetPayAccountPasswordActivity;
 import io.brahmaos.wallet.brahmawallet.ui.token.TokensActivity;
 import io.brahmaos.wallet.brahmawallet.ui.transfer.InstantExchangeActivity;
+import io.brahmaos.wallet.brahmawallet.view.CustomProgressDialog;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
 import rx.Observable;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class QuickPayFragment extends BaseFragment {
     @Override
@@ -55,6 +66,7 @@ public class QuickPayFragment extends BaseFragment {
     private LinearLayout layoutAddQuickPayAccount;
     private LinearLayout layoutHeader;
     private RecyclerView recyclerViewAccounts;
+    private CustomProgressDialog progressDialog;
 
     private AccountViewModel mViewModel;
     private List<AccountEntity> cacheAccounts = new ArrayList<>();
@@ -98,6 +110,10 @@ public class QuickPayFragment extends BaseFragment {
         recyclerViewAccounts.setHasFixedSize(true);
         recyclerViewAccounts.setNestedScrollingEnabled(false);
 
+        progressDialog = new CustomProgressDialog(getActivity(), R.style.CustomProgressDialogStyle, "");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setCancelable(false);
+
         mViewModel = ViewModelProviders.of(this).get(AccountViewModel.class);
         initData();
         return true;
@@ -129,9 +145,22 @@ public class QuickPayFragment extends BaseFragment {
             rootView.setOnClickListener(v -> {
                 int position = recyclerViewAccounts.getChildAdapterPosition(v);
                 AccountEntity account = cacheAccounts.get(position);
-                Intent intent = new Intent(getActivity(), SetPayAccountPasswordActivity.class);
-                intent.putExtra(IntentParam.PARAM_ACCOUNT_ID, account.getId());
-                startActivity(intent);
+                final View dialogView = getLayoutInflater().inflate(R.layout.dialog_set_quick_pay_account, null);
+                EditText etPassword = dialogView.findViewById(R.id.et_password);
+                AlertDialog passwordDialog = new AlertDialog.Builder(getActivity())
+                        .setView(dialogView)
+                        .setCancelable(true)
+                        .setPositiveButton(R.string.confirm, (dialog, which) -> {
+                            dialog.cancel();
+                            String password = etPassword.getText().toString();
+                            checkPrivateKey(account, password);
+                        })
+                        .create();
+                passwordDialog.setOnShowListener(dialog -> {
+                    InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.showSoftInput(etPassword, InputMethodManager.SHOW_IMPLICIT);
+                });
+                passwordDialog.show();
             });
             return new AccountRecyclerAdapter.ItemViewHolder(rootView);
         }
@@ -176,6 +205,58 @@ public class QuickPayFragment extends BaseFragment {
                 tvAccountAddress = itemView.findViewById(R.id.tv_account_address);
             }
         }
+    }
+
+    private void checkPrivateKey(AccountEntity account, String password) {
+        progressDialog.show();
+        BrahmaWeb3jService.getInstance()
+                .getEcKeyByPassword(account.getFilename(), password)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Map>() {
+                    @Override
+                    public void onNext(Map ecKeys) {
+                        if (progressDialog != null) {
+                            progressDialog.cancel();
+                        }
+                        if (ecKeys != null && ecKeys.containsKey(BrahmaConst.PRIVATE_KEY)
+                                && ecKeys.get(BrahmaConst.PRIVATE_KEY) != null
+                                && BrahmaWeb3jService.getInstance().isValidPrivateKey(String.valueOf(ecKeys.get(BrahmaConst.PRIVATE_KEY)))) {
+                            Intent intent = new Intent(getActivity(), SetPayAccountPasswordActivity.class);
+                            intent.putExtra(IntentParam.PARAM_ACCOUNT_ID, account.getId());
+                            intent.putExtra(IntentParam.PARAM_ACCOUNT_PRIVATE_KEY, String.valueOf(ecKeys.get(BrahmaConst.PRIVATE_KEY)));
+                            intent.putExtra(IntentParam.PARAM_ACCOUNT_PUBLIC_KEY, String.valueOf(ecKeys.get(BrahmaConst.PUBLIC_KEY)));
+                            startActivity(intent);
+                        } else {
+                            showPasswordErrorDialog();;
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        if (progressDialog != null) {
+                            progressDialog.cancel();
+                        }
+                        showPasswordErrorDialog();
+                    }
+
+                    @Override
+                    public void onCompleted() {
+
+                    }
+                });
+    }
+
+    private void showPasswordErrorDialog() {
+        AlertDialog errorDialog = new AlertDialog.Builder(getActivity())
+                .setMessage(R.string.error_current_password)
+                .setCancelable(true)
+                .setPositiveButton(R.string.ok, (dialog, which) -> {
+                    dialog.cancel();
+                })
+                .create();
+        errorDialog.show();
     }
 }
 

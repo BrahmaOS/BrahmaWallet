@@ -24,6 +24,9 @@ public class BrahmaConst {
     public static final int DEFAULT_TOKEN_COUNT = 20;
     public static final int DEFAULT_TOKEN_SHOW_FLAG = 1;
     public static final int DEFAULT_TOKEN_HIDE_FLAG = 0;
+    public static final String PRIVATE_KEY = "privateKey";
+    public static final String PUBLIC_KEY = "publicKey";
+    public static final String PAY_REQUEST_SIGN_TYPE = "ecdsa-keccak256";
 
     public static final String PAY_DEV_HOST = "https://api.dev.brmpay.com/";
     public static final String PAY_HOST = "https://api.brmpay.com/";

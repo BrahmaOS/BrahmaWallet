@@ -1,6 +1,7 @@
 package io.brahmaos.wallet.brahmawallet.ui.pay;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -40,10 +41,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.api.PayApi;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.model.VersionInfo;
+import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
+import io.brahmaos.wallet.brahmawallet.service.PayService;
 import io.brahmaos.wallet.brahmawallet.ui.account.AccountsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseFragment;
@@ -51,12 +55,16 @@ import io.brahmaos.wallet.brahmawallet.ui.home.MeFragment;
 import io.brahmaos.wallet.brahmawallet.ui.home.QuickPayFragment;
 import io.brahmaos.wallet.brahmawallet.ui.home.WalletFragment;
 import io.brahmaos.wallet.brahmawallet.ui.setting.SettingsActivity;
+import io.brahmaos.wallet.brahmawallet.view.CustomProgressDialog;
 import io.brahmaos.wallet.brahmawallet.view.HomeViewPager;
 import io.brahmaos.wallet.brahmawallet.view.PassWordLayout;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
 import io.brahmaos.wallet.util.PermissionUtil;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class SetPayAccountPasswordActivity extends BaseActivity {
     @Override
@@ -88,8 +96,12 @@ public class SetPayAccountPasswordActivity extends BaseActivity {
 
     private int passwordLength = 6;
     private int accountId;
+    private String accountPrivateKey;
+    private String accountPublicKey;
     private AccountEntity account;
     private AccountViewModel mViewModel;
+
+    private CustomProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +113,9 @@ public class SetPayAccountPasswordActivity extends BaseActivity {
         if (accountId <= 0) {
             finish();
         }
+        accountPrivateKey = getIntent().getStringExtra(IntentParam.PARAM_ACCOUNT_PRIVATE_KEY);
+        accountPublicKey = getIntent().getStringExtra(IntentParam.PARAM_ACCOUNT_PUBLIC_KEY);
+        BLog.d(tag(), "private: " + accountPrivateKey + "/n" + "public: " + accountPublicKey);
         mViewModel = ViewModelProviders.of(this).get(AccountViewModel.class);
         initView();
     }
@@ -159,6 +174,10 @@ public class SetPayAccountPasswordActivity extends BaseActivity {
             layoutRepeatPassword.setVisibility(View.VISIBLE);
             etRepeatPassword.callOnClick();
         });
+
+        btnSetAccount.setOnClickListener(v -> {
+            createPayAccount(etRepeatPassword.getPassString());
+        });
     }
 
     @Override
@@ -169,12 +188,47 @@ public class SetPayAccountPasswordActivity extends BaseActivity {
             initAccountInfo(account);
         });
         etPassword.setNoInput(0,  true, "");
+
+        progressDialog = new CustomProgressDialog(this, R.style.CustomProgressDialogStyle, "");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setCancelable(false);
     }
 
     private void initAccountInfo(AccountEntity account) {
         ImageManager.showAccountAvatar(this, ivAccountAvatar, account);
         tvAccountName.setText(account.getName());
         tvAccountAddress.setText(account.getAddress());
+    }
+
+    private void createPayAccount(String password) {
+        progressDialog.show();
+        PayService.getInstance()
+                .createPayAccount(account.getAddress(), BrahmaConst.ETH_ACCOUNT_TYPE,
+                        password, accountPrivateKey, accountPublicKey)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onNext(String privateKey) {
+                        if (progressDialog != null) {
+                            progressDialog.cancel();
+                        }
+                        BLog.d(tag(), privateKey);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        if (progressDialog != null) {
+                            progressDialog.cancel();
+                        }
+                    }
+
+                    @Override
+                    public void onCompleted() {
+
+                    }
+                });
     }
 
     @Override

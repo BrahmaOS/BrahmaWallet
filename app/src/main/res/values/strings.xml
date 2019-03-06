@@ -578,4 +578,5 @@
     <string name="menu_address_book">Address Book</string>
     <string name="menu_pay_test">模拟用户支付场景</string>
     <string name="info_account_id">Account ID</string>
+    <string name="label_confirm_eht_account_for_quick_pay">Please confirm if you have an account</string>
 </resources>

@@ -116,4 +116,5 @@ dependencies {
     implementation 'org.bitcoinj:bitcoinj-core:0.14.7'
     implementation 'com.aurelhubert:ahbottomnavigation:2.2.0'
     implementation files('libs/rayup-api-1.6.0b5.jar')
+
 }

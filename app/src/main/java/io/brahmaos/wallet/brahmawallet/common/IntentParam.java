@@ -36,4 +36,6 @@ public class IntentParam {
     public static final String PARAM_PAY_ERROR_CODE = "error.code";
     public static final String PARAM_PAY_MSG = "msg";
     public static final String PARAM_PAY_HASH = "hash";
+    public static final String PARAM_ACCOUNT_PRIVATE_KEY = "account.private.key";
+    public static final String PARAM_ACCOUNT_PUBLIC_KEY = "account.public.key";
 }

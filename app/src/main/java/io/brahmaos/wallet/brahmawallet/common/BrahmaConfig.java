@@ -32,6 +32,7 @@ public class BrahmaConfig {
     private static final String KEY_TOKEN_LIST_HASH = "token.list.hash";
     private static final String KEY_TOKEN_LIST_VERSION = "token.list.version";
     private static final String KEY_PAY_REQUEST_TOKEN = "pay.request.token";
+    private static final String KEY_PAY_REQUEST_TOKEN_TYPE = "pay.request.token.type";
 
     // false: main net; true: ropsten testnet;
     public static boolean debugFlag = true;//false;
@@ -39,6 +40,7 @@ public class BrahmaConfig {
     private String languageLocale;
     private String currencyUnit;
     private String payRequestToken;
+    private String payRequestTokenType;
     private boolean assetsVisible = true;
     private String tokenListHash;
     private boolean touchId = false;
@@ -58,6 +60,7 @@ public class BrahmaConfig {
         languageLocale = sharedPref.getString(context.getString(R.string.key_wallet_language), null);
         currencyUnit = sharedPref.getString(context.getString(R.string.key_wallet_currency_unit), null);
         payRequestToken = sharedPref.getString(KEY_PAY_REQUEST_TOKEN, null);
+        payRequestTokenType = sharedPref.getString(KEY_PAY_REQUEST_TOKEN_TYPE, null);
         assetsVisible = sharedPref.getBoolean(KEY_ASSETS_VISIBLE, true);
         tokenListHash = sharedPref.getString(KEY_TOKEN_LIST_HASH, "");
         touchId = sharedPref.getBoolean(context.getString(R.string.key_touch_id_switch), false);
@@ -163,6 +166,17 @@ public class BrahmaConfig {
         this.payRequestToken = payRequestToken;
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(KEY_PAY_REQUEST_TOKEN, payRequestToken);
+        editor.apply();
+    }
+
+    public String getPayRequestTokenType() {
+        return payRequestTokenType;
+    }
+
+    public void setPayRequestTokenType(String payRequestTokenType) {
+        this.payRequestTokenType = payRequestTokenType;
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(KEY_PAY_REQUEST_TOKEN_TYPE, payRequestTokenType);
         editor.apply();
     }
 

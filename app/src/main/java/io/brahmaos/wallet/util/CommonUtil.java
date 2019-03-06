@@ -10,11 +10,40 @@ import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.util.DisplayMetrics;
 
+import org.spongycastle.jce.ECNamedCurveTable;
+import org.spongycastle.jce.provider.BouncyCastleProvider;
+import org.spongycastle.jce.spec.ECNamedCurveParameterSpec;
+import org.spongycastle.jce.spec.ECNamedCurveSpec;
+import org.spongycastle.util.encoders.Base64;
+import org.web3j.crypto.ECKeyPair;
+import org.web3j.crypto.Hash;
+import org.web3j.crypto.WalletUtils;
+import org.web3j.utils.Numeric;
+
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URLEncoder;
+import java.security.InvalidKeyException;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.Signature;
+import java.security.SignatureException;
+import java.security.spec.ECPrivateKeySpec;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.TreeMap;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
@@ -184,5 +213,85 @@ public class CommonUtil {
     public static String datetimeFormat(Date date) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return formatter.format(date);
+    }
+
+    public static int getCurrentSecondTimestamp() {
+        Date curDate =  new Date(System.currentTimeMillis());
+        if (null == curDate) {
+            return 0;
+        }
+        String timestamp = String.valueOf(curDate.getTime());
+        int length = timestamp.length();
+        if (length > 3) {
+            return Integer.valueOf(timestamp.substring(0,length-3));
+        } else {
+            return 0;
+        }
+    }
+
+    public static int getNonce() {
+        return new Random().nextInt(100);
+    }
+
+    public static String generateSignature(String uri, TreeMap<String,Object> params, String secKey) {
+        String securityContent = generateSecurityContent(uri, params);
+        String messageSig;
+        String messageSigUrlencoder;
+        try {
+            /*PKCS8EncodedKeySpec signingKey = new PKCS8EncodedKeySpec(secKey.getBytes());
+            KeyFactory keyFactory = KeyFactory.getInstance("EC");
+            PrivateKey privateKey = keyFactory.generatePrivate(signingKey);*/
+
+            ECNamedCurveParameterSpec spec = ECNamedCurveTable.getParameterSpec("secp256r1");
+            KeyFactory kf = KeyFactory.getInstance("ECDSA", new BouncyCastleProvider());
+            ECNamedCurveSpec ecNamedCurveSpec = new ECNamedCurveSpec("secp256r1", spec.getCurve(), spec.getG(), spec.getN());
+            ECPrivateKeySpec privKeySpec = new ECPrivateKeySpec(Numeric.decodeQuantity(Numeric.prependHexPrefix(secKey)), ecNamedCurveSpec);
+            //return kf.generatePrivate(privKeySpec);
+
+            Signature signature = Signature.getInstance("SHA256WITHECDSA");
+            signature.initSign(kf.generatePrivate(privKeySpec));
+            signature.update(Hash.sha3(Numeric.hexStringToByteArray(securityContent)));
+            byte[] res = signature.sign();
+            messageSig = Base64.toBase64String(res);
+            messageSigUrlencoder = URLEncoder.encode(messageSig, "UTF-8");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+            return null;
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return null;
+        } catch (InvalidKeySpecException e) {
+            e.printStackTrace();
+            return null;
+        } catch (SignatureException e) {
+            e.printStackTrace();
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        return messageSig;
+
+    }
+
+    public static String generateSecurityContent(String uri, TreeMap<String,Object> params){
+        StringBuilder sb = new StringBuilder(uri);
+        if (params != null && params.keySet().size() > 0) {
+            boolean firstFlag = true;
+            Iterator iterator = params.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry entry = (Map.Entry<String, String>) iterator.next();
+                if (firstFlag) {
+                    sb.append("?").append(entry.getKey()).append("=").append(entry.getValue());
+                    firstFlag = false;
+                } else {
+                    sb.append("&").append(entry.getKey()).append("=").append(entry.getValue());
+                }
+            }
+        }
+        return sb.toString();
     }
 }

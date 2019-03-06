@@ -399,7 +399,7 @@
     <string name="contract_approve">合约授权</string>
     <string name="progress_get_rate">获取汇率…</string>
     <string name="progress_get_allowance">获取授权额度</string>
-    <string name="action_instant_exchange">快速兑换</string>
+    <string name="action_instant_exchange">快捷兑换</string>
     <string name="prompt_approval_amount">授权额度</string>
     <string name="tip_approve_success">合约授权请求已提交，请等待合约授权成功后进行下一步交易。</string>
     <string name="prompt_send_amount">转出数量</string>
@@ -489,4 +489,5 @@
     <string name="menu_transactions">账单</string>
     <string name="menu_address_book">地址本</string>
     <string name="info_account_id">账号标识</string>
+    <string name="label_confirm_eht_account_for_quick_pay">请确认是否拥有账号</string>
 </resources>

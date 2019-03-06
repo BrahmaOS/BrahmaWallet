@@ -15,6 +15,8 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.TreeMap;
 
 import io.brahmaos.wallet.brahmawallet.WalletApp;
 import io.brahmaos.wallet.brahmawallet.api.ApiRespResult;
@@ -32,12 +34,14 @@ import io.brahmaos.wallet.brahmawallet.model.pay.PayRequestToken;
 import io.brahmaos.wallet.brahmawallet.repository.DataRepository;
 import io.brahmaos.wallet.brahmawallet.statistic.network.StatisticHttpUtils;
 import io.brahmaos.wallet.util.BLog;
+import io.brahmaos.wallet.util.CommonUtil;
 import io.rayup.sdk.RayUpApp;
 import io.rayup.sdk.model.CoinQuote;
 import io.rayup.sdk.model.EthToken;
 import rx.Completable;
 import rx.Observable;
 import rx.Observer;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -68,7 +72,7 @@ public class PayService extends BaseService{
     }
 
     /*
-     * Fetch token price
+     * Fetch pay request token.
      */
     public void getPayRequestToken() {
         Map<String, Object> params = new HashMap<>();
@@ -95,6 +99,7 @@ public class PayService extends BaseService{
                             try {
                                 PayRequestToken payRequestToken = objectMapper.readValue(objectMapper.writeValueAsString(apr.getData()), new TypeReference<PayRequestToken>() {});
                                 BrahmaConfig.getInstance().setPayRequestToken(payRequestToken.getAccessToken());
+                                BrahmaConfig.getInstance().setPayRequestTokenType(payRequestToken.getTokenType());
                             } catch (IOException e1) {
                                 e1.printStackTrace();
                             }
@@ -104,13 +109,51 @@ public class PayService extends BaseService{
     }
 
     /*
-     * Get accounts
+     * Create quick pay account
      */
-    public Observable<List<AccountEntity>> getAccounts() {
-        return Observable.create(e -> {
-            List<AccountEntity> accounts = ((WalletApp) context.getApplicationContext()).getRepository().getAccountsSync();
-            e.onNext(accounts);
-            e.onCompleted();
+    public Observable<String> createPayAccount(String address, int type,
+                                                            String payPassword, String privateKey,
+                                                            String publicKey) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> e) {
+                String uri = "/account/create";
+                TreeMap<String, Object> params = new TreeMap<>();
+                params.put(ReqParam.PARAM_ACCOUNT_ADDRESS, address);
+                params.put(ReqParam.PARAM_ACCOUNT_TYPE, type);
+                params.put(ReqParam.PARAM_PUBLIC_KEY, publicKey);
+                params.put(ReqParam.PARAM_PAY_PASSWORD, payPassword);
+                params.put(ReqParam.PARAM_NONCE, CommonUtil.getNonce());
+                params.put(ReqParam.PARAM_TIMESTAMP, CommonUtil.getCurrentSecondTimestamp());
+                params.put(ReqParam.PARAM_SIGN_TYPE, BrahmaConst.PAY_REQUEST_SIGN_TYPE);
+                String sign = CommonUtil.generateSignature(uri, params, privateKey);
+                params.put(ReqParam.PARAM_SIGN, sign);
+
+                Networks.getInstance().getPayApi()
+                        .setQuickPayAccount(params)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Observer<ApiRespResult>() {
+                            @Override
+                            public void onCompleted() {
+                                e.onCompleted();
+                            }
+
+                            @Override
+                            public void onError(Throwable throwable) {
+                                throwable.printStackTrace();
+                                e.onError(throwable);
+                            }
+
+                            @Override
+                            public void onNext(ApiRespResult apr) {
+                                if (apr != null && apr.getResult() == 0 && apr.getData() != null) {
+                                    BLog.i(tag(), apr.toString());
+                                }
+                                e.onNext(apr.toString());
+                            }
+                        });
+            }
         });
     }
 
