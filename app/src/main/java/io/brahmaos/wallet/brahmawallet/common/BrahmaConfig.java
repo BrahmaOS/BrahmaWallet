@@ -31,12 +31,14 @@ public class BrahmaConfig {
     private static final String KEY_ASSETS_VISIBLE = "assets.visible";
     private static final String KEY_TOKEN_LIST_HASH = "token.list.hash";
     private static final String KEY_TOKEN_LIST_VERSION = "token.list.version";
+    private static final String KEY_PAY_REQUEST_TOKEN = "pay.request.token";
 
     // false: main net; true: ropsten testnet;
     public static boolean debugFlag = true;//false;
     private String networkUrl;
     private String languageLocale;
     private String currencyUnit;
+    private String payRequestToken;
     private boolean assetsVisible = true;
     private String tokenListHash;
     private boolean touchId = false;
@@ -55,6 +57,7 @@ public class BrahmaConfig {
 
         languageLocale = sharedPref.getString(context.getString(R.string.key_wallet_language), null);
         currencyUnit = sharedPref.getString(context.getString(R.string.key_wallet_currency_unit), null);
+        payRequestToken = sharedPref.getString(KEY_PAY_REQUEST_TOKEN, null);
         assetsVisible = sharedPref.getBoolean(KEY_ASSETS_VISIBLE, true);
         tokenListHash = sharedPref.getString(KEY_TOKEN_LIST_HASH, "");
         touchId = sharedPref.getBoolean(context.getString(R.string.key_touch_id_switch), false);
@@ -150,6 +153,17 @@ public class BrahmaConfig {
 
         config.setLocale(newLocale);
         resources.updateConfiguration(config, dm);
+    }
+
+    public String getPayRequestToken() {
+        return payRequestToken;
+    }
+
+    public void setPayRequestToken(String payRequestToken) {
+        this.payRequestToken = payRequestToken;
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(KEY_PAY_REQUEST_TOKEN, payRequestToken);
+        editor.apply();
     }
 
     public boolean isAssetsVisible() {

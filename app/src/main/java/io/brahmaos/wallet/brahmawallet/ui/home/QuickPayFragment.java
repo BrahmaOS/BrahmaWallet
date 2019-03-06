@@ -28,6 +28,7 @@ import java.util.List;
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
+import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 import io.brahmaos.wallet.brahmawallet.model.AccountAssets;
@@ -37,6 +38,7 @@ import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.ui.account.CreateAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.account.RestoreAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseFragment;
+import io.brahmaos.wallet.brahmawallet.ui.pay.SetPayAccountPasswordActivity;
 import io.brahmaos.wallet.brahmawallet.ui.token.TokensActivity;
 import io.brahmaos.wallet.brahmawallet.ui.transfer.InstantExchangeActivity;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
@@ -127,9 +129,9 @@ public class QuickPayFragment extends BaseFragment {
             rootView.setOnClickListener(v -> {
                 int position = recyclerViewAccounts.getChildAdapterPosition(v);
                 AccountEntity account = cacheAccounts.get(position);
-                /*Intent intent = new Intent(AccountsActivity.this, EthAccountAssetsActivity.class);
+                Intent intent = new Intent(getActivity(), SetPayAccountPasswordActivity.class);
                 intent.putExtra(IntentParam.PARAM_ACCOUNT_ID, account.getId());
-                startActivity(intent);*/
+                startActivity(intent);
             });
             return new AccountRecyclerAdapter.ItemViewHolder(rootView);
         }

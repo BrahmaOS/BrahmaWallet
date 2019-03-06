@@ -60,6 +60,7 @@ public class MainService extends BaseService{
         BrahmaWeb3jService.getInstance().init(context);
         TransactionService.getInstance().init(context);
         BtcAccountManager.getInstance().init(context);
+        PayService.getInstance().init(context);
         return true;
     }
 

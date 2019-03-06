@@ -9,8 +9,11 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import io.brahmaos.wallet.brahmawallet.BuildConfig;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.util.BLog;
+import okhttp3.Authenticator;
+import okhttp3.Credentials;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -121,14 +124,25 @@ public class Networks {
     }
 
     private <T> T PayConfigRetrofit(Class<T> service, boolean isAddCommonParam) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BrahmaConst.KYBER_NETWORK_URL)
-                .client(configClient(isAddCommonParam))
-                .addConverterFactory(JacksonConverterFactory.create(mapper))
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .build();
+        if (BrahmaConfig.debugFlag) {
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(BrahmaConst.PAY_DEV_HOST)
+                    .client(configClient(isAddCommonParam))
+                    .addConverterFactory(JacksonConverterFactory.create(mapper))
+                    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                    .build();
 
-        return retrofit.create(service);
+            return retrofit.create(service);
+        } else {
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(BrahmaConst.PAY_HOST)
+                    .client(configClient(isAddCommonParam))
+                    .addConverterFactory(JacksonConverterFactory.create(mapper))
+                    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                    .build();
+
+            return retrofit.create(service);
+        }
     }
 
     private OkHttpClient configClient(final boolean isAddCommonParam) {

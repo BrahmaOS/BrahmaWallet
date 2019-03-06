@@ -34,6 +34,7 @@ import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.model.VersionInfo;
+import io.brahmaos.wallet.brahmawallet.service.PayService;
 import io.brahmaos.wallet.brahmawallet.service.VersionUpgradeService;
 import io.brahmaos.wallet.brahmawallet.ui.account.AccountsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.account.CreateAccountActivity;
@@ -158,6 +159,7 @@ public class MainActivity extends BaseActivity
             cacheAccounts = accountEntities;
             invalidateOptionsMenu();
         });
+        PayService.getInstance().checkPayRequestToken();
     }
 
     @Override

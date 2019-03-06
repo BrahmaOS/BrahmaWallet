@@ -153,6 +153,7 @@
         </activity>
         <activity android:name=".ui.dapp.DappTestActivity" />
         <activity android:name=".ui.account.AccountGuideActivity" />
+        <activity android:name=".ui.pay.SetPayAccountPasswordActivity" />
     </application>
 
 </manifest>

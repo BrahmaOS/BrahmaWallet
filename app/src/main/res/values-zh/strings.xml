@@ -479,4 +479,10 @@
     <string name="pay_msg_invalid_blockchain">公链类型错误</string>
     <string name="pay_msg_no_account">暂无账号</string>
     <string name="tip_insufficient_balance">账号余额不足</string>
+    <string name="quick_pay_account_help">什么是快捷支付账号?</string>
+    <string name="label_choose_eth_account">或者从现有以太坊账号中选择：</string>
+    <string name="title_pay_set_password">设置快捷支付密码</string>
+    <string name="label_set_payment_password">请为此快捷支付账号设置6位数字支付密码</string>
+    <string name="label_repeat_password">请再次输入密码</string>
+    <string name="tip_repeat_password_error">两次输入的密码不一致</string>
 </resources>

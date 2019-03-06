@@ -20,7 +20,7 @@ public interface PayApi {
      * Get pay request token
      */
     @POST("/pay/util/request/token")
-    Observable<ApiRespResult> getRequestToken(@Body Map<String, Object> params);;
+    Observable<ApiRespResult> getPayRequestToken(@Body Map<String, Object> params);;
 
     /**
      * Get all tokens
