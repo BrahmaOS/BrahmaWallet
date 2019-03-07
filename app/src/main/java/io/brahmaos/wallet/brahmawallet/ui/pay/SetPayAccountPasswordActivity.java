@@ -209,11 +209,17 @@ public class SetPayAccountPasswordActivity extends BaseActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<String>() {
                     @Override
-                    public void onNext(String privateKey) {
+                    public void onNext(String account) {
                         if (progressDialog != null) {
                             progressDialog.cancel();
                         }
-                        BLog.d(tag(), privateKey);
+                        BLog.d(tag(), account);
+                        if (account != null && account.length() > 0) {
+                            showLongToast(getString(R.string.tip_add_pay_account_success));
+                            finish();
+                        } else {
+                            showLongToast(getString(R.string.tip_add_pay_account_failed));
+                        }
                     }
 
                     @Override
@@ -222,6 +228,7 @@ public class SetPayAccountPasswordActivity extends BaseActivity {
                         if (progressDialog != null) {
                             progressDialog.cancel();
                         }
+                        showLongToast(getString(R.string.tip_add_pay_account_failed));
                     }
 
                     @Override

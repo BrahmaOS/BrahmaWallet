@@ -11,7 +11,7 @@ public class ReqParam {
     public static final String PARAM_PUBLIC_KEY = "pub_key";
     public static final String PARAM_NONCE = "nonce";
     public static final String PARAM_TIMESTAMP = "t";
-    public static final String PARAM_PAY_PASSWORD = "pay_password";
+    public static final String PARAM_PAY_PASSWORD = "pay_passwd";
     public static final String PARAM_SIGN_TYPE = "sign_type";
     public static final String PARAM_SIGN = "sign";
 }

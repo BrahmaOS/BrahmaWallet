@@ -15,8 +15,10 @@ import org.spongycastle.jce.provider.BouncyCastleProvider;
 import org.spongycastle.jce.spec.ECNamedCurveParameterSpec;
 import org.spongycastle.jce.spec.ECNamedCurveSpec;
 import org.spongycastle.util.encoders.Base64;
+import org.spongycastle.util.encoders.Hex;
 import org.web3j.crypto.ECKeyPair;
 import org.web3j.crypto.Hash;
+import org.web3j.crypto.Sign;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.utils.Numeric;
 
@@ -236,39 +238,13 @@ public class CommonUtil {
     public static String generateSignature(String uri, TreeMap<String,Object> params, String secKey) {
         String securityContent = generateSecurityContent(uri, params);
         String messageSig;
-        String messageSigUrlencoder;
         try {
-            /*PKCS8EncodedKeySpec signingKey = new PKCS8EncodedKeySpec(secKey.getBytes());
-            KeyFactory keyFactory = KeyFactory.getInstance("EC");
-            PrivateKey privateKey = keyFactory.generatePrivate(signingKey);*/
-
-            ECNamedCurveParameterSpec spec = ECNamedCurveTable.getParameterSpec("secp256r1");
-            KeyFactory kf = KeyFactory.getInstance("ECDSA", new BouncyCastleProvider());
-            ECNamedCurveSpec ecNamedCurveSpec = new ECNamedCurveSpec("secp256r1", spec.getCurve(), spec.getG(), spec.getN());
-            ECPrivateKeySpec privKeySpec = new ECPrivateKeySpec(Numeric.decodeQuantity(Numeric.prependHexPrefix(secKey)), ecNamedCurveSpec);
-            //return kf.generatePrivate(privKeySpec);
-
-            Signature signature = Signature.getInstance("SHA256WITHECDSA");
-            signature.initSign(kf.generatePrivate(privKeySpec));
-            signature.update(Hash.sha3(Numeric.hexStringToByteArray(securityContent)));
-            byte[] res = signature.sign();
-            messageSig = Base64.toBase64String(res);
-            messageSigUrlencoder = URLEncoder.encode(messageSig, "UTF-8");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            return null;
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-            return null;
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            return null;
-        } catch (InvalidKeySpecException e) {
-            e.printStackTrace();
-            return null;
-        } catch (SignatureException e) {
-            e.printStackTrace();
-            return null;
+            ECKeyPair ecKeyPair = ECKeyPair.create(Hex.decode(secKey));
+            Sign.SignatureData signatureData = Sign.signMessage(securityContent.getBytes(), ecKeyPair, true);
+            String messageR = Numeric.cleanHexPrefix(Numeric.toHexString(signatureData.getR()));
+            String messageS = Numeric.cleanHexPrefix(Numeric.toHexString(signatureData.getS()));
+            String messageV = String.format("%02x", (signatureData.getV() - 27) & 0xFF);
+            messageSig = String.format("%s%s%s", messageR, messageS, messageV);
         } catch (Exception e) {
             e.printStackTrace();
             return null;

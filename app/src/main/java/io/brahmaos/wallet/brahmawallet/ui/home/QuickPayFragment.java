@@ -64,6 +64,7 @@ public class QuickPayFragment extends BaseFragment {
     }
 
     private LinearLayout layoutAddQuickPayAccount;
+    private LinearLayout layoutPayAccountInfo;
     private LinearLayout layoutHeader;
     private RecyclerView recyclerViewAccounts;
     private CustomProgressDialog progressDialog;
@@ -86,6 +87,7 @@ public class QuickPayFragment extends BaseFragment {
     @Override
     protected boolean initView() {
         layoutAddQuickPayAccount = parentView.findViewById(R.id.layout_add_quick_pay_account);
+        layoutPayAccountInfo = parentView.findViewById(R.id.layout_pay_account_info);
         layoutHeader = parentView.findViewById(R.id.layout_header);
         recyclerViewAccounts = parentView.findViewById(R.id.accounts_recycler);
 
@@ -131,6 +133,19 @@ public class QuickPayFragment extends BaseFragment {
                 recyclerViewAccounts.getAdapter().notifyDataSetChanged();
             }
         });
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        BLog.d(tag(), "quick pay fragment onstart");
+        if (BrahmaConfig.getInstance().getPayAccount() != null) {
+            layoutAddQuickPayAccount.setVisibility(View.GONE);
+            layoutPayAccountInfo.setVisibility(View.VISIBLE);
+        } else {
+            layoutAddQuickPayAccount.setVisibility(View.VISIBLE);
+            layoutPayAccountInfo.setVisibility(View.GONE);
+        }
     }
 
     /**

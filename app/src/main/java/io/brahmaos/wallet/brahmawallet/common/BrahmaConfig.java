@@ -33,6 +33,7 @@ public class BrahmaConfig {
     private static final String KEY_TOKEN_LIST_VERSION = "token.list.version";
     private static final String KEY_PAY_REQUEST_TOKEN = "pay.request.token";
     private static final String KEY_PAY_REQUEST_TOKEN_TYPE = "pay.request.token.type";
+    private static final String KEY_PAY_ACCOUNT = "quick.pay.account";
 
     // false: main net; true: ropsten testnet;
     public static boolean debugFlag = true;//false;
@@ -41,6 +42,7 @@ public class BrahmaConfig {
     private String currencyUnit;
     private String payRequestToken;
     private String payRequestTokenType;
+    private String payAccount;
     private boolean assetsVisible = true;
     private String tokenListHash;
     private boolean touchId = false;
@@ -61,6 +63,7 @@ public class BrahmaConfig {
         currencyUnit = sharedPref.getString(context.getString(R.string.key_wallet_currency_unit), null);
         payRequestToken = sharedPref.getString(KEY_PAY_REQUEST_TOKEN, null);
         payRequestTokenType = sharedPref.getString(KEY_PAY_REQUEST_TOKEN_TYPE, null);
+        payAccount = sharedPref.getString(KEY_PAY_ACCOUNT, null);
         assetsVisible = sharedPref.getBoolean(KEY_ASSETS_VISIBLE, true);
         tokenListHash = sharedPref.getString(KEY_TOKEN_LIST_HASH, "");
         touchId = sharedPref.getBoolean(context.getString(R.string.key_touch_id_switch), false);
@@ -177,6 +180,17 @@ public class BrahmaConfig {
         this.payRequestTokenType = payRequestTokenType;
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(KEY_PAY_REQUEST_TOKEN_TYPE, payRequestTokenType);
+        editor.apply();
+    }
+
+    public String getPayAccount() {
+        return payAccount;
+    }
+
+    public void setPayAccount(String payAccount) {
+        this.payAccount = payAccount;
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(KEY_PAY_ACCOUNT, payAccount);
         editor.apply();
     }
 

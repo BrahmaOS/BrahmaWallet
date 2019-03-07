@@ -224,6 +224,10 @@ public class Networks {
             public Response intercept(Chain chain) throws IOException {
                 Request request = chain.request();
                 Response response = chain.proceed(request);
+                String accessToken = response.header("access_token");
+                if (accessToken != null) {
+                    BrahmaConfig.getInstance().setPayRequestToken(accessToken);
+                }
                 ResponseBody responseBody = response.body();
                 BufferedSource source = responseBody.source();
                 source.request(Long.MAX_VALUE);  // Buffer the entire body.

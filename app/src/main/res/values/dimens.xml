@@ -31,6 +31,7 @@
 
     <dimen name="icon_large_size">56dp</dimen>
     <dimen name="icon_normal_size">40dp</dimen>
+    <dimen name="icon_pay_size">36dp</dimen>
     <dimen name="toolbar_icon_size">24dp</dimen>
     <dimen name="toolbar_icon_size_smaller">20dp</dimen>
     <dimen name="width_left_content">120dp</dimen>

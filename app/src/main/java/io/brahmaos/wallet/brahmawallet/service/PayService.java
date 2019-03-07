@@ -43,6 +43,7 @@ import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 public class PayService extends BaseService{
@@ -109,51 +110,132 @@ public class PayService extends BaseService{
     }
 
     /*
+     * Fetch pay request token.
+     */
+    public Observable<String> getPayTokenForCreateAccount(String address, int type,
+                                            String payPassword, String privateKey,
+                                            String publicKey) {
+        return Observable.create(e -> {
+            Map<String, Object> params = new HashMap<>();
+            params.put(ReqParam.PARAM_UD_ID, StatisticHttpUtils.getUDID(context));
+            Networks.getInstance().getPayApi()
+                    .getPayRequestToken(params)
+                    .flatMap((Func1<ApiRespResult, Observable<Boolean>>) apr -> {
+                        if (apr != null && apr.getResult() == 0 && apr.getData() != null) {
+                            BLog.i(tag(), apr.toString());
+                            ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
+                            try {
+                                PayRequestToken payRequestToken = objectMapper.readValue(objectMapper.writeValueAsString(apr.getData()), new TypeReference<PayRequestToken>() {});
+                                BrahmaConfig.getInstance().setPayRequestToken(payRequestToken.getAccessToken());
+                                BrahmaConfig.getInstance().setPayRequestTokenType(payRequestToken.getTokenType());
+                                return Observable.from(new Boolean[]{Boolean.TRUE});
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            }
+                        }
+                        return Observable.from(new Boolean[]{Boolean.FALSE});
+                    })
+                    .flatMap((Func1<Boolean, Observable<String>>) apr -> {
+                        if (apr != null && apr) {
+                            return createPayAccount(address, type, payPassword, privateKey, publicKey);
+                        }
+                        return Observable.from((String[]) null);
+                    })
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<String>() {
+                        @Override
+                        public void onCompleted() {
+                        }
+
+                        @Override
+                        public void onError(Throwable throwable) {
+                            throwable.printStackTrace();
+                        }
+
+                        @Override
+                        public void onNext(String accountAddress) {
+                            if (accountAddress != null) {
+                                e.onNext(accountAddress);
+                            } else {
+                                e.onNext(null);
+                            }
+                        }
+                    });
+        });
+    }
+
+    /*
      * Create quick pay account
      */
     public Observable<String> createPayAccount(String address, int type,
                                                             String payPassword, String privateKey,
                                                             String publicKey) {
-        return Observable.create(new Observable.OnSubscribe<String>() {
-            @Override
-            public void call(Subscriber<? super String> e) {
-                String uri = "/account/create";
-                TreeMap<String, Object> params = new TreeMap<>();
-                params.put(ReqParam.PARAM_ACCOUNT_ADDRESS, address);
-                params.put(ReqParam.PARAM_ACCOUNT_TYPE, type);
-                params.put(ReqParam.PARAM_PUBLIC_KEY, publicKey);
-                params.put(ReqParam.PARAM_PAY_PASSWORD, payPassword);
-                params.put(ReqParam.PARAM_NONCE, CommonUtil.getNonce());
-                params.put(ReqParam.PARAM_TIMESTAMP, CommonUtil.getCurrentSecondTimestamp());
-                params.put(ReqParam.PARAM_SIGN_TYPE, BrahmaConst.PAY_REQUEST_SIGN_TYPE);
-                String sign = CommonUtil.generateSignature(uri, params, privateKey);
-                params.put(ReqParam.PARAM_SIGN, sign);
+        return Observable.create(e -> {
+            String uri = "/account/create";
+            TreeMap<String, Object> params = new TreeMap<>();
+            params.put(ReqParam.PARAM_ACCOUNT_ADDRESS, address);
+            params.put(ReqParam.PARAM_ACCOUNT_TYPE, type);
+            params.put(ReqParam.PARAM_PUBLIC_KEY, publicKey);
+            params.put(ReqParam.PARAM_PAY_PASSWORD, payPassword);
+            params.put(ReqParam.PARAM_NONCE, 8);
+            params.put(ReqParam.PARAM_TIMESTAMP, 1551941187);
+            params.put(ReqParam.PARAM_SIGN_TYPE, BrahmaConst.PAY_REQUEST_SIGN_TYPE);
+            String sign = CommonUtil.generateSignature(uri, params, privateKey);
+            params.put(ReqParam.PARAM_SIGN, sign);
 
-                Networks.getInstance().getPayApi()
-                        .setQuickPayAccount(params)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Observer<ApiRespResult>() {
-                            @Override
-                            public void onCompleted() {
-                                e.onCompleted();
-                            }
+            Networks.getInstance().getPayApi()
+                    .setQuickPayAccount(params)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<ApiRespResult>() {
+                        @Override
+                        public void onCompleted() {
+                            e.onCompleted();
+                        }
 
-                            @Override
-                            public void onError(Throwable throwable) {
-                                throwable.printStackTrace();
-                                e.onError(throwable);
-                            }
+                        @Override
+                        public void onError(Throwable throwable) {
+                            throwable.printStackTrace();
+                            e.onError(throwable);
+                        }
 
-                            @Override
-                            public void onNext(ApiRespResult apr) {
-                                if (apr != null && apr.getResult() == 0 && apr.getData() != null) {
+                        @Override
+                        public void onNext(ApiRespResult apr) {
+                            if (apr != null) {
+                                if (apr.getResult() == 0) {
                                     BLog.i(tag(), apr.toString());
+                                    BrahmaConfig.getInstance().setPayAccount(address);
+                                    e.onNext(address);
+                                } else if (apr.getResult() == 1005) {
+                                    getPayTokenForCreateAccount(address, type, payPassword, privateKey, publicKey)
+                                            .subscribeOn(Schedulers.io())
+                                            .observeOn(AndroidSchedulers.mainThread())
+                                            .subscribe(new Observer<String>() {
+                                                @Override
+                                                public void onNext(String address) {
+                                                    BLog.d(tag(), address);
+                                                    e.onNext(address);
+                                                }
+
+                                                @Override
+                                                public void onError(Throwable error) {
+                                                    error.printStackTrace();
+                                                }
+
+                                                @Override
+                                                public void onCompleted() {
+
+                                                }
+                                            });
+                                } else {
+                                    e.onNext(null);
                                 }
-                                e.onNext(apr.toString());
+                            } else {
+                                e.onNext(null);
                             }
-                        });
-            }
+                        }
+                    });
         });
     }
 
