@@ -150,6 +150,10 @@ public class AccountDetailActivity extends BaseActivity implements FingerprintCo
             startActivity(intent);
         });
 
+        if (1 != fingerprintCore.checkFingerprintAvailable()) {
+            BrahmaConfig.getInstance().setTouchIDPayState(account.getAddress(), false);
+            fingerprintCore.clearTouchIDPay(account.getAddress());
+        }
         mSwitchTouchID.setOnCheckedChangeListener(null);
         mSwitchTouchID.setChecked(BrahmaConfig.getInstance().getTouchIDPayState(account.getAddress()));
         mLayoutTouchID.setOnClickListener(v -> {

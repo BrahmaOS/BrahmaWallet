@@ -449,6 +449,7 @@
     <string name="tip_fingerprint">Click to start verification</string>
     <string name="fail_fingerprint_verification">Fingerprint verification failed</string>
     <string name="error_fingerprint_verification">Fingerprint verification failed</string>
+    <string name="fingerprint_changed">Verification failed. If the fingerprint was changed, please reset Touch ID Pay.</string>
 
     <!-- instant exchange -->
     <string name="title_activity_instant_exchange">Flash Exchange</string>

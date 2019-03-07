@@ -509,6 +509,8 @@ public class EthTransferActivity extends BaseActivity implements FingerprintCore
             mFingerprintCore.decryptWithFingerprint(mAccount.getAddress());
         } catch (Exception e) {
             BLog.d(tag(), "Failed to decryptWithFingerprint: " + e.toString());
+            mFingerDialog.cancel();
+            showPayChoiceDialog(getString(R.string.fingerprint_changed));
         }
     }
 

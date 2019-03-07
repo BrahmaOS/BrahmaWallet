@@ -459,6 +459,8 @@ public class BtcTransferActivity extends BaseActivity implements FingerprintCore
             mFingerprintCore.decryptWithFingerprint(mainAddress);
         } catch (Exception e) {
             BLog.d(tag(), "Failed to decryptWithFingerprint: " + e.toString());
+            mFingerDialog.cancel();
+            showPayChoiceDialog(getString(R.string.fingerprint_changed));
         }
     }
 

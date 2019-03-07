@@ -381,6 +381,7 @@
     <string name="tip_fingerprint">点击开启验证</string>
     <string name="fail_fingerprint_verification">指纹验证失败</string>
     <string name="error_fingerprint_verification">指纹验证失败</string>
+    <string name="fingerprint_changed">指纹验证失败，如果指纹信息有改动，请重新设置指纹支付。</string>
 
     <!-- instant exchange -->
     <string name="title_activity_instant_exchange">闪兑</string>

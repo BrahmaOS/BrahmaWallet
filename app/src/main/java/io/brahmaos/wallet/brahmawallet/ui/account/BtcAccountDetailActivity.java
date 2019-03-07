@@ -149,6 +149,10 @@ public class BtcAccountDetailActivity extends BaseActivity implements Fingerprin
                 mainAddress = kit.wallet().currentChangeAddress().toBase58();
             }
 
+            if (1 != fingerprintCore.checkFingerprintAvailable()) {
+                BrahmaConfig.getInstance().setTouchIDPayState(mainAddress, false);
+                fingerprintCore.clearTouchIDPay(mainAddress);
+            }
             mLayoutTouchID.setEnabled(true);
             mSwitchTouchID.setOnCheckedChangeListener(null);
             mSwitchTouchID.setChecked(BrahmaConfig.getInstance().getTouchIDPayState(mainAddress));
