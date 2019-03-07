@@ -47,6 +47,7 @@ import io.brahmaos.wallet.brahmawallet.ui.home.MeFragment;
 import io.brahmaos.wallet.brahmawallet.ui.home.QuickPayFragment;
 import io.brahmaos.wallet.brahmawallet.ui.home.WalletFragment;
 import io.brahmaos.wallet.brahmawallet.ui.pay.AccountInfoActivity;
+import io.brahmaos.wallet.brahmawallet.ui.pay.PayTestActivity;
 import io.brahmaos.wallet.brahmawallet.ui.setting.AboutActivity;
 import io.brahmaos.wallet.brahmawallet.ui.setting.HelpActivity;
 import io.brahmaos.wallet.brahmawallet.ui.setting.SettingsActivity;
@@ -267,10 +268,10 @@ public class MainActivity extends BaseActivity
                 Intent aboutIntent = new Intent(this, AboutActivity.class);
                 startActivity(aboutIntent);
                 break;
-//            case R.id.layout_pay_test:
-//                Intent payTestIntent = new Intent(this, PayTestActivity.class);
-//                startActivity(payTestIntent);
-//                break;
+            case R.id.layout_pay_test:
+                Intent payTestIntent = new Intent(this, PayTestActivity.class);
+                startActivity(payTestIntent);
+                break;
             default:
                 break;
         }

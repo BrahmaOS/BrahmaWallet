@@ -11,7 +11,6 @@
     <TextView
         android:id="@android:id/title"
         android:textColor="@color/colorAccent"
-        android:textStyle="bold"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"/>

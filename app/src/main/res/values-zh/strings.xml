@@ -34,7 +34,7 @@
     <!-- Drawer menu -->
     <string name="nav_menu_other">其余</string>
     <string name="nav_menu_setting">设置</string>
-    <string name="nav_menu_help">使用帮助</string>
+    <string name="nav_menu_help">帮助中心</string>
     <string name="nav_menu_info">关于我们</string>
 
     <!-- Strings related to dialog -->
@@ -332,7 +332,7 @@
     <string name="confirm_error">助记词顺序错误，请核对！</string>
 
     <!-- string about us -->
-    <string name="title_about_us">关于</string>
+    <string name="title_about_us">关于我们</string>
     <string name="about_current_version">当前版本： </string>
     <string name="desc_wallet">
         梵钱包是一款完全开源、去中心化的移动端轻钱包，梵钱包旨为用户提供一款安全放心、简单易用的数字资产钱包应用。
@@ -348,7 +348,7 @@
     <string name="title_service_terms">梵钱包服务协议</string>
 
     <!-- string about contacts -->
-    <string name="title_contacts">联系人</string>
+    <string name="title_contacts">地址本</string>
     <string name="title_add_contact">添加联系人</string>
     <string name="prompt_contact_first_name">名</string>
     <string name="prompt_contact_last_name">姓</string>
@@ -487,6 +487,7 @@
     <string name="label_set_payment_password">请为此快捷支付账号设置6位数字支付密码</string>
     <string name="label_repeat_password">请再次输入密码</string>
     <string name="tip_repeat_password_error">两次输入的密码不一致</string>
+    <string name="menu_account_info">账号信息</string>
     <string name="menu_transactions">账单</string>
     <string name="menu_address_book">地址本</string>
     <string name="info_account_id">账号标识</string>

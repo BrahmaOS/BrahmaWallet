@@ -36,7 +36,7 @@
     <!-- Drawer menu -->
     <string name="nav_menu_other">Other</string>
     <string name="nav_menu_setting">Settings</string>
-    <string name="nav_menu_help">FAQ</string>
+    <string name="nav_menu_help">Help</string>
     <string name="nav_menu_info">About Us</string>
 
     <!-- Strings related to dialog -->
@@ -398,7 +398,7 @@
     <string name="backup_success">Backup Success</string>
 
     <!-- string about us -->
-    <string name="title_about_us">About</string>
+    <string name="title_about_us">About Us</string>
     <string name="about_current_version">Current Version: </string>
     <string name="desc_wallet">
         Brahma Wallet is a fully open source, decentralized mobile light wallet. It is designed to provide users with a secure, easy-to-use digital asset wallet application.
@@ -416,7 +416,7 @@
     <string name="title_service_terms">Brahma Wallet Service Agreement</string>
 
     <!-- string about contacts -->
-    <string name="title_contacts">Contacts</string>
+    <string name="title_contacts">Address Book</string>
     <string name="title_choose_contact">Choose Contact</string>
     <string name="title_add_contact">Add Contact</string>
     <string name="title_my_accounts">My Accounts</string>

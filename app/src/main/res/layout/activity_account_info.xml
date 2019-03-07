@@ -20,7 +20,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:titleTextAppearance="@style/ToolbarTitleText"
-                app:title="@string/title_account_detail"
+                app:title="@string/menu_account_info"
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
 
         </android.support.design.widget.AppBarLayout>
@@ -61,6 +61,8 @@
                         android:layout_width="@dimen/toolbar_icon_size"
                         android:layout_height="@dimen/toolbar_icon_size"
                         android:layout_toLeftOf="@+id/avatar_arrow"
+                        android:src="@drawable/ic_default_account_avatar"
+                        android:scaleType="fitCenter"
                         android:layout_marginRight="@dimen/space_normal"/>
                 </RelativeLayout>
                 <include layout="@layout/horizontal_divider"/>

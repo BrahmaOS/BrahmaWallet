@@ -38,7 +38,7 @@
     <!-- Drawer menu -->
     <string name="nav_menu_other">Other</string>
     <string name="nav_menu_setting">Settings</string>
-    <string name="nav_menu_help">FAQ</string>
+    <string name="nav_menu_help">Help</string>
     <string name="nav_menu_info">About Us</string>
 
     <!-- Strings related to dialog -->
@@ -404,7 +404,7 @@
     <string name="confirm_error">Wrong mnemonic order, please check.</string>
 
     <!-- string about us -->
-    <string name="title_about_us">About</string>
+    <string name="title_about_us">About Us</string>
     <string name="about_current_version">Current Version: </string>
     <string name="desc_wallet">
         Brahma Wallet is a fully open source, decentralized mobile light wallet. It is designed to provide users with a secure, easy-to-use digital asset wallet application.
@@ -422,7 +422,7 @@
     <string name="title_service_terms">Brahma Wallet Service Agreement</string>
 
     <!-- string about contacts -->
-    <string name="title_contacts">Contacts</string>
+    <string name="title_contacts">Address Book</string>
     <string name="title_choose_contact">Choose Contact</string>
     <string name="title_add_contact">Add Contact</string>
     <string name="title_my_accounts">My Accounts</string>
@@ -575,6 +575,7 @@
     <string name="label_set_payment_password">Set a 6-digit payment password</string>
     <string name="label_repeat_password">Please enter your password again</string>
     <string name="tip_repeat_password_error">Inconsistent password entered twice</string>
+    <string name="menu_account_info">Account Info</string>
     <string name="menu_transactions">Transactions</string>
     <string name="menu_address_book">Address Book</string>
     <string name="menu_pay_test">模拟用户支付场景</string>
