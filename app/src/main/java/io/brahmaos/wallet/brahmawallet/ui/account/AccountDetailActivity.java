@@ -28,6 +28,7 @@ import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.service.MainService;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
+import io.brahmaos.wallet.brahmawallet.ui.biometric.TouchIDPayActivity;
 import io.brahmaos.wallet.brahmawallet.view.CustomProgressDialog;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
@@ -35,11 +36,8 @@ import io.brahmaos.wallet.util.CommonUtil;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-import android.widget.Switch;
-import io.brahmaos.wallet.brahmawallet.FingerprintCore;
-import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 
-public class AccountDetailActivity extends BaseActivity implements FingerprintCore.SimpleAuthenticationCallback{
+public class AccountDetailActivity extends BaseActivity {
 
     @Override
     protected String tag() {
@@ -75,9 +73,6 @@ public class AccountDetailActivity extends BaseActivity implements FingerprintCo
     private AccountViewModel mViewModel;
     private CustomProgressDialog progressDialog;
     private RelativeLayout mLayoutTouchID;
-    private Switch mSwitchTouchID;
-    private FingerprintCore fingerprintCore;
-    private AlertDialog mFingerDialog = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,14 +81,11 @@ public class AccountDetailActivity extends BaseActivity implements FingerprintCo
         ButterKnife.bind(this);
         showNavBackBtn();
         mLayoutTouchID = (RelativeLayout) findViewById(R.id.layout_account_touch_id);
-        mSwitchTouchID = (Switch) findViewById(R.id.switch_touch_id);
         accountId = getIntent().getIntExtra(IntentParam.PARAM_ACCOUNT_ID, 0);
         if (accountId <= 0) {
             finish();
         }
         mViewModel = ViewModelProviders.of(this).get(AccountViewModel.class);
-        fingerprintCore = new FingerprintCore(this);
-        fingerprintCore.setCallback(this);
     }
 
     @Override
@@ -150,26 +142,12 @@ public class AccountDetailActivity extends BaseActivity implements FingerprintCo
             startActivity(intent);
         });
 
-        if (1 != fingerprintCore.checkFingerprintAvailable()) {
-            BrahmaConfig.getInstance().setTouchIDPayState(account.getAddress(), false);
-            fingerprintCore.clearTouchIDPay(account.getAddress());
-        }
-        mSwitchTouchID.setOnCheckedChangeListener(null);
-        mSwitchTouchID.setChecked(BrahmaConfig.getInstance().getTouchIDPayState(account.getAddress()));
         mLayoutTouchID.setOnClickListener(v -> {
-            if (!BrahmaConfig.getInstance().getTouchIDPayState(account.getAddress())) {
-                openTouchID(account.getAddress());
-            } else {
-                closeTouchID(account.getAddress());
-            }
+            Intent intent = new Intent(this, TouchIDPayActivity.class);
+            intent.putExtra(IntentParam.PARAM_ACCOUNT_ID, account.getId());
+            intent.putExtra(IntentParam.PARAM_ACCOUNT_TYPE, BrahmaConst.ETH_ACCOUNT_TYPE);
+            startActivity(intent);
         });
-        mSwitchTouchID.setOnCheckedChangeListener((v1, isChecked) -> {
-            BrahmaConfig.getInstance().setTouchIDPayState(account.getAddress(), isChecked);
-            if (!isChecked) {
-                fingerprintCore.clearTouchIDPay(account.getAddress());
-            }
-        });
-
         tvChangePassword.setOnClickListener(v -> {
             Intent intent = new Intent(this, AccountChangePasswordActivity.class);
             intent.putExtra(IntentParam.PARAM_ACCOUNT_ID, account.getId());
@@ -216,132 +194,9 @@ public class AccountDetailActivity extends BaseActivity implements FingerprintCo
         });
     }
 
-    private void openTouchID(String accountAddr) {
-        //check whether support fingerprint
-        int result = fingerprintCore.checkFingerprintAvailable();
-        if (-1 == result) {
-            showShortToast(getString(R.string.touch_id_no_hardware));
-        } else if (0 == result) {
-            showShortToast(getString(R.string.touch_id_no_fingerprint));
-        } else if (1 == result) {
-            try {
-                fingerprintCore.generateKey(accountAddr);
-            } catch (Exception e) {
-                showShortToast(getString(R.string.touch_id_auth_fail));
-                return;
-            }
-            final View dialogView = getLayoutInflater().inflate(R.layout.dialog_account_password, null);
-            AlertDialog passwordDialog = new AlertDialog.Builder(this)
-                    .setView(dialogView)
-                    .setCancelable(true)
-                    .setPositiveButton(R.string.confirm, (dialog, which) -> {
-                        dialog.cancel();
-                        String password = ((EditText) dialogView.findViewById(R.id.et_password)).getText().toString();
-                        prepareEncryptPassword(password);
-                    })
-                    .create();
-            passwordDialog.show();
-        }
-    }
-
-    private void closeTouchID(String accountAddr) {
-        mSwitchTouchID.setChecked(false);
-    }
-
-    private void showFingerprintDialog(String password) {
-        mFingerDialog = new AlertDialog.Builder(this)
-                .setCancelable(false)
-                .create();
-        View fingerView = View.inflate(this, R.layout.fingerdialog, null);
-        TextView cancel = fingerView.findViewById(R.id.fingerprint_cancel_tv);
-        cancel.setOnClickListener(v -> {
-            fingerprintCore.stopListening();
-            if (!BrahmaConfig.getInstance().getTouchIDPayState(account.getAddress())) {
-                fingerprintCore.clearTouchIDPay(account.getAddress());
-            }
-            mFingerDialog.cancel();
-        });
-        mFingerDialog.show();
-        mFingerDialog.setContentView(fingerView);
-//        mFingerDialog.getWindow().setLayout(8 * getResources().getDimensionPixelSize(
-//                R.dimen.icon_normal_size), LinearLayout.LayoutParams.WRAP_CONTENT);
-
-        try {
-            fingerprintCore.encryptData(account.getAddress(), password);
-        } catch (Exception e) {
-            mFingerDialog.cancel();
-            showShortToast(getString(R.string.touch_id_auth_fail));
-        }
-    }
-
-    private void prepareEncryptPassword(String password) {
-        progressDialog.show();
-        BrahmaWeb3jService.getInstance()
-                .getPrivateKeyByPassword(account.getFilename(), password)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<String>() {
-                    @Override
-                    public void onNext(String privateKey) {
-                        if (progressDialog != null) {
-                            progressDialog.cancel();
-                        }
-                        if (privateKey != null && BrahmaWeb3jService.getInstance().isValidPrivateKey(privateKey)) {
-                            showFingerprintDialog(password);
-                        } else {
-                            showPasswordErrorDialog();
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        if (progressDialog != null) {
-                            progressDialog.cancel();
-                        }
-                        showPasswordErrorDialog();
-                    }
-
-                    @Override
-                    public void onCompleted() {
-
-                    }
-                });
-    }
-
-    @Override
-    public void onAuthenticationError(int errorCode, CharSequence errString) {
-        showShortToast(null == errString ? "" : errString.toString());
-        if (7 == errorCode) {
-            if (mFingerDialog != null) {
-                mFingerDialog.cancel();
-            }
-        }
-    }
-
-    @Override
-    public void onAuthenticationHelp(int helpCode, CharSequence helpString) {
-        showShortToast(null == helpString ? "" : helpString.toString());
-    }
-
-    @Override
-    public void onAuthenticationFail() {
-        showShortToast(getString(R.string.fail_fingerprint_verification));
-    }
-
-    @Override
-    public void onAuthenticationSucceeded(String data) {
-        if (mFingerDialog != null) {
-            mFingerDialog.cancel();
-        }
-        mSwitchTouchID.setChecked(true);
-
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        fingerprintCore.setCallback(null);
     }
 
     private void exportKeystore(String password) {

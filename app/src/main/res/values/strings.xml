@@ -102,6 +102,11 @@
     <string name="label_account_address">Address</string>
     <string name="label_qrcode">Address Code</string>
     <string name="label_touch_id">Touch ID Pay</string>
+    <string name="touch_id_info">Touch ID makes payments safer and quicker</string>
+    <string name="touch_id_view">View</string>
+    <string name="touch_id_notice">Touch ID Payment Notice</string>
+    <string name="touch_id_open">Agree To The Agreement And Open</string>
+    <string name="touch_id_close">Close</string>
     <string name="action_change_account_name">Change Name</string>
     <string name="action_change_password">Change Password</string>
     <string name="action_export_private_key">Export Private Key</string>
@@ -141,6 +146,10 @@
     <string name="prompt_account_name">Name</string>
     <string name="prompt_password">Password</string>
     <string name="prompt_repeat_password">Repeat password</string>
+    <string name="prompt_account_password">Account Password</string>
+    <string name="prompt_close_touch_id">Are you sure you want to close Touch ID Pay?</string>
+    <string name="prompt_sure">Sure</string>
+    <string name="prompt_no">No</string>
     <string name="action_agree">Agree on</string>
     <string name="service_agreement">&#160;Service Agreement&#160;</string>
     <string name="protocol_and">and</string>

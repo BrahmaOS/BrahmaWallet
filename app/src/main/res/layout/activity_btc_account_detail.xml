@@ -131,13 +131,12 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:text="@string/label_touch_id"/>
-                    <Switch
-                        android:id="@+id/switch_touch_id"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:clickable="false"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"/>
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_alignParentRight="true"
+                        android:src="@drawable/ic_keyboard_arrow_right_gray"/>
                 </RelativeLayout>
 
                 <include layout="@layout/horizontal_divider"/>

@@ -97,6 +97,11 @@
     <string name="label_account_address">账号地址</string>
     <string name="label_qrcode">地址二维码</string>
     <string name="label_touch_id">指纹支付</string>
+    <string name="touch_id_info">指纹支付，让支付更安全便捷</string>
+    <string name="touch_id_view">查看</string>
+    <string name="touch_id_notice">《指纹支付协议》</string>
+    <string name="touch_id_open">同意协议并开通</string>
+    <string name="touch_id_close">关闭</string>
     <string name="action_change_account_name">更改账号名</string>
     <string name="action_change_password">更改密码</string>
     <string name="action_export_private_key">导出私钥</string>
@@ -136,6 +141,10 @@
     <string name="prompt_account_name">账号名</string>
     <string name="prompt_password">密码</string>
     <string name="prompt_repeat_password">重复密码</string>
+    <string name="prompt_account_password">钱包账号的密码</string>
+    <string name="prompt_close_touch_id">您确定要关闭指纹支付吗？</string>
+    <string name="prompt_sure">是</string>
+    <string name="prompt_no">否</string>
     <string name="action_agree">同意</string>
     <string name="service_agreement">&#160;服务协议&#160;</string>
     <string name="protocol_and">及</string>
