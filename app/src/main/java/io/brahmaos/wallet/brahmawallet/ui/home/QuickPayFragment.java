@@ -45,6 +45,7 @@ import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.ui.account.CreateAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.account.RestoreAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseFragment;
+import io.brahmaos.wallet.brahmawallet.ui.pay.PayAccountAddCreditActivity;
 import io.brahmaos.wallet.brahmawallet.ui.pay.SetPayAccountPasswordActivity;
 import io.brahmaos.wallet.brahmawallet.ui.token.TokensActivity;
 import io.brahmaos.wallet.brahmawallet.ui.transfer.InstantExchangeActivity;
@@ -87,9 +88,14 @@ public class QuickPayFragment extends BaseFragment {
     @Override
     protected boolean initView() {
         layoutAddQuickPayAccount = parentView.findViewById(R.id.layout_add_quick_pay_account);
-        layoutPayAccountInfo = parentView.findViewById(R.id.layout_pay_account_info);
         layoutHeader = parentView.findViewById(R.id.layout_header);
         recyclerViewAccounts = parentView.findViewById(R.id.accounts_recycler);
+        layoutPayAccountInfo = parentView.findViewById(R.id.layout_pay_account_info);
+        LinearLayout layoutAddCredit = parentView.findViewById(R.id.layout_pay_add_credit);
+        layoutAddCredit.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), PayAccountAddCreditActivity.class);
+            startActivity(intent);
+        });
 
         DisplayMetrics display = this.getResources().getDisplayMetrics();
 

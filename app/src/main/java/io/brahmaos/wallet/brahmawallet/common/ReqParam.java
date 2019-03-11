@@ -14,4 +14,11 @@ public class ReqParam {
     public static final String PARAM_PAY_PASSWORD = "pay_passwd";
     public static final String PARAM_SIGN_TYPE = "sign_type";
     public static final String PARAM_SIGN = "sign";
+    public static final String PARAM_SENDER = "sender";
+    public static final String PARAM_COIN_CODE = "coin_code";
+    public static final String PARAM_AMOUNT = "amount";
+    public static final String PARAM_REMARK = "remark";
+    public static final String PARAM_ORDER_ID = "order_id";
+    public static final String PARAM_RECEIVER_INFO = "receiver_info";
+    public static final String PARAM_RECEIVER = "receiver";
 }

@@ -10,4 +10,6 @@ public class ApiConst {
     public static final String PARAM_VER_INFO = "v";
     public static final int TOKEN_TYPE_ERC20 = 1;
     public static final String PARAM_TRANSACTIONS = "transactions";
+
+    public static final int INVALID_TOKEN = 1005;
 }

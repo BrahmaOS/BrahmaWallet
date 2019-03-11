@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.web3j.protocol.ObjectMapperFactory;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -19,6 +21,7 @@ import java.util.Random;
 import java.util.TreeMap;
 
 import io.brahmaos.wallet.brahmawallet.WalletApp;
+import io.brahmaos.wallet.brahmawallet.api.ApiConst;
 import io.brahmaos.wallet.brahmawallet.api.ApiRespResult;
 import io.brahmaos.wallet.brahmawallet.api.Networks;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
@@ -109,6 +112,71 @@ public class PayService extends BaseService{
                 });
     }
 
+    private Observable<ApiRespResult> callMethod(String methodName, Map params) {
+        Class<?> cls = PayService.class;
+        try {
+            Method method = cls.getMethod(methodName, Map.class);
+            return (Observable<ApiRespResult>) method.invoke(PayService.getInstance(), params);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /*
+     * Fetch pay request token.
+     */
+    public Observable<ApiRespResult> getPayTokenForQuickPay(String methodName, Map params) {
+        return Observable.create(e -> {
+            Map<String, Object> tokenParams = new HashMap<>();
+            tokenParams.put(ReqParam.PARAM_UD_ID, StatisticHttpUtils.getUDID(context));
+            Networks.getInstance().getPayApi()
+                    .getPayRequestToken(tokenParams)
+                    .flatMap((Func1<ApiRespResult, Observable<Boolean>>) apr -> {
+                        if (apr != null && apr.getResult() == 0 && apr.getData() != null) {
+                            BLog.i(tag(), apr.toString());
+                            ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
+                            try {
+                                PayRequestToken payRequestToken = objectMapper.readValue(objectMapper.writeValueAsString(apr.getData()), new TypeReference<PayRequestToken>() {});
+                                BrahmaConfig.getInstance().setPayRequestToken(payRequestToken.getAccessToken());
+                                BrahmaConfig.getInstance().setPayRequestTokenType(payRequestToken.getTokenType());
+                                return Observable.from(new Boolean[]{Boolean.TRUE});
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            }
+                        }
+                        return Observable.from(new Boolean[]{Boolean.FALSE});
+                    })
+                    .flatMap((Func1<Boolean, Observable<ApiRespResult>>) apr -> {
+                        if (apr != null && apr) {
+                            return callMethod(methodName, params);
+                        }
+                        return Observable.from((ApiRespResult[]) null);
+                    })
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<ApiRespResult>() {
+                        @Override
+                        public void onCompleted() {
+                        }
+
+                        @Override
+                        public void onError(Throwable throwable) {
+                            throwable.printStackTrace();
+                        }
+
+                        @Override
+                        public void onNext(ApiRespResult api) {
+                            e.onNext(api);
+                        }
+                    });
+        });
+    }
+
     /*
      * Fetch pay request token.
      */
@@ -178,14 +246,13 @@ public class PayService extends BaseService{
             params.put(ReqParam.PARAM_ACCOUNT_TYPE, type);
             params.put(ReqParam.PARAM_PUBLIC_KEY, publicKey);
             params.put(ReqParam.PARAM_PAY_PASSWORD, payPassword);
-            params.put(ReqParam.PARAM_NONCE, 8);
-            params.put(ReqParam.PARAM_TIMESTAMP, 1551941187);
+            params.put(ReqParam.PARAM_NONCE, CommonUtil.getNonce());
+            params.put(ReqParam.PARAM_TIMESTAMP, CommonUtil.getCurrentSecondTimestamp());
             params.put(ReqParam.PARAM_SIGN_TYPE, BrahmaConst.PAY_REQUEST_SIGN_TYPE);
             String sign = CommonUtil.generateSignature(uri, params, privateKey);
             params.put(ReqParam.PARAM_SIGN, sign);
 
-            Networks.getInstance().getPayApi()
-                    .setQuickPayAccount(params)
+            createPayAccountByNet(params)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<ApiRespResult>() {
@@ -207,15 +274,19 @@ public class PayService extends BaseService{
                                     BLog.i(tag(), apr.toString());
                                     BrahmaConfig.getInstance().setPayAccount(address);
                                     e.onNext(address);
-                                } else if (apr.getResult() == 1005) {
-                                    getPayTokenForCreateAccount(address, type, payPassword, privateKey, publicKey)
+                                } else if (apr.getResult() == ApiConst.INVALID_TOKEN) {
+                                    getPayTokenForQuickPay("createPayAccountByNet", params)
                                             .subscribeOn(Schedulers.io())
                                             .observeOn(AndroidSchedulers.mainThread())
-                                            .subscribe(new Observer<String>() {
+                                            .subscribe(new Observer<ApiRespResult>() {
                                                 @Override
-                                                public void onNext(String address) {
-                                                    BLog.d(tag(), address);
-                                                    e.onNext(address);
+                                                public void onNext(ApiRespResult apiRespResult) {
+                                                    if (apiRespResult != null && apiRespResult.getResult() == 0) {
+                                                        BrahmaConfig.getInstance().setPayAccount(address);
+                                                        e.onNext(address);
+                                                    } else {
+                                                        e.onNext(null);
+                                                    }
                                                 }
 
                                                 @Override
@@ -239,12 +310,94 @@ public class PayService extends BaseService{
         });
     }
 
-    // Get alltokenEntity
-    public Observable<AllTokenEntity> queryAllTokenEntity(String address) {
+    public Observable<ApiRespResult> createPayAccountByNet(Map<String, Object> params) {
+        return Networks.getInstance().getPayApi().setQuickPayAccount(params);
+    }
+
+    /*
+     * Create credit pre order.
+     */
+    public Observable<Map> createCreditPreOrder(String address, int coinCode,
+                                                   String amount, String remark) {
         return Observable.create(e -> {
-            AllTokenEntity allTokenEntity = ((WalletApp) context.getApplicationContext()).getRepository().queryAllTokenByAddress(address);
-            e.onNext(allTokenEntity);
-            e.onCompleted();
+            TreeMap<String, Object> params = new TreeMap<>();
+            params.put(ReqParam.PARAM_SENDER, address);
+            params.put(ReqParam.PARAM_COIN_CODE, coinCode);
+            params.put(ReqParam.PARAM_AMOUNT, amount);
+            params.put(ReqParam.PARAM_REMARK, remark);
+
+            createCreditPreOrderByNet(params)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<ApiRespResult>() {
+                        @Override
+                        public void onCompleted() {
+                            e.onCompleted();
+                        }
+
+                        @Override
+                        public void onError(Throwable throwable) {
+                            throwable.printStackTrace();
+                            e.onError(throwable);
+                        }
+
+                        @Override
+                        public void onNext(ApiRespResult apr) {
+                            if (apr != null) {
+                                if (apr.getResult() == 0 && apr.getData() != null) {
+                                    BLog.i(tag(), apr.toString());
+                                    Map result = apr.getData();
+                                    Map<String, Object> orderInfo = new HashMap<>();
+                                    orderInfo.put(ReqParam.PARAM_ORDER_ID, result.get(ReqParam.PARAM_ORDER_ID));
+                                    if (result.containsKey(ReqParam.PARAM_RECEIVER_INFO) &&
+                                            ((Map)result.get(ReqParam.PARAM_RECEIVER_INFO)).containsKey(ReqParam.PARAM_RECEIVER)) {
+                                        orderInfo.put(ReqParam.PARAM_RECEIVER, ((Map)result.get(ReqParam.PARAM_RECEIVER_INFO)).get(ReqParam.PARAM_RECEIVER));
+                                    }
+                                    e.onNext(orderInfo);
+                                } else if (apr.getResult() == ApiConst.INVALID_TOKEN) {
+                                    getPayTokenForQuickPay("createCreditPreOrderByNet", params)
+                                            .subscribeOn(Schedulers.io())
+                                            .observeOn(AndroidSchedulers.mainThread())
+                                            .subscribe(new Observer<ApiRespResult>() {
+                                                @Override
+                                                public void onNext(ApiRespResult apiRespResult) {
+                                                    if (apr.getResult() == 0 && apr.getData() != null) {
+                                                        BLog.i(tag(), apr.toString());
+                                                        Map result = apr.getData();
+                                                        Map<String, Object> orderInfo = new HashMap<>();
+                                                        orderInfo.put(ReqParam.PARAM_ORDER_ID, result.get(ReqParam.PARAM_ORDER_ID));
+                                                        if (result.containsKey(ReqParam.PARAM_RECEIVER_INFO) &&
+                                                                ((Map)result.get(ReqParam.PARAM_RECEIVER_INFO)).containsKey(ReqParam.PARAM_RECEIVER)) {
+                                                            orderInfo.put(ReqParam.PARAM_RECEIVER, ((Map)result.get(ReqParam.PARAM_RECEIVER_INFO)).get(ReqParam.PARAM_RECEIVER));
+                                                        }
+                                                        e.onNext(orderInfo);
+                                                    } else {
+                                                        e.onNext(null);
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onError(Throwable error) {
+                                                    error.printStackTrace();
+                                                }
+
+                                                @Override
+                                                public void onCompleted() {
+
+                                                }
+                                            });
+                                } else {
+                                    e.onNext(null);
+                                }
+                            } else {
+                                e.onNext(null);
+                            }
+                        }
+                    });
         });
+    }
+
+    public Observable<ApiRespResult> createCreditPreOrderByNet(Map<String, Object> params) {
+        return Networks.getInstance().getPayApi().createPayAccountPreCredit(params);
     }
 }

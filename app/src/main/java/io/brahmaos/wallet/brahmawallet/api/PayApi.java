@@ -29,19 +29,16 @@ public interface PayApi {
     Observable<ApiRespResult> setQuickPayAccount(@Body Map<String, Object> params);
 
     /**
-     * Get the currency of the specified tokens
+     * Create quick pay account credit pre order
      */
-    @GET("/v1/ticker/{id}/")
-    Observable<List<CryptoCurrency>> getCryptoCurrency(@Path("id") String id,
-                                                       @Query("convert") String convertFormat);
+    @POST("/pay/create/deposit")
+    Observable<ApiRespResult> createPayAccountPreCredit(@Body Map<String, Object> params);
 
     /**
-     * Get the latest version of the wallet
+     * Account credit order
      */
-    @GET("/v2/wallet/versions/latest")
-    Observable<ApiRespResult> getLatestVersion(@Query("app") int appId,
-                                               @Query("os") int osId,
-                                               @Query("lang") String language);
+    @POST("/pay/payment/deposit")
+    Observable<ApiRespResult> createaPaymentOrder(@Body Map<String, Object> params);
 
     /**
      * Get the latest version of the tokens
