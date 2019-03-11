@@ -1,49 +1,32 @@
 package io.brahmaos.wallet.brahmawallet.ui.pay;
 
-import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import java.math.BigDecimal;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
-import io.brahmaos.wallet.brahmawallet.api.ApiRespResult;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
-import io.brahmaos.wallet.brahmawallet.common.IntentParam;
-import io.brahmaos.wallet.brahmawallet.common.ReqParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
-import io.brahmaos.wallet.brahmawallet.service.PayService;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
-import io.brahmaos.wallet.brahmawallet.ui.transfer.EthTransferActivity;
 import io.brahmaos.wallet.brahmawallet.view.CustomProgressDialog;
-import io.brahmaos.wallet.brahmawallet.view.PassWordLayout;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
-import io.brahmaos.wallet.util.BLog;
-import io.brahmaos.wallet.util.CommonUtil;
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
-public class PayAccountAddCreditActivity extends BaseActivity {
+public class PayAccountRechargeActivity extends BaseActivity {
     @Override
     protected String tag() {
-        return PayAccountAddCreditActivity.class.getName();
+        return PayAccountRechargeActivity.class.getName();
     }
 
     // UI references.
@@ -75,7 +58,7 @@ public class PayAccountAddCreditActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pay_add_credit);
+        setContentView(R.layout.activity_pay_recharge);
         showNavBackBtn();
         ButterKnife.bind(this);
         mViewModel = ViewModelProviders.of(this).get(AccountViewModel.class);
@@ -120,35 +103,6 @@ public class PayAccountAddCreditActivity extends BaseActivity {
                     sendValueStr, chosenCoinCode, BrahmaConfig.getInstance().getPayAccount()));
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
             startActivity(intent);
-            /*PayService.getInstance().createCreditPreOrder(BrahmaConfig.getInstance().getPayAccount(),
-                    chosenCoinCode, sendValueStr, "")
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Observer<Map>() {
-                        @Override
-                        public void onNext(Map orderInfo) {
-                            if (progressDialog != null) {
-                                progressDialog.cancel();
-                            }
-                            if (orderInfo != null && orderInfo.containsKey(ReqParam.PARAM_ORDER_ID)
-                                    && orderInfo.containsKey(ReqParam.PARAM_RECEIVER)) {
-                                String orderId = (String) orderInfo.get(ReqParam.PARAM_ORDER_ID);
-                                String receipt = (String) orderInfo.get(ReqParam.PARAM_RECEIVER);
-                                showLongToast(String.format("orderId: %s ; receipt: %s;", orderId, receipt));
-                                BLog.d(tag(), String.format("orderId: %s ; receipt: %s;", orderId, receipt));
-                            }
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            e.printStackTrace();
-                        }
-
-                        @Override
-                        public void onCompleted() {
-
-                        }
-                    });*/
         });
     }
 

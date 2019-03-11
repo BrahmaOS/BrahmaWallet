@@ -3,8 +3,8 @@ package io.brahmaos.wallet.brahmawallet.ui.pay;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Network;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
@@ -35,12 +35,18 @@ import org.web3j.utils.Numeric;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.brahmaos.wallet.brahmawallet.R;
+import io.brahmaos.wallet.brahmawallet.api.ApiConst;
+import io.brahmaos.wallet.brahmawallet.api.ApiRespResult;
+import io.brahmaos.wallet.brahmawallet.api.Networks;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
+import io.brahmaos.wallet.brahmawallet.common.ReqParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 import io.brahmaos.wallet.brahmawallet.event.EventTypeDef;
@@ -49,6 +55,7 @@ import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
 import io.brahmaos.wallet.brahmawallet.service.BtcAccountManager;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.service.MainService;
+import io.brahmaos.wallet.brahmawallet.service.PayService;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.view.CustomStatusView;
 import io.brahmaos.wallet.util.AnimationUtil;
@@ -63,13 +70,20 @@ import rx.schedulers.Schedulers;
 
 public class QuickPayActivity extends BaseActivity {
 
+    public static String PARAM_ACCESS_KEY_ID = "access_key_id";
+    public static String PARAM_CREDIT = "credit";
+    public static String PARAM_AMOUNT = "amount";
+    public static String PARAM_COIN_CODE = "coin_code";
+
     private ImageView mImageViewClose;
     private LinearLayout mLayoutTransferInfo;
     private ImageView mImageViewCoin;
     private TextView mTvCoinName;
     private EditText mEtTransferAmount;
     private TextView mTvTransferAmount;
-    private TextView mTvReceiptAddress;
+    private TextView mTvCommodityInformation;
+    private TextView mTvMerchantName;
+    private TextView mTvPaymentMethod;
     private LinearLayout mLayoutChooseToken;
     private RelativeLayout mLayoutAccount;
     private ImageView mIvChosenAccountAvatar;
@@ -100,14 +114,24 @@ public class QuickPayActivity extends BaseActivity {
     private LinearLayout mLayoutChooseAccount;
     private ImageView ivCloseChooseAccount;
 
+    private RelativeLayout mLayoutPayRemark;
+    private TextView mTvPaymentRemark;
+    private LinearLayout mLayoutEditPayRemark;
+    private ImageView mIvClosePayRemark;
+    private EditText mEtPayRemark;
+    private Button btnConfirmRemark;
+
     private LinearLayout mLayoutTransferStatus;
     private CustomStatusView customStatusView;
     private TextView tvTransferStatus;
 
-    private String receiptAddress;
     private int coinCode;
+    private boolean isAddCredit = false;
+    private String orderId;
+    private String receiptAddress;
     private String intentParamSendValue;
     private BigInteger transferValue;
+    private String paymentRemark;
     private BigInteger accountBalance;
     private AccountEntity chosenAccount;
     private TokenEntity chosenToken = new TokenEntity();
@@ -136,21 +160,178 @@ public class QuickPayActivity extends BaseActivity {
         window.setStatusBarColor(Color.TRANSPARENT);
         window.setNavigationBarColor(Color.TRANSPARENT);
         Uri uri = getIntent().getData();
-        BLog.d(tag(), "the uri is:" + uri.getQuery());
-        String accessKeyId = uri.getQueryParameter("access_key_id");
-        intentParamSendValue = uri.getQueryParameter("amount");
-        String coinCodeStr = uri.getQueryParameter("coin_code");
-        coinCode = Integer.valueOf(coinCodeStr);
+        String accessKeyId = uri.getQueryParameter(PARAM_ACCESS_KEY_ID);
         if (accessKeyId == null) {
             BLog.d(tag(), "the access key id is null ");
         } else {
             BLog.d(tag(), "the access key id is: " + accessKeyId);
         }
+        String addCreditStr = uri.getQueryParameter(PARAM_CREDIT);
+        if (addCreditStr != null && Integer.valueOf(addCreditStr) == 1) {
+            isAddCredit = true;
+        }
+        intentParamSendValue = uri.getQueryParameter(PARAM_AMOUNT);
+        if (intentParamSendValue == null) {
+            showLongToast(R.string.tip_lack_param);
+            finish();
+        }
+        String coinCodeStr = uri.getQueryParameter(PARAM_COIN_CODE);
+        if (coinCodeStr == null) {
+            showLongToast(R.string.tip_lack_param);
+            finish();
+        }
+        try {
+            coinCode = Integer.valueOf(coinCodeStr);
+        } catch (NumberFormatException e) {
+            showLongToast(R.string.tip_invalid_param);
+            finish();
+        }
+        paymentRemark = uri.getQueryParameter("paymentRemark");
+        if (paymentRemark == null) {
+            paymentRemark = "";
+        }
 
         setContentView(R.layout.activity_pay_quick);
-        receiptAddress = getIntent().getStringExtra(IntentParam.PARAM_PAY_RECEIPT_ADDRESS);
-
         initView();
+        initData();
+    }
+
+    private void initView() {
+        mImageViewClose = findViewById(R.id.iv_close_dialog);
+        mImageViewClose.setOnClickListener(v -> {
+            finish();
+        });
+
+        mLayoutTransferInfo = findViewById(R.id.layout_transfer_info);
+        mImageViewCoin = findViewById(R.id.iv_transfer_token_icon);
+        mTvCoinName = findViewById(R.id.tv_transfer_token_name);
+        mTvTransferAmount = findViewById(R.id.tv_transfer_amount);
+        mEtTransferAmount = findViewById(R.id.et_transfer_amount);
+
+        mTvMerchantName = findViewById(R.id.tv_quick_pay_merchant_name);
+        mTvCommodityInformation = findViewById(R.id.tv_quick_pay_commodity_information);
+        mTvPaymentMethod = findViewById(R.id.tv_quick_pay_type);
+
+        mLayoutBtcFee = findViewById(R.id.layout_btc_fee);
+        mTvBtcFee = findViewById(R.id.tv_btc_fee);
+        mLayoutBtcFee.setOnClickListener(v -> {
+            etBtcFee.setText(mTvBtcFee.getText());
+            mLayoutEditBtcFee.setVisibility(View.VISIBLE);
+            mLayoutEditBtcFee.setAnimation(AnimationUtil.makeInAnimation());
+        });
+
+        mLayoutEditBtcFee = findViewById(R.id.layout_edit_btc_fee);
+        etBtcFee = findViewById(R.id.et_btc_fee);
+        ivCloseBtcFee = findViewById(R.id.iv_close_btc_fee);
+        ivCloseBtcFee.setOnClickListener(v -> {
+            mLayoutEditBtcFee.setVisibility(View.GONE);
+            mLayoutEditBtcFee.setAnimation(AnimationUtil.makeOutAnimation());
+        });
+        btnConfirmBtcFee = findViewById(R.id.btn_commit_btc_fee);
+        btnConfirmBtcFee.setOnClickListener(v -> {
+            String feePerByte = etBtcFee.getText().toString().trim();
+            if (feePerByte.length() >= 1) {
+                mTvBtcFee.setText(feePerByte);
+            }
+            mLayoutEditBtcFee.setVisibility(View.GONE);
+            mLayoutEditBtcFee.setAnimation(AnimationUtil.makeOutAnimation());
+        });
+
+        mLayoutChooseToken = findViewById(R.id.layout_choose_token);
+
+        mLayoutAccount = findViewById(R.id.layout_account);
+        mIvChosenAccountAvatar = findViewById(R.id.iv_chosen_account_avatar);
+        mTvAccountInfo = findViewById(R.id.tv_account_info);
+        mIvShowAccountsArrow = findViewById(R.id.iv_show_accounts_arrow);
+
+        mLayoutChooseAccount = findViewById(R.id.layout_choose_account);
+        mLayoutAccounts = findViewById(R.id.layout_accounts);
+        ivCloseChooseAccount = findViewById(R.id.iv_close_choose_account);
+        ivCloseChooseAccount.setOnClickListener(v -> {
+            mLayoutChooseAccount.setVisibility(View.GONE);
+            mLayoutChooseAccount.setAnimation(AnimationUtil.makeOutAnimation());
+        });
+
+        mLayoutGasPrice = findViewById(R.id.layout_eth_gas_price);
+        mTvGasPrice = findViewById(R.id.tv_eth_gas_price);
+        mTvGasLimit = findViewById(R.id.tv_eth_gas_limit);
+        mLayoutGasPrice.setOnClickListener(v -> {
+            etGasPrice.setText(mTvGasPrice.getText());
+            etGasLimit.setText(mTvGasLimit.getText());
+            mLayoutEditGasPrice.setVisibility(View.VISIBLE);
+            mLayoutEditGasPrice.setAnimation(AnimationUtil.makeInAnimation());
+        });
+        mLayoutGasLimit = findViewById(R.id.layout_eth_gas_limit);
+        mLayoutGasLimit.setOnClickListener(v -> {
+            etGasPrice.setText(mTvGasPrice.getText());
+            etGasLimit.setText(mTvGasLimit.getText());
+            mLayoutEditGasPrice.setVisibility(View.VISIBLE);
+            mLayoutEditGasPrice.setAnimation(AnimationUtil.makeInAnimation());
+        });
+        mLayoutEditGasPrice = findViewById(R.id.layout_edit_eth_gas_price);
+        btnConfirmGas = findViewById(R.id.btn_commit_gas_price);
+        etGasLimit = findViewById(R.id.et_gas_limit);
+        etGasPrice = findViewById(R.id.et_gas_price);
+        ivCloseGasPrice = findViewById(R.id.iv_close_eth_gas_price);
+        ivCloseGasPrice.setOnClickListener(v -> {
+            mLayoutEditGasPrice.setVisibility(View.GONE);
+            mLayoutEditGasPrice.setAnimation(AnimationUtil.makeOutAnimation());
+        });
+        btnConfirmGas.setOnClickListener(v -> {
+            String gasPrice = etGasPrice.getText().toString().trim();
+            if (gasPrice.length() >= 1) {
+                mTvGasPrice.setText(gasPrice);
+            }
+            String gasLimit = etGasLimit.getText().toString().trim();
+            if (gasLimit.length() >= 1) {
+                mTvGasLimit.setText(gasLimit);
+            }
+            mLayoutEditGasPrice.setVisibility(View.GONE);
+            mLayoutEditGasPrice.setAnimation(AnimationUtil.makeOutAnimation());
+        });
+
+        mLayoutPayRemark = findViewById(R.id.layout_pay_remark);
+        mLayoutPayRemark.setOnClickListener(v -> {
+            mEtPayRemark.setText(mTvPaymentRemark.getText());
+            mLayoutEditPayRemark.setVisibility(View.VISIBLE);
+            mLayoutEditPayRemark.setAnimation(AnimationUtil.makeInAnimation());
+        });
+        mTvPaymentRemark = findViewById(R.id.tv_remark);
+        mLayoutEditPayRemark = findViewById(R.id.layout_edit_pay_remark);
+        mIvClosePayRemark = findViewById(R.id.iv_close_pay_remark);
+        mIvClosePayRemark.setOnClickListener(v -> {
+            mLayoutEditPayRemark.setVisibility(View.GONE);
+            mLayoutEditPayRemark.setAnimation(AnimationUtil.makeOutAnimation());
+        });
+        mEtPayRemark = findViewById(R.id.et_pay_remark);
+        btnConfirmRemark = findViewById(R.id.btn_commit_remark);
+        btnConfirmRemark.setOnClickListener(v -> {
+            String remark = mEtPayRemark.getText().toString().trim();
+            if (remark.length() >= 1) {
+                mTvPaymentRemark.setText(remark);
+            }
+            mLayoutEditPayRemark.setVisibility(View.GONE);
+            mLayoutEditPayRemark.setAnimation(AnimationUtil.makeOutAnimation());
+        });
+
+        mLayoutTransferStatus = findViewById(R.id.layout_transfer_status);
+        customStatusView = findViewById(R.id.as_status);
+        tvTransferStatus = findViewById(R.id.tv_transfer_status);
+
+        mBtnConfirmTransfer = findViewById(R.id.btn_commit_transfer);
+        mBtnConfirmTransfer.setOnClickListener(v -> {
+            /*Intent intent = new Intent();
+            setResult(RESULT_OK, intent);
+            finish();*/
+            showPasswordDialog();
+        });
+
+        // Initialize values based on parameters
+        if (isAddCredit) {
+            mTvMerchantName.setText(getString(R.string.label_quick_payment_account_recharge));
+            mTvCommodityInformation.setText(getString(R.string.brm_pay));
+            mTvPaymentMethod.setText(getString(R.string.payment_type_ordinary_payment));
+        }
 
         if (coinCode == BrahmaConst.COIN_CODE_BTC) {
             chosenToken.setName(BrahmaConst.COIN_BTC);
@@ -171,9 +352,6 @@ public class QuickPayActivity extends BaseActivity {
                 chosenToken.setShortName(BrahmaConst.COIN_SYMBOL_ETH);
             }
         }
-
-        // set receipt address
-        mTvReceiptAddress.setText(receiptAddress);
 
         // send value
         if (intentParamSendValue != null && intentParamSendValue.length() > 0) {
@@ -205,7 +383,9 @@ public class QuickPayActivity extends BaseActivity {
                 mTvCoinName.setText(BrahmaConst.COIN_SYMBOL_ETH);
             }
         }
+    }
 
+    private void initData() {
         // btc wallet app kit init
         btcAppkitSetup = RxEventBus.get().register(EventTypeDef.BTC_APP_KIT_INIT_SET_UP, Boolean.class);
         btcAppkitSetup.observeOn(AndroidSchedulers.mainThread())
@@ -314,109 +494,40 @@ public class QuickPayActivity extends BaseActivity {
                         }
                     }
                 });
+
+        // get pre order id
+        createPreOrderId();
     }
 
-    private void initView() {
-        mImageViewClose = findViewById(R.id.iv_close_dialog);
-        mImageViewClose.setOnClickListener(v -> {
-            finish();
-        });
+    private void createPreOrderId() {
+        PayService.getInstance().createCreditPreOrder(BrahmaConfig.getInstance().getPayAccount(),
+                    coinCode, intentParamSendValue, paymentRemark)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<Map>() {
+                        @Override
+                        public void onNext(Map orderInfo) {
+                            if (orderInfo != null && orderInfo.containsKey(ReqParam.PARAM_ORDER_ID)
+                                    && orderInfo.containsKey(ReqParam.PARAM_RECEIVER)) {
+                                orderId = (String) orderInfo.get(ReqParam.PARAM_ORDER_ID);
+                                receiptAddress = (String) orderInfo.get(ReqParam.PARAM_RECEIVER);
+                                BLog.d(tag(), String.format("orderId: %s ; receipt: %s;", orderId, receiptAddress));
+                            } else {
+                                BLog.d(tag(), "failed create order: " + orderInfo);
+                                finish();
+                            }
+                        }
 
-        mLayoutTransferInfo = findViewById(R.id.layout_transfer_info);
-        mImageViewCoin = findViewById(R.id.iv_transfer_token_icon);
-        mTvCoinName = findViewById(R.id.tv_transfer_token_name);
-        mTvTransferAmount = findViewById(R.id.tv_transfer_amount);
-        mEtTransferAmount = findViewById(R.id.et_transfer_amount);
-        mTvReceiptAddress = findViewById(R.id.tv_pay_to_address);
-        mLayoutBtcFee = findViewById(R.id.layout_btc_fee);
-        mTvBtcFee = findViewById(R.id.tv_btc_fee);
-        mLayoutBtcFee.setOnClickListener(v -> {
-            etBtcFee.setText(mTvBtcFee.getText());
-            mLayoutEditBtcFee.setVisibility(View.VISIBLE);
-            mLayoutEditBtcFee.setAnimation(AnimationUtil.makeInAnimation());
-        });
+                        @Override
+                        public void onError(Throwable e) {
+                            e.printStackTrace();
+                        }
 
-        mLayoutEditBtcFee = findViewById(R.id.layout_edit_btc_fee);
-        etBtcFee = findViewById(R.id.et_btc_fee);
-        ivCloseBtcFee = findViewById(R.id.iv_close_btc_fee);
-        ivCloseBtcFee.setOnClickListener(v -> {
-            mLayoutEditBtcFee.setVisibility(View.GONE);
-            mLayoutEditBtcFee.setAnimation(AnimationUtil.makeOutAnimation());
-        });
-        btnConfirmBtcFee = findViewById(R.id.btn_commit_btc_fee);
-        btnConfirmBtcFee.setOnClickListener(v -> {
-            String feePerByte = etBtcFee.getText().toString().trim();
-            if (feePerByte.length() >= 1) {
-                mTvBtcFee.setText(feePerByte);
-            }
-            mLayoutEditBtcFee.setVisibility(View.GONE);
-            mLayoutEditBtcFee.setAnimation(AnimationUtil.makeOutAnimation());
-        });
+                        @Override
+                        public void onCompleted() {
 
-        mLayoutChooseToken = findViewById(R.id.layout_choose_token);
-
-        mLayoutAccount = findViewById(R.id.layout_account);
-        mIvChosenAccountAvatar = findViewById(R.id.iv_chosen_account_avatar);
-        mTvAccountInfo = findViewById(R.id.tv_account_info);
-        mIvShowAccountsArrow = findViewById(R.id.iv_show_accounts_arrow);
-
-        mLayoutChooseAccount = findViewById(R.id.layout_choose_account);
-        mLayoutAccounts = findViewById(R.id.layout_accounts);
-        ivCloseChooseAccount = findViewById(R.id.iv_close_choose_account);
-        ivCloseChooseAccount.setOnClickListener(v -> {
-            mLayoutChooseAccount.setVisibility(View.GONE);
-            mLayoutChooseAccount.setAnimation(AnimationUtil.makeOutAnimation());
-        });
-
-        mLayoutGasPrice = findViewById(R.id.layout_eth_gas_price);
-        mTvGasPrice = findViewById(R.id.tv_eth_gas_price);
-        mTvGasLimit = findViewById(R.id.tv_eth_gas_limit);
-        mLayoutGasPrice.setOnClickListener(v -> {
-            etGasPrice.setText(mTvGasPrice.getText());
-            etGasLimit.setText(mTvGasLimit.getText());
-            mLayoutEditGasPrice.setVisibility(View.VISIBLE);
-            mLayoutEditGasPrice.setAnimation(AnimationUtil.makeInAnimation());
-        });
-        mLayoutGasLimit = findViewById(R.id.layout_eth_gas_limit);
-        mLayoutGasLimit.setOnClickListener(v -> {
-            etGasPrice.setText(mTvGasPrice.getText());
-            etGasLimit.setText(mTvGasLimit.getText());
-            mLayoutEditGasPrice.setVisibility(View.VISIBLE);
-            mLayoutEditGasPrice.setAnimation(AnimationUtil.makeInAnimation());
-        });
-        mLayoutEditGasPrice = findViewById(R.id.layout_edit_eth_gas_price);
-        btnConfirmGas = findViewById(R.id.btn_commit_gas_price);
-        etGasLimit = findViewById(R.id.et_gas_limit);
-        etGasPrice = findViewById(R.id.et_gas_price);
-        ivCloseGasPrice = findViewById(R.id.iv_close_eth_gas_price);
-        ivCloseGasPrice.setOnClickListener(v -> {
-            mLayoutEditGasPrice.setVisibility(View.GONE);
-            mLayoutEditGasPrice.setAnimation(AnimationUtil.makeOutAnimation());
-        });
-        btnConfirmGas.setOnClickListener(v -> {
-            String gasPrice = etGasPrice.getText().toString().trim();
-            if (gasPrice.length() >= 1) {
-                mTvGasPrice.setText(gasPrice);
-            }
-            String gasLimit = etGasLimit.getText().toString().trim();
-            if (gasLimit.length() >= 1) {
-                mTvGasLimit.setText(gasLimit);
-            }
-            mLayoutEditGasPrice.setVisibility(View.GONE);
-            mLayoutEditGasPrice.setAnimation(AnimationUtil.makeOutAnimation());
-        });
-
-        mLayoutTransferStatus = findViewById(R.id.layout_transfer_status);
-        customStatusView = findViewById(R.id.as_status);
-        tvTransferStatus = findViewById(R.id.tv_transfer_status);
-
-        mBtnConfirmTransfer = findViewById(R.id.btn_commit_transfer);
-        mBtnConfirmTransfer.setOnClickListener(v -> {
-            /*Intent intent = new Intent();
-            setResult(RESULT_OK, intent);
-            finish();*/
-            showPasswordDialog();
-        });
+                        }
+                    });
     }
 
     private void showChosenAccountInfo(AccountEntity account) {
@@ -494,6 +605,9 @@ public class QuickPayActivity extends BaseActivity {
             } else if (mLayoutTransferStatus.getVisibility() == View.VISIBLE) {
                 mLayoutTransferStatus.setVisibility(View.GONE);
                 mLayoutTransferStatus.setAnimation(AnimationUtil.makeOutAnimation());
+            } else if (mLayoutEditPayRemark.getVisibility() == View.VISIBLE) {
+                mLayoutEditPayRemark.setVisibility(View.GONE);
+                mLayoutEditPayRemark.setAnimation(AnimationUtil.makeOutAnimation());
             } else {
                 finish();
             }
@@ -614,6 +728,18 @@ public class QuickPayActivity extends BaseActivity {
 
         if (transferValue.compareTo(accountBalance) > 0) {
             showTipDialog(R.string.tip_insufficient_balance);
+            return;
+        }
+
+        if (receiptAddress == null || receiptAddress.length() < 1) {
+            showTipDialog(R.string.payment_invalid_create_order);
+            createPreOrderId();
+            return;
+        }
+
+        if (orderId == null || orderId.length() < 1) {
+            showTipDialog(R.string.payment_invalid_create_order);
+            createPreOrderId();
             return;
         }
 
@@ -770,6 +896,71 @@ public class QuickPayActivity extends BaseActivity {
             imm.showSoftInput(etPassword, InputMethodManager.SHOW_IMPLICIT);
         });
         passwordDialog.show();
+    }
+
+    private void payAccountRecharge(String txHash) {
+        Map<String, Object> params = new HashMap<>();
+        params.put(ReqParam.PARAM_ORDER_ID, orderId);
+        params.put(ReqParam.PARAM_TX_HASH, txHash);
+        Networks.getInstance().getPayApi()
+                .payAccountRecharge(params)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<ApiRespResult>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        throwable.printStackTrace();
+                    }
+
+                    @Override
+                    public void onNext(ApiRespResult apr) {
+                        if (apr != null) {
+                            if (apr.getResult() == 0 && apr.getData() != null) {
+                                BLog.i(tag(), apr.toString());
+                                Map result = apr.getData();
+                                Map<String, Object> orderInfo = new HashMap<>();
+                                orderInfo.put(ReqParam.PARAM_ORDER_ID, result.get(ReqParam.PARAM_ORDER_ID));
+                                if (result.containsKey(ReqParam.PARAM_RECEIVER_INFO) &&
+                                        ((Map)result.get(ReqParam.PARAM_RECEIVER_INFO)).containsKey(ReqParam.PARAM_RECEIVER)) {
+                                    orderInfo.put(ReqParam.PARAM_RECEIVER, ((Map)result.get(ReqParam.PARAM_RECEIVER_INFO)).get(ReqParam.PARAM_RECEIVER));
+                                }
+                            } else if (apr.getResult() == ApiConst.INVALID_TOKEN) {
+                                /*getPayTokenForQuickPay("createCreditPreOrderByNet", params)
+                                        .subscribeOn(Schedulers.io())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe(new Observer<ApiRespResult>() {
+                                            @Override
+                                            public void onNext(ApiRespResult apiRespResult) {
+                                                if (apr.getResult() == 0 && apr.getData() != null) {
+                                                    BLog.i(tag(), apr.toString());
+                                                    Map result = apr.getData();
+                                                    Map<String, Object> orderInfo = new HashMap<>();
+                                                    orderInfo.put(ReqParam.PARAM_ORDER_ID, result.get(ReqParam.PARAM_ORDER_ID));
+                                                    if (result.containsKey(ReqParam.PARAM_RECEIVER_INFO) &&
+                                                            ((Map)result.get(ReqParam.PARAM_RECEIVER_INFO)).containsKey(ReqParam.PARAM_RECEIVER)) {
+                                                        orderInfo.put(ReqParam.PARAM_RECEIVER, ((Map)result.get(ReqParam.PARAM_RECEIVER_INFO)).get(ReqParam.PARAM_RECEIVER));
+                                                    }
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onError(Throwable error) {
+                                                error.printStackTrace();
+                                            }
+
+                                            @Override
+                                            public void onCompleted() {
+
+                                            }
+                                        });*/
+                            }
+                        }
+                    }
+                });
     }
 
     private boolean isBtcValidPassword(String password) {

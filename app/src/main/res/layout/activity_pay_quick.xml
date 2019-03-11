@@ -48,7 +48,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/space_small"
-                    android:layout_marginBottom="@dimen/space_small">
+                    android:layout_marginBottom="@dimen/space_smaller">
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -59,13 +59,13 @@
                             android:id="@+id/tv_transfer_amount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="@dimen/font_size_display3"
+                            android:textSize="34sp"
                             android:textColor="@color/color_primary_text"/>
                         <EditText
                             android:id="@+id/et_transfer_amount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="@dimen/font_size_display3"
+                            android:textSize="34sp"
                             android:textColor="@color/color_primary_text"
                             android:hint="0.00"
                             android:inputType="numberDecimal"
@@ -89,13 +89,7 @@
                             android:text="@string/account_btc"/>
                     </LinearLayout>
                 </RelativeLayout>
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="1px"
-                    android:layout_marginStart="@dimen/space_normal"
-                    android:layout_marginEnd="@dimen/space_normal"
-                    android:background="@color/horizontal_divider"/>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -105,18 +99,37 @@
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingTop="@dimen/space_normal"
-                        android:paddingBottom="@dimen/space_normal">
+                        android:paddingTop="@dimen/space_smaller"
+                        android:paddingBottom="@dimen/space_smaller">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="@dimen/space_smaller"
                             android:textColor="@color/color_hint_text"
-                            android:text="@string/pay_to_address"/>
+                            android:text="@string/label_commodity_information"/>
                         <TextView
-                            android:id="@+id/tv_pay_to_address"
+                            android:id="@+id/tv_quick_pay_commodity_information"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textSize="@dimen/font_size_subheading"
+                            android:layout_alignParentEnd="true"/>
+                    </RelativeLayout>
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="@dimen/space_smaller"
+                        android:paddingBottom="@dimen/space_small">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/space_smaller"
+                            android:textColor="@color/color_hint_text"
+                            android:text="@string/label_merchant_name"/>
+                        <TextView
+                            android:id="@+id/tv_quick_pay_merchant_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/font_size_subheading"
                             android:layout_alignParentEnd="true"/>
                     </RelativeLayout>
 
@@ -130,8 +143,8 @@
                         <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:paddingTop="@dimen/space_normal"
-                            android:paddingBottom="@dimen/space_normal">
+                            android:paddingTop="@dimen/space_small"
+                            android:paddingBottom="@dimen/space_smaller">
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -168,11 +181,29 @@
 
                     <include layout="@layout/horizontal_divider"/>
                     <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="@dimen/space_small"
+                        android:paddingBottom="@dimen/space_smaller">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/space_smaller"
+                            android:textColor="@color/color_hint_text"
+                            android:text="@string/label_pay_type"/>
+                        <TextView
+                            android:id="@+id/tv_quick_pay_type"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/font_size_subheading"
+                            android:layout_alignParentEnd="true"/>
+                    </RelativeLayout>
+                    <RelativeLayout
                         android:id="@+id/layout_account"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingTop="@dimen/space_normal"
-                        android:paddingBottom="@dimen/space_normal">
+                        android:paddingTop="@dimen/space_smaller"
+                        android:paddingBottom="@dimen/space_smaller">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -216,12 +247,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
-                        <include layout="@layout/horizontal_divider"/>
                         <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:paddingTop="@dimen/space_normal"
-                            android:paddingBottom="@dimen/space_normal">
+                            android:paddingTop="@dimen/space_smaller"
+                            android:paddingBottom="@dimen/space_smaller">
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -264,12 +294,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
-                        <include layout="@layout/horizontal_divider"/>
                         <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:paddingTop="@dimen/space_normal"
-                            android:paddingBottom="@dimen/space_normal">
+                            android:paddingTop="@dimen/space_smaller"
+                            android:paddingBottom="@dimen/space_smaller">
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -306,12 +335,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
-                        <include layout="@layout/horizontal_divider"/>
                         <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:paddingTop="@dimen/space_normal"
-                            android:paddingBottom="@dimen/space_normal">
+                            android:paddingTop="@dimen/space_smaller"
+                            android:paddingBottom="@dimen/space_smaller">
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -349,7 +377,33 @@
                         </RelativeLayout>
                     </LinearLayout>
 
+                    <RelativeLayout
+                        android:id="@+id/layout_pay_remark"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="@dimen/space_smaller"
+                        android:paddingBottom="@dimen/space_small">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/color_hint_text"
+                            android:text="@string/prompt_remark"/>
+                        <TextView
+                            android:id="@+id/tv_remark"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toStartOf="@id/iv_remark_arrow"
+                            android:textSize="@dimen/font_size_subheading"/>
+                        <ImageView
+                            android:id="@+id/iv_remark_arrow"
+                            android:layout_alignParentEnd="true"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_keyboard_arrow_right_black"/>
+                    </RelativeLayout>
+
                     <include layout="@layout/horizontal_divider"/>
+
                     <Button
                         android:id="@+id/btn_commit_transfer"
                         style="@style/ButtonSingle"
@@ -422,7 +476,7 @@
                         android:textAlignment="center"
                         android:text="@string/label_gas_price"
                         android:paddingTop="@dimen/space_normal"
-                        android:paddingBottom="@dimen/space_small"
+                        android:paddingBottom="@dimen/space_normal"
                         android:textColor="@color/color_primary_text"
                         android:textSize="@dimen/font_size_subheading"/>
 
@@ -611,6 +665,59 @@
                     android:text="@string/action_confirm"
                     android:textStyle="bold" />
 
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_edit_pay_remark"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="@dimen/space_large"
+                android:orientation="vertical"
+                android:background="@color/white">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        android:text="@string/prompt_btc_fee"
+                        android:paddingTop="@dimen/space_normal"
+                        android:paddingBottom="@dimen/space_small"
+                        android:textColor="@color/color_primary_text"
+                        android:textSize="@dimen/font_size_subheading"/>
+
+                    <ImageView
+                        android:id="@+id/iv_close_pay_remark"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/space_small"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_keyboard_arrow_left"/>
+                </FrameLayout>
+
+                <include layout="@layout/horizontal_divider"/>
+
+                <EditText
+                    android:id="@+id/et_pay_remark"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:lines="4"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:layout_height="0dp"/>
+                <Button
+                    android:id="@+id/btn_commit_remark"
+                    style="@style/ButtonSingle"
+                    android:layout_marginTop="@dimen/space_normal"
+                    android:layout_marginStart="@dimen/space_normal"
+                    android:layout_marginEnd="@dimen/space_normal"
+                    android:text="@string/action_confirm"
+                    android:textStyle="bold" />
             </LinearLayout>
         </FrameLayout>
 

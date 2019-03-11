@@ -157,7 +157,7 @@
         <activity android:name=".ui.pay.AccountInfoActivity" />
         <activity android:name=".ui.pay.PayTestActivity" />
         <activity android:name=".ui.biometric.TouchIDPayActivity" />
-        <activity android:name=".ui.pay.PayAccountAddCreditActivity" />
+        <activity android:name=".ui.pay.PayAccountRechargeActivity" />
         <activity android:name=".ui.pay.QuickPayActivity"
             android:exported="true"
             android:theme="@style/transparent_activity">

@@ -10,7 +10,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <LinearLayout
-                android:visibility="gone"
                 android:id="@+id/layout_add_quick_pay_account"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -19,8 +18,11 @@
                     android:id="@+id/layout_header"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
-                    android:background="@drawable/money"
                     android:orientation="vertical">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/pay_banner_1"/>
                 </LinearLayout>
                 <Button
                     style="@style/MainButtonSingle"
@@ -51,6 +53,7 @@
                     android:layout_height="wrap_content"/>
             </LinearLayout>
             <LinearLayout
+                android:visibility="gone"
                 android:id="@+id/layout_pay_account_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

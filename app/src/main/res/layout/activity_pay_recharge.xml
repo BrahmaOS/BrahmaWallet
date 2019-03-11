@@ -20,7 +20,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:titleTextAppearance="@style/ToolbarTitleText"
-                app:title="@string/title_about_us"
+                app:title="@string/title_pay_recharge"
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
 
         </android.support.design.widget.AppBarLayout>
@@ -80,7 +80,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/color_secondary_text"
-                        android:textSize="@dimen/font_size_subtitle"
+                        android:textSize="@dimen/font_size_subheading"
                         android:text="@string/label_choose_token"/>
                     <ImageView
                         android:id="@+id/iv_choose_coin_arrow"
@@ -93,7 +93,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:textSize="@dimen/font_size_subtitle"
+                        android:textSize="@dimen/font_size_subheading"
                         android:textColor="@color/color_primary_text"
                         android:layout_toStartOf="@id/iv_choose_coin_arrow"
                         android:text="BRM (BrahmaOS)"/>
@@ -110,7 +110,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/space_normal"
-                    android:textSize="@dimen/font_size_subtitle"
+                    android:textSize="@dimen/font_size_subheading"
                     android:textColor="@color/color_secondary_text"
                     android:text="@string/prompt_amount"/>
                 <RelativeLayout
@@ -121,10 +121,10 @@
                     android:layout_height="wrap_content">
                     <ImageView
                         android:id="@+id/iv_credit_coin_icon"
-                        android:layout_marginTop="@dimen/space_normal"
+                        android:layout_marginTop="@dimen/space_small"
                         android:layout_marginEnd="@dimen/space_smaller"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
                         android:src="@drawable/icon_brm"/>
                     <EditText
                         android:id="@+id/et_credit_amount"
@@ -132,7 +132,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:minWidth="160dp"
-                        android:textSize="@dimen/font_size_display2"
+                        android:textSize="@dimen/font_size_headline"
                         android:textColor="@color/color_primary_text"
                         android:hint=" 0.00 "
                         android:inputType="numberDecimal"

@@ -38,28 +38,5 @@ public interface PayApi {
      * Account credit order
      */
     @POST("/pay/payment/deposit")
-    Observable<ApiRespResult> createaPaymentOrder(@Body Map<String, Object> params);
-
-    /**
-     * Get the latest version of the tokens
-     */
-    @GET("/v1/wallet/tokens/latest")
-    Observable<ApiRespResult> getLatestTokensVersion(@Query("type") int type);
-
-    /**
-     * Get the account transactions.
-     */
-    @GET("/v1/eth/txs/all")
-    Observable<ApiRespResult> getEthTransactions(@Query("acct") String accountAddress,
-                                                 @Query("page") int page,
-                                                 @Query("count") int count);
-
-    /**
-     * Get the account token transactions.
-     */
-    @GET("/v1/eth/tokens/{token_address}/txs/all")
-    Observable<ApiRespResult> getTokenTransactions(@Path("token_address") String tokenAddress,
-                                                   @Query("acct") String accountAddress,
-                                                   @Query("page") int page,
-                                                   @Query("count") int count);
+    Observable<ApiRespResult> payAccountRecharge(@Body Map<String, Object> params);
 }

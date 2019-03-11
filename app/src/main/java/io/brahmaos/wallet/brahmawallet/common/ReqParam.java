@@ -21,4 +21,5 @@ public class ReqParam {
     public static final String PARAM_ORDER_ID = "order_id";
     public static final String PARAM_RECEIVER_INFO = "receiver_info";
     public static final String PARAM_RECEIVER = "receiver";
+    public static final String PARAM_TX_HASH = "tx_hash";
 }

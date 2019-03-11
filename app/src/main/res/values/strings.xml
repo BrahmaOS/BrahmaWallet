@@ -589,7 +589,18 @@
     <string name="menu_address_book">Address Book</string>
     <string name="menu_pay_test">模拟用户支付场景</string>
     <string name="info_account_id">Account ID</string>
+    <string name="title_pay_recharge">Recharge</string>
     <string name="label_confirm_eht_account_for_quick_pay">Please confirm if you have an account</string>
     <string name="tip_add_pay_account_success">Create account success.</string>
     <string name="tip_add_pay_account_failed">Create account failed!</string>
+    <string name="label_commodity_information">Commodity</string>
+    <string name="label_merchant_name">Merchant</string>
+    <string name="label_pay_type">Payment Method</string>
+    <string name="tip_lack_param">Lack param.</string>
+    <string name="tip_invalid_param">Invalid param.</string>
+    <string name="brm_pay">BRMPAY</string>
+    <string name="label_quick_payment_account_recharge">Quick payment account recharge</string>
+    <string name="payment_type_ordinary_payment">Ordinary Payment</string>
+    <string name="payment_type_quick_payment">Quick Payment</string>
+    <string name="payment_invalid_create_order">Create order invalid!</string>
 </resources>
