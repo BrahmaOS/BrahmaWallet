@@ -3,7 +3,6 @@ package io.brahmaos.wallet.brahmawallet.ui.pay;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.net.Network;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -35,14 +34,10 @@ import org.web3j.utils.Numeric;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import io.brahmaos.wallet.brahmawallet.R;
-import io.brahmaos.wallet.brahmawallet.api.ApiConst;
-import io.brahmaos.wallet.brahmawallet.api.ApiRespResult;
-import io.brahmaos.wallet.brahmawallet.api.Networks;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
@@ -126,7 +121,7 @@ public class QuickPayActivity extends BaseActivity {
     private TextView tvTransferStatus;
 
     private int coinCode;
-    private boolean isAddCredit = false;
+    private boolean isRecharge = false;
     private String orderId;
     private String receiptAddress;
     private String intentParamSendValue;
@@ -168,7 +163,7 @@ public class QuickPayActivity extends BaseActivity {
         }
         String addCreditStr = uri.getQueryParameter(PARAM_CREDIT);
         if (addCreditStr != null && Integer.valueOf(addCreditStr) == 1) {
-            isAddCredit = true;
+            isRecharge = true;
         }
         intentParamSendValue = uri.getQueryParameter(PARAM_AMOUNT);
         if (intentParamSendValue == null) {
@@ -327,9 +322,9 @@ public class QuickPayActivity extends BaseActivity {
         });
 
         // Initialize values based on parameters
-        if (isAddCredit) {
-            mTvMerchantName.setText(getString(R.string.label_quick_payment_account_recharge));
-            mTvCommodityInformation.setText(getString(R.string.brm_pay));
+        if (isRecharge) {
+            mTvCommodityInformation.setText(getString(R.string.label_quick_payment_account_recharge));
+            mTvMerchantName.setText(getString(R.string.brm_pay));
             mTvPaymentMethod.setText(getString(R.string.payment_type_ordinary_payment));
         }
 
@@ -514,6 +509,7 @@ public class QuickPayActivity extends BaseActivity {
                                 BLog.d(tag(), String.format("orderId: %s ; receipt: %s;", orderId, receiptAddress));
                             } else {
                                 BLog.d(tag(), "failed create order: " + orderInfo);
+                                showLongToast(R.string.payment_invalid_create_order);
                                 finish();
                             }
                         }
@@ -788,63 +784,9 @@ public class QuickPayActivity extends BaseActivity {
                     mLayoutTransferStatus.setVisibility(View.VISIBLE);
                     customStatusView.loadLoading();
                     String password = etPassword.getText().toString();
-                    BrahmaWeb3jService.getInstance().sendTransfer(chosenAccount, chosenToken, password, receiptAddress,
-                            CommonUtil.getAccountFromWei(transferValue), gasPrice, gasLimit, "")
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(new Observer<Object>() {
-                                @Override
-                                public void onNext(Object result) {
-                                    if (result instanceof Integer) {
-                                        int flag = (Integer) result;
-                                        if (flag == 1) {
-                                            tvTransferStatus.setText(R.string.progress_verify_account);
-                                        } else if (flag == 2) {
-                                            tvTransferStatus.setText(R.string.progress_send_request);
-                                        }
-                                    } else if (result instanceof String) {
-                                        String hash = (String) result;
-                                        tvTransferStatus.setText(R.string.progress_transfer_success);
-                                        BLog.i(tag(), "the transfer success");
-                                        customStatusView.loadSuccess();
-                                        new Handler().postDelayed(() -> {
-                                            Intent intent = new Intent();
-                                            intent.putExtra(IntentParam.PARAM_PAY_ERROR_CODE, BrahmaConst.PAY_CODE_SUCCESS);
-                                            intent.putExtra(IntentParam.PARAM_PAY_BLOCKCHAIN_TYPE, BrahmaConst.ETH_ACCOUNT_TYPE);
-                                            intent.putExtra(IntentParam.PARAM_PAY_HASH, hash);
-                                            setResult(RESULT_OK, intent);
-                                            finish();
-                                        }, 1200);
-                                    }
-
-                                }
-
-                                @Override
-                                public void onError(Throwable e) {
-                                    e.printStackTrace();
-                                    customStatusView.loadFailure();
-                                    tvTransferStatus.setText(R.string.progress_transfer_fail);
-                                    new Handler().postDelayed(() -> {
-                                        mLayoutTransferStatus.setVisibility(View.GONE);
-                                        int resId = R.string.tip_error_transfer;
-                                        if (e instanceof CipherException) {
-                                            resId = R.string.tip_error_password;
-                                        } else if (e instanceof TransactionException) {
-                                            resId = R.string.tip_error_net;
-                                        }
-                                        new AlertDialog.Builder(QuickPayActivity.this)
-                                                .setMessage(resId)
-                                                .setNegativeButton(R.string.ok, (dialog1, which1) -> dialog1.cancel())
-                                                .create().show();
-                                    }, 1500);
-
-                                    BLog.i(tag(), "the transfer failed");
-                                }
-
-                                @Override
-                                public void onCompleted() {
-                                }
-                            });
+                    if (isRecharge) {
+                        accountRecharge(password, gasPrice, gasLimit);
+                    }
                 })
                 .create();
         passwordDialog.setOnShowListener(dialog -> {
@@ -898,67 +840,74 @@ public class QuickPayActivity extends BaseActivity {
         passwordDialog.show();
     }
 
-    private void payAccountRecharge(String txHash) {
-        Map<String, Object> params = new HashMap<>();
-        params.put(ReqParam.PARAM_ORDER_ID, orderId);
-        params.put(ReqParam.PARAM_TX_HASH, txHash);
-        Networks.getInstance().getPayApi()
-                .payAccountRecharge(params)
+    // Payment account recharge
+    private void accountRecharge(String password, BigDecimal gasPrice, BigInteger gasLimit) {
+        BrahmaWeb3jService.getInstance().accountRechargeWithEthereum(chosenAccount, chosenToken, password, receiptAddress,
+                CommonUtil.getAccountFromWei(transferValue), gasPrice, gasLimit, "", orderId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<ApiRespResult>() {
+                .subscribe(new Observer<Object>() {
+                    @Override
+                    public void onNext(Object result) {
+                        if (result instanceof Integer) {
+                            int flag = (Integer) result;
+                            if (flag == 1) {
+                                tvTransferStatus.setText(R.string.progress_verify_account);
+                            } else if (flag == 2) {
+                                tvTransferStatus.setText(R.string.progress_send_request);
+                            } else if (flag == -1) {
+                                customStatusView.loadFailure();
+                                tvTransferStatus.setText(R.string.progress_transfer_fail);
+                                new Handler().postDelayed(() -> {
+                                    mLayoutTransferStatus.setVisibility(View.GONE);
+                                    int resId = R.string.tip_error_transfer;
+                                    new AlertDialog.Builder(QuickPayActivity.this)
+                                            .setMessage(resId)
+                                            .setNegativeButton(R.string.ok, (dialog1, which1) -> dialog1.cancel())
+                                            .create().show();
+                                }, 1500);
+                            }
+                        } else if (result instanceof String) {
+                            String hash = (String) result;
+                            tvTransferStatus.setText(R.string.progress_transfer_success);
+                            BLog.i(tag(), "the transfer success");
+                            customStatusView.loadSuccess();
+                            new Handler().postDelayed(() -> {
+                                Intent intent = new Intent();
+                                intent.putExtra(IntentParam.PARAM_PAY_ERROR_CODE, BrahmaConst.PAY_CODE_SUCCESS);
+                                intent.putExtra(IntentParam.PARAM_PAY_BLOCKCHAIN_TYPE, BrahmaConst.ETH_ACCOUNT_TYPE);
+                                intent.putExtra(IntentParam.PARAM_PAY_HASH, hash);
+                                setResult(RESULT_OK, intent);
+                                finish();
+                            }, 1200);
+                        }
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        customStatusView.loadFailure();
+                        tvTransferStatus.setText(R.string.progress_transfer_fail);
+                        new Handler().postDelayed(() -> {
+                            mLayoutTransferStatus.setVisibility(View.GONE);
+                            int resId = R.string.tip_error_transfer;
+                            if (e instanceof CipherException) {
+                                resId = R.string.tip_error_password;
+                            } else if (e instanceof TransactionException) {
+                                resId = R.string.tip_error_net;
+                            }
+                            new AlertDialog.Builder(QuickPayActivity.this)
+                                    .setMessage(resId)
+                                    .setNegativeButton(R.string.ok, (dialog1, which1) -> dialog1.cancel())
+                                    .create().show();
+                        }, 1500);
+
+                        BLog.i(tag(), "the transfer failed");
+                    }
+
                     @Override
                     public void onCompleted() {
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-                        throwable.printStackTrace();
-                    }
-
-                    @Override
-                    public void onNext(ApiRespResult apr) {
-                        if (apr != null) {
-                            if (apr.getResult() == 0 && apr.getData() != null) {
-                                BLog.i(tag(), apr.toString());
-                                Map result = apr.getData();
-                                Map<String, Object> orderInfo = new HashMap<>();
-                                orderInfo.put(ReqParam.PARAM_ORDER_ID, result.get(ReqParam.PARAM_ORDER_ID));
-                                if (result.containsKey(ReqParam.PARAM_RECEIVER_INFO) &&
-                                        ((Map)result.get(ReqParam.PARAM_RECEIVER_INFO)).containsKey(ReqParam.PARAM_RECEIVER)) {
-                                    orderInfo.put(ReqParam.PARAM_RECEIVER, ((Map)result.get(ReqParam.PARAM_RECEIVER_INFO)).get(ReqParam.PARAM_RECEIVER));
-                                }
-                            } else if (apr.getResult() == ApiConst.INVALID_TOKEN) {
-                                /*getPayTokenForQuickPay("createCreditPreOrderByNet", params)
-                                        .subscribeOn(Schedulers.io())
-                                        .observeOn(AndroidSchedulers.mainThread())
-                                        .subscribe(new Observer<ApiRespResult>() {
-                                            @Override
-                                            public void onNext(ApiRespResult apiRespResult) {
-                                                if (apr.getResult() == 0 && apr.getData() != null) {
-                                                    BLog.i(tag(), apr.toString());
-                                                    Map result = apr.getData();
-                                                    Map<String, Object> orderInfo = new HashMap<>();
-                                                    orderInfo.put(ReqParam.PARAM_ORDER_ID, result.get(ReqParam.PARAM_ORDER_ID));
-                                                    if (result.containsKey(ReqParam.PARAM_RECEIVER_INFO) &&
-                                                            ((Map)result.get(ReqParam.PARAM_RECEIVER_INFO)).containsKey(ReqParam.PARAM_RECEIVER)) {
-                                                        orderInfo.put(ReqParam.PARAM_RECEIVER, ((Map)result.get(ReqParam.PARAM_RECEIVER_INFO)).get(ReqParam.PARAM_RECEIVER));
-                                                    }
-                                                }
-                                            }
-
-                                            @Override
-                                            public void onError(Throwable error) {
-                                                error.printStackTrace();
-                                            }
-
-                                            @Override
-                                            public void onCompleted() {
-
-                                            }
-                                        });*/
-                            }
-                        }
                     }
                 });
     }

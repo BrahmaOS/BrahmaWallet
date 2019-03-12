@@ -4,7 +4,14 @@ import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v4.widget.NestedScrollView;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,12 +34,15 @@ import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
+import io.brahmaos.wallet.brahmawallet.model.pay.AccountBalance;
 import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
+import io.brahmaos.wallet.brahmawallet.service.PayService;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseFragment;
 import io.brahmaos.wallet.brahmawallet.ui.pay.PayAccountRechargeActivity;
 import io.brahmaos.wallet.brahmawallet.ui.pay.SetPayAccountPasswordActivity;
 import io.brahmaos.wallet.brahmawallet.view.CustomProgressDialog;
+import io.brahmaos.wallet.brahmawallet.view.HeightWrappingViewPager;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
@@ -46,14 +56,22 @@ public class QuickPayFragment extends BaseFragment {
         return QuickPayFragment.class.getName();
     }
 
-    private LinearLayout layoutAddQuickPayAccount;
-    private LinearLayout layoutPayAccountInfo;
+    private NestedScrollView layoutAddQuickPayAccount;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private LinearLayout layoutHeader;
+    private HeightWrappingViewPager pagerGuide;
+    private LinearLayout layoutGuidePageIndicator;
     private RecyclerView recyclerViewAccounts;
     private CustomProgressDialog progressDialog;
+    private TextView mTvEthBalance;
+    private TextView mTvBrmBalance;
+    private TextView mTvBtcBalance;
 
+    private List<ImageView> lstGuideIndicator = new ArrayList<>();
+    private int pageNum = 3;
     private AccountViewModel mViewModel;
     private List<AccountEntity> cacheAccounts = new ArrayList<>();
+    private List<AccountBalance> accountBalances = new ArrayList<>();
 
     /**
      * instance
@@ -71,12 +89,21 @@ public class QuickPayFragment extends BaseFragment {
     protected boolean initView() {
         layoutAddQuickPayAccount = parentView.findViewById(R.id.layout_add_quick_pay_account);
         layoutHeader = parentView.findViewById(R.id.layout_header);
+        pagerGuide = parentView.findViewById(R.id.guide_vpager);
+        layoutGuidePageIndicator = parentView.findViewById(R.id.indicator_layout);
         recyclerViewAccounts = parentView.findViewById(R.id.accounts_recycler);
-        layoutPayAccountInfo = parentView.findViewById(R.id.layout_pay_account_info);
+        swipeRefreshLayout = parentView.findViewById(R.id.swipe_refresh_layout_pay_account_info);
         LinearLayout layoutAddCredit = parentView.findViewById(R.id.layout_pay_add_credit);
         layoutAddCredit.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), PayAccountRechargeActivity.class);
             startActivity(intent);
+        });
+
+        LinearLayout layoutPayReceipt = parentView.findViewById(R.id.layout_pay_receipt);
+        layoutPayReceipt.setOnClickListener(v -> {
+            BrahmaConfig.getInstance().setPayAccount(null);
+            layoutAddQuickPayAccount.setVisibility(View.VISIBLE);
+            swipeRefreshLayout.setVisibility(View.GONE);
         });
 
         DisplayMetrics display = this.getResources().getDisplayMetrics();
@@ -90,7 +117,7 @@ public class QuickPayFragment extends BaseFragment {
 
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) layoutHeader.getLayoutParams();
         params.width = display.widthPixels;
-        params.height = ((int) (display.heightPixels * BrahmaConst.MAIN_PAGE_HEADER_RATIO) - statusBarHeight - toolbarHeight);
+        params.height = ((int) (display.heightPixels * 0.6) - statusBarHeight - toolbarHeight);
         layoutHeader.setLayoutParams(params);
 
         LinearLayoutManager btcLayoutManager = new LinearLayoutManager(getActivity());
@@ -104,12 +131,49 @@ public class QuickPayFragment extends BaseFragment {
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.setCancelable(false);
 
-        mViewModel = ViewModelProviders.of(this).get(AccountViewModel.class);
+        swipeRefreshLayout.setColorSchemeResources(R.color.master);
+        swipeRefreshLayout.setRefreshing(true);
+
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            swipeRefreshLayout.setRefreshing(false);
+        });
+
+        GuidePagerAdapter adapterGuidePage = new GuidePagerAdapter(getFragmentManager(), pageNum);
+        pagerGuide.setAdapter(adapterGuidePage);
+        pagerGuide.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+
+            @Override
+            public void onPageSelected(int position) {
+                updateGuidePageIndicatorWithPos(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {}
+        });
+
+        layoutGuidePageIndicator = parentView.findViewById(R.id.indicator_layout);
+        layoutGuidePageIndicator.removeAllViews();
+        lstGuideIndicator.clear();
+        for (int idx = 0; idx < pageNum; ++idx) {
+            ImageView ivIndicator = (ImageView) getLayoutInflater().inflate(R.layout.page_indicator, null);
+            lstGuideIndicator.add(ivIndicator);
+            layoutGuidePageIndicator.addView(ivIndicator);
+        }
+        updateGuidePageIndicatorWithPos(0);
+
+        mTvEthBalance = parentView.findViewById(R.id.tv_eth_amount);
+        mTvBrmBalance = parentView.findViewById(R.id.tv_brm_amount);
+        mTvBtcBalance = parentView.findViewById(R.id.tv_btc_amount);
+
         initData();
         return true;
     }
 
     private void initData() {
+        mViewModel = ViewModelProviders.of(this).get(AccountViewModel.class);
+
         mViewModel.getAccounts().observe(this, accountEntities -> {
             cacheAccounts = new ArrayList<>();
             if (accountEntities != null && accountEntities.size() > 0) {
@@ -121,6 +185,9 @@ public class QuickPayFragment extends BaseFragment {
                 recyclerViewAccounts.getAdapter().notifyDataSetChanged();
             }
         });
+        if (BrahmaConfig.getInstance().getPayAccount() != null) {
+            getAccountBalance();
+        }
     }
 
     @Override
@@ -129,10 +196,47 @@ public class QuickPayFragment extends BaseFragment {
         BLog.d(tag(), "quick pay fragment onstart");
         if (BrahmaConfig.getInstance().getPayAccount() != null) {
             layoutAddQuickPayAccount.setVisibility(View.GONE);
-            layoutPayAccountInfo.setVisibility(View.VISIBLE);
+            swipeRefreshLayout.setVisibility(View.VISIBLE);
         } else {
             layoutAddQuickPayAccount.setVisibility(View.VISIBLE);
-            layoutPayAccountInfo.setVisibility(View.GONE);
+            swipeRefreshLayout.setVisibility(View.GONE);
+        }
+    }
+
+    private void updateGuidePageIndicatorWithPos(int position) {
+        if (lstGuideIndicator == null || position >= lstGuideIndicator.size()) {
+            return ;
+        }
+
+        for (ImageView ivIndicator : lstGuideIndicator) {
+            if (ivIndicator != null) {
+                ivIndicator.setSelected(false);
+            }
+        }
+
+        lstGuideIndicator.get(position).setSelected(true);
+    }
+
+    private class GuidePagerAdapter extends FragmentPagerAdapter {
+        private int pageNum;
+
+        GuidePagerAdapter(FragmentManager fm, int pageNum) {
+            super(fm);
+            this.pageNum = pageNum;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            GuideFragment fragment = new GuideFragment();
+            Bundle args = new Bundle();
+            args.putInt(GuideFragment.GUIDE_FRAGMENT_POSITION, position);
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        @Override
+        public int getCount() {
+            return pageNum;
         }
     }
 
@@ -260,6 +364,42 @@ public class QuickPayFragment extends BaseFragment {
                 })
                 .create();
         errorDialog.show();
+    }
+
+    private void getAccountBalance() {
+        PayService.getInstance().getAccountBalance()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<List<AccountBalance>>() {
+                    @Override
+                    public void onNext(List<AccountBalance> results) {
+                        swipeRefreshLayout.setRefreshing(false);
+                        showAccountBalance();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                });
+    }
+
+    private void showAccountBalance() {
+        accountBalances = PayService.getInstance().getAccountBalances();
+        for (AccountBalance accountBalance : accountBalances) {
+            if (accountBalance.getCoinCode() == BrahmaConst.PAY_COIN_CODE_BRM) {
+                mTvBrmBalance.setText(accountBalance.getBalance());
+            } else if (accountBalance.getCoinCode() == BrahmaConst.PAY_COIN_CODE_ETH) {
+                mTvEthBalance.setText(accountBalance.getBalance());
+            } else if (accountBalance.getCoinCode() == BrahmaConst.PAY_COIN_CODE_BTC) {
+                mTvBtcBalance.setText(accountBalance.getBalance());
+            }
+        }
     }
 }
 

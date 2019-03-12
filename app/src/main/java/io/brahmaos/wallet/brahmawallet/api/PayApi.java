@@ -39,4 +39,10 @@ public interface PayApi {
      */
     @POST("/pay/payment/deposit")
     Observable<ApiRespResult> payAccountRecharge(@Body Map<String, Object> params);
+
+    /**
+     * Get account balance
+     */
+    @GET("/pay/balance/info")
+    Observable<ApiRespResult> getAccountBalance();
 }

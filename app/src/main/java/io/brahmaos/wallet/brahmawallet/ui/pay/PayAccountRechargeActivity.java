@@ -17,6 +17,8 @@ import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
+import io.brahmaos.wallet.brahmawallet.common.IntentParam;
+import io.brahmaos.wallet.brahmawallet.common.ReqCode;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
@@ -70,7 +72,7 @@ public class PayAccountRechargeActivity extends BaseActivity {
     private void initView() {
         layoutChooseToken.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            View dialogView = getLayoutInflater().inflate(R.layout.dialog_credit_coins, null);
+            View dialogView = getLayoutInflater().inflate(R.layout.dialog_recharge_coins, null);
             builder.setView(dialogView);
             builder.setCancelable(true);
             final AlertDialog alertDialog = builder.create();
@@ -102,7 +104,7 @@ public class PayAccountRechargeActivity extends BaseActivity {
             Uri uri = Uri.parse(String.format("brahmaos://wallet/pay?credit=1&amount=%s&coin_code=%d&sender=%s",
                     sendValueStr, chosenCoinCode, BrahmaConfig.getInstance().getPayAccount()));
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-            startActivity(intent);
+            startActivityForResult(intent, ReqCode.QUICK_PAYMENT_RECHARGE);
         });
     }
 
@@ -126,5 +128,19 @@ public class PayAccountRechargeActivity extends BaseActivity {
             ImageManager.showTokenIcon(this, ivCreditCoinIcon, R.drawable.icon_btc);
             tvCoinName.setText(String.format("%s (%s)", BrahmaConst.COIN_SYMBOL_BTC, BrahmaConst.COIN_BTC));
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == ReqCode.QUICK_PAYMENT_RECHARGE) {
+            if (resultCode == RESULT_OK) {
+                String hash = data.getStringExtra(IntentParam.PARAM_PAY_HASH);
+                if (hash != null && hash.length() > 0) {
+                    showLongToast(R.string.tip_recharge_success);
+                    finish();
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

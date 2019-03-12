@@ -683,7 +683,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textAlignment="center"
-                        android:text="@string/prompt_btc_fee"
+                        android:text="@string/prompt_remark"
                         android:paddingTop="@dimen/space_normal"
                         android:paddingBottom="@dimen/space_small"
                         android:textColor="@color/color_primary_text"
@@ -704,7 +704,17 @@
                     android:id="@+id/et_pay_remark"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:lines="4"/>
+                    android:layout_marginStart="@dimen/space_normal"
+                    android:layout_marginEnd="@dimen/space_normal"
+                    android:layout_marginTop="@dimen/space_normal"
+                    android:layout_marginBottom="@dimen/space_normal"
+                    android:padding="@dimen/space_small"
+                    android:inputType="textMultiLine"
+                    android:lines="4"
+                    android:gravity="start|top"
+                    android:textSize="@dimen/font_size_subheading"
+                    android:background="@drawable/editor_normal_bg"
+                    android:lineSpacingMultiplier="1.2"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"

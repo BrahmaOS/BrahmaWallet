@@ -602,7 +602,11 @@
     <string name="label_quick_payment_account_recharge">Quick payment account recharge</string>
     <string name="payment_type_ordinary_payment">Ordinary Payment</string>
     <string name="payment_type_quick_payment">Quick Payment</string>
-    <string name="payment_invalid_create_order">Create order invalid!</string>+    <string name="pay_account_info">Quick Account</string>
+    <string name="payment_invalid_create_order">Create order invalid!</string>
+    <string name="tip_recharge_success">Recharge success.</string>
+    <string name="label_account_balance">Account Balance</string>
+
+    <string name="pay_account_info">Quick Account</string>
     <string name="no_quick_pay_account">Please set a quick pay account.</string>
     <string-array name="avatar_change_choices">
         <item>Take photo</item>

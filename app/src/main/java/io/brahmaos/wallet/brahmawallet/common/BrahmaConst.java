@@ -109,4 +109,10 @@ public class BrahmaConst {
     public static final int PAY_CODE_SUCCESS = 0;
     public static final int PAY_CODE_INVALID_BLOCKCHAIN = 101;
     public static final int PAY_CODE_NO_ACCOUNT = 102;
+
+    // coin code base brmpay
+    public static final int PAY_COIN_CODE_BTC = 1;
+    public static final int PAY_COIN_CODE_ETH = 2;
+    public static final int PAY_COIN_CODE_USDT = 8;
+    public static final int PAY_COIN_CODE_BRM = 1200;
 }

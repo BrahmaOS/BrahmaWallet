@@ -482,7 +482,7 @@
 
     <!-- quick transfer -->
     <string name="label_confirm_transfer">确认转账</string>
-    <string name="label_choose_token">Choose Coin</string>
+    <string name="label_choose_token">充值币种</string>
     <string name="label_gas_price">Gas Price</string>
     <string name="label_choose_account">账号列表</string>
 
@@ -500,7 +500,22 @@
     <string name="menu_transactions">账单</string>
     <string name="menu_address_book">地址本</string>
     <string name="info_account_id">账号标识</string>
+    <string name="title_pay_recharge">快捷账号充值</string>
     <string name="label_confirm_eht_account_for_quick_pay">请确认是否拥有账号</string>
+    <string name="tip_add_pay_account_success">创建快捷账号成功.</string>
+    <string name="tip_add_pay_account_failed">创建快捷账号失败!</string>
+    <string name="label_commodity_information">商品描述</string>
+    <string name="label_merchant_name">商户名称</string>
+    <string name="label_pay_type">支付方式</string>
+    <string name="tip_lack_param">缺少参数。</string>
+    <string name="tip_invalid_param">参数不正确。</string>
+    <string name="brm_pay">BRMPAY</string>
+    <string name="label_quick_payment_account_recharge">快捷支付账号充值</string>
+    <string name="payment_type_ordinary_payment">普通支付</string>
+    <string name="payment_type_quick_payment">快捷支付</string>
+    <string name="payment_invalid_create_order">创建订单失败!</string>
+    <string name="tip_recharge_success">充值成功.</string>
+    <string name="label_account_balance">账号余额</string>
     <string name="pay_account_info">快捷账号</string>
     <string name="no_quick_pay_account">请先设置一个快捷支付账号。</string>
     <string-array name="avatar_change_choices">

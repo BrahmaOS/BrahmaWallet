@@ -33,6 +33,7 @@ import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 import io.brahmaos.wallet.brahmawallet.model.AccountAssets;
 import io.brahmaos.wallet.brahmawallet.model.CryptoCurrency;
 import io.brahmaos.wallet.brahmawallet.model.KyberToken;
+import io.brahmaos.wallet.brahmawallet.model.pay.AccountBalance;
 import io.brahmaos.wallet.brahmawallet.model.pay.PayRequestToken;
 import io.brahmaos.wallet.brahmawallet.repository.DataRepository;
 import io.brahmaos.wallet.brahmawallet.statistic.network.StatisticHttpUtils;
@@ -61,11 +62,21 @@ public class PayService extends BaseService{
         return instance;
     }
 
+    private List<AccountBalance> accountBalances = new ArrayList<>();
+
     @Override
     public boolean init(Context context) {
         super.init(context);
         this.context = context;
         return true;
+    }
+
+    public List<AccountBalance> getAccountBalances() {
+        return accountBalances;
+    }
+
+    public void setAccountBalances(List<AccountBalance> accountBalances) {
+        this.accountBalances = accountBalances;
     }
 
     public void checkPayRequestToken() {
@@ -170,8 +181,8 @@ public class PayService extends BaseService{
                         }
 
                         @Override
-                        public void onNext(ApiRespResult api) {
-                            e.onNext(api);
+                        public void onNext(ApiRespResult apiRespResult) {
+                            e.onNext(apiRespResult);
                         }
                     });
         });
@@ -399,5 +410,150 @@ public class PayService extends BaseService{
 
     public Observable<ApiRespResult> createCreditPreOrderByNet(Map<String, Object> params) {
         return Networks.getInstance().getPayApi().createPayAccountPreCredit(params);
+    }
+
+    /*
+     * Recharge quick payment account.
+     */
+    public Observable<ApiRespResult> rechargeOrder(String orderId, String txHash) {
+        return Observable.create(e -> {
+            Map<String, Object> params = new HashMap<>();
+            params.put(ReqParam.PARAM_ORDER_ID, orderId);
+            params.put(ReqParam.PARAM_TX_HASH, txHash);
+
+            rechargeOrderByNet(params)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<ApiRespResult>() {
+                        @Override
+                        public void onCompleted() {
+                            e.onCompleted();
+                        }
+
+                        @Override
+                        public void onError(Throwable throwable) {
+                            throwable.printStackTrace();
+                            e.onError(throwable);
+                        }
+
+                        @Override
+                        public void onNext(ApiRespResult apr) {
+                            if (apr != null) {
+                                if (apr.getResult() == ApiConst.INVALID_TOKEN) {
+                                    getPayTokenForQuickPay("rechargeOrderByNet", params)
+                                            .subscribeOn(Schedulers.io())
+                                            .observeOn(AndroidSchedulers.mainThread())
+                                            .subscribe(new Observer<ApiRespResult>() {
+                                                @Override
+                                                public void onNext(ApiRespResult apiRespResult) {
+                                                    e.onNext(apiRespResult);
+                                                }
+
+                                                @Override
+                                                public void onError(Throwable error) {
+                                                    error.printStackTrace();
+                                                }
+
+                                                @Override
+                                                public void onCompleted() {
+
+                                                }
+                                            });
+                                } else {
+                                    e.onNext(apr);
+                                }
+                            } else {
+                                e.onNext(null);
+                            }
+                        }
+                    });
+        });
+    }
+
+    public Observable<ApiRespResult> rechargeOrderByNet(Map<String, Object> params) {
+        return Networks.getInstance().getPayApi().payAccountRecharge(params);
+    }
+
+    /*
+     * Get account balance.
+     */
+    public Observable<List<AccountBalance>> getAccountBalance() {
+        return Observable.create(e -> {
+            getAccountBalanceByNet()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<ApiRespResult>() {
+                        @Override
+                        public void onCompleted() {
+                            e.onCompleted();
+                        }
+
+                        @Override
+                        public void onError(Throwable throwable) {
+                            throwable.printStackTrace();
+                            e.onError(throwable);
+                        }
+
+                        @Override
+                        public void onNext(ApiRespResult apr) {
+                            if (apr != null) {
+                                if (apr.getResult() == ApiConst.INVALID_TOKEN) {
+                                    getPayTokenForQuickPay("getAccountBalanceByNet", null)
+                                            .subscribeOn(Schedulers.io())
+                                            .observeOn(AndroidSchedulers.mainThread())
+                                            .subscribe(new Observer<ApiRespResult>() {
+                                                @Override
+                                                public void onNext(ApiRespResult apiRespResult) {
+                                                    if (apiRespResult.getData() != null && apiRespResult.getData().containsKey("balance_info")
+                                                            && apiRespResult.getData().get("balance_info") != null){
+                                                        ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
+                                                        try {
+                                                            ArrayList<AccountBalance> accountBalances = objectMapper.readValue(objectMapper.writeValueAsString(apiRespResult.getData().get("balance_info")), new TypeReference<List<AccountBalance>>() {});
+                                                            setAccountBalances(accountBalances);
+                                                            e.onNext(accountBalances);
+                                                        } catch (IOException e1) {
+                                                            e1.printStackTrace();
+                                                            e.onError(e1);
+                                                        }
+                                                    } else {
+                                                        e.onNext(null);
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onError(Throwable error) {
+                                                    error.printStackTrace();
+                                                }
+
+                                                @Override
+                                                public void onCompleted() {
+
+                                                }
+                                            });
+                                } else if (apr.getData() != null && apr.getData().containsKey("balance_info")
+                                        && apr.getData().get("balance_info") != null){
+                                    BLog.i(tag(), apr.toString());
+                                    ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
+                                    try {
+                                        ArrayList<AccountBalance> accountBalances = objectMapper.readValue(objectMapper.writeValueAsString(apr.getData().get("balance_info")), new TypeReference<List<AccountBalance>>() {});
+                                        setAccountBalances(accountBalances);
+                                        e.onNext(accountBalances);
+                                    } catch (IOException e1) {
+                                        e1.printStackTrace();
+                                        e.onError(e1);
+                                    }
+                                } else {
+                                    e.onNext(null);
+                                }
+                            } else {
+                                e.onNext(null);
+                            }
+                        }
+                    });
+        });
+    }
+
+    public Observable<ApiRespResult> getAccountBalanceByNet() {
+        return Networks.getInstance().getPayApi().getAccountBalance();
     }
 }
