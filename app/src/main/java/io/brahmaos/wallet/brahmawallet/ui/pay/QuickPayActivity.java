@@ -328,12 +328,12 @@ public class QuickPayActivity extends BaseActivity {
             mTvPaymentMethod.setText(getString(R.string.payment_type_ordinary_payment));
         }
 
-        if (coinCode == BrahmaConst.COIN_CODE_BTC) {
+        if (coinCode == BrahmaConst.PAY_COIN_CODE_BTC) {
             chosenToken.setName(BrahmaConst.COIN_BTC);
             chosenToken.setShortName(BrahmaConst.COIN_SYMBOL_BTC);
         } else {
             getEthGasPrice();
-            if (coinCode == BrahmaConst.COIN_CODE_BRM) {
+            if (coinCode == BrahmaConst.PAY_COIN_CODE_BRM) {
                 // only support brm
                 chosenToken.setName(BrahmaConst.COIN_BRM);
                 chosenToken.setShortName(BrahmaConst.COIN_SYMBOL_BRM);
@@ -359,7 +359,7 @@ public class QuickPayActivity extends BaseActivity {
         }
 
         // coin type
-        if (coinCode == BrahmaConst.COIN_CODE_BTC) {
+        if (coinCode == BrahmaConst.PAY_COIN_CODE_BTC) {
             ImageManager.showTokenIcon(this, mImageViewCoin, R.drawable.icon_btc);
             mTvCoinName.setText(BrahmaConst.COIN_SYMBOL_BTC);
             mLayoutChooseToken.setVisibility(View.GONE);
@@ -370,7 +370,7 @@ public class QuickPayActivity extends BaseActivity {
             mLayoutGasPrice.setVisibility(View.VISIBLE);
             mLayoutGasLimit.setVisibility(View.VISIBLE);
             mLayoutBtcFee.setVisibility(View.GONE);
-            if (coinCode == BrahmaConst.COIN_CODE_BRM) {
+            if (coinCode == BrahmaConst.PAY_COIN_CODE_BRM) {
                 ImageManager.showTokenIcon(this, mImageViewCoin, R.drawable.icon_brm);
                 mTvCoinName.setText(BrahmaConst.COIN_SYMBOL_BRM);
             } else {
@@ -455,7 +455,7 @@ public class QuickPayActivity extends BaseActivity {
                         if (accountEntities != null && accountEntities.size() > 0) {
                             for (AccountEntity accountEntity : accountEntities) {
                                 int blockchainType = BrahmaConst.ETH_ACCOUNT_TYPE;
-                                if (coinCode == BrahmaConst.COIN_CODE_BTC) {
+                                if (coinCode == BrahmaConst.PAY_COIN_CODE_BTC) {
                                     blockchainType = BrahmaConst.BTC_ACCOUNT_TYPE;
                                 }
                                 if (accountEntity.getType() == blockchainType) {
@@ -473,7 +473,7 @@ public class QuickPayActivity extends BaseActivity {
                         } else {
                             chosenAccount = accounts.get(0);
                             showChosenAccountInfo(chosenAccount);
-                            if (coinCode != BrahmaConst.COIN_CODE_BTC) {
+                            if (coinCode != BrahmaConst.PAY_COIN_CODE_BTC) {
                                 getEthereumChainBalance(accounts, coinCode);
                             }
                             if (accounts.size() > 1) {
@@ -621,7 +621,7 @@ public class QuickPayActivity extends BaseActivity {
 
     // get eth/token balance
     private void getEthereumChainBalance(List<AccountEntity> accounts, int coinCode) {
-        if (coinCode == BrahmaConst.COIN_CODE_ETH) {
+        if (coinCode == BrahmaConst.PAY_COIN_CODE_ETH) {
             for (AccountEntity account : accounts) {
                 BrahmaWeb3jService.getInstance().getEthBalance(account)
                         .observable()
@@ -716,7 +716,7 @@ public class QuickPayActivity extends BaseActivity {
                 return;
             }
         }
-        if (coinCode == BrahmaConst.COIN_CODE_BTC) {
+        if (coinCode == BrahmaConst.PAY_COIN_CODE_BTC) {
             transferValue = CommonUtil.convertSatoshiFromBTC(new BigDecimal(intentParamSendValue));
         } else {
             transferValue = CommonUtil.convertWeiFromEther(new BigDecimal(intentParamSendValue));
@@ -739,7 +739,7 @@ public class QuickPayActivity extends BaseActivity {
             return;
         }
 
-        if (coinCode == BrahmaConst.COIN_CODE_BTC) {
+        if (coinCode == BrahmaConst.PAY_COIN_CODE_BTC) {
             showBtcPasswordDialog();
         } else {
             showEthPasswordDialog();

@@ -51,7 +51,7 @@ public class PayAccountRechargeActivity extends BaseActivity {
     @BindView(R.id.btn_credit)
     Button btnCredit;
 
-    private int chosenCoinCode = BrahmaConst.COIN_CODE_BRM;
+    private int chosenCoinCode = BrahmaConst.PAY_COIN_CODE_BRM;
     private AccountEntity account;
     private AccountViewModel mViewModel;
 
@@ -80,17 +80,17 @@ public class PayAccountRechargeActivity extends BaseActivity {
 
             RelativeLayout layoutCoinBrm = dialogView.findViewById(R.id.layout_coin_brm);
             layoutCoinBrm.setOnClickListener(v1 -> {
-                initCoinType(BrahmaConst.COIN_CODE_BRM);
+                initCoinType(BrahmaConst.PAY_COIN_CODE_BRM);
                 alertDialog.cancel();
             });
             RelativeLayout layoutCoinEth = dialogView.findViewById(R.id.layout_coin_eth);
             layoutCoinEth.setOnClickListener(v1 -> {
-                initCoinType(BrahmaConst.COIN_CODE_ETH);
+                initCoinType(BrahmaConst.PAY_COIN_CODE_ETH);
                 alertDialog.cancel();
             });
             RelativeLayout layoutCoinBtc = dialogView.findViewById(R.id.layout_coin_btc);
             layoutCoinBtc.setOnClickListener(v1 -> {
-                initCoinType(BrahmaConst.COIN_CODE_BTC);
+                initCoinType(BrahmaConst.PAY_COIN_CODE_BTC);
                 alertDialog.cancel();
             });
         });
@@ -115,15 +115,15 @@ public class PayAccountRechargeActivity extends BaseActivity {
 
     private void initCoinType(int coinCode) {
         chosenCoinCode = coinCode;
-        if (coinCode == BrahmaConst.COIN_CODE_BRM) {
+        if (coinCode == BrahmaConst.PAY_COIN_CODE_BRM) {
             ImageManager.showTokenIcon(this, ivCoinIcon, R.drawable.icon_brm);
             ImageManager.showTokenIcon(this, ivCreditCoinIcon, R.drawable.icon_brm);
             tvCoinName.setText(String.format("%s (%s)", BrahmaConst.COIN_SYMBOL_BRM, BrahmaConst.COIN_BRM));
-        } else if (coinCode == BrahmaConst.COIN_CODE_ETH) {
+        } else if (coinCode == BrahmaConst.PAY_COIN_CODE_ETH) {
             ImageManager.showTokenIcon(this, ivCoinIcon, R.drawable.icon_eth);
             ImageManager.showTokenIcon(this, ivCreditCoinIcon, R.drawable.icon_eth);
             tvCoinName.setText(String.format("%s (%s)", BrahmaConst.COIN_SYMBOL_ETH, BrahmaConst.COIN_ETH));
-        } else if (coinCode == BrahmaConst.COIN_CODE_BTC) {
+        } else if (coinCode == BrahmaConst.PAY_COIN_CODE_BTC) {
             ImageManager.showTokenIcon(this, ivCoinIcon, R.drawable.icon_btc);
             ImageManager.showTokenIcon(this, ivCreditCoinIcon, R.drawable.icon_btc);
             tvCoinName.setText(String.format("%s (%s)", BrahmaConst.COIN_SYMBOL_BTC, BrahmaConst.COIN_BTC));
