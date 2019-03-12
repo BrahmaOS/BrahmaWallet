@@ -4,15 +4,22 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Locale;
 
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 import io.brahmaos.wallet.brahmawallet.statistic.utils.StatisticEventAgent;
+import io.brahmaos.wallet.util.BLog;
 
 /**
  * the project common config
@@ -34,6 +41,10 @@ public class BrahmaConfig {
     private static final String KEY_PAY_REQUEST_TOKEN = "pay.request.token";
     private static final String KEY_PAY_REQUEST_TOKEN_TYPE = "pay.request.token.type";
     private static final String KEY_PAY_ACCOUNT = "quick.pay.account";
+    private static final String KEY_PAY_ACCOUNT_NAME = "quick.pay.account.name";
+
+    private static final String PAY_ACCOUNT_AVATAR_FOLDER = "pay_account";
+    private static final String PAY_ACCOUNT_AVATAR_JPG_NAME = "avatar.jpg";
 
     // false: main net; true: ropsten testnet;
     public static boolean debugFlag = true;//false;
@@ -43,6 +54,7 @@ public class BrahmaConfig {
     private String payRequestToken;
     private String payRequestTokenType;
     private String payAccount;
+    private String payAccountName;
     private boolean assetsVisible = true;
     private String tokenListHash;
     private boolean touchId = false;
@@ -64,6 +76,7 @@ public class BrahmaConfig {
         payRequestToken = sharedPref.getString(KEY_PAY_REQUEST_TOKEN, null);
         payRequestTokenType = sharedPref.getString(KEY_PAY_REQUEST_TOKEN_TYPE, null);
         payAccount = sharedPref.getString(KEY_PAY_ACCOUNT, null);
+        payAccountName = sharedPref.getString(KEY_PAY_ACCOUNT_NAME, "");
         assetsVisible = sharedPref.getBoolean(KEY_ASSETS_VISIBLE, true);
         tokenListHash = sharedPref.getString(KEY_TOKEN_LIST_HASH, "");
         touchId = sharedPref.getBoolean(context.getString(R.string.key_touch_id_switch), false);
@@ -192,6 +205,57 @@ public class BrahmaConfig {
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(KEY_PAY_ACCOUNT, payAccount);
         editor.apply();
+    }
+
+    public String getPayAccountName() {
+        return payAccountName;
+    }
+
+    public void setPayAccountName(String payAccountName) {
+        this.payAccountName = payAccountName;
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(KEY_PAY_ACCOUNT_NAME, payAccountName);
+        editor.apply();
+    }
+
+    public Bitmap getPayAccountAvatar() {
+        try {
+            FileInputStream f = new FileInputStream(context.getApplicationContext().getFilesDir()
+                    + "/" + PAY_ACCOUNT_AVATAR_FOLDER + "/" + PAY_ACCOUNT_AVATAR_JPG_NAME);
+            Bitmap bm = null;
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inSampleSize = 8;
+            bm = BitmapFactory.decodeStream(f, null, options);
+            return bm;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public boolean savePayAccountAvatar(Bitmap bitmap) {
+        boolean result = false;
+        File dir = new File(context.getApplicationContext().getFilesDir()
+                + "/" + PAY_ACCOUNT_AVATAR_FOLDER);
+        if(!dir.exists()) {
+            dir.mkdirs();
+        }
+        File file = new File(dir + "/" + PAY_ACCOUNT_AVATAR_JPG_NAME);
+        FileOutputStream os =null;
+        try {
+            os =new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG,100, os);
+            os.flush();
+            result = true;
+        } catch(Exception e) {
+        } finally {
+            try {
+                os.close();
+            } catch (IOException ie) {
+            }
+            bitmap = null;
+            System.gc();
+        }
+        return result;
     }
 
     public boolean isAssetsVisible() {

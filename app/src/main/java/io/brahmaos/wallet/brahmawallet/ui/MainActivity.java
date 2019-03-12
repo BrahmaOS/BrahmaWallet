@@ -32,12 +32,12 @@ import java.util.TimerTask;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.model.VersionInfo;
 import io.brahmaos.wallet.brahmawallet.service.PayService;
 import io.brahmaos.wallet.brahmawallet.service.VersionUpgradeService;
-import io.brahmaos.wallet.brahmawallet.ui.account.AccountDetailActivity;
 import io.brahmaos.wallet.brahmawallet.ui.account.AccountsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.account.CreateAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
@@ -46,7 +46,7 @@ import io.brahmaos.wallet.brahmawallet.ui.contact.ContactsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.home.MeFragment;
 import io.brahmaos.wallet.brahmawallet.ui.home.QuickPayFragment;
 import io.brahmaos.wallet.brahmawallet.ui.home.WalletFragment;
-import io.brahmaos.wallet.brahmawallet.ui.pay.AccountInfoActivity;
+import io.brahmaos.wallet.brahmawallet.ui.pay.PayAccountInfoActivity;
 import io.brahmaos.wallet.brahmawallet.ui.pay.PayTestActivity;
 import io.brahmaos.wallet.brahmawallet.ui.setting.AboutActivity;
 import io.brahmaos.wallet.brahmawallet.ui.setting.HelpActivity;
@@ -249,8 +249,13 @@ public class MainActivity extends BaseActivity
         BLog.d(tag(), "onClickLayout--" + v.getId());
         switch (v.getId()){
             case R.id.layout_account_info:
-                Intent accInfoIntent = new Intent(this, AccountInfoActivity.class);
-                startActivity(accInfoIntent);
+                if (null == BrahmaConfig.getInstance().getPayAccount() ||
+                        BrahmaConfig.getInstance().getPayAccount().isEmpty()) {
+                    showLongToast(getString(R.string.no_quick_pay_account));
+                } else {
+                    Intent accInfoIntent = new Intent(this, PayAccountInfoActivity.class);
+                    startActivity(accInfoIntent);
+                }
                 break;
 //            case R.id.layout_transactions:
 //                Intent transListIntent = new Intent(this, TransactionsList.class);

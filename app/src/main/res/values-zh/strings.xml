@@ -501,4 +501,15 @@
     <string name="menu_address_book">地址本</string>
     <string name="info_account_id">账号标识</string>
     <string name="label_confirm_eht_account_for_quick_pay">请确认是否拥有账号</string>
+    <string name="pay_account_info">快捷账号</string>
+    <string name="no_quick_pay_account">请先设置一个快捷支付账号。</string>
+    <string-array name="avatar_change_choices">
+        <item>拍照</item>
+        <item>从图库选择</item>
+    </string-array>
+    <string name="avatar_choose_fail">打开图库失败</string>
+    <string name="avatar_camera_fail">打开相机失败</string>
+    <string name="avatar_crop_fail">图片裁剪失败</string>
+    <string name="avatar_save_fail">头像保存失败</string>
+    <string name="avatar_changed">头像修改成功</string>
 </resources>

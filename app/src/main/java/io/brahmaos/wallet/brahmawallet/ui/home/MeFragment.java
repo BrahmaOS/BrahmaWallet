@@ -1,31 +1,17 @@
 package io.brahmaos.wallet.brahmawallet.ui.home;
 
-import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.graphics.Bitmap;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import io.brahmaos.wallet.brahmawallet.R;
-import io.brahmaos.wallet.brahmawallet.common.IntentParam;
-import io.brahmaos.wallet.brahmawallet.model.Dapp;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseFragment;
-import io.brahmaos.wallet.brahmawallet.ui.contact.ContactsActivity;
-import io.brahmaos.wallet.brahmawallet.ui.dapp.DappActivity;
-import io.brahmaos.wallet.brahmawallet.ui.dapp.DappTestActivity;
-import io.brahmaos.wallet.util.BLog;
 
 public class MeFragment extends BaseFragment {
+    private ImageView mAvatar;
+    private TextView mAccName;
+
     @Override
     protected String tag() {
         return MeFragment.class.getName();
@@ -41,6 +27,23 @@ public class MeFragment extends BaseFragment {
         MeFragment fragment = new MeFragment();
         fragment.setArguments(newArguments(layoutResId, titleResId));
         return fragment;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAvatar = getActivity().findViewById(R.id.iv_account_avatar);
+        mAccName = getActivity().findViewById(R.id.tv_account_name);
+        String accountName = BrahmaConfig.getInstance().getPayAccountName();
+        if (null == accountName || accountName.isEmpty()) {
+            mAccName.setText(getString(R.string.pay_account_info));
+        } else {
+            mAccName.setText(accountName);
+        }
+        Bitmap avatar = BrahmaConfig.getInstance().getPayAccountAvatar();
+        if (avatar != null) {
+            mAvatar.setImageBitmap(avatar);
+        }
     }
 
     @Override
