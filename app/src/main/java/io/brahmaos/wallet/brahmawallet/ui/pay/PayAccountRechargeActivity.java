@@ -101,7 +101,7 @@ public class PayAccountRechargeActivity extends BaseActivity {
                 showLongToast(R.string.tip_invalid_amount);
                 return;
             }
-            Uri uri = Uri.parse(String.format("brahmaos://wallet/pay?pay_type=1&amount=%s&coin_code=%d&sender=%s",
+            Uri uri = Uri.parse(String.format("brahmaos://wallet/pay?trade_type=1&amount=%s&coin_code=%d&sender=%s",
                     sendValueStr, chosenCoinCode, BrahmaConfig.getInstance().getPayAccount()));
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
             startActivityForResult(intent, ReqCode.QUICK_PAYMENT_RECHARGE);
