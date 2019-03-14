@@ -280,6 +280,14 @@ public class BrahmaConfig {
         editor.apply();
     }
 
+    public String getFingerprintTermsUrl() {
+        String url = "https://support.brahmaos.io/wallet/policies/fingerprint-terms_en";
+        if (languageLocale.equals(BrahmaConst.LANGUAGE_CHINESE)) {
+            url = "https://support.brahmaos.io/wallet/policies/fingerprint-terms_zh";
+        }
+        return url;
+    }
+
     public String getServiceTermsUrl() {
         String serviceUrl = "https://support.brahmaos.io/wallet/policies/service_en";
         if (languageLocale.equals(BrahmaConst.LANGUAGE_CHINESE)) {

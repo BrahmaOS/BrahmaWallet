@@ -11,7 +11,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.USE_FINGERPRINT" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
-    <uses-permission android:name= "android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
         android:name=".WalletApp"
@@ -107,8 +107,7 @@
         <activity
             android:name=".ui.contact.ShowContactAvatarActivity"
             android:label="@string/title_show_contact_avatar"
-            android:theme="@style/AppTheme"/>
-
+            android:theme="@style/AppTheme" />
         <activity android:name=".ui.setting.ServiceTermsActivity" />
         <activity android:name=".ui.account.MnemonicBackupActivity" />
         <activity android:name=".ui.account.ConfirmMnemonicActivity" />
@@ -117,8 +116,9 @@
             android:name=".ui.FingerActivity"
             android:launchMode="singleInstance"
             android:theme="@style/FadeTheme" />
-        <activity android:name=".ui.transfer.InstantExchangeActivity"
-            android:windowSoftInputMode="adjustResize"/>
+        <activity
+            android:name=".ui.transfer.InstantExchangeActivity"
+            android:windowSoftInputMode="adjustResize" />
         <activity android:name=".ui.setting.HelpActivity" />
         <activity android:name=".ui.transaction.TransactionsActivity" />
         <activity android:name=".ui.transaction.EthTransactionsActivity" />
@@ -126,7 +126,6 @@
         <activity android:name=".ui.transaction.EtherscanTxDetailActivity" />
         <activity android:name=".ui.transaction.TransactionDetailActivity" />
         <activity android:name=".ui.setting.FeedbackActivity" />
-
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
@@ -144,10 +143,11 @@
         <activity android:name=".ui.transaction.BtcTransactionDetailActivity" />
         <activity android:name=".ui.transaction.BlockchainTxDetailActivity" />
         <activity android:name=".ui.dapp.DappActivity" />
-        <activity android:name=".ui.transfer.QuickTransferActivity"
+        <activity
+            android:name=".ui.transfer.QuickTransferActivity"
             android:theme="@style/transparent_activity">
             <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
+                <action android:name="android.intent.action.VIEW" />
             </intent-filter>
         </activity>
         <activity android:name=".ui.dapp.DappTestActivity" />
@@ -157,20 +157,25 @@
         <activity android:name=".ui.pay.PayTestActivity" />
         <activity android:name=".ui.biometric.TouchIDPayActivity" />
         <activity android:name=".ui.pay.PayAccountRechargeActivity" />
-        <activity android:name=".ui.pay.QuickPayActivity"
+        <activity
+            android:name=".ui.pay.QuickPayActivity"
             android:exported="true"
             android:theme="@style/transparent_activity">
             <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
-                <category android:name="android.intent.category.APP_BROWSER"/>
-                <data android:scheme="brahmaos"
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.APP_BROWSER" />
+
+                <data
                     android:host="wallet"
-                    android:path="/pay"/>
+                    android:path="/pay"
+                    android:scheme="brahmaos" />
             </intent-filter>
         </activity>
         <activity android:name=".ui.pay.ChangePayAccountNameActivity" />
+        <activity android:name=".ui.base.BaseWebActivity" />
     </application>
 
 </manifest>

@@ -38,6 +38,7 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
                     android:clickable="true"
                     android:focusable="true"
                     android:padding="@dimen/space_normal"
@@ -54,11 +55,11 @@
                         android:layout_width="@dimen/toolbar_icon_size"
                         android:layout_height="@dimen/toolbar_icon_size"/>
                 </RelativeLayout>
-                <include layout="@layout/horizontal_divider"/>
                 <RelativeLayout
                     android:id="@+id/layout_account_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
                     android:clickable="true"
                     android:focusable="true"
                     android:padding="@dimen/space_normal"
@@ -75,11 +76,12 @@
                         android:layout_alignParentEnd="true"
                         android:textColor="@color/color_secondary_text"/>
                 </RelativeLayout>
-                <include layout="@layout/horizontal_divider"/>
+
                 <RelativeLayout
                     android:id="@+id/layout_account_address"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
                     android:clickable="true"
                     android:focusable="true"
                     android:padding="@dimen/space_normal"
@@ -96,11 +98,11 @@
                         android:layout_alignParentEnd="true"
                         android:textColor="@color/color_secondary_text"/>
                 </RelativeLayout>
-                <include layout="@layout/horizontal_divider"/>
                 <RelativeLayout
                     android:id="@+id/layout_account_address_qrcode"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
                     android:clickable="true"
                     android:focusable="true"
                     android:padding="@dimen/space_normal"
@@ -124,6 +126,7 @@
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:focusable="true"
+                    android:layout_marginTop="@dimen/space_normal"
                     android:padding="@dimen/space_normal"
                     android:background="@drawable/list_item_bg">
                     <TextView
@@ -135,47 +138,44 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:layout_gravity="center_vertical"
-                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
                         android:src="@drawable/ic_keyboard_arrow_right_gray"/>
                 </RelativeLayout>
-
-                <include layout="@layout/horizontal_divider"/>
-
                 <TextView
                     android:id="@+id/tv_change_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/space_normal"
+                    android:layout_marginTop="1dp"
                     android:padding="@dimen/space_normal"
                     android:clickable="true"
                     android:focusable="true"
                     android:background="@drawable/list_item_bg"
                     android:text="@string/action_change_password"/>
-                <include layout="@layout/horizontal_divider"/>
                 <TextView
                     android:id="@+id/tv_export_private_key"
                     android:clickable="true"
                     android:focusable="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
                     android:padding="@dimen/space_normal"
                     android:background="@drawable/list_item_bg"
                     android:text="@string/action_export_private_key"/>
-                <include layout="@layout/horizontal_divider"/>
                 <TextView
                     android:id="@+id/tv_export_keystore"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
                     android:padding="@dimen/space_normal"
                     android:clickable="true"
                     android:focusable="true"
                     android:background="@drawable/list_item_bg"
                     android:text="@string/action_export_keystore"/>
-                <include layout="@layout/horizontal_divider"/>
                 <TextView
                     android:id="@+id/tv_delete_account"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
                     android:padding="@dimen/space_normal"
                     android:clickable="true"
                     android:focusable="true"

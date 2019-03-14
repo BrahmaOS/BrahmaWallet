@@ -28,27 +28,37 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/height_toolbar"
-            android:layout_marginLeft="@dimen/space_normal"
-            android:layout_marginRight="@dimen/space_normal"
+            android:background="@color/main_bg"
             android:orientation="vertical">
-            <ImageView
-                android:layout_marginTop="@dimen/space_largest"
-                android:layout_width="@dimen/icon_large_size"
-                android:layout_height="@dimen/icon_large_size"
-                android:layout_gravity="center"
-                android:src="@drawable/fingerprint"
-                android:scaleType="fitCenter"/>
-            <TextView
-                android:layout_marginTop="@dimen/space_large"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:textSize="@dimen/font_size_body"
-                android:text="@string/touch_id_info"/>
+                android:orientation="vertical"
+                android:paddingTop="@dimen/space_largest"
+                android:paddingBottom="@dimen/space_larger"
+                android:background="@android:color/white">
+                <ImageView
+                    android:layout_width="@dimen/icon_large_size"
+                    android:layout_height="@dimen/icon_large_size"
+                    android:layout_gravity="center"
+                    android:src="@drawable/fingerprint"
+                    android:scaleType="fitCenter" />
+                <TextView
+                    android:layout_marginTop="@dimen/space_large"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:textSize="@dimen/font_size_subheading"
+                    android:textStyle="bold"
+                    android:text="@string/touch_id_info"/>
+            </LinearLayout>
+
             <LinearLayout
-                android:layout_marginTop="@dimen/space_largest"
+                android:layout_marginTop="@dimen/space_normal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/space_large"
+                android:layout_marginRight="@dimen/space_large">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -59,6 +69,7 @@
                     android:onClick="showTouchIDPaymentNotice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
                     android:textSize="@dimen/font_size_body"
                     android:text="@string/touch_id_notice"
                     android:textColor="@color/colorPrimary" />
@@ -67,6 +78,8 @@
             <Button
                 android:id="@+id/btn_touch_id"
                 android:layout_marginTop="@dimen/space_large"
+                android:layout_marginLeft="@dimen/space_large"
+                android:layout_marginRight="@dimen/space_large"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/ButtonSingle"

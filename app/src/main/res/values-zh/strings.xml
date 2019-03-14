@@ -97,9 +97,9 @@
     <string name="label_account_address">账号地址</string>
     <string name="label_qrcode">地址二维码</string>
     <string name="label_touch_id">指纹支付</string>
-    <string name="touch_id_info">指纹支付，让支付更安全便捷</string>
+    <string name="touch_id_info">让支付更安全, 更便捷</string>
     <string name="touch_id_view">查看</string>
-    <string name="touch_id_notice">《指纹支付协议》</string>
+    <string name="touch_id_notice">指纹服务协议</string>
     <string name="touch_id_open">同意协议并开通</string>
     <string name="touch_id_close">关闭</string>
     <string name="action_change_account_name">更改账号名</string>

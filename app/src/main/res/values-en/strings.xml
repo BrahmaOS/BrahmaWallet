@@ -100,10 +100,10 @@
     <string name="label_account_address">Address</string>
     <string name="label_qrcode">Address Code</string>
     <string name="label_touch_id">Touch ID Pay</string>
-    <string name="touch_id_info">Touch ID makes payments safer and quicker</string>
+    <string name="touch_id_info">Touch ID make payments safer and quicker</string>
     <string name="touch_id_view">View</string>
     <string name="touch_id_notice">Touch ID Payment Notice</string>
-    <string name="touch_id_open">Agree To The Agreement And Open</string>
+    <string name="touch_id_open">Agree And Open</string>
     <string name="touch_id_close">Close</string>
     <string name="action_change_account_name">Change Name</string>
     <string name="action_change_password">Change Password</string>

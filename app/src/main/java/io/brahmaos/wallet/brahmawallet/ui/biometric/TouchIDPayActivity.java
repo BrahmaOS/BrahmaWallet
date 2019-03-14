@@ -2,6 +2,7 @@ package io.brahmaos.wallet.brahmawallet.ui.biometric;
 
 import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
@@ -24,6 +25,7 @@ import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
 import io.brahmaos.wallet.brahmawallet.service.BtcAccountManager;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
+import io.brahmaos.wallet.brahmawallet.ui.base.BaseWebActivity;
 import io.brahmaos.wallet.brahmawallet.view.CustomProgressDialog;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.DataCryptoUtils;
@@ -64,7 +66,9 @@ public class TouchIDPayActivity extends BaseActivity  implements FingerprintCore
     }
 
     public void showTouchIDPaymentNotice(View view) {
-        //Todo
+        BaseWebActivity.startWeb(this,
+                getResources().getString(R.string.touch_id_notice),
+                BrahmaConfig.getInstance().getFingerprintTermsUrl());
     }
 
     @Override
