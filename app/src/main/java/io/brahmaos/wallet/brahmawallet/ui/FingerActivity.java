@@ -12,7 +12,6 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.view.KeyEvent;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -23,16 +22,15 @@ import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.WalletApp;
 import io.brahmaos.wallet.brahmawallet.service.MainService;
 import io.brahmaos.wallet.brahmawallet.ui.account.AccountGuideActivity;
-import io.brahmaos.wallet.brahmawallet.ui.account.CreateAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.util.BLog;
+
 
 public class FingerActivity extends BaseActivity {
     
     FingerprintManager manager;
     KeyguardManager mKeyManager;
     private final static int REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS = 0;
-    private final static String TAG = "finger_BLog.d";
 
     @Override
     protected String tag() {
@@ -47,12 +45,9 @@ public class FingerActivity extends BaseActivity {
         manager = (FingerprintManager) this.getSystemService(Context.FINGERPRINT_SERVICE);
         mKeyManager = (KeyguardManager) this.getSystemService(Context.KEYGUARD_SERVICE);
         ImageView ivStartVerification = findViewById(R.id.iv_fingerprint);
-        ivStartVerification.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isFinger()) {
-                    startListening(null);
-                }
+        ivStartVerification.setOnClickListener(v -> {
+            if (isFinger()) {
+                startListening(null);
             }
         });
         if (isFinger()) {
@@ -74,7 +69,7 @@ public class FingerActivity extends BaseActivity {
             BLog.d(tag(), "no hardware detected fingerprint");
             return false;
         }
-        BLog.d(TAG, "have hardware detected fingerprint");
+        BLog.d(tag(), "have hardware detected fingerprint");
 
         //is open PIN
         if (!mKeyManager.isKeyguardSecure()) {
@@ -139,16 +134,6 @@ public class FingerActivity extends BaseActivity {
             mCancellationSignal = new CancellationSignal();
         }
         manager.authenticate(cryptoObject, mCancellationSignal, 0, mSelfCallback, null);
-    }
-
-    /**
-     * screen pin
-     */
-    private void showAuthenticationScreen() {
-        Intent intent = mKeyManager.createConfirmDeviceCredentialIntent("finger", "test fingerprint");
-        if (intent != null) {
-            startActivityForResult(intent, REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS);
-        }
     }
 
     @Override
