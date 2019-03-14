@@ -33,7 +33,7 @@ import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class TouchIDPayActivity extends BaseActivity  implements FingerprintCore.SimpleAuthenticationCallback{
+public class TouchIDPayActivity extends BaseActivity implements FingerprintCore.SimpleAuthenticationCallback{
     private int accountId;
     private int accountType;
     private AccountEntity account;
@@ -135,7 +135,7 @@ public class TouchIDPayActivity extends BaseActivity  implements FingerprintCore
     }
 
     private void openTouchID(String accountAddr) {
-        //check whether support fingerprint
+        // check whether support fingerprint
         int result = fingerprintCore.checkFingerprintAvailable();
         if (-1 == result) {
             showShortToast(getString(R.string.touch_id_no_hardware));
@@ -163,7 +163,7 @@ public class TouchIDPayActivity extends BaseActivity  implements FingerprintCore
     }
 
     private void closeTouchID(String accountAddr) {
-        //reset shared prference
+        // reset shared prference
         BrahmaConfig.getInstance().setTouchIDPayState(accountAddr, false);
         fingerprintCore.clearTouchIDPay(accountAddr);
     }
@@ -183,8 +183,6 @@ public class TouchIDPayActivity extends BaseActivity  implements FingerprintCore
         });
         mFingerDialog.show();
         mFingerDialog.setContentView(fingerView);
-//        mFingerDialog.getWindow().setLayout(8 * getResources().getDimensionPixelSize(
-//                R.dimen.icon_normal_size), LinearLayout.LayoutParams.WRAP_CONTENT);
 
         try {
             fingerprintCore.encryptData(mAccountAddress, password);
@@ -230,17 +228,16 @@ public class TouchIDPayActivity extends BaseActivity  implements FingerprintCore
                 });
         } else if(BrahmaConst.BTC_ACCOUNT_TYPE == accountType) {
             String mnemonicsCode = DataCryptoUtils.aes128Decrypt(account.getCryptoMnemonics(), password);
-        if (mnemonicsCode != null) {
-            List<String> mnemonicsCodes = Splitter.on(" ").splitToList(mnemonicsCode);
-            if (mnemonicsCodes.size() == 0 || mnemonicsCodes.size() % 3 > 0) {
-                showPasswordErrorDialog();
+            if (mnemonicsCode != null) {
+                List<String> mnemonicsCodes = Splitter.on(" ").splitToList(mnemonicsCode);
+                if (mnemonicsCodes.size() == 0 || mnemonicsCodes.size() % 3 > 0) {
+                    showPasswordErrorDialog();
+                } else {
+                    showFingerprintDialog(password);
+                }
             } else {
-                showFingerprintDialog(password);
+                showPasswordErrorDialog();
             }
-        } else {
-            showPasswordErrorDialog();
-        }
-
         }
     }
 
@@ -269,8 +266,11 @@ public class TouchIDPayActivity extends BaseActivity  implements FingerprintCore
         if (mFingerDialog != null) {
             mFingerDialog.cancel();
         }
+
         BrahmaConfig.getInstance().setTouchIDPayState(mAccountAddress, true);
         mTouchIdButton.setText(getString(R.string.touch_id_close));
+        showLongToast(R.string.touch_id_open_succ);
+        finish();
     }
 
     private void showPasswordErrorDialog() {

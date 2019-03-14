@@ -175,11 +175,12 @@
                     android:id="@+id/tv_delete_account"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="1dp"
+                    android:layout_marginTop="@dimen/space_normal"
                     android:padding="@dimen/space_normal"
                     android:clickable="true"
                     android:focusable="true"
                     android:textColor="@color/color_danger"
+                    android:textAlignment="center"
                     android:background="@drawable/list_item_bg"
                     android:text="@string/action_delete_account"/>
 

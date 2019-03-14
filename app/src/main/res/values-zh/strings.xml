@@ -102,6 +102,7 @@
     <string name="touch_id_notice">指纹服务协议</string>
     <string name="touch_id_open">同意协议并开通</string>
     <string name="touch_id_close">关闭</string>
+    <string name="touch_id_open_succ">开通成功</string>
     <string name="action_change_account_name">更改账号名</string>
     <string name="action_change_password">更改密码</string>
     <string name="action_export_private_key">导出私钥</string>

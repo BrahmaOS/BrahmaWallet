@@ -105,6 +105,7 @@
     <string name="touch_id_notice">Touch ID Payment Notice</string>
     <string name="touch_id_open">Agree And Open</string>
     <string name="touch_id_close">Close</string>
+    <string name="touch_id_open_succ">Open Successfully</string>
     <string name="action_change_account_name">Change Name</string>
     <string name="action_change_password">Change Password</string>
     <string name="action_export_private_key">Export Private Key</string>
