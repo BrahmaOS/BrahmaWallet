@@ -270,4 +270,8 @@ public class CommonUtil {
         }
         return sb.toString();
     }
+
+    public static boolean isNull(String content) {
+        return content == null || content.isEmpty();
+    }
 }

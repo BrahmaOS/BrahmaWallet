@@ -20,7 +20,7 @@
     <string name="error_network">网络异常!</string>
 
     <string name="fragment_wallet">钱包</string>
-    <string name="fragment_pay">快速支付</string>
+    <string name="fragment_pay">快捷支付</string>
     <string name="fragment_me">我</string>
 
     <string name="action_next">下一步</string>
@@ -410,7 +410,7 @@
     <string name="contract_approve">合约授权</string>
     <string name="progress_get_rate">获取汇率…</string>
     <string name="progress_get_allowance">获取授权额度</string>
-    <string name="action_instant_exchange">快捷兑换</string>
+    <string name="action_instant_exchange">快速兑换</string>
     <string name="prompt_approval_amount">授权额度</string>
     <string name="tip_approve_success">合约授权请求已提交，请等待合约授权成功后进行下一步交易。</string>
     <string name="prompt_send_amount">转出数量</string>
@@ -517,6 +517,8 @@
     <string name="payment_invalid_create_order">创建订单失败!</string>
     <string name="tip_recharge_success">充值成功.</string>
     <string name="label_account_balance">账号余额</string>
+    <string name="action_create_pay_account">开通快捷账号</string>
+
     <string name="pay_account_info">快捷账号</string>
     <string name="no_quick_pay_account">请先设置一个快捷支付账号。</string>
     <string-array name="avatar_change_choices">
@@ -532,4 +534,7 @@
     <string name="title_create_quick_pay">创建快捷账号</string>
     <string name="quick_account_check_password">为了验证您拥有此快捷账号的权限，请输入创建或导入快捷账号时设置的密码。</string>
     <string name="tip_create_quick_account">&#8226;&#160;&#160;密码将会用于验证并开通快捷支付账号。</string>
+
+    <!-- Quick pay -->
+    <string name="tip_lack_param_trade_type">缺少交易类型参数</string>
 </resources>

@@ -40,10 +40,10 @@
                 <Button
                     android:id="@+id/btn_create_quick_account"
                     style="@style/MainButtonSingle"
-                    android:layout_marginTop="@dimen/space_larger"
+                    android:layout_marginTop="@dimen/space_largest"
                     android:layout_marginStart="@dimen/icon_large_size"
                     android:layout_marginEnd="@dimen/icon_large_size"
-                    android:text="@string/action_create_account"/>
+                    android:text="@string/action_create_pay_account"/>
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

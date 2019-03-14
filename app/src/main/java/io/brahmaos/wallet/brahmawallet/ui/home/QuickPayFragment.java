@@ -131,7 +131,7 @@ public class QuickPayFragment extends BaseFragment {
 
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) layoutHeader.getLayoutParams();
         params.width = display.widthPixels;
-        params.height = ((int) (display.heightPixels * 0.6) - statusBarHeight - toolbarHeight);
+        params.height = ((int) (display.heightPixels * 0.65) - statusBarHeight - toolbarHeight);
         layoutHeader.setLayoutParams(params);
 
         LinearLayoutManager btcLayoutManager = new LinearLayoutManager(getActivity());

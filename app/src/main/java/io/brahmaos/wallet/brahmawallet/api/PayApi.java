@@ -32,10 +32,10 @@ public interface PayApi {
      * Create quick pay account credit pre order
      */
     @POST("/pay/create/deposit")
-    Observable<ApiRespResult> createPayAccountPreCredit(@Body Map<String, Object> params);
+    Observable<ApiRespResult> rechargePreOrder(@Body Map<String, Object> params);
 
     /**
-     * Account credit order
+     * Account recharge order
      */
     @POST("/pay/payment/deposit")
     Observable<ApiRespResult> payAccountRecharge(@Body Map<String, Object> params);
@@ -45,4 +45,10 @@ public interface PayApi {
      */
     @GET("/pay/balance/info")
     Observable<ApiRespResult> getAccountBalance();
+
+    /**
+     * Pay request order by merchant
+     */
+    @POST("/pay/request/order")
+    Observable<ApiRespResult> payRequestOrder(@Body Map<String, Object> params);
 }

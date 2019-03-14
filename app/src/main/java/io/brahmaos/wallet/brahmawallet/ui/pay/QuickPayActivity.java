@@ -34,6 +34,7 @@ import org.web3j.utils.Numeric;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +47,7 @@ import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 import io.brahmaos.wallet.brahmawallet.event.EventTypeDef;
 import io.brahmaos.wallet.brahmawallet.model.AccountAssets;
+import io.brahmaos.wallet.brahmawallet.model.pay.MerchantReceiver;
 import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
 import io.brahmaos.wallet.brahmawallet.service.BtcAccountManager;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
@@ -66,9 +68,23 @@ import rx.schedulers.Schedulers;
 public class QuickPayActivity extends BaseActivity {
 
     public static String PARAM_ACCESS_KEY_ID = "access_key_id";
-    public static String PARAM_CREDIT = "credit";
+    public static String PARAM_TRADE_TYPE = "trade_type";
     public static String PARAM_AMOUNT = "amount";
     public static String PARAM_COIN_CODE = "coin_code";
+    public static String PARAM_PRE_PAY_ID = "prepay_id";
+    public static String PARAM_PAY_TYPE = "pay_type";
+    public static String PARAM_ORDER_NO = "order_no";
+    public static String PARAM_ORDER_DESC = "order_desc";
+    public static String PARAM_ORDER_DETAIL = "order_detail";
+    public static String PARAM_NOTIFY_URL = "notify_url";
+    public static String PARAM_CALLBACK_URL = "callback_url";
+    public static String PARAM_ATTACH = "attach";
+    public static String PARAM_SIGN_TYPE = "sign_type";
+    public static String PARAM_SIGN = "sign";
+    public static String PARAM_NONCE = "nonce";
+    public static String PARAM_T = "t";
+    public static int TRADE_TYPE_RECHARGE = 1;
+    public static int TRADE_TYPE_PAYMENT = 2;
 
     private ImageView mImageViewClose;
     private LinearLayout mLayoutTransferInfo;
@@ -120,13 +136,31 @@ public class QuickPayActivity extends BaseActivity {
     private CustomStatusView customStatusView;
     private TextView tvTransferStatus;
 
-    private int coinCode;
     private boolean isRecharge = false;
+    private int tradeType = 0;
+    // common params
+    private int coinCode;
     private String orderId;
-    private String receiptAddress;
     private String intentParamSendValue;
     private BigInteger transferValue;
-    private String paymentRemark;
+    private String tradeRemark;
+
+    // pay params
+    private String accessKeyId;
+    private int payType;
+    private String orderNo;
+    private String orderDesc;
+    private String orderDetail;
+    private String notifyUrl;
+    private String callbackUrl;
+    private String attach;
+    private String signType;
+    private String sign;
+    private int nonce;
+    private int timestamp;
+
+    private String receiptAddress;
+
     private BigInteger accountBalance;
     private AccountEntity chosenAccount;
     private TokenEntity chosenToken = new TokenEntity();
@@ -154,41 +188,74 @@ public class QuickPayActivity extends BaseActivity {
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(Color.TRANSPARENT);
         window.setNavigationBarColor(Color.TRANSPARENT);
+
+        setContentView(R.layout.activity_pay_quick);
+        initIntentParam();
+        initView();
+
+        initData();
+    }
+
+    private void initIntentParam() {
         Uri uri = getIntent().getData();
-        String accessKeyId = uri.getQueryParameter(PARAM_ACCESS_KEY_ID);
-        if (accessKeyId == null) {
-            BLog.d(tag(), "the access key id is null ");
-        } else {
-            BLog.d(tag(), "the access key id is: " + accessKeyId);
+        String tradeTypeStr = uri.getQueryParameter(PARAM_TRADE_TYPE);
+        if (CommonUtil.isNull(tradeTypeStr)) {
+            showLongToast(R.string.tip_lack_param_trade_type);
+            finish();
+            return;
         }
-        String addCreditStr = uri.getQueryParameter(PARAM_CREDIT);
-        if (addCreditStr != null && Integer.valueOf(addCreditStr) == 1) {
+        tradeType = Integer.valueOf(tradeTypeStr);
+        if (tradeType == TRADE_TYPE_RECHARGE) {
             isRecharge = true;
         }
         intentParamSendValue = uri.getQueryParameter(PARAM_AMOUNT);
-        if (intentParamSendValue == null) {
+        if (CommonUtil.isNull(intentParamSendValue)) {
             showLongToast(R.string.tip_lack_param);
             finish();
+            return;
         }
         String coinCodeStr = uri.getQueryParameter(PARAM_COIN_CODE);
-        if (coinCodeStr == null) {
+        if (CommonUtil.isNull(coinCodeStr)) {
             showLongToast(R.string.tip_lack_param);
             finish();
+            return;
         }
         try {
             coinCode = Integer.valueOf(coinCodeStr);
         } catch (NumberFormatException e) {
             showLongToast(R.string.tip_invalid_param);
             finish();
-        }
-        paymentRemark = uri.getQueryParameter("paymentRemark");
-        if (paymentRemark == null) {
-            paymentRemark = "";
+            return;
         }
 
-        setContentView(R.layout.activity_pay_quick);
-        initView();
-        initData();
+        if (tradeType == TRADE_TYPE_PAYMENT) {
+            accessKeyId = uri.getQueryParameter(PARAM_ACCESS_KEY_ID);
+            orderId = uri.getQueryParameter(PARAM_PRE_PAY_ID);
+            notifyUrl = uri.getQueryParameter(PARAM_NOTIFY_URL);
+            sign = uri.getQueryParameter(PARAM_SIGN);
+            orderNo = uri.getQueryParameter(PARAM_ORDER_NO);
+            orderDesc = uri.getQueryParameter(PARAM_ORDER_DESC);
+            String nonceStr = uri.getQueryParameter(PARAM_NONCE);
+            String timestampStr = uri.getQueryParameter(PARAM_T);
+            if (accessKeyId == null || orderId == null || notifyUrl == null
+                    || sign == null || nonceStr == null || timestampStr == null
+                    || orderNo == null || orderDesc == null) {
+                showLongToast(R.string.tip_lack_param);
+                finish();
+            }
+            callbackUrl = uri.getQueryParameter(PARAM_CALLBACK_URL);
+            attach = uri.getQueryParameter(PARAM_ATTACH);
+            nonce = Integer.valueOf(nonceStr);
+            timestamp = Integer.valueOf(timestampStr);
+            payType = Integer.valueOf(uri.getQueryParameter(PARAM_PAY_TYPE));
+            signType = uri.getQueryParameter(PARAM_SIGN_TYPE);
+        }
+
+
+        tradeRemark = uri.getQueryParameter("remark");
+        if (tradeRemark == null) {
+            tradeRemark = "";
+        }
     }
 
     private void initView() {
@@ -326,6 +393,8 @@ public class QuickPayActivity extends BaseActivity {
             mTvCommodityInformation.setText(getString(R.string.label_quick_payment_account_recharge));
             mTvMerchantName.setText(getString(R.string.brm_pay));
             mTvPaymentMethod.setText(getString(R.string.payment_type_ordinary_payment));
+        } else if (tradeType == TRADE_TYPE_PAYMENT) {
+            mTvCommodityInformation.setText(orderDesc);
         }
 
         if (coinCode == BrahmaConst.PAY_COIN_CODE_BTC) {
@@ -490,13 +559,21 @@ public class QuickPayActivity extends BaseActivity {
                     }
                 });
 
-        // get pre order id
+        // request order according trade type
         createPreOrderId();
     }
 
     private void createPreOrderId() {
-        PayService.getInstance().createCreditPreOrder(BrahmaConfig.getInstance().getPayAccount(),
-                    coinCode, intentParamSendValue, paymentRemark)
+        if (isRecharge) {
+            rechargePreOrderId();
+        } else if (tradeType == TRADE_TYPE_PAYMENT) {
+            requestOrderFromMerchant();
+        }
+    }
+
+    private void rechargePreOrderId() {
+        PayService.getInstance().createRechargePreOrder(BrahmaConfig.getInstance().getPayAccount(),
+                    coinCode, intentParamSendValue, tradeRemark)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<Map>() {
@@ -524,6 +601,59 @@ public class QuickPayActivity extends BaseActivity {
 
                         }
                     });
+    }
+
+    private void requestOrderFromMerchant() {
+        Map<String, Object> params = new HashMap<>();
+        params.put(PARAM_ACCESS_KEY_ID, accessKeyId);
+        params.put(PARAM_PRE_PAY_ID, orderId);
+        params.put(PARAM_PAY_TYPE, payType);
+        params.put(PARAM_ORDER_NO, orderNo);
+        params.put(PARAM_ORDER_DESC, orderDesc);
+        params.put(PARAM_COIN_CODE, coinCode);
+        params.put(PARAM_AMOUNT, intentParamSendValue);
+        params.put(PARAM_NOTIFY_URL, notifyUrl);
+        params.put(PARAM_SIGN, sign);
+        params.put(PARAM_NONCE, nonce);
+        params.put(PARAM_T, timestamp);
+        if (orderDetail != null && orderDetail.length() > 0) {
+            params.put(PARAM_ORDER_DETAIL, orderDetail);
+        }
+        if (callbackUrl != null && callbackUrl.length() > 0) {
+            params.put(PARAM_CALLBACK_URL, callbackUrl);
+        }
+        if (attach != null && attach.length() > 0) {
+            params.put(PARAM_ATTACH, attach);
+        }
+        if (signType != null && signType.length() > 0) {
+            params.put(PARAM_SIGN_TYPE, signType);
+        }
+        PayService.getInstance().payRequestOrder(params)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<MerchantReceiver>() {
+                    @Override
+                    public void onNext(MerchantReceiver merchantReceiver) {
+                        if (merchantReceiver != null ) {
+                            receiptAddress = merchantReceiver.getReceiver().getAddress();
+                            mTvMerchantName.setText(merchantReceiver.getMerchant().getName());
+                        } else {
+                            BLog.d(tag(), "failed pay request order: " + merchantReceiver);
+                            showLongToast(R.string.payment_invalid_create_order);
+                            finish();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onCompleted() {
+
+                    }
+                });
     }
 
     private void showChosenAccountInfo(AccountEntity account) {

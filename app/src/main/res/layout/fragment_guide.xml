@@ -5,6 +5,6 @@
         android:id="@+id/iv_guide"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerInside"
+        android:scaleType="fitCenter"
         android:contentDescription="@string/app_name" />
 </FrameLayout>

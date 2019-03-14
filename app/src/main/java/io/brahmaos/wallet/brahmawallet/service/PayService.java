@@ -11,41 +11,25 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.TreeMap;
 
-import io.brahmaos.wallet.brahmawallet.WalletApp;
 import io.brahmaos.wallet.brahmawallet.api.ApiConst;
 import io.brahmaos.wallet.brahmawallet.api.ApiRespResult;
 import io.brahmaos.wallet.brahmawallet.api.Networks;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.common.ReqParam;
-import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
-import io.brahmaos.wallet.brahmawallet.db.entity.AllTokenEntity;
-import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
-import io.brahmaos.wallet.brahmawallet.model.AccountAssets;
-import io.brahmaos.wallet.brahmawallet.model.CryptoCurrency;
-import io.brahmaos.wallet.brahmawallet.model.KyberToken;
 import io.brahmaos.wallet.brahmawallet.model.pay.AccountBalance;
+import io.brahmaos.wallet.brahmawallet.model.pay.MerchantReceiver;
 import io.brahmaos.wallet.brahmawallet.model.pay.PayRequestToken;
-import io.brahmaos.wallet.brahmawallet.repository.DataRepository;
 import io.brahmaos.wallet.brahmawallet.statistic.network.StatisticHttpUtils;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
-import io.rayup.sdk.RayUpApp;
-import io.rayup.sdk.model.CoinQuote;
-import io.rayup.sdk.model.EthToken;
-import rx.Completable;
 import rx.Observable;
 import rx.Observer;
-import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
@@ -328,7 +312,7 @@ public class PayService extends BaseService{
     /*
      * Create credit pre order.
      */
-    public Observable<Map> createCreditPreOrder(String address, int coinCode,
+    public Observable<Map> createRechargePreOrder(String address, int coinCode,
                                                    String amount, String remark) {
         return Observable.create(e -> {
             TreeMap<String, Object> params = new TreeMap<>();
@@ -337,7 +321,7 @@ public class PayService extends BaseService{
             params.put(ReqParam.PARAM_AMOUNT, amount);
             params.put(ReqParam.PARAM_REMARK, remark);
 
-            createCreditPreOrderByNet(params)
+            createRechargePreOrderByNet(params)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<ApiRespResult>() {
@@ -366,7 +350,7 @@ public class PayService extends BaseService{
                                     }
                                     e.onNext(orderInfo);
                                 } else if (apr.getResult() == ApiConst.INVALID_TOKEN) {
-                                    getPayTokenForQuickPay("createCreditPreOrderByNet", params)
+                                    getPayTokenForQuickPay("createRechargePreOrderByNet", params)
                                             .subscribeOn(Schedulers.io())
                                             .observeOn(AndroidSchedulers.mainThread())
                                             .subscribe(new Observer<ApiRespResult>() {
@@ -408,8 +392,8 @@ public class PayService extends BaseService{
         });
     }
 
-    public Observable<ApiRespResult> createCreditPreOrderByNet(Map<String, Object> params) {
-        return Networks.getInstance().getPayApi().createPayAccountPreCredit(params);
+    public Observable<ApiRespResult> createRechargePreOrderByNet(Map<String, Object> params) {
+        return Networks.getInstance().getPayApi().rechargePreOrder(params);
     }
 
     /*
@@ -555,5 +539,45 @@ public class PayService extends BaseService{
 
     public Observable<ApiRespResult> getAccountBalanceByNet() {
         return Networks.getInstance().getPayApi().getAccountBalance();
+    }
+
+    /**
+     * Pay request order
+     */
+    public Observable<MerchantReceiver> payRequestOrder(Map<String, Object> params) {
+        return Observable.create(e -> {
+            Networks.getInstance().getPayApi()
+                    .payRequestOrder(params)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<ApiRespResult>() {
+                        @Override
+                        public void onCompleted() {
+                            e.onCompleted();
+                        }
+
+                        @Override
+                        public void onError(Throwable throwable) {
+                            throwable.printStackTrace();
+                            e.onError(throwable);
+                        }
+
+                        @Override
+                        public void onNext(ApiRespResult apr) {
+                            if (apr != null && apr.getResult() == 0 && apr.getData() != null) {
+                                ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
+                                try {
+                                    MerchantReceiver merchantReceiver = objectMapper.readValue(objectMapper.writeValueAsString(apr.getData()), new TypeReference<MerchantReceiver>() {});
+                                    e.onNext(merchantReceiver);
+                                } catch (IOException e1) {
+                                    e1.printStackTrace();
+                                    e.onError(e1);
+                                }
+                            } else {
+                                e.onNext(null);
+                            }
+                        }
+                    });
+        });
     }
 }
