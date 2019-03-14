@@ -503,8 +503,8 @@
     <string name="info_account_id">账号标识</string>
     <string name="title_pay_recharge">快捷账号充值</string>
     <string name="label_confirm_eht_account_for_quick_pay">请确认是否拥有账号</string>
-    <string name="tip_add_pay_account_success">创建快捷账号成功.</string>
-    <string name="tip_add_pay_account_failed">创建快捷账号失败!</string>
+    <string name="tip_add_pay_account_success">开通快捷账号成功。</string>
+    <string name="tip_add_pay_account_failed">开通快捷账号失败！</string>
     <string name="label_commodity_information">商品描述</string>
     <string name="label_merchant_name">商户名称</string>
     <string name="label_pay_type">支付方式</string>
@@ -523,9 +523,13 @@
         <item>拍照</item>
         <item>从图库选择</item>
     </string-array>
-    <string name="avatar_choose_fail">打开图库失败</string>
-    <string name="avatar_camera_fail">打开相机失败</string>
+    <string name="avatar_choose_fail">从图库选择头像失败</string>
+    <string name="avatar_camera_fail">打开相机拍照失败</string>
     <string name="avatar_crop_fail">图片裁剪失败</string>
     <string name="avatar_save_fail">头像保存失败</string>
     <string name="avatar_changed">头像修改成功</string>
+    <string name="title_open_quick_pay">开通快捷账号</string>
+    <string name="title_create_quick_pay">创建快捷账号</string>
+    <string name="quick_account_check_password">为了验证您拥有此快捷账号的权限，请输入创建或导入快捷账号时设置的密码。</string>
+    <string name="tip_create_quick_account">&#8226;&#160;&#160;密码将会用于验证并开通快捷支付账号。</string>
 </resources>

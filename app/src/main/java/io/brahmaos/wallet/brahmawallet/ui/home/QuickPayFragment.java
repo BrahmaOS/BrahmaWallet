@@ -20,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -39,6 +40,7 @@ import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.service.PayService;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseFragment;
+import io.brahmaos.wallet.brahmawallet.ui.pay.CheckQuickAccountPasswordActivity;
 import io.brahmaos.wallet.brahmawallet.ui.pay.PayAccountRechargeActivity;
 import io.brahmaos.wallet.brahmawallet.ui.pay.SetPayAccountPasswordActivity;
 import io.brahmaos.wallet.brahmawallet.view.CustomProgressDialog;
@@ -72,6 +74,7 @@ public class QuickPayFragment extends BaseFragment {
     private AccountViewModel mViewModel;
     private List<AccountEntity> cacheAccounts = new ArrayList<>();
     private List<AccountBalance> accountBalances = new ArrayList<>();
+    private Button mCreateQuickAccount;
 
     /**
      * instance
@@ -87,6 +90,17 @@ public class QuickPayFragment extends BaseFragment {
 
     @Override
     protected boolean initView() {
+        mCreateQuickAccount = parentView.findViewById(R.id.btn_create_quick_account);
+        mCreateQuickAccount.setOnClickListener(v -> {
+            if (null == BrahmaConfig.getInstance().getPayAccountID()) {
+                //todo
+                //create account
+            } else {
+                Intent i = new Intent(getActivity(), CheckQuickAccountPasswordActivity.class);
+                startActivity(i);
+            }
+
+        });
         layoutAddQuickPayAccount = parentView.findViewById(R.id.layout_add_quick_pay_account);
         layoutHeader = parentView.findViewById(R.id.layout_header);
         pagerGuide = parentView.findViewById(R.id.guide_vpager);
@@ -194,6 +208,12 @@ public class QuickPayFragment extends BaseFragment {
     public void onStart() {
         super.onStart();
         BLog.d(tag(), "quick pay fragment onstart");
+        String defaultQuickAccountID = BrahmaConfig.getInstance().getPayAccountID();
+        if (null == defaultQuickAccountID || defaultQuickAccountID.isEmpty()) {
+            mCreateQuickAccount.setText("创建快捷账号");
+        } else {
+            mCreateQuickAccount.setText("开通快捷账号");
+        }
         if (BrahmaConfig.getInstance().getPayAccount() != null) {
             layoutAddQuickPayAccount.setVisibility(View.GONE);
             swipeRefreshLayout.setVisibility(View.VISIBLE);
@@ -335,7 +355,7 @@ public class QuickPayFragment extends BaseFragment {
                             intent.putExtra(IntentParam.PARAM_ACCOUNT_PUBLIC_KEY, String.valueOf(ecKeys.get(BrahmaConst.PUBLIC_KEY)));
                             startActivity(intent);
                         } else {
-                            showPasswordErrorDialog();;
+                            showPasswordErrorDialog();
                         }
                     }
 

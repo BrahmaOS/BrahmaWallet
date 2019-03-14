@@ -72,6 +72,8 @@ public class RestoreAccountActivity extends BaseActivity {
     TextView tvService;
     @BindView(R.id.privacy_policy_tv)
     TextView tvPrivacyPolicy;
+    @BindView(R.id.tv_quick_account_tip)
+    TextView tipQuickAccount;
 
     private CustomProgressDialog customProgressDialog;
     @Override
@@ -80,6 +82,7 @@ public class RestoreAccountActivity extends BaseActivity {
         setContentView(R.layout.activity_restore_account);
         ButterKnife.bind(this);
         showNavBackBtn();
+        tipQuickAccount.setVisibility(View.VISIBLE);
         mViewModel = ViewModelProviders.of(this).get(AccountViewModel.class);
         initView();
         initData();

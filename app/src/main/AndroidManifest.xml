@@ -176,6 +176,7 @@
         </activity>
         <activity android:name=".ui.pay.ChangePayAccountNameActivity" />
         <activity android:name=".ui.base.BaseWebActivity" />
+        <activity android:name=".ui.pay.CheckQuickAccountPasswordActivity" />
     </application>
 
 </manifest>

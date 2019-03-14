@@ -18,15 +18,15 @@
             android:background="@drawable/list_item_bg"
             android:layout_height="@dimen/layout_height_large">
             <ImageView
-                android:id="@+id/iv_account_avatar"
+                android:id="@+id/iv_quick_account_avatar"
                 android:layout_gravity="center_vertical"
-                android:layout_width="@dimen/icon_pay_size"
-                android:layout_height="@dimen/icon_pay_size"
+                android:layout_width="@dimen/icon_normal_size"
+                android:layout_height="@dimen/icon_normal_size"
                 android:src="@drawable/ic_default_account_avatar"
                 android:scaleType="fitCenter"/>
 
             <TextView
-                android:id="@+id/tv_account_name"
+                android:id="@+id/tv_quick_account_name"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -36,7 +36,7 @@
                 android:gravity="center_vertical"
                 android:singleLine="true"
                 android:text="@string/pay_account_info"
-                android:textSize="@dimen/font_size_subheading" />
+                android:textSize="@dimen/font_size_subtitle" />
 
             <!--<LinearLayout
                 android:layout_width="match_parent"
@@ -69,22 +69,22 @@
                     android:textColor="@color/color_hint_text" />
             </LinearLayout>-->
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="@dimen/toolbar_icon_size"
+                android:layout_height="@dimen/toolbar_icon_size"
                 android:layout_gravity="center_vertical"
                 android:src="@drawable/ic_keyboard_arrow_right_gray"/>
         </LinearLayout>
 
         <LinearLayout
-            android:layout_marginTop="@dimen/space_larger"
+            android:layout_marginTop="@dimen/space_large"
             android:id="@+id/layout_transactions"
             android:layout_width="match_parent"
             android:onClick="onClickLayout"
             android:background="@drawable/list_item_bg"
             android:layout_height="@dimen/layout_height_normal">
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/layout_height_normal"
+                android:layout_width="@dimen/toolbar_icon_size"
+                android:layout_height="@dimen/toolbar_icon_size"
                 android:scaleType="center"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_transactions_list"/>
@@ -99,8 +99,8 @@
                 android:textSize="@dimen/font_size_subheading"
                 android:text="@string/menu_transactions"/>
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="@dimen/toolbar_icon_size"
+                android:layout_height="@dimen/toolbar_icon_size"
                 android:layout_gravity="center_vertical"
                 android:src="@drawable/ic_keyboard_arrow_right_gray"/>
         </LinearLayout>
@@ -117,8 +117,8 @@
         android:background="@drawable/list_item_bg"
         android:layout_height="@dimen/layout_height_normal">
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/layout_height_normal"
+            android:layout_width="@dimen/toolbar_icon_size"
+            android:layout_height="@dimen/toolbar_icon_size"
             android:scaleType="center"
             android:layout_gravity="center"
             android:src="@drawable/ic_address_black_24dp"/>
@@ -133,8 +133,8 @@
             android:textSize="@dimen/font_size_subheading"
             android:text="@string/menu_address_book"/>
         <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="@dimen/toolbar_icon_size"
+            android:layout_height="@dimen/toolbar_icon_size"
             android:layout_gravity="center_vertical"
             android:src="@drawable/ic_keyboard_arrow_right_gray"/>
     </LinearLayout>
@@ -151,8 +151,8 @@
         android:background="@drawable/list_item_bg"
         android:layout_height="@dimen/layout_height_normal">
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/layout_height_normal"
+            android:layout_width="@dimen/toolbar_icon_size"
+            android:layout_height="@dimen/toolbar_icon_size"
             android:scaleType="center"
             android:layout_gravity="center"
             android:src="@drawable/ic_help_outline_black_24dp"/>
@@ -167,8 +167,8 @@
             android:textSize="@dimen/font_size_subheading"
             android:text="@string/nav_menu_help"/>
         <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="@dimen/toolbar_icon_size"
+            android:layout_height="@dimen/toolbar_icon_size"
             android:layout_gravity="center_vertical"
             android:src="@drawable/ic_keyboard_arrow_right_gray"/>
     </LinearLayout>
@@ -185,8 +185,8 @@
         android:background="@drawable/list_item_bg"
         android:layout_height="@dimen/layout_height_normal">
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/layout_height_normal"
+            android:layout_width="@dimen/toolbar_icon_size"
+            android:layout_height="@dimen/toolbar_icon_size"
             android:scaleType="center"
             android:layout_gravity="center"
             android:src="@drawable/ic_about_us_black_24dp"/>
@@ -201,8 +201,8 @@
             android:textSize="@dimen/font_size_subheading"
             android:text="@string/nav_menu_info"/>
         <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="@dimen/toolbar_icon_size"
+            android:layout_height="@dimen/toolbar_icon_size"
             android:layout_gravity="center_vertical"
             android:src="@drawable/ic_keyboard_arrow_right_gray"/>
     </LinearLayout>
@@ -219,8 +219,8 @@
         android:background="@drawable/list_item_bg"
         android:layout_height="@dimen/layout_height_normal">
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/layout_height_normal"
+            android:layout_width="@dimen/toolbar_icon_size"
+            android:layout_height="@dimen/toolbar_icon_size"
             android:scaleType="center"
             android:layout_gravity="center"
             android:src="@drawable/ic_about_us_black_24dp"/>
@@ -235,8 +235,8 @@
             android:textSize="@dimen/font_size_subheading"
             android:text="@string/menu_pay_test"/>
         <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="@dimen/toolbar_icon_size"
+            android:layout_height="@dimen/toolbar_icon_size"
             android:layout_gravity="center_vertical"
             android:src="@drawable/ic_keyboard_arrow_right_gray"/>
     </LinearLayout>

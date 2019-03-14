@@ -31,6 +31,7 @@ import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.ReqCode;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.util.BLog;
+import io.brahmaos.wallet.util.ImageUtil;
 
 public class PayAccountInfoActivity extends BaseActivity {
     private ImageView mAvatar;
@@ -48,13 +49,13 @@ public class PayAccountInfoActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.pay_activity_account_info);
         showNavBackBtn();
-        mAvatar = findViewById(R.id.quick_account_avatar);
-        mName = findViewById(R.id.quick_account_name);
-        mID = findViewById(R.id.quick_account_id);
-        mID.setText(BrahmaConfig.getInstance().getPayAccount());
+        mAvatar = findViewById(R.id.iv_quick_account_avatar);
+        mName = findViewById(R.id.tv_quick_account_name);
+        mID = findViewById(R.id.tv_quick_account_id);
+        mID.setText(BrahmaConfig.getInstance().getPayAccountID());
         Bitmap avatar = BrahmaConfig.getInstance().getPayAccountAvatar();
         if (avatar != null) {
-            mAvatar.setImageBitmap(avatar);
+            mAvatar.setImageBitmap(ImageUtil.getCircleBitmap(avatar));
         }
     }
 
@@ -136,6 +137,16 @@ public class PayAccountInfoActivity extends BaseActivity {
             startActivityForResult(intent, ReqCode.CHOOSE_IMAGE);
         }
     }
+//
+//    @Override
+//    public void handleCameraScanPermission() {
+//        takePhoto();
+//    }
+//
+//    @Override
+//    public void handleExternalStoragePermission() {
+//        choosePhoto();
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

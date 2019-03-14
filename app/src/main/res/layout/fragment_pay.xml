@@ -38,6 +38,7 @@
                     </FrameLayout>
                 </LinearLayout>
                 <Button
+                    android:id="@+id/btn_create_quick_account"
                     style="@style/MainButtonSingle"
                     android:layout_marginTop="@dimen/space_larger"
                     android:layout_marginStart="@dimen/icon_large_size"

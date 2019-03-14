@@ -41,7 +41,9 @@ public class BrahmaConfig {
     private static final String KEY_PAY_REQUEST_TOKEN = "pay.request.token";
     private static final String KEY_PAY_REQUEST_TOKEN_TYPE = "pay.request.token.type";
     private static final String KEY_PAY_ACCOUNT = "quick.pay.account";
+    private static final String KEY_PAY_ACCOUNT_ID = "quick.pay.account.id";
     private static final String KEY_PAY_ACCOUNT_NAME = "quick.pay.account.name";
+    private static final String KEY_PAY_ACCOUNT_WALLET_FILE_NAME = "quick.pay.account.wallet.file.name";
 
     private static final String PAY_ACCOUNT_AVATAR_FOLDER = "pay_account";
     private static final String PAY_ACCOUNT_AVATAR_JPG_NAME = "avatar.jpg";
@@ -54,7 +56,9 @@ public class BrahmaConfig {
     private String payRequestToken;
     private String payRequestTokenType;
     private String payAccount;
+    private String payAccountID;
     private String payAccountName;
+    private String payAccountWallet;
     private boolean assetsVisible = true;
     private String tokenListHash;
     private boolean touchId = false;
@@ -76,7 +80,9 @@ public class BrahmaConfig {
         payRequestToken = sharedPref.getString(KEY_PAY_REQUEST_TOKEN, null);
         payRequestTokenType = sharedPref.getString(KEY_PAY_REQUEST_TOKEN_TYPE, null);
         payAccount = sharedPref.getString(KEY_PAY_ACCOUNT, null);
+        payAccountID = sharedPref.getString(KEY_PAY_ACCOUNT_ID, null);
         payAccountName = sharedPref.getString(KEY_PAY_ACCOUNT_NAME, "");
+        payAccountWallet = sharedPref.getString(KEY_PAY_ACCOUNT_WALLET_FILE_NAME, "");
         assetsVisible = sharedPref.getBoolean(KEY_ASSETS_VISIBLE, true);
         tokenListHash = sharedPref.getString(KEY_TOKEN_LIST_HASH, "");
         touchId = sharedPref.getBoolean(context.getString(R.string.key_touch_id_switch), false);
@@ -207,6 +213,17 @@ public class BrahmaConfig {
         editor.apply();
     }
 
+    public String getPayAccountID() {
+        return payAccountID;
+    }
+
+    public void setPayAccountID(String payAccountID) {
+        this.payAccountID = payAccountID;
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(KEY_PAY_ACCOUNT_ID, payAccountID);
+        editor.apply();
+    }
+
     public String getPayAccountName() {
         return payAccountName;
     }
@@ -215,6 +232,17 @@ public class BrahmaConfig {
         this.payAccountName = payAccountName;
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(KEY_PAY_ACCOUNT_NAME, payAccountName);
+        editor.apply();
+    }
+
+    public String getPayAccountWalletFileName() {
+        return payAccountWallet;
+    }
+
+    public void setPayAccountWalletFileName(String payAccountWallet) {
+        this.payAccountWallet = payAccountWallet;
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(KEY_PAY_ACCOUNT_WALLET_FILE_NAME, payAccountWallet);
         editor.apply();
     }
 

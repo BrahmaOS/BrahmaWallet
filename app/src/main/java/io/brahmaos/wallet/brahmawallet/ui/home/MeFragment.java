@@ -7,6 +7,7 @@ import android.widget.TextView;
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseFragment;
+import io.brahmaos.wallet.util.ImageUtil;
 
 public class MeFragment extends BaseFragment {
     private ImageView mAvatar;
@@ -32,8 +33,8 @@ public class MeFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();
-        mAvatar = getActivity().findViewById(R.id.iv_account_avatar);
-        mAccName = getActivity().findViewById(R.id.tv_account_name);
+        mAvatar = getActivity().findViewById(R.id.iv_quick_account_avatar);
+        mAccName = getActivity().findViewById(R.id.tv_quick_account_name);
         String accountName = BrahmaConfig.getInstance().getPayAccountName();
         if (null == accountName || accountName.isEmpty()) {
             mAccName.setText(getString(R.string.pay_account_info));
@@ -42,9 +43,10 @@ public class MeFragment extends BaseFragment {
         }
         Bitmap avatar = BrahmaConfig.getInstance().getPayAccountAvatar();
         if (avatar != null) {
-            mAvatar.setImageBitmap(avatar);
+            mAvatar.setImageBitmap(ImageUtil.getCircleBitmap(avatar));
         }
     }
+
 
     @Override
     protected boolean initView() {

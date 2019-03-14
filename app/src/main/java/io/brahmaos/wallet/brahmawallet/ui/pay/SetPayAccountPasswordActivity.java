@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -41,6 +42,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.api.PayApi;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
@@ -61,6 +63,7 @@ import io.brahmaos.wallet.brahmawallet.view.PassWordLayout;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
+import io.brahmaos.wallet.util.ImageUtil;
 import io.brahmaos.wallet.util.PermissionUtil;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
@@ -95,11 +98,9 @@ public class SetPayAccountPasswordActivity extends BaseActivity {
     Button btnSetAccount;
 
     private int passwordLength = 6;
-    private int accountId;
+    private String accountId;
     private String accountPrivateKey;
     private String accountPublicKey;
-    private AccountEntity account;
-    private AccountViewModel mViewModel;
 
     private CustomProgressDialog progressDialog;
 
@@ -109,14 +110,12 @@ public class SetPayAccountPasswordActivity extends BaseActivity {
         setContentView(R.layout.activity_pay_account_set_password);
         ButterKnife.bind(this);
         showNavBackBtn();
-        accountId = getIntent().getIntExtra(IntentParam.PARAM_ACCOUNT_ID, 0);
-        if (accountId <= 0) {
+        accountId = getIntent().getStringExtra(IntentParam.PARAM_ACCOUNT_ID);
+        if (null == accountId || accountId.isEmpty()) {
             finish();
         }
         accountPrivateKey = getIntent().getStringExtra(IntentParam.PARAM_ACCOUNT_PRIVATE_KEY);
         accountPublicKey = getIntent().getStringExtra(IntentParam.PARAM_ACCOUNT_PUBLIC_KEY);
-        BLog.d(tag(), "private: " + accountPrivateKey + "/n" + "public: " + accountPublicKey);
-        mViewModel = ViewModelProviders.of(this).get(AccountViewModel.class);
         initView();
     }
 
@@ -183,10 +182,17 @@ public class SetPayAccountPasswordActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        mViewModel.getAccountById(accountId).observe(this, accountEntity -> {
-            account = accountEntity;
-            initAccountInfo(account);
-        });
+        String accountName = BrahmaConfig.getInstance().getPayAccountName();
+        if (null == accountName || accountName.isEmpty()) {
+            tvAccountName.setText(getString(R.string.pay_account_info));
+        } else {
+            tvAccountName.setText(accountName);
+        }
+        Bitmap avatar = BrahmaConfig.getInstance().getPayAccountAvatar();
+        if (avatar != null) {
+            ivAccountAvatar.setImageBitmap(ImageUtil.getCircleBitmap(avatar));
+        }
+        tvAccountAddress.setText(accountId);
         etPassword.setNoInput(0,  true, "");
 
         progressDialog = new CustomProgressDialog(this, R.style.CustomProgressDialogStyle, "");
@@ -194,16 +200,10 @@ public class SetPayAccountPasswordActivity extends BaseActivity {
         progressDialog.setCancelable(false);
     }
 
-    private void initAccountInfo(AccountEntity account) {
-        ImageManager.showAccountAvatar(this, ivAccountAvatar, account);
-        tvAccountName.setText(account.getName());
-        tvAccountAddress.setText(account.getAddress());
-    }
-
     private void createPayAccount(String password) {
         progressDialog.show();
         PayService.getInstance()
-                .createPayAccount(account.getAddress(), BrahmaConst.ETH_ACCOUNT_TYPE,
+                .createPayAccount(accountId, BrahmaConst.ETH_ACCOUNT_TYPE,
                         password, accountPrivateKey, accountPublicKey)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

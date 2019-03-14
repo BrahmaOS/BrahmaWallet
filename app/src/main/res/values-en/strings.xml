@@ -22,7 +22,7 @@
     <string name="error_network">Network connect error!</string>
 
     <string name="fragment_wallet">Wallet</string>
-    <string name="fragment_pay">QuickPay</string>
+    <string name="fragment_pay">Quick Pay</string>
     <string name="fragment_me">Me</string>
 
     <string name="action_next">Next</string>

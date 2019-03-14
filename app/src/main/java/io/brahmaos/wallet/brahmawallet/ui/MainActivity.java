@@ -249,8 +249,8 @@ public class MainActivity extends BaseActivity
         BLog.d(tag(), "onClickLayout--" + v.getId());
         switch (v.getId()){
             case R.id.layout_account_info:
-                if (null == BrahmaConfig.getInstance().getPayAccount() ||
-                        BrahmaConfig.getInstance().getPayAccount().isEmpty()) {
+                if (null == BrahmaConfig.getInstance().getPayAccountID() ||
+                        BrahmaConfig.getInstance().getPayAccountID().isEmpty()) {
                     showLongToast(getString(R.string.no_quick_pay_account));
                 } else {
                     Intent accInfoIntent = new Intent(this, PayAccountInfoActivity.class);
