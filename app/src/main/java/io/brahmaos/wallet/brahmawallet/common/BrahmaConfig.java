@@ -281,17 +281,17 @@ public class BrahmaConfig {
     }
 
     public String getServiceTermsUrl() {
-        String serviceUrl = BrahmaConst.PAGE_BASE_URL + BrahmaConst.HELP_PREFIX + "service_en.html";
+        String serviceUrl = "https://support.brahmaos.io/wallet/policies/service_en";
         if (languageLocale.equals(BrahmaConst.LANGUAGE_CHINESE)) {
-            serviceUrl = BrahmaConst.PAGE_BASE_URL + BrahmaConst.HELP_PREFIX + "service_zh.html";
+            serviceUrl = "https://support.brahmaos.io/wallet/policies/service_zh";
         }
         return serviceUrl;
     }
 
     public String getPrivacyUrl() {
-        String serviceUrl = BrahmaConst.PAGE_BASE_URL + BrahmaConst.HELP_PREFIX + "privacy_policy_en.html";
+        String serviceUrl = "https://support.brahmaos.io/wallet/policies/privacy_en";
         if (languageLocale.equals(BrahmaConst.LANGUAGE_CHINESE)) {
-            serviceUrl = BrahmaConst.PAGE_BASE_URL + BrahmaConst.HELP_PREFIX + "privacy_policy_zh.html";
+            serviceUrl = "https://support.brahmaos.io/wallet/policies/privacy_zh";
         }
         return serviceUrl;
     }
