@@ -63,7 +63,6 @@ public class QuickPayFragment extends BaseFragment {
     private LinearLayout layoutHeader;
     private HeightWrappingViewPager pagerGuide;
     private LinearLayout layoutGuidePageIndicator;
-    private RecyclerView recyclerViewAccounts;
     private CustomProgressDialog progressDialog;
     private TextView mTvEthBalance;
     private TextView mTvBrmBalance;
@@ -71,8 +70,6 @@ public class QuickPayFragment extends BaseFragment {
 
     private List<ImageView> lstGuideIndicator = new ArrayList<>();
     private int pageNum = 3;
-    private AccountViewModel mViewModel;
-    private List<AccountEntity> cacheAccounts = new ArrayList<>();
     private List<AccountBalance> accountBalances = new ArrayList<>();
     private Button mCreateQuickAccount;
 
@@ -105,7 +102,6 @@ public class QuickPayFragment extends BaseFragment {
         layoutHeader = parentView.findViewById(R.id.layout_header);
         pagerGuide = parentView.findViewById(R.id.guide_vpager);
         layoutGuidePageIndicator = parentView.findViewById(R.id.indicator_layout);
-        recyclerViewAccounts = parentView.findViewById(R.id.accounts_recycler);
         swipeRefreshLayout = parentView.findViewById(R.id.swipe_refresh_layout_pay_account_info);
         LinearLayout layoutAddCredit = parentView.findViewById(R.id.layout_pay_add_credit);
         layoutAddCredit.setOnClickListener(v -> {
@@ -115,6 +111,7 @@ public class QuickPayFragment extends BaseFragment {
 
         LinearLayout layoutPayReceipt = parentView.findViewById(R.id.layout_pay_receipt);
         layoutPayReceipt.setOnClickListener(v -> {
+            // todo test
             BrahmaConfig.getInstance().setPayAccount(null);
             layoutAddQuickPayAccount.setVisibility(View.VISIBLE);
             swipeRefreshLayout.setVisibility(View.GONE);
@@ -134,13 +131,6 @@ public class QuickPayFragment extends BaseFragment {
         params.height = ((int) (display.heightPixels * 0.65) - statusBarHeight - toolbarHeight);
         layoutHeader.setLayoutParams(params);
 
-        LinearLayoutManager btcLayoutManager = new LinearLayoutManager(getActivity());
-        recyclerViewAccounts.setLayoutManager(btcLayoutManager);
-        recyclerViewAccounts.setAdapter(new AccountRecyclerAdapter());
-        // Solve the sliding lag problem
-        recyclerViewAccounts.setHasFixedSize(true);
-        recyclerViewAccounts.setNestedScrollingEnabled(false);
-
         progressDialog = new CustomProgressDialog(getActivity(), R.style.CustomProgressDialogStyle, "");
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.setCancelable(false);
@@ -149,7 +139,7 @@ public class QuickPayFragment extends BaseFragment {
         swipeRefreshLayout.setRefreshing(true);
 
         swipeRefreshLayout.setOnRefreshListener(() -> {
-            swipeRefreshLayout.setRefreshing(false);
+            getAccountBalance();
         });
 
         GuidePagerAdapter adapterGuidePage = new GuidePagerAdapter(getFragmentManager(), pageNum);
@@ -180,43 +170,17 @@ public class QuickPayFragment extends BaseFragment {
         mTvEthBalance = parentView.findViewById(R.id.tv_eth_amount);
         mTvBrmBalance = parentView.findViewById(R.id.tv_brm_amount);
         mTvBtcBalance = parentView.findViewById(R.id.tv_btc_amount);
-
-        initData();
         return true;
-    }
-
-    private void initData() {
-        mViewModel = ViewModelProviders.of(this).get(AccountViewModel.class);
-
-        mViewModel.getAccounts().observe(this, accountEntities -> {
-            cacheAccounts = new ArrayList<>();
-            if (accountEntities != null && accountEntities.size() > 0) {
-                for (AccountEntity account : accountEntities) {
-                    if (account.getType() == BrahmaConst.ETH_ACCOUNT_TYPE) {
-                        cacheAccounts.add(account);
-                    }
-                }
-                recyclerViewAccounts.getAdapter().notifyDataSetChanged();
-            }
-        });
-        if (BrahmaConfig.getInstance().getPayAccount() != null) {
-            getAccountBalance();
-        }
     }
 
     @Override
     public void onStart() {
         super.onStart();
         BLog.d(tag(), "quick pay fragment onstart");
-        String defaultQuickAccountID = BrahmaConfig.getInstance().getPayAccountID();
-        if (null == defaultQuickAccountID || defaultQuickAccountID.isEmpty()) {
-            mCreateQuickAccount.setText("创建快捷账号");
-        } else {
-            mCreateQuickAccount.setText("开通快捷账号");
-        }
         if (BrahmaConfig.getInstance().getPayAccount() != null) {
             layoutAddQuickPayAccount.setVisibility(View.GONE);
             swipeRefreshLayout.setVisibility(View.VISIBLE);
+            getAccountBalance();
         } else {
             layoutAddQuickPayAccount.setVisibility(View.VISIBLE);
             swipeRefreshLayout.setVisibility(View.GONE);
@@ -260,153 +224,29 @@ public class QuickPayFragment extends BaseFragment {
         }
     }
 
-    /**
-     * list item eth account
-     */
-    private class AccountRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
-        @NonNull
-        @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_account_eth_for_quick_pay, parent, false);
-            rootView.setOnClickListener(v -> {
-                int position = recyclerViewAccounts.getChildAdapterPosition(v);
-                AccountEntity account = cacheAccounts.get(position);
-                final View dialogView = getLayoutInflater().inflate(R.layout.dialog_set_quick_pay_account, null);
-                EditText etPassword = dialogView.findViewById(R.id.et_password);
-                AlertDialog passwordDialog = new AlertDialog.Builder(getActivity())
-                        .setView(dialogView)
-                        .setCancelable(true)
-                        .setPositiveButton(R.string.confirm, (dialog, which) -> {
-                            dialog.cancel();
-                            String password = etPassword.getText().toString();
-                            checkPrivateKey(account, password);
-                        })
-                        .create();
-                passwordDialog.setOnShowListener(dialog -> {
-                    InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.showSoftInput(etPassword, InputMethodManager.SHOW_IMPLICIT);
-                });
-                passwordDialog.show();
-            });
-            return new AccountRecyclerAdapter.ItemViewHolder(rootView);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-            if (holder instanceof AccountRecyclerAdapter.ItemViewHolder) {
-                AccountRecyclerAdapter.ItemViewHolder itemViewHolder = (AccountRecyclerAdapter.ItemViewHolder) holder;
-                AccountEntity accountEntity = cacheAccounts.get(position);
-                setData(itemViewHolder, accountEntity);
-            }
-        }
-
-        /**
-         * set account view
-         */
-        private void setData(AccountRecyclerAdapter.ItemViewHolder holder, final AccountEntity account) {
-            if (account == null) {
-                return ;
-            }
-            ImageManager.showAccountAvatar(getContext(), holder.ivAccountAvatar, account);
-
-            holder.tvAccountName.setText(account.getName());
-            holder.tvAccountAddress.setText(CommonUtil.generateSimpleAddress(account.getAddress()));
-        }
-
-        @Override
-        public int getItemCount() {
-            return cacheAccounts.size();
-        }
-
-        class ItemViewHolder extends RecyclerView.ViewHolder {
-
-            ImageView ivAccountAvatar;
-            TextView tvAccountName;
-            TextView tvAccountAddress;
-
-            ItemViewHolder(View itemView) {
-                super(itemView);
-                ivAccountAvatar = itemView.findViewById(R.id.iv_account_avatar);
-                tvAccountName = itemView.findViewById(R.id.tv_account_name);
-                tvAccountAddress = itemView.findViewById(R.id.tv_account_address);
-            }
-        }
-    }
-
-    private void checkPrivateKey(AccountEntity account, String password) {
-        progressDialog.show();
-        BrahmaWeb3jService.getInstance()
-                .getEcKeyByPassword(account.getFilename(), password)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Map>() {
-                    @Override
-                    public void onNext(Map ecKeys) {
-                        if (progressDialog != null) {
-                            progressDialog.cancel();
-                        }
-                        if (ecKeys != null && ecKeys.containsKey(BrahmaConst.PRIVATE_KEY)
-                                && ecKeys.get(BrahmaConst.PRIVATE_KEY) != null
-                                && BrahmaWeb3jService.getInstance().isValidPrivateKey(String.valueOf(ecKeys.get(BrahmaConst.PRIVATE_KEY)))) {
-                            Intent intent = new Intent(getActivity(), SetPayAccountPasswordActivity.class);
-                            intent.putExtra(IntentParam.PARAM_ACCOUNT_ID, account.getId());
-                            intent.putExtra(IntentParam.PARAM_ACCOUNT_PRIVATE_KEY, String.valueOf(ecKeys.get(BrahmaConst.PRIVATE_KEY)));
-                            intent.putExtra(IntentParam.PARAM_ACCOUNT_PUBLIC_KEY, String.valueOf(ecKeys.get(BrahmaConst.PUBLIC_KEY)));
-                            startActivity(intent);
-                        } else {
-                            showPasswordErrorDialog();
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        if (progressDialog != null) {
-                            progressDialog.cancel();
-                        }
-                        showPasswordErrorDialog();
-                    }
-
-                    @Override
-                    public void onCompleted() {
-
-                    }
-                });
-    }
-
-    private void showPasswordErrorDialog() {
-        AlertDialog errorDialog = new AlertDialog.Builder(getActivity())
-                .setMessage(R.string.error_current_password)
-                .setCancelable(true)
-                .setPositiveButton(R.string.ok, (dialog, which) -> {
-                    dialog.cancel();
-                })
-                .create();
-        errorDialog.show();
-    }
-
     private void getAccountBalance() {
-        PayService.getInstance().getAccountBalance()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<List<AccountBalance>>() {
-                    @Override
-                    public void onNext(List<AccountBalance> results) {
-                        swipeRefreshLayout.setRefreshing(false);
-                        showAccountBalance();
-                    }
+        if (BrahmaConfig.getInstance().getPayAccount() != null) {
+            PayService.getInstance().getAccountBalance()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<List<AccountBalance>>() {
+                        @Override
+                        public void onNext(List<AccountBalance> results) {
+                            swipeRefreshLayout.setRefreshing(false);
+                            showAccountBalance();
+                        }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                    }
+                        @Override
+                        public void onError(Throwable e) {
+                            e.printStackTrace();
+                        }
 
-                    @Override
-                    public void onCompleted() {
-                        swipeRefreshLayout.setRefreshing(false);
-                    }
-                });
+                        @Override
+                        public void onCompleted() {
+                            swipeRefreshLayout.setRefreshing(false);
+                        }
+                    });
+        }
     }
 
     private void showAccountBalance() {

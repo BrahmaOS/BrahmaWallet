@@ -52,19 +52,6 @@
                     android:textColor="@color/master"
                     android:layout_marginTop="@dimen/space_normal"
                     android:text="@string/quick_pay_account_help"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/space_larger"
-                    android:layout_marginStart="@dimen/space_normal"
-                    android:text="@string/label_choose_eth_account"/>
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/accounts_recycler"
-                    android:background="@color/white"
-                    android:layout_marginTop="@dimen/space_normal"
-                    android:layout_marginBottom="@dimen/space_smaller"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
             </LinearLayout>
         </android.support.v4.widget.NestedScrollView>
 

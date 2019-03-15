@@ -537,4 +537,7 @@
 
     <!-- Quick pay -->
     <string name="tip_lack_param_trade_type">缺少交易类型参数</string>
+    <string name="title_choose_payment_method">选择支付方式</string>
+    <string name="desc_quick_payment">实时到账、无手续费</string>
+    <string name="desc_ordinary_payment">完全的去中心化转账</string>
 </resources>

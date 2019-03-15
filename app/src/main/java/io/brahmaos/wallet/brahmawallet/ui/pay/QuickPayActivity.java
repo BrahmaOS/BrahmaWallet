@@ -2,6 +2,7 @@ package io.brahmaos.wallet.brahmawallet.ui.pay;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.common.base.Splitter;
 
 import org.bitcoinj.kits.WalletAppKit;
@@ -47,6 +49,7 @@ import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 import io.brahmaos.wallet.brahmawallet.event.EventTypeDef;
 import io.brahmaos.wallet.brahmawallet.model.AccountAssets;
+import io.brahmaos.wallet.brahmawallet.model.pay.AccountBalance;
 import io.brahmaos.wallet.brahmawallet.model.pay.MerchantReceiver;
 import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
 import io.brahmaos.wallet.brahmawallet.service.BtcAccountManager;
@@ -59,6 +62,7 @@ import io.brahmaos.wallet.util.AnimationUtil;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
 import io.brahmaos.wallet.util.DataCryptoUtils;
+import io.brahmaos.wallet.util.ImageUtil;
 import io.brahmaos.wallet.util.RxEventBus;
 import rx.Observable;
 import rx.Observer;
@@ -85,6 +89,8 @@ public class QuickPayActivity extends BaseActivity {
     public static String PARAM_T = "t";
     public static int TRADE_TYPE_RECHARGE = 1;
     public static int TRADE_TYPE_PAYMENT = 2;
+    public static int PAYMENT_QUICK = 1;
+    public static int PAYMENT_ORDINARY = 2;
 
     private ImageView mImageViewClose;
     private LinearLayout mLayoutTransferInfo;
@@ -94,8 +100,10 @@ public class QuickPayActivity extends BaseActivity {
     private TextView mTvTransferAmount;
     private TextView mTvCommodityInformation;
     private TextView mTvMerchantName;
+    private RelativeLayout mLayoutPaymentMethod;
     private TextView mTvPaymentMethod;
-    private LinearLayout mLayoutChooseToken;
+    private ImageView mIvChoosePaymentMethodArrow;
+
     private RelativeLayout mLayoutAccount;
     private ImageView mIvChosenAccountAvatar;
     private TextView mTvAccountInfo;
@@ -132,12 +140,21 @@ public class QuickPayActivity extends BaseActivity {
     private EditText mEtPayRemark;
     private Button btnConfirmRemark;
 
+    // Choose payment method
+    private LinearLayout mLayoutChoosePaymentMethod;
+    private ImageView mIvCloseChoosePaymentMethod;
+    private RelativeLayout mLayoutQuickPayment;
+    private ImageView mIvQuickPayment;
+    private RelativeLayout mLayoutOrdinaryPayment;
+    private ImageView mIvOrdinaryPayment;
+
     private LinearLayout mLayoutTransferStatus;
     private CustomStatusView customStatusView;
     private TextView tvTransferStatus;
 
-    private boolean isRecharge = false;
+    // 1: recharge;  2: payment;
     private int tradeType = 0;
+    private int paymentMethod = PAYMENT_QUICK;
     // common params
     private int coinCode;
     private String orderId;
@@ -161,6 +178,7 @@ public class QuickPayActivity extends BaseActivity {
 
     private String receiptAddress;
 
+    private String quickAccount;
     private BigInteger accountBalance;
     private AccountEntity chosenAccount;
     private TokenEntity chosenToken = new TokenEntity();
@@ -168,6 +186,7 @@ public class QuickPayActivity extends BaseActivity {
     private Observable<String> btcTxBroadcastComplete;
     private List<AccountEntity> accounts = new ArrayList<>();
     private List<AccountAssets> accountAssets = new ArrayList<>();
+    private List<AccountBalance> quickAccountBalances = new ArrayList<>();
 
     @Override
     protected String tag() {
@@ -190,9 +209,9 @@ public class QuickPayActivity extends BaseActivity {
         window.setNavigationBarColor(Color.TRANSPARENT);
 
         setContentView(R.layout.activity_pay_quick);
+        quickAccount = BrahmaConfig.getInstance().getPayAccount();
         initIntentParam();
         initView();
-
         initData();
     }
 
@@ -205,9 +224,7 @@ public class QuickPayActivity extends BaseActivity {
             return;
         }
         tradeType = Integer.valueOf(tradeTypeStr);
-        if (tradeType == TRADE_TYPE_RECHARGE) {
-            isRecharge = true;
-        }
+
         intentParamSendValue = uri.getQueryParameter(PARAM_AMOUNT);
         if (CommonUtil.isNull(intentParamSendValue)) {
             showLongToast(R.string.tip_lack_param);
@@ -251,7 +268,6 @@ public class QuickPayActivity extends BaseActivity {
             signType = uri.getQueryParameter(PARAM_SIGN_TYPE);
         }
 
-
         tradeRemark = uri.getQueryParameter("remark");
         if (tradeRemark == null) {
             tradeRemark = "";
@@ -273,6 +289,25 @@ public class QuickPayActivity extends BaseActivity {
         mTvMerchantName = findViewById(R.id.tv_quick_pay_merchant_name);
         mTvCommodityInformation = findViewById(R.id.tv_quick_pay_commodity_information);
         mTvPaymentMethod = findViewById(R.id.tv_quick_pay_type);
+        mIvChoosePaymentMethodArrow = findViewById(R.id.iv_choose_payment_method_arrow);
+
+        mLayoutPaymentMethod = findViewById(R.id.layout_payment_method);
+        mLayoutChoosePaymentMethod = findViewById(R.id.layout_choose_payment_method);
+        mIvCloseChoosePaymentMethod = findViewById(R.id.iv_close_payment_method);
+        mIvCloseChoosePaymentMethod.setOnClickListener(v -> {
+            mLayoutChoosePaymentMethod.setVisibility(View.GONE);
+            mLayoutChoosePaymentMethod.setAnimation(AnimationUtil.makeOutAnimation());
+        });
+        mLayoutQuickPayment = findViewById(R.id.layout_choose_quick_payment);
+        mLayoutQuickPayment.setOnClickListener(v -> {
+            choosePaymentMethod(PAYMENT_QUICK);
+        });
+        mIvQuickPayment = findViewById(R.id.iv_quick_payment_checked);
+        mLayoutOrdinaryPayment = findViewById(R.id.layout_choose_ordinary_payment);
+        mLayoutOrdinaryPayment.setOnClickListener(v -> {
+            choosePaymentMethod(PAYMENT_ORDINARY);
+        });
+        mIvOrdinaryPayment = findViewById(R.id.iv_ordinary_payment_checked);
 
         mLayoutBtcFee = findViewById(R.id.layout_btc_fee);
         mTvBtcFee = findViewById(R.id.tv_btc_fee);
@@ -298,8 +333,6 @@ public class QuickPayActivity extends BaseActivity {
             mLayoutEditBtcFee.setVisibility(View.GONE);
             mLayoutEditBtcFee.setAnimation(AnimationUtil.makeOutAnimation());
         });
-
-        mLayoutChooseToken = findViewById(R.id.layout_choose_token);
 
         mLayoutAccount = findViewById(R.id.layout_account);
         mIvChosenAccountAvatar = findViewById(R.id.iv_chosen_account_avatar);
@@ -389,20 +422,44 @@ public class QuickPayActivity extends BaseActivity {
         });
 
         // Initialize values based on parameters
-        if (isRecharge) {
+        if (tradeType == TRADE_TYPE_RECHARGE) {
             mTvCommodityInformation.setText(getString(R.string.label_quick_payment_account_recharge));
             mTvMerchantName.setText(getString(R.string.brm_pay));
-            mTvPaymentMethod.setText(getString(R.string.payment_type_ordinary_payment));
+            paymentMethod = PAYMENT_ORDINARY;
         } else if (tradeType == TRADE_TYPE_PAYMENT) {
             mTvCommodityInformation.setText(orderDesc);
+            if (quickAccount != null && quickAccount.length() > 0) {
+                paymentMethod = PAYMENT_QUICK;
+                mIvChoosePaymentMethodArrow.setVisibility(View.VISIBLE);
+                mLayoutPaymentMethod.setOnClickListener(v -> {
+                    if (paymentMethod == PAYMENT_QUICK) {
+                        mIvQuickPayment.setVisibility(View.VISIBLE);
+                        mIvOrdinaryPayment.setVisibility(View.GONE);
+                    } else {
+                        mIvQuickPayment.setVisibility(View.GONE);
+                        mIvOrdinaryPayment.setVisibility(View.VISIBLE);
+                    }
+                    mLayoutChoosePaymentMethod.setVisibility(View.VISIBLE);
+                    mLayoutChoosePaymentMethod.setAnimation(AnimationUtil.makeInAnimation());
+                });
+            } else {
+                mIvChoosePaymentMethodArrow.setVisibility(View.GONE);
+                paymentMethod = PAYMENT_ORDINARY;
+            }
         }
 
         if (coinCode == BrahmaConst.PAY_COIN_CODE_BTC) {
             chosenToken.setName(BrahmaConst.COIN_BTC);
             chosenToken.setShortName(BrahmaConst.COIN_SYMBOL_BTC);
+
+            ImageManager.showTokenIcon(this, mImageViewCoin, R.drawable.icon_btc);
+            mTvCoinName.setText(BrahmaConst.COIN_SYMBOL_BTC);
         } else {
             getEthGasPrice();
             if (coinCode == BrahmaConst.PAY_COIN_CODE_BRM) {
+                ImageManager.showTokenIcon(this, mImageViewCoin, R.drawable.icon_brm);
+                mTvCoinName.setText(BrahmaConst.COIN_SYMBOL_BRM);
+
                 // only support brm
                 chosenToken.setName(BrahmaConst.COIN_BRM);
                 chosenToken.setShortName(BrahmaConst.COIN_SYMBOL_BRM);
@@ -412,6 +469,9 @@ public class QuickPayActivity extends BaseActivity {
                     chosenToken.setAddress(BrahmaConst.COIN_BRM_ADDRESS);
                 }
             } else {
+                ImageManager.showTokenIcon(this, mImageViewCoin, R.drawable.icon_eth);
+                mTvCoinName.setText(BrahmaConst.COIN_SYMBOL_ETH);
+
                 chosenToken.setName(BrahmaConst.COIN_ETH);
                 chosenToken.setShortName(BrahmaConst.COIN_SYMBOL_ETH);
             }
@@ -427,26 +487,7 @@ public class QuickPayActivity extends BaseActivity {
             mEtTransferAmount.setVisibility(View.VISIBLE);
         }
 
-        // coin type
-        if (coinCode == BrahmaConst.PAY_COIN_CODE_BTC) {
-            ImageManager.showTokenIcon(this, mImageViewCoin, R.drawable.icon_btc);
-            mTvCoinName.setText(BrahmaConst.COIN_SYMBOL_BTC);
-            mLayoutChooseToken.setVisibility(View.GONE);
-            mLayoutGasPrice.setVisibility(View.GONE);
-            mLayoutGasLimit.setVisibility(View.GONE);
-            mLayoutBtcFee.setVisibility(View.VISIBLE);
-        } else {
-            mLayoutGasPrice.setVisibility(View.VISIBLE);
-            mLayoutGasLimit.setVisibility(View.VISIBLE);
-            mLayoutBtcFee.setVisibility(View.GONE);
-            if (coinCode == BrahmaConst.PAY_COIN_CODE_BRM) {
-                ImageManager.showTokenIcon(this, mImageViewCoin, R.drawable.icon_brm);
-                mTvCoinName.setText(BrahmaConst.COIN_SYMBOL_BRM);
-            } else {
-                ImageManager.showTokenIcon(this, mImageViewCoin, R.drawable.icon_eth);
-                mTvCoinName.setText(BrahmaConst.COIN_SYMBOL_ETH);
-            }
-        }
+        showPaymentMethod();
     }
 
     private void initData() {
@@ -506,6 +547,11 @@ public class QuickPayActivity extends BaseActivity {
                     }
                 });
 
+        // get quick account balance
+        if (tradeType != TRADE_TYPE_RECHARGE) {
+            getQuickAccountBalance();
+        }
+
         // get accounts
         MainService.getInstance().getAccounts()
                 .subscribeOn(Schedulers.io())
@@ -542,19 +588,6 @@ public class QuickPayActivity extends BaseActivity {
                         } else {
                             chosenAccount = accounts.get(0);
                             showChosenAccountInfo(chosenAccount);
-                            if (coinCode != BrahmaConst.PAY_COIN_CODE_BTC) {
-                                getEthereumChainBalance(accounts, coinCode);
-                            }
-                            if (accounts.size() > 1) {
-                                mIvShowAccountsArrow.setVisibility(View.VISIBLE);
-                                mLayoutAccount.setOnClickListener(v -> {
-                                    showAccounts();
-                                    mLayoutChooseAccount.setVisibility(View.VISIBLE);
-                                    mLayoutChooseAccount.setAnimation(AnimationUtil.makeInAnimation());
-                                });
-                            } else {
-                                mIvShowAccountsArrow.setVisibility(View.GONE);
-                            }
                         }
                     }
                 });
@@ -563,10 +596,41 @@ public class QuickPayActivity extends BaseActivity {
         createPreOrderId();
     }
 
+    // checked payment method
+    private void choosePaymentMethod(int value) {
+        paymentMethod = value;
+        showPaymentMethod();
+        mLayoutChoosePaymentMethod.setVisibility(View.GONE);
+        mLayoutChoosePaymentMethod.setAnimation(AnimationUtil.makeOutAnimation());
+    }
+
+    // change payment method
+    private void showPaymentMethod() {
+        showChosenAccountInfo(chosenAccount);
+        if (paymentMethod == PAYMENT_ORDINARY) {
+            mTvPaymentMethod.setText(R.string.payment_type_ordinary_payment);
+            if (coinCode == BrahmaConst.PAY_COIN_CODE_BTC) {
+                mLayoutGasPrice.setVisibility(View.GONE);
+                mLayoutGasLimit.setVisibility(View.GONE);
+                mLayoutBtcFee.setVisibility(View.VISIBLE);
+            } else {
+                mLayoutGasPrice.setVisibility(View.VISIBLE);
+                mLayoutGasLimit.setVisibility(View.VISIBLE);
+                mLayoutBtcFee.setVisibility(View.GONE);
+            }
+        } else {
+            mTvPaymentMethod.setText(R.string.payment_type_quick_payment);
+            mLayoutGasPrice.setVisibility(View.GONE);
+            mLayoutGasLimit.setVisibility(View.GONE);
+            mLayoutBtcFee.setVisibility(View.GONE);
+        }
+    }
+
     private void createPreOrderId() {
-        if (isRecharge) {
+        if (tradeType == TRADE_TYPE_RECHARGE) {
             rechargePreOrderId();
         } else if (tradeType == TRADE_TYPE_PAYMENT) {
+            // todo
             requestOrderFromMerchant();
         }
     }
@@ -640,7 +704,7 @@ public class QuickPayActivity extends BaseActivity {
                         } else {
                             BLog.d(tag(), "failed pay request order: " + merchantReceiver);
                             showLongToast(R.string.payment_invalid_create_order);
-                            finish();
+                            //finish();
                         }
                     }
 
@@ -657,30 +721,72 @@ public class QuickPayActivity extends BaseActivity {
     }
 
     private void showChosenAccountInfo(AccountEntity account) {
-        ImageManager.showAccountAvatar(this, mIvChosenAccountAvatar, account);
-        if (account.getType() == BrahmaConst.BTC_ACCOUNT_TYPE) {
-            WalletAppKit kit = BtcAccountManager.getInstance().getBtcWalletAppKit(account.getFilename());
-            String accountBalanceStr = "0.00";
-            if (kit != null) {
-                accountBalance = new BigInteger(String.valueOf(kit.wallet().getBalance().value));
-                accountBalanceStr = String.valueOf(CommonUtil.convertUnit(BrahmaConst.BITCOIN, new BigInteger(String.valueOf(kit.wallet().getBalance().value))));
+        if (paymentMethod == PAYMENT_QUICK) {
+            mIvShowAccountsArrow.setVisibility(View.GONE);
+            Bitmap quickAccountAvatar = ImageUtil.getCircleBitmap(BrahmaConfig.getInstance().getPayAccountAvatar());
+            if (quickAccountAvatar != null) {
+                Glide.with(this)
+                        .load(quickAccountAvatar)
+                        .into(mIvChosenAccountAvatar);
             } else {
-                accountBalance = BigInteger.ZERO;
-                BtcAccountManager.getInstance().initExistsWalletAppKit(account);
+                Glide.with(this)
+                        .load(R.drawable.ic_default_account_avatar)
+                        .into(mIvChosenAccountAvatar);
             }
-            mTvAccountInfo.setText(String.format("%s (%s BTC)", account.getName(), accountBalanceStr));
-        } else {
-            BigDecimal balance = BigDecimal.ZERO;
-            accountBalance = BigInteger.ZERO;
-            if (accountAssets != null && accountAssets.size() > 0) {
-                for (AccountAssets assets : accountAssets) {
-                    if (assets.getAccountEntity().getId() == chosenAccount.getId()) {
-                        accountBalance = assets.getBalance();
-                        balance = CommonUtil.convertUnit(BrahmaConst.COIN_SYMBOL_ETH, assets.getBalance());
+            String coinBalance = null;
+            if (quickAccountBalances != null && quickAccountBalances.size() > 0) {
+                for (AccountBalance balance : quickAccountBalances) {
+                    if (balance.getCoinCode() == coinCode) {
+                        coinBalance = balance.getBalance();
                     }
                 }
             }
-            mTvAccountInfo.setText(String.format("%s (%s %s)", account.getName(), String.valueOf(balance.setScale(4, BigDecimal.ROUND_HALF_UP)), chosenToken.getShortName()));
+            if (coinBalance != null && coinBalance.length() > 0) {
+                mTvAccountInfo.setText(String.format("%s (%s %s)", BrahmaConfig.getInstance().getPayAccountName(), coinBalance, chosenToken.getShortName()));
+            } else {
+                mTvAccountInfo.setText(String.format("%s", BrahmaConfig.getInstance().getPayAccountName()));
+            }
+        } else if (account != null) {
+            ImageManager.showAccountAvatar(this, mIvChosenAccountAvatar, account);
+            if (account.getType() == BrahmaConst.BTC_ACCOUNT_TYPE) {
+                WalletAppKit kit = BtcAccountManager.getInstance().getBtcWalletAppKit(account.getFilename());
+                String accountBalanceStr = "0.00";
+                if (kit != null) {
+                    accountBalance = new BigInteger(String.valueOf(kit.wallet().getBalance().value));
+                    accountBalanceStr = String.valueOf(CommonUtil.convertUnit(BrahmaConst.BITCOIN, new BigInteger(String.valueOf(kit.wallet().getBalance().value))));
+                } else {
+                    accountBalance = BigInteger.ZERO;
+                    BtcAccountManager.getInstance().initExistsWalletAppKit(account);
+                }
+                mTvAccountInfo.setText(String.format("%s (%s BTC)", account.getName(), accountBalanceStr));
+            } else {
+                BigDecimal balance = BigDecimal.ZERO;
+                accountBalance = BigInteger.ZERO;
+                if (accountAssets != null && accountAssets.size() > 0) {
+                    for (AccountAssets assets : accountAssets) {
+                        if (assets.getAccountEntity().getId() == chosenAccount.getId()) {
+                            accountBalance = assets.getBalance();
+                            balance = CommonUtil.convertUnit(BrahmaConst.COIN_SYMBOL_ETH, assets.getBalance());
+                        }
+                    }
+                }
+                mTvAccountInfo.setText(String.format("%s (%s %s)", account.getName(), String.valueOf(balance.setScale(4, BigDecimal.ROUND_HALF_UP)), chosenToken.getShortName()));
+            }
+
+            // judge to change blockchain account
+            if (coinCode != BrahmaConst.PAY_COIN_CODE_BTC) {
+                getEthereumChainBalance(accounts, coinCode);
+            }
+            if (accounts.size() > 1) {
+                mIvShowAccountsArrow.setVisibility(View.VISIBLE);
+                mLayoutAccount.setOnClickListener(v -> {
+                    showAccounts();
+                    mLayoutChooseAccount.setVisibility(View.VISIBLE);
+                    mLayoutChooseAccount.setAnimation(AnimationUtil.makeInAnimation());
+                });
+            } else {
+                mIvShowAccountsArrow.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -734,6 +840,9 @@ public class QuickPayActivity extends BaseActivity {
             } else if (mLayoutEditPayRemark.getVisibility() == View.VISIBLE) {
                 mLayoutEditPayRemark.setVisibility(View.GONE);
                 mLayoutEditPayRemark.setAnimation(AnimationUtil.makeOutAnimation());
+            } else if (mLayoutChoosePaymentMethod.getVisibility() == View.VISIBLE) {
+                mLayoutChoosePaymentMethod.setVisibility(View.GONE);
+                mLayoutChoosePaymentMethod.setAnimation(AnimationUtil.makeOutAnimation());
             } else {
                 finish();
             }
@@ -914,7 +1023,7 @@ public class QuickPayActivity extends BaseActivity {
                     mLayoutTransferStatus.setVisibility(View.VISIBLE);
                     customStatusView.loadLoading();
                     String password = etPassword.getText().toString();
-                    if (isRecharge) {
+                    if (tradeType == TRADE_TYPE_RECHARGE) {
                         accountRecharge(password, gasPrice, gasLimit);
                     }
                 })
@@ -1081,6 +1190,30 @@ public class QuickPayActivity extends BaseActivity {
 
                     }
                 });
+    }
+
+    private void getQuickAccountBalance() {
+        if (BrahmaConfig.getInstance().getPayAccount() != null) {
+            PayService.getInstance().getAccountBalance()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<List<AccountBalance>>() {
+                        @Override
+                        public void onNext(List<AccountBalance> results) {
+                            quickAccountBalances = PayService.getInstance().getAccountBalances();
+                            showChosenAccountInfo(chosenAccount);
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            e.printStackTrace();
+                        }
+
+                        @Override
+                        public void onCompleted() {
+                        }
+                    });
+        }
     }
 
     @Override

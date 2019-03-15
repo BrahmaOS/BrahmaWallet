@@ -10,6 +10,8 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 
 import io.brahmaos.wallet.brahmawallet.R;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 
 public class GuideFragment extends Fragment{
     public static String GUIDE_FRAGMENT_POSITION = "guide-position";
@@ -54,19 +56,35 @@ public class GuideFragment extends Fragment{
     }
 
     private void initView() {
-        ImageView ivGuide = (ImageView) parentView.findViewById(R.id.iv_guide);
-        if (pagePosition == 0) {
-            Glide.with(this)
-                    .load(R.drawable.pay_banner_1)
-                    .into(ivGuide);
-        } else if (pagePosition == 1) {
-            Glide.with(this)
-                    .load(R.drawable.pay_banner_2)
-                    .into(ivGuide);
-        } else if (pagePosition == 2) {
-            Glide.with(this)
-                    .load(R.drawable.pay_banner_3)
-                    .into(ivGuide);
+        ImageView ivGuide = parentView.findViewById(R.id.iv_guide);
+        if (BrahmaConfig.getInstance().getLanguageLocale().equals(BrahmaConst.LANGUAGE_CHINESE)) {
+            if (pagePosition == 0) {
+                Glide.with(this)
+                        .load(R.drawable.pay_banner_zh_1)
+                        .into(ivGuide);
+            } else if (pagePosition == 1) {
+                Glide.with(this)
+                        .load(R.drawable.pay_banner_zh_2)
+                        .into(ivGuide);
+            } else if (pagePosition == 2) {
+                Glide.with(this)
+                        .load(R.drawable.pay_banner_zh_3)
+                        .into(ivGuide);
+            }
+        } else {
+            if (pagePosition == 0) {
+                Glide.with(this)
+                        .load(R.drawable.pay_banner_1)
+                        .into(ivGuide);
+            } else if (pagePosition == 1) {
+                Glide.with(this)
+                        .load(R.drawable.pay_banner_2)
+                        .into(ivGuide);
+            } else if (pagePosition == 2) {
+                Glide.with(this)
+                        .load(R.drawable.pay_banner_3)
+                        .into(ivGuide);
+            }
         }
     }
 }
