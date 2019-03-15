@@ -491,7 +491,7 @@
     <string name="pay_msg_invalid_blockchain">公链类型错误</string>
     <string name="pay_msg_no_account">暂无账号</string>
     <string name="tip_insufficient_balance">账号余额不足</string>
-    <string name="quick_pay_account_help">什么是快捷支付账号?</string>
+    <string name="quick_pay_account_help">什么是快捷账号?</string>
     <string name="label_choose_eth_account">或者从现有以太坊账号中选择：</string>
     <string name="title_pay_set_password">设置快捷支付密码</string>
     <string name="label_set_payment_password">请为此快捷支付账号设置6位数字支付密码</string>
@@ -520,7 +520,7 @@
     <string name="action_create_pay_account">开通快捷账号</string>
 
     <string name="pay_account_info">快捷账号</string>
-    <string name="no_quick_pay_account">请先设置一个快捷支付账号。</string>
+    <string name="no_quick_pay_account">请先开通快捷账号。</string>
     <string-array name="avatar_change_choices">
         <item>拍照</item>
         <item>从图库选择</item>

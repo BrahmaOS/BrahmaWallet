@@ -246,12 +246,17 @@ public class MainActivity extends BaseActivity
     }
 
     public void onClickLayout(View v) {
-        BLog.d(tag(), "onClickLayout--" + v.getId());
         switch (v.getId()){
             case R.id.layout_account_info:
-                if (null == BrahmaConfig.getInstance().getPayAccountID() ||
-                        BrahmaConfig.getInstance().getPayAccountID().isEmpty()) {
+                if (null == BrahmaConfig.getInstance().getPayAccount() ||
+                        BrahmaConfig.getInstance().getPayAccount().isEmpty()) {
+                    contentPager.setCurrentItem(PAY_FRAGMENT_POSITION);
+//                    currentFragmentPosition = PAY_FRAGMENT_POSITION;
+//                    invalidateOptionsMenu();
+//
+//                        toolbar.setTitle(getString(R.string.fragment_pay));
                     showLongToast(getString(R.string.no_quick_pay_account));
+
                 } else {
                     Intent accInfoIntent = new Intent(this, PayAccountInfoActivity.class);
                     startActivity(accInfoIntent);

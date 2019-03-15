@@ -71,20 +71,28 @@ public class PayAccountInfoActivity extends BaseActivity {
     }
 
     public void changeAccountAvatar(View view) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestExternalStorage();
+        } else {
+            showChangeAvatarMenu();
+        }
+    }
+
+    private void showChangeAvatarMenu() {
         AlertDialog alertDialog = new AlertDialog.Builder(this)
-        .setItems(getResources().getStringArray(R.array.avatar_change_choices), (dialog, which)->{
-            switch (which) {
-                case 0:
-                    takePhoto();
-                    break;
-                case 1:
-                    choosePhoto();
-                    break;
-                default:
-                        break;
-            }
-            dialog.cancel();
-        }).create();
+                .setItems(getResources().getStringArray(R.array.avatar_change_choices), (dialog, which) -> {
+                    switch (which) {
+                        case 0:
+                            takePhoto();
+                            break;
+                        case 1:
+                            choosePhoto();
+                            break;
+                        default:
+                            break;
+                    }
+                }).create();
         alertDialog.show();
     }
 
@@ -96,9 +104,6 @@ public class PayAccountInfoActivity extends BaseActivity {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
             requestCameraScanPermission();
-        } else if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            requestExternalStorage();
         } else {
             Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if (cameraIntent.resolveActivity(getPackageManager()) != null) {
@@ -137,16 +142,16 @@ public class PayAccountInfoActivity extends BaseActivity {
             startActivityForResult(intent, ReqCode.CHOOSE_IMAGE);
         }
     }
-//
-//    @Override
-//    public void handleCameraScanPermission() {
-//        takePhoto();
-//    }
-//
-//    @Override
-//    public void handleExternalStoragePermission() {
-//        choosePhoto();
-//    }
+
+    @Override
+    public void handleCameraScanPermission() {
+        takePhoto();
+    }
+
+    @Override
+    public void handleExternalStoragePermission() {
+        showChangeAvatarMenu();
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -164,17 +169,19 @@ public class PayAccountInfoActivity extends BaseActivity {
             }
         } else if (ReqCode.CROP_IMAGE == requestCode) {
             if (RESULT_OK == resultCode){
-                mAvatar.setImageURI(Uri.fromFile(mCropImageFile));
                 // Save avatar image to local
                 InputStream imageStream = null;
                 try {
                     imageStream = getContentResolver().openInputStream(Uri.fromFile(mCropImageFile));
-                    if (BrahmaConfig.getInstance().savePayAccountAvatar(
-                            BitmapFactory.decodeStream(imageStream))) {
+                    Bitmap bitmap = BitmapFactory.decodeStream(imageStream);
+                    if (BrahmaConfig.getInstance().savePayAccountAvatar(bitmap)) {
+                        mAvatar.setImageBitmap(ImageUtil.getCircleBitmap(bitmap));
                         showShortToast(getString(R.string.avatar_changed));
                     } else {
                         showShortToast(getString(R.string.avatar_save_fail));
                     }
+                    bitmap = null;
+                    System.gc();
                 } catch (FileNotFoundException fe) {
                     BLog.w(tag(), "Cannot find image file" + fe.toString());
                 } finally {
@@ -194,7 +201,6 @@ public class PayAccountInfoActivity extends BaseActivity {
     }
 
     private void cropAvatar(String imagePath){
-        //mCropImageFile = FileUtils.createTmpFile(getBaseContext());
         mCropImageFile = getTempCropImageFile();
         Intent intent = new Intent("com.android.camera.action.CROP");
         intent.setDataAndType(getImageContentUri(new File(imagePath)), "image/*");

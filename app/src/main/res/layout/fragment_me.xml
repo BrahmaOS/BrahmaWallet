@@ -21,8 +21,8 @@
 
             <ImageView
                 android:id="@+id/iv_quick_account_avatar"
-                android:layout_width="@dimen/icon_normal_size"
-                android:layout_height="@dimen/icon_normal_size"
+                android:layout_width="@dimen/icon_pay_size"
+                android:layout_height="@dimen/icon_pay_size"
                 android:layout_gravity="center_vertical"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_default_account_avatar" />

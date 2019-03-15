@@ -153,7 +153,8 @@
         <activity android:name=".ui.dapp.DappTestActivity" />
         <activity android:name=".ui.account.AccountGuideActivity" />
         <activity android:name=".ui.pay.SetPayAccountPasswordActivity" />
-        <activity android:name=".ui.pay.PayAccountInfoActivity" />
+        <activity android:name=".ui.pay.PayAccountInfoActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
         <activity android:name=".ui.pay.PayTestActivity" />
         <activity android:name=".ui.biometric.TouchIDPayActivity" />
         <activity android:name=".ui.pay.PayAccountRechargeActivity" />
