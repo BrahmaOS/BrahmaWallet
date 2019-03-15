@@ -604,7 +604,7 @@
     <string name="payment_invalid_create_order">Create order invalid!</string>
     <string name="tip_recharge_success">Recharge success.</string>
     <string name="label_account_balance">Account Balance</string>
-    <string name="action_create_pay_account">Create pay account</string>
+    <string name="action_create_pay_account">Open pay account</string>
 
     <string name="pay_account_info">Quick Account</string>
     <string name="no_quick_pay_account">Please open the quick account.</string>
@@ -625,6 +625,7 @@
     <string name="tip_create_quick_account">&#8226;&#160;&#160;The password will be used to verify and open a Quick Account.</string>
 
     <!-- Quick pay -->
+    <string name="label_confirm_pay">Confirm Pay</string>
     <string name="tip_lack_param_trade_type">Lack trade type</string>
     <string name="title_choose_payment_method">Choose payment method</string>
     <string name="desc_quick_payment">More convenient, no fees</string>

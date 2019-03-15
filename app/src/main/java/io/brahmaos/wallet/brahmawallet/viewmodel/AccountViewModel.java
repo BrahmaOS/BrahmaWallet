@@ -210,6 +210,10 @@ public class AccountViewModel extends AndroidViewModel {
             BigInteger payAccountPrivateKey = payAccountKey.getPrivKey();
 
             ECKeyPair payAccountECKeyPair = ECKeyPair.create(payAccountPrivateKey);
+
+            BigInteger publicKey = payAccountECKeyPair.getPublicKey();
+            publicKey.toString(16);
+
             WalletFile payAccountWalletFile = Wallet.createLight(password, payAccountECKeyPair);
 
             String payAccountFilename = "default_quick_account_" + payAccountWalletFile.getAddress() + ".json";

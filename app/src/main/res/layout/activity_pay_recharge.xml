@@ -42,8 +42,7 @@
                     android:layout_gravity="center"
                     android:layout_width="@dimen/icon_normal_size"
                     android:layout_height="@dimen/icon_normal_size"
-                    android:src="@drawable/icon_pay_account"
-                    android:padding="@dimen/space_smaller"/>
+                    android:src="@drawable/ic_default_account_avatar"/>
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -54,7 +53,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/font_size_subtitle"
-                        android:text="Kobe"
                         android:textColor="@color/color_primary_text"/>
                     <TextView
                         android:id="@+id/tv_account_address"

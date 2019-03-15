@@ -7,6 +7,7 @@ import com.google.common.util.concurrent.MoreExecutors;
 
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Coin;
+import org.bitcoinj.core.InsufficientMoneyException;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.core.Peer;
 import org.bitcoinj.core.Transaction;
@@ -28,6 +29,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.Executors;
 
+import io.brahmaos.wallet.brahmawallet.api.ApiRespResult;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
@@ -36,6 +38,10 @@ import io.brahmaos.wallet.brahmawallet.model.BitcoinDownloadProgress;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
 import io.brahmaos.wallet.util.RxEventBus;
+import rx.Observable;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class BtcAccountManager extends BaseService{
     @Override
@@ -218,7 +224,7 @@ public class BtcAccountManager extends BaseService{
 
             SendRequest request = SendRequest.forTx(transaction);
             request.feePerKb = Coin.valueOf(fee);
-
+            kit.wallet().sendCoinsOffline(request).getHashAsString();
             Wallet.SendResult sendResult = kit.wallet().sendCoins(kit.peerGroup(), request);
 
             ListeningExecutorService executorService = MoreExecutors.listeningDecorator(Executors.newCachedThreadPool());
@@ -237,7 +243,72 @@ public class BtcAccountManager extends BaseService{
             e.fillInStackTrace();
             return false;
         }
+    }
 
+    public Observable<String> accountRecharge(String receiveAddress, BigDecimal amount, long fee,
+                                              String accountFilename, String orderId) {
+        return Observable.create(e -> {
+            try {
+                WalletAppKit kit = btcAccountKit.get(accountFilename);
+                Coin value = Coin.valueOf(CommonUtil.convertSatoshiFromBTC(amount).longValue());
+                System.out.println("Forwarding " + value.toFriendlyString() + " BTC");
+                Address to = Address.fromBase58(getNetworkParams(), receiveAddress);
+                Transaction transaction = new Transaction(getNetworkParams());
+                transaction.addOutput(value, to);
+
+                SendRequest request = SendRequest.forTx(transaction);
+                request.feePerKb = Coin.valueOf(fee);
+                String txHash = kit.wallet().sendCoinsOffline(request).getHashAsString();
+                if (txHash == null || txHash.isEmpty()) {
+                    e.onNext(null);
+                } else {
+                    PayService.getInstance().rechargeOrder(orderId, txHash)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Observer<ApiRespResult>() {
+                                @Override
+                                public void onCompleted() {
+                                }
+
+                                @Override
+                                public void onError(Throwable throwable) {
+                                    throwable.printStackTrace();
+                                    e.onError(throwable);
+                                }
+
+                                @Override
+                                public void onNext(ApiRespResult apr) {
+                                    if (apr != null && apr.getResult() == 0) {
+                                        try {
+                                            Wallet.SendResult sendResult = kit.wallet().sendCoins(kit.peerGroup(), request);
+                                            ListeningExecutorService executorService = MoreExecutors.listeningDecorator(Executors.newCachedThreadPool());
+
+                                            sendResult.broadcastComplete.addListener(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    // The wallet has changed now, it'll get auto saved shortly or when the app shuts down.
+                                                    System.out.println("Sent coins onwards! Transaction hash is " +
+                                                            sendResult.tx.getHashAsString());
+                                                    RxEventBus.get().post(EventTypeDef.BTC_TRANSACTION_BROADCAST_COMPLETE, sendResult.tx.getHashAsString());
+                                                }
+                                            }, executorService);
+                                            e.onNext(sendResult.tx.getHashAsString());
+                                        } catch (InsufficientMoneyException e1) {
+                                            e1.printStackTrace();
+                                            e.onNext(null);
+                                        }
+                                        e.onCompleted();
+                                    } else {
+                                        e.onError(new RuntimeException("Error eth send transaction"));
+                                    }
+                                }
+                            });
+                }
+            } catch (Exception e1) {
+                e1.printStackTrace();
+                e.onError(e1);
+            }
+        });
     }
 
     public boolean isValidBtcAddress(String address) {

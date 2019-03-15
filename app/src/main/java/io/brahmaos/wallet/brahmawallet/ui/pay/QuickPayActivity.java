@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.brahmaos.wallet.brahmawallet.R;
+import io.brahmaos.wallet.brahmawallet.api.ApiRespResult;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
@@ -426,6 +427,7 @@ public class QuickPayActivity extends BaseActivity {
             mTvCommodityInformation.setText(getString(R.string.label_quick_payment_account_recharge));
             mTvMerchantName.setText(getString(R.string.brm_pay));
             paymentMethod = PAYMENT_ORDINARY;
+            mIvChoosePaymentMethodArrow.setVisibility(View.GONE);
         } else if (tradeType == TRADE_TYPE_PAYMENT) {
             mTvCommodityInformation.setText(orderDesc);
             if (quickAccount != null && quickAccount.length() > 0) {
@@ -587,6 +589,10 @@ public class QuickPayActivity extends BaseActivity {
                             finish();
                         } else {
                             chosenAccount = accounts.get(0);
+                            // get blockchain balance for ordinary payment
+                            if (coinCode != BrahmaConst.PAY_COIN_CODE_BTC) {
+                                getEthereumChainBalance(accounts, coinCode);
+                            }
                             showChosenAccountInfo(chosenAccount);
                         }
                     }
@@ -630,7 +636,6 @@ public class QuickPayActivity extends BaseActivity {
         if (tradeType == TRADE_TYPE_RECHARGE) {
             rechargePreOrderId();
         } else if (tradeType == TRADE_TYPE_PAYMENT) {
-            // todo
             requestOrderFromMerchant();
         }
     }
@@ -723,10 +728,10 @@ public class QuickPayActivity extends BaseActivity {
     private void showChosenAccountInfo(AccountEntity account) {
         if (paymentMethod == PAYMENT_QUICK) {
             mIvShowAccountsArrow.setVisibility(View.GONE);
-            Bitmap quickAccountAvatar = ImageUtil.getCircleBitmap(BrahmaConfig.getInstance().getPayAccountAvatar());
+            Bitmap quickAccountAvatar = BrahmaConfig.getInstance().getPayAccountAvatar();
             if (quickAccountAvatar != null) {
                 Glide.with(this)
-                        .load(quickAccountAvatar)
+                        .load(ImageUtil.getCircleBitmap(quickAccountAvatar))
                         .into(mIvChosenAccountAvatar);
             } else {
                 Glide.with(this)
@@ -773,10 +778,6 @@ public class QuickPayActivity extends BaseActivity {
                 mTvAccountInfo.setText(String.format("%s (%s %s)", account.getName(), String.valueOf(balance.setScale(4, BigDecimal.ROUND_HALF_UP)), chosenToken.getShortName()));
             }
 
-            // judge to change blockchain account
-            if (coinCode != BrahmaConst.PAY_COIN_CODE_BTC) {
-                getEthereumChainBalance(accounts, coinCode);
-            }
             if (accounts.size() > 1) {
                 mIvShowAccountsArrow.setVisibility(View.VISIBLE);
                 mLayoutAccount.setOnClickListener(v -> {
@@ -961,10 +962,16 @@ public class QuickPayActivity extends BaseActivity {
             transferValue = CommonUtil.convertWeiFromEther(new BigDecimal(intentParamSendValue));
         }
 
-        if (transferValue.compareTo(accountBalance) > 0) {
-            showTipDialog(R.string.tip_insufficient_balance);
-            return;
+        if (paymentMethod == PAYMENT_ORDINARY) {
+            if (transferValue.compareTo(accountBalance) > 0) {
+                showTipDialog(R.string.tip_insufficient_balance);
+                return;
+            }
+        } else {
+            //todo
+            // judge quick account balance
         }
+
 
         if (receiptAddress == null || receiptAddress.length() < 1) {
             showTipDialog(R.string.payment_invalid_create_order);
@@ -1024,7 +1031,7 @@ public class QuickPayActivity extends BaseActivity {
                     customStatusView.loadLoading();
                     String password = etPassword.getText().toString();
                     if (tradeType == TRADE_TYPE_RECHARGE) {
-                        accountRecharge(password, gasPrice, gasLimit);
+                        accountEthereumRecharge(password, gasPrice, gasLimit);
                     }
                 })
                 .create();
@@ -1057,17 +1064,8 @@ public class QuickPayActivity extends BaseActivity {
                     if (isBtcValidPassword(password)) {
                         // show transfer progress
                         mLayoutTransferStatus.setVisibility(View.VISIBLE);
-                        if (BtcAccountManager.getInstance().transfer(receiptAddress, CommonUtil.convertBTCFromSatoshi(transferValue),
-                                feePerKb, chosenAccount.getFilename())) {
-                            customStatusView.loadLoading();
-                        } else {
-                            customStatusView.loadFailure();
-                            tvTransferStatus.setText(R.string.progress_transfer_fail);
-                            new Handler().postDelayed(() -> {
-                                mLayoutTransferStatus.setVisibility(View.GONE);
-                                int resId = R.string.tip_error_transfer;
-                                showTipDialog(R.string.tip_error_transfer);
-                            }, 1500);
+                        if (tradeType == TRADE_TYPE_RECHARGE) {
+                            accountBitcoinRecharge(feePerKb);
                         }
                     }
                 })
@@ -1079,8 +1077,8 @@ public class QuickPayActivity extends BaseActivity {
         passwordDialog.show();
     }
 
-    // Payment account recharge
-    private void accountRecharge(String password, BigDecimal gasPrice, BigInteger gasLimit) {
+    // Quick account ethereum recharge
+    private void accountEthereumRecharge(String password, BigDecimal gasPrice, BigInteger gasLimit) {
         BrahmaWeb3jService.getInstance().accountRechargeWithEthereum(chosenAccount, chosenToken, password, receiptAddress,
                 CommonUtil.getAccountFromWei(transferValue), gasPrice, gasLimit, "", orderId)
                 .subscribeOn(Schedulers.io())
@@ -1121,6 +1119,70 @@ public class QuickPayActivity extends BaseActivity {
                             }, 1200);
                         }
 
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        customStatusView.loadFailure();
+                        tvTransferStatus.setText(R.string.progress_transfer_fail);
+                        new Handler().postDelayed(() -> {
+                            mLayoutTransferStatus.setVisibility(View.GONE);
+                            int resId = R.string.tip_error_transfer;
+                            if (e instanceof CipherException) {
+                                resId = R.string.tip_error_password;
+                            } else if (e instanceof TransactionException) {
+                                resId = R.string.tip_error_net;
+                            }
+                            new AlertDialog.Builder(QuickPayActivity.this)
+                                    .setMessage(resId)
+                                    .setNegativeButton(R.string.ok, (dialog1, which1) -> dialog1.cancel())
+                                    .create().show();
+                        }, 1500);
+
+                        BLog.i(tag(), "the transfer failed");
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                    }
+                });
+    }
+
+    // TODO
+    // Quick account Bitcoin recharge
+    private void accountBitcoinRecharge(long feePerKb) {
+        BtcAccountManager.getInstance().accountRecharge(receiptAddress, CommonUtil.convertBTCFromSatoshi(transferValue),
+                feePerKb, chosenAccount.getFilename(), orderId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onNext(String result) {
+                        if (result != null && result.length() > 0) {
+                            tvTransferStatus.setText(R.string.progress_transfer_success);
+                            BLog.i(tag(), "the transfer success");
+                            customStatusView.loadSuccess();
+                            new Handler().postDelayed(() -> {
+                                Intent intent = new Intent();
+                                intent.putExtra(IntentParam.PARAM_PAY_ERROR_CODE, BrahmaConst.PAY_CODE_SUCCESS);
+                                intent.putExtra(IntentParam.PARAM_PAY_BLOCKCHAIN_TYPE, BrahmaConst.ETH_ACCOUNT_TYPE);
+                                intent.putExtra(IntentParam.PARAM_PAY_HASH, result);
+                                setResult(RESULT_OK, intent);
+                                finish();
+                            }, 1200);
+                        } else {
+                            customStatusView.loadFailure();
+                            tvTransferStatus.setText(R.string.progress_transfer_fail);
+                            new Handler().postDelayed(() -> {
+                                mLayoutTransferStatus.setVisibility(View.GONE);
+                                int resId = R.string.tip_error_transfer;
+                                new AlertDialog.Builder(QuickPayActivity.this)
+                                        .setMessage(resId)
+                                        .setNegativeButton(R.string.ok, (dialog1, which1) -> dialog1.cancel())
+                                        .create().show();
+                            }, 1500);
+                        }
                     }
 
                     @Override

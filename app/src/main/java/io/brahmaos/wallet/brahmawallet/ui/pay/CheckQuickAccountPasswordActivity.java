@@ -39,6 +39,7 @@ public class CheckQuickAccountPasswordActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quick_account_check_password);
+        showNavBackBtn();
         mEtPassword = findViewById(R.id.et_quick_account_password);
         mIvAvatar = findViewById(R.id.iv_quick_account_avatar);
         mTvAccountName = findViewById(R.id.tv_quick_account_name);

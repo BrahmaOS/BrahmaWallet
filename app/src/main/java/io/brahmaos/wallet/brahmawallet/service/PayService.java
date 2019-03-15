@@ -10,6 +10,7 @@ import org.web3j.protocol.ObjectMapperFactory;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -167,62 +168,6 @@ public class PayService extends BaseService{
                         @Override
                         public void onNext(ApiRespResult apiRespResult) {
                             e.onNext(apiRespResult);
-                        }
-                    });
-        });
-    }
-
-    /*
-     * Fetch pay request token.
-     */
-    public Observable<String> getPayTokenForCreateAccount(String address, int type,
-                                            String payPassword, String privateKey,
-                                            String publicKey) {
-        return Observable.create(e -> {
-            Map<String, Object> params = new HashMap<>();
-            params.put(ReqParam.PARAM_UD_ID, StatisticHttpUtils.getUDID(context));
-            Networks.getInstance().getPayApi()
-                    .getPayRequestToken(params)
-                    .flatMap((Func1<ApiRespResult, Observable<Boolean>>) apr -> {
-                        if (apr != null && apr.getResult() == 0 && apr.getData() != null) {
-                            BLog.i(tag(), apr.toString());
-                            ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
-                            try {
-                                PayRequestToken payRequestToken = objectMapper.readValue(objectMapper.writeValueAsString(apr.getData()), new TypeReference<PayRequestToken>() {});
-                                BrahmaConfig.getInstance().setPayRequestToken(payRequestToken.getAccessToken());
-                                BrahmaConfig.getInstance().setPayRequestTokenType(payRequestToken.getTokenType());
-                                return Observable.from(new Boolean[]{Boolean.TRUE});
-                            } catch (IOException e1) {
-                                e1.printStackTrace();
-                            }
-                        }
-                        return Observable.from(new Boolean[]{Boolean.FALSE});
-                    })
-                    .flatMap((Func1<Boolean, Observable<String>>) apr -> {
-                        if (apr != null && apr) {
-                            return createPayAccount(address, type, payPassword, privateKey, publicKey);
-                        }
-                        return Observable.from((String[]) null);
-                    })
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Observer<String>() {
-                        @Override
-                        public void onCompleted() {
-                        }
-
-                        @Override
-                        public void onError(Throwable throwable) {
-                            throwable.printStackTrace();
-                        }
-
-                        @Override
-                        public void onNext(String accountAddress) {
-                            if (accountAddress != null) {
-                                e.onNext(accountAddress);
-                            } else {
-                                e.onNext(null);
-                            }
                         }
                     });
         });
@@ -493,6 +438,12 @@ public class PayService extends BaseService{
                                                         ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
                                                         try {
                                                             ArrayList<AccountBalance> accountBalances = objectMapper.readValue(objectMapper.writeValueAsString(apiRespResult.getData().get("balance_info")), new TypeReference<List<AccountBalance>>() {});
+                                                            for (AccountBalance balance : accountBalances) {
+                                                                if (balance.getBalance() != null && balance.getBalance().length() > 0) {
+                                                                    BigDecimal coinBalance = new BigDecimal(balance.getBalance());
+                                                                    balance.setBalance(String.valueOf(coinBalance.setScale(4, BigDecimal.ROUND_HALF_UP)));
+                                                                }
+                                                            }
                                                             setAccountBalances(accountBalances);
                                                             e.onNext(accountBalances);
                                                         } catch (IOException e1) {
@@ -520,6 +471,12 @@ public class PayService extends BaseService{
                                     ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
                                     try {
                                         ArrayList<AccountBalance> accountBalances = objectMapper.readValue(objectMapper.writeValueAsString(apr.getData().get("balance_info")), new TypeReference<List<AccountBalance>>() {});
+                                        for (AccountBalance balance : accountBalances) {
+                                            if (balance.getBalance() != null && balance.getBalance().length() > 0) {
+                                                BigDecimal coinBalance = new BigDecimal(balance.getBalance());
+                                                balance.setBalance(String.valueOf(coinBalance.setScale(4, BigDecimal.ROUND_HALF_UP)));
+                                            }
+                                        }
                                         setAccountBalances(accountBalances);
                                         e.onNext(accountBalances);
                                     } catch (IOException e1) {

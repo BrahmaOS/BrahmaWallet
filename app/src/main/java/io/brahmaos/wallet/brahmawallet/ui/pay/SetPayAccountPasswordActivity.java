@@ -63,6 +63,7 @@ import io.brahmaos.wallet.brahmawallet.view.PassWordLayout;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
+import io.brahmaos.wallet.util.DataCryptoUtils;
 import io.brahmaos.wallet.util.ImageUtil;
 import io.brahmaos.wallet.util.PermissionUtil;
 import rx.Observer;
@@ -175,7 +176,7 @@ public class SetPayAccountPasswordActivity extends BaseActivity {
         });
 
         btnSetAccount.setOnClickListener(v -> {
-            createPayAccount(etRepeatPassword.getPassString());
+            createPayAccount(DataCryptoUtils.shaEncrypt(etRepeatPassword.getPassString()));
         });
     }
 

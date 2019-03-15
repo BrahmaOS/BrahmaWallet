@@ -2,6 +2,7 @@ package io.brahmaos.wallet.brahmawallet.ui.pay;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -11,6 +12,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,6 +27,7 @@ import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.view.CustomProgressDialog;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
+import io.brahmaos.wallet.util.ImageUtil;
 
 public class PayAccountRechargeActivity extends BaseActivity {
     @Override
@@ -111,6 +115,17 @@ public class PayAccountRechargeActivity extends BaseActivity {
     private void initData() {
         String accountAddress = BrahmaConfig.getInstance().getPayAccount();
         tvAccountAddress.setText(accountAddress);
+        tvAccountName.setText(BrahmaConfig.getInstance().getPayAccountName());
+        Bitmap quickAccountAvatar = BrahmaConfig.getInstance().getPayAccountAvatar();
+        if (quickAccountAvatar != null) {
+            Glide.with(this)
+                    .load(ImageUtil.getCircleBitmap(quickAccountAvatar))
+                    .into(ivPayAccountAvatar);
+        } else {
+            Glide.with(this)
+                    .load(R.drawable.ic_default_account_avatar)
+                    .into(ivPayAccountAvatar);
+        }
     }
 
     private void initCoinType(int coinCode) {

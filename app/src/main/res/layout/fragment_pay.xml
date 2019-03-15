@@ -192,6 +192,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_centerVertical="true"
                                 android:textColor="@color/color_primary_text"
+                                android:text="0.00"
                                 android:textSize="@dimen/font_size_subtitle"
                                 android:layout_alignParentEnd="true"/>
                         </RelativeLayout>
@@ -227,6 +228,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_centerVertical="true"
+                                android:text="0.00"
                                 android:textColor="@color/color_primary_text"
                                 android:textSize="@dimen/font_size_subtitle"
                                 android:layout_alignParentEnd="true"/>
@@ -262,6 +264,7 @@
                                 android:id="@+id/tv_btc_amount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:text="0.00"
                                 android:layout_centerVertical="true"
                                 android:textColor="@color/color_primary_text"
                                 android:textSize="@dimen/font_size_subtitle"
