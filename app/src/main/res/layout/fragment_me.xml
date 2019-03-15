@@ -1,37 +1,39 @@
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="@color/white"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/main_bg">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/space_normal"
-        android:layout_marginLeft="@dimen/space_normal"
-        android:layout_marginRight="@dimen/space_normal"
         android:orientation="vertical">
+
         <LinearLayout
             android:id="@+id/layout_account_info"
             android:layout_width="match_parent"
-            android:onClick="onClickLayout"
+            android:layout_height="@dimen/layout_height_large"
+            android:paddingLeft="@dimen/space_normal"
+            android:paddingRight="@dimen/space_normal"
+            android:paddingTop="@dimen/space_small"
+            android:paddingBottom="@dimen/space_small"
             android:background="@drawable/list_item_bg"
-            android:layout_height="@dimen/layout_height_large">
+            android:onClick="onClickLayout">
+
             <ImageView
                 android:id="@+id/iv_quick_account_avatar"
-                android:layout_gravity="center_vertical"
                 android:layout_width="@dimen/icon_normal_size"
                 android:layout_height="@dimen/icon_normal_size"
-                android:src="@drawable/ic_default_account_avatar"
-                android:scaleType="fitCenter"/>
+                android:layout_gravity="center_vertical"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_default_account_avatar" />
 
             <TextView
                 android:id="@+id/tv_quick_account_name"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:layout_marginLeft="@dimen/space_normal"
                 android:layout_marginRight="@dimen/space_normal"
+                android:layout_weight="1"
                 android:ellipsize="middle"
                 android:gravity="center_vertical"
                 android:singleLine="true"
@@ -72,174 +74,183 @@
                 android:layout_width="@dimen/toolbar_icon_size"
                 android:layout_height="@dimen/toolbar_icon_size"
                 android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_keyboard_arrow_right_gray"/>
+                android:src="@drawable/ic_keyboard_arrow_right_gray" />
         </LinearLayout>
 
         <LinearLayout
-            android:layout_marginTop="@dimen/space_large"
             android:id="@+id/layout_transactions"
+            android:paddingLeft="@dimen/space_normal"
+            android:paddingRight="@dimen/space_normal"
             android:layout_width="match_parent"
-            android:onClick="onClickLayout"
+            android:layout_height="@dimen/layout_height_normal"
+            android:layout_marginTop="@dimen/space_normal"
             android:background="@drawable/list_item_bg"
-            android:layout_height="@dimen/layout_height_normal">
+            android:onClick="onClickLayout">
+
             <ImageView
                 android:layout_width="@dimen/toolbar_icon_size"
                 android:layout_height="@dimen/toolbar_icon_size"
-                android:scaleType="center"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_transactions_list"/>
+                android:scaleType="center"
+                android:src="@drawable/ic_transactions_list" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/space_normal"
+                android:layout_marginRight="@dimen/space_normal"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
                 android:singleLine="true"
-                android:layout_marginLeft="@dimen/space_normal"
-                android:layout_marginRight="@dimen/space_normal"
-                android:textSize="@dimen/font_size_subheading"
-                android:text="@string/menu_transactions"/>
+                android:text="@string/menu_transactions"
+                android:textSize="@dimen/font_size_subheading" />
+
             <ImageView
                 android:layout_width="@dimen/toolbar_icon_size"
                 android:layout_height="@dimen/toolbar_icon_size"
                 android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_keyboard_arrow_right_gray"/>
+                android:src="@drawable/ic_keyboard_arrow_right_gray" />
         </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:layout_marginLeft="@dimen/icon_large_size"
-            android:background="@color/color_divider"/>
 
-    <LinearLayout
-        android:id="@+id/layout_address"
-        android:layout_width="match_parent"
-        android:onClick="onClickLayout"
-        android:background="@drawable/list_item_bg"
-        android:layout_height="@dimen/layout_height_normal">
-        <ImageView
-            android:layout_width="@dimen/toolbar_icon_size"
-            android:layout_height="@dimen/toolbar_icon_size"
-            android:scaleType="center"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_address_black_24dp"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:singleLine="true"
-            android:layout_marginLeft="@dimen/space_normal"
-            android:layout_marginRight="@dimen/space_normal"
-            android:textSize="@dimen/font_size_subheading"
-            android:text="@string/menu_address_book"/>
-        <ImageView
-            android:layout_width="@dimen/toolbar_icon_size"
-            android:layout_height="@dimen/toolbar_icon_size"
-            android:layout_gravity="center_vertical"
-            android:src="@drawable/ic_keyboard_arrow_right_gray"/>
-    </LinearLayout>
         <LinearLayout
+            android:id="@+id/layout_address"
             android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:layout_marginLeft="@dimen/icon_large_size"
-            android:background="@color/color_divider"/>
+            android:layout_height="@dimen/layout_height_normal"
+            android:layout_marginTop="1dp"
+            android:paddingLeft="@dimen/space_normal"
+            android:paddingRight="@dimen/space_normal"
+            android:background="@drawable/list_item_bg"
+            android:onClick="onClickLayout">
 
-    <LinearLayout
-        android:id="@+id/layout_help"
-        android:layout_width="match_parent"
-        android:onClick="onClickLayout"
-        android:background="@drawable/list_item_bg"
-        android:layout_height="@dimen/layout_height_normal">
-        <ImageView
-            android:layout_width="@dimen/toolbar_icon_size"
-            android:layout_height="@dimen/toolbar_icon_size"
-            android:scaleType="center"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_help_outline_black_24dp"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:singleLine="true"
-            android:layout_marginLeft="@dimen/space_normal"
-            android:layout_marginRight="@dimen/space_normal"
-            android:textSize="@dimen/font_size_subheading"
-            android:text="@string/nav_menu_help"/>
-        <ImageView
-            android:layout_width="@dimen/toolbar_icon_size"
-            android:layout_height="@dimen/toolbar_icon_size"
-            android:layout_gravity="center_vertical"
-            android:src="@drawable/ic_keyboard_arrow_right_gray"/>
-    </LinearLayout>
+            <ImageView
+                android:layout_width="@dimen/toolbar_icon_size"
+                android:layout_height="@dimen/toolbar_icon_size"
+                android:layout_gravity="center"
+                android:scaleType="center"
+                android:src="@drawable/ic_address_black_24dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/space_normal"
+                android:layout_marginRight="@dimen/space_normal"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:text="@string/menu_address_book"
+                android:textSize="@dimen/font_size_subheading" />
+
+            <ImageView
+                android:layout_width="@dimen/toolbar_icon_size"
+                android:layout_height="@dimen/toolbar_icon_size"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_keyboard_arrow_right_gray" />
+        </LinearLayout>
+
         <LinearLayout
+            android:id="@+id/layout_help"
             android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:layout_marginLeft="@dimen/icon_large_size"
-            android:background="@color/color_divider"/>
+            android:layout_height="@dimen/layout_height_normal"
+            android:layout_marginTop="1dp"
+            android:paddingLeft="@dimen/space_normal"
+            android:paddingRight="@dimen/space_normal"
+            android:background="@drawable/list_item_bg"
+            android:onClick="onClickLayout">
 
-    <LinearLayout
-        android:id="@+id/layout_about_us"
-        android:layout_width="match_parent"
-        android:onClick="onClickLayout"
-        android:background="@drawable/list_item_bg"
-        android:layout_height="@dimen/layout_height_normal">
-        <ImageView
-            android:layout_width="@dimen/toolbar_icon_size"
-            android:layout_height="@dimen/toolbar_icon_size"
-            android:scaleType="center"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_about_us_black_24dp"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:singleLine="true"
-            android:layout_marginLeft="@dimen/space_normal"
-            android:layout_marginRight="@dimen/space_normal"
-            android:textSize="@dimen/font_size_subheading"
-            android:text="@string/nav_menu_info"/>
-        <ImageView
-            android:layout_width="@dimen/toolbar_icon_size"
-            android:layout_height="@dimen/toolbar_icon_size"
-            android:layout_gravity="center_vertical"
-            android:src="@drawable/ic_keyboard_arrow_right_gray"/>
-    </LinearLayout>
+            <ImageView
+                android:layout_width="@dimen/toolbar_icon_size"
+                android:layout_height="@dimen/toolbar_icon_size"
+                android:layout_gravity="center"
+                android:scaleType="center"
+                android:src="@drawable/ic_help_outline_black_24dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/space_normal"
+                android:layout_marginRight="@dimen/space_normal"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:text="@string/nav_menu_help"
+                android:textSize="@dimen/font_size_subheading" />
+
+            <ImageView
+                android:layout_width="@dimen/toolbar_icon_size"
+                android:layout_height="@dimen/toolbar_icon_size"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_keyboard_arrow_right_gray" />
+        </LinearLayout>
+
         <LinearLayout
+            android:id="@+id/layout_about_us"
             android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:layout_marginLeft="@dimen/icon_large_size"
-            android:background="@color/color_divider"/>
+            android:layout_height="@dimen/layout_height_normal"
+            android:layout_marginTop="1dp"
+            android:paddingLeft="@dimen/space_normal"
+            android:paddingRight="@dimen/space_normal"
+            android:background="@drawable/list_item_bg"
+            android:onClick="onClickLayout">
 
-    <LinearLayout
-        android:id="@+id/layout_pay_test"
-        android:layout_width="match_parent"
-        android:onClick="onClickLayout"
-        android:background="@drawable/list_item_bg"
-        android:layout_height="@dimen/layout_height_normal">
-        <ImageView
-            android:layout_width="@dimen/toolbar_icon_size"
-            android:layout_height="@dimen/toolbar_icon_size"
-            android:scaleType="center"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_about_us_black_24dp"/>
-        <TextView
+            <ImageView
+                android:layout_width="@dimen/toolbar_icon_size"
+                android:layout_height="@dimen/toolbar_icon_size"
+                android:layout_gravity="center"
+                android:scaleType="center"
+                android:src="@drawable/ic_about_us_black_24dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/space_normal"
+                android:layout_marginRight="@dimen/space_normal"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:text="@string/nav_menu_info"
+                android:textSize="@dimen/font_size_subheading" />
+
+            <ImageView
+                android:layout_width="@dimen/toolbar_icon_size"
+                android:layout_height="@dimen/toolbar_icon_size"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_keyboard_arrow_right_gray" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_pay_test"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:singleLine="true"
-            android:layout_marginLeft="@dimen/space_normal"
-            android:layout_marginRight="@dimen/space_normal"
-            android:textSize="@dimen/font_size_subheading"
-            android:text="@string/menu_pay_test"/>
-        <ImageView
-            android:layout_width="@dimen/toolbar_icon_size"
-            android:layout_height="@dimen/toolbar_icon_size"
-            android:layout_gravity="center_vertical"
-            android:src="@drawable/ic_keyboard_arrow_right_gray"/>
-    </LinearLayout>
+            android:layout_height="@dimen/layout_height_normal"
+            android:layout_marginTop="1dp"
+            android:paddingLeft="@dimen/space_normal"
+            android:paddingRight="@dimen/space_normal"
+            android:background="@drawable/list_item_bg"
+            android:onClick="onClickLayout">
+
+            <ImageView
+                android:layout_width="@dimen/toolbar_icon_size"
+                android:layout_height="@dimen/toolbar_icon_size"
+                android:layout_gravity="center"
+                android:scaleType="center"
+                android:src="@drawable/ic_about_us_black_24dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/space_normal"
+                android:layout_marginRight="@dimen/space_normal"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:text="@string/menu_pay_test"
+                android:textSize="@dimen/font_size_subheading" />
+
+            <ImageView
+                android:layout_width="@dimen/toolbar_icon_size"
+                android:layout_height="@dimen/toolbar_icon_size"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_keyboard_arrow_right_gray" />
+        </LinearLayout>
     </LinearLayout>
 
 </ScrollView>
