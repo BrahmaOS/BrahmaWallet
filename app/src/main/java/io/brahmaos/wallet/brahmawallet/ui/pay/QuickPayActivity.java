@@ -59,6 +59,7 @@ import io.brahmaos.wallet.brahmawallet.service.MainService;
 import io.brahmaos.wallet.brahmawallet.service.PayService;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.view.CustomStatusView;
+import io.brahmaos.wallet.brahmawallet.view.PassWordLayout;
 import io.brahmaos.wallet.util.AnimationUtil;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
@@ -72,6 +73,7 @@ import rx.schedulers.Schedulers;
 
 public class QuickPayActivity extends BaseActivity {
 
+    public int passwordLength = 6;
     public static String PARAM_ACCESS_KEY_ID = "access_key_id";
     public static String PARAM_TRADE_TYPE = "trade_type";
     public static String PARAM_AMOUNT = "amount";
@@ -88,6 +90,13 @@ public class QuickPayActivity extends BaseActivity {
     public static String PARAM_SIGN = "sign";
     public static String PARAM_NONCE = "nonce";
     public static String PARAM_T = "t";
+    public static String PARAM_RECEIVER = "receiver";
+    public static String PARAM_BALANCE_COIN_CODE = "balance_coin_code";
+    public static String PARAM_PAY_PASSWORD = "pay_passwd";
+    public static String PARAM_REMARK = "remark";
+    public static String PARAM_SENDER = "sender";
+    public static String PARAM_TX_HASH = "tx_hash";
+
     public static int TRADE_TYPE_RECHARGE = 1;
     public static int TRADE_TYPE_PAYMENT = 2;
     public static int PAYMENT_QUICK = 1;
@@ -148,6 +157,12 @@ public class QuickPayActivity extends BaseActivity {
     private ImageView mIvQuickPayment;
     private RelativeLayout mLayoutOrdinaryPayment;
     private ImageView mIvOrdinaryPayment;
+
+    // input quick account password
+    private LinearLayout mLayoutInputQuickAccountPassword;
+    private ImageView mIvCloseQuickAccountPassword;
+    private PassWordLayout mLayoutPassword;
+    private Button mBtnConfirmPassword;
 
     private LinearLayout mLayoutTransferStatus;
     private CustomStatusView customStatusView;
@@ -409,6 +424,15 @@ public class QuickPayActivity extends BaseActivity {
             mLayoutEditPayRemark.setVisibility(View.GONE);
             mLayoutEditPayRemark.setAnimation(AnimationUtil.makeOutAnimation());
         });
+
+        mLayoutInputQuickAccountPassword = findViewById(R.id.layout_input_quick_account_password);
+        mIvCloseQuickAccountPassword = findViewById(R.id.iv_close_quick_account_password);
+        mIvCloseQuickAccountPassword.setOnClickListener(v -> {
+            mLayoutInputQuickAccountPassword.setVisibility(View.GONE);
+            mLayoutInputQuickAccountPassword.setAnimation(AnimationUtil.makeOutAnimation());
+        });
+        mLayoutPassword = findViewById(R.id.et_quick_account_password);
+        mBtnConfirmPassword = findViewById(R.id.btn_commit_quick_account_password);
 
         mLayoutTransferStatus = findViewById(R.id.layout_transfer_status);
         customStatusView = findViewById(R.id.as_status);
@@ -709,7 +733,7 @@ public class QuickPayActivity extends BaseActivity {
                         } else {
                             BLog.d(tag(), "failed pay request order: " + merchantReceiver);
                             showLongToast(R.string.payment_invalid_create_order);
-                            //finish();
+                            finish();
                         }
                     }
 
@@ -844,6 +868,9 @@ public class QuickPayActivity extends BaseActivity {
             } else if (mLayoutChoosePaymentMethod.getVisibility() == View.VISIBLE) {
                 mLayoutChoosePaymentMethod.setVisibility(View.GONE);
                 mLayoutChoosePaymentMethod.setAnimation(AnimationUtil.makeOutAnimation());
+            } else if (mLayoutInputQuickAccountPassword.getVisibility() == View.VISIBLE) {
+                mLayoutInputQuickAccountPassword.setVisibility(View.GONE);
+                mLayoutInputQuickAccountPassword.setAnimation(AnimationUtil.makeOutAnimation());
             } else {
                 finish();
             }
@@ -963,15 +990,31 @@ public class QuickPayActivity extends BaseActivity {
         }
 
         if (paymentMethod == PAYMENT_ORDINARY) {
+            // judge blockchain account balance
             if (transferValue.compareTo(accountBalance) > 0) {
                 showTipDialog(R.string.tip_insufficient_balance);
                 return;
             }
         } else {
-            //todo
             // judge quick account balance
+            String quickAccountBalanceStr = "0";
+            for (AccountBalance accountBalance : quickAccountBalances) {
+                if (accountBalance.getCoinCode() == coinCode) {
+                    quickAccountBalanceStr = accountBalance.getBalance();
+                    break;
+                }
+            }
+            BigInteger quickAccountBalance;
+            if (coinCode == BrahmaConst.PAY_COIN_CODE_BTC) {
+                quickAccountBalance = CommonUtil.convertSatoshiFromBTC(new BigDecimal(quickAccountBalanceStr));
+            } else {
+                quickAccountBalance = CommonUtil.convertWeiFromEther(new BigDecimal(quickAccountBalanceStr));
+            }
+            if (transferValue.compareTo(quickAccountBalance) > 0) {
+                showTipDialog(R.string.tip_insufficient_balance);
+                return;
+            }
         }
-
 
         if (receiptAddress == null || receiptAddress.length() < 1) {
             showTipDialog(R.string.payment_invalid_create_order);
@@ -985,10 +1028,16 @@ public class QuickPayActivity extends BaseActivity {
             return;
         }
 
-        if (coinCode == BrahmaConst.PAY_COIN_CODE_BTC) {
-            showBtcPasswordDialog();
-        } else {
-            showEthPasswordDialog();
+        tradeRemark = mTvPaymentRemark.getText().toString().trim();
+
+        if (paymentMethod == PAYMENT_QUICK) {
+            showQuickPayPassword();
+        } else if (paymentMethod == PAYMENT_ORDINARY) {
+            if (coinCode == BrahmaConst.PAY_COIN_CODE_BTC) {
+                showBtcPasswordDialog();
+            } else {
+                showEthPasswordDialog();
+            }
         }
     }
 
@@ -1003,6 +1052,40 @@ public class QuickPayActivity extends BaseActivity {
         errorDialog.show();
     }
 
+    private void showQuickPayPassword() {
+        mLayoutInputQuickAccountPassword.setVisibility(View.VISIBLE);
+        mLayoutInputQuickAccountPassword.setAnimation(AnimationUtil.makeInAnimation());
+        mLayoutPassword.removeAllPwd();
+        mLayoutPassword.callOnClick();
+        mLayoutPassword.setPwdChangeListener(new PassWordLayout.pwdChangeListener() {
+            @Override
+            public void onChange(String pwd) {
+                if (pwd != null && pwd.length() == passwordLength) {
+                    mBtnConfirmPassword.setEnabled(true);
+                } else {
+                    mBtnConfirmPassword.setEnabled(false);
+                }
+            }
+
+            @Override
+            public void onNull() {
+
+            }
+
+            @Override
+            public void onFinished(String pwd) {
+                mBtnConfirmPassword.setEnabled(true);
+            }
+        });
+        mBtnConfirmPassword.setOnClickListener(v -> {
+            mLayoutInputQuickAccountPassword.setVisibility(View.GONE);
+            mLayoutTransferStatus.setVisibility(View.VISIBLE);
+            customStatusView.loadLoading();
+            tvTransferStatus.setText(R.string.progress_transfer);
+            quickPayment(mLayoutPassword.getPassString());
+        });
+    }
+
     private void showEthPasswordDialog() {
         String gasPriceStr = mTvGasPrice.getText().toString().trim();
         String gasLimitStr = mTvGasLimit.getText().toString().trim();
@@ -1015,7 +1098,6 @@ public class QuickPayActivity extends BaseActivity {
             showTipDialog(R.string.tip_invalid_gas_limit);
             return;
         }
-
         BigDecimal gasPrice = new BigDecimal(gasPriceStr);
         BigInteger gasLimit = new BigInteger(gasLimitStr);
         final View dialogView = getLayoutInflater().inflate(R.layout.dialog_account_password, null);
@@ -1032,6 +1114,10 @@ public class QuickPayActivity extends BaseActivity {
                     String password = etPassword.getText().toString();
                     if (tradeType == TRADE_TYPE_RECHARGE) {
                         accountEthereumRecharge(password, gasPrice, gasLimit);
+                    } else if (tradeType == TRADE_TYPE_PAYMENT) {
+                        if (paymentMethod == PAYMENT_ORDINARY) {
+                            ordinaryEthereumPayment(password, gasPrice, gasLimit);
+                        }
                     }
                 })
                 .create();
@@ -1064,8 +1150,13 @@ public class QuickPayActivity extends BaseActivity {
                     if (isBtcValidPassword(password)) {
                         // show transfer progress
                         mLayoutTransferStatus.setVisibility(View.VISIBLE);
+                        customStatusView.loadLoading();
                         if (tradeType == TRADE_TYPE_RECHARGE) {
                             accountBitcoinRecharge(feePerKb);
+                        } else if (tradeType == TRADE_TYPE_PAYMENT) {
+                            if (paymentMethod == PAYMENT_ORDINARY) {
+                                ordinaryBitcoinPayment(feePerKb);
+                            }
                         }
                     }
                 })
@@ -1149,7 +1240,6 @@ public class QuickPayActivity extends BaseActivity {
                 });
     }
 
-    // TODO
     // Quick account Bitcoin recharge
     private void accountBitcoinRecharge(long feePerKb) {
         BtcAccountManager.getInstance().accountRecharge(receiptAddress, CommonUtil.convertBTCFromSatoshi(transferValue),
@@ -1200,6 +1290,201 @@ public class QuickPayActivity extends BaseActivity {
                             }
                             new AlertDialog.Builder(QuickPayActivity.this)
                                     .setMessage(resId)
+                                    .setNegativeButton(R.string.ok, (dialog1, which1) -> dialog1.cancel())
+                                    .create().show();
+                        }, 1500);
+
+                        BLog.i(tag(), "the transfer failed");
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                    }
+                });
+    }
+
+    // Quick account quick pay
+    private void quickPayment(String password) {
+        Map<String, Object> params = new HashMap<>();
+        params.put(PARAM_PRE_PAY_ID, orderId);
+        params.put(PARAM_RECEIVER, receiptAddress);
+        params.put(PARAM_BALANCE_COIN_CODE, coinCode);
+        params.put(PARAM_PAY_PASSWORD, DataCryptoUtils.shaEncrypt(password));
+        params.put(PARAM_REMARK, tradeRemark);
+        PayService.getInstance().paymentOrder(params)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<ApiRespResult>() {
+                    @Override
+                    public void onNext(ApiRespResult apr) {
+                        if (apr != null && apr.getResult() == 0) {
+                            tvTransferStatus.setText(R.string.progress_transfer_success);
+                            BLog.i(tag(), "the transfer success");
+                            customStatusView.loadSuccess();
+                            new Handler().postDelayed(() -> {
+                                Intent intent = new Intent();
+                                intent.putExtra(IntentParam.PARAM_PAY_ERROR_CODE, BrahmaConst.PAY_CODE_SUCCESS);
+                                intent.putExtra(IntentParam.PARAM_PAY_BLOCKCHAIN_TYPE, BrahmaConst.ETH_ACCOUNT_TYPE);
+                                setResult(RESULT_OK, intent);
+                                finish();
+                            }, 1200);
+                        } else {
+                            customStatusView.loadFailure();
+                            tvTransferStatus.setText(R.string.progress_transfer_fail);
+                            new Handler().postDelayed(() -> {
+                                mLayoutTransferStatus.setVisibility(View.GONE);
+                                new AlertDialog.Builder(QuickPayActivity.this)
+                                        .setMessage(R.string.tip_error_transfer)
+                                        .setNegativeButton(R.string.ok, (dialog1, which1) -> dialog1.cancel())
+                                        .create().show();
+                            }, 1500);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        customStatusView.loadFailure();
+                        tvTransferStatus.setText(R.string.progress_transfer_fail);
+                        new Handler().postDelayed(() -> {
+                            mLayoutTransferStatus.setVisibility(View.GONE);
+                            new AlertDialog.Builder(QuickPayActivity.this)
+                                    .setMessage(R.string.tip_error_transfer)
+                                    .setNegativeButton(R.string.ok, (dialog1, which1) -> dialog1.cancel())
+                                    .create().show();
+                        }, 1500);
+
+                        BLog.i(tag(), "the transfer failed");
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                    }
+                });
+    }
+
+    // Ordinary Ethereum payment
+    private void ordinaryEthereumPayment(String password, BigDecimal gasPrice, BigInteger gasLimit) {
+        if (tradeRemark == null || tradeRemark.isEmpty()) {
+            tradeRemark = "";
+        }
+        BrahmaWeb3jService.getInstance().paymentWithEthereum(chosenAccount, chosenToken, password, receiptAddress,
+                CommonUtil.getAccountFromWei(transferValue), gasPrice, gasLimit, tradeRemark, orderId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Object>() {
+                    @Override
+                    public void onNext(Object result) {
+                        if (result instanceof Integer) {
+                            int flag = (Integer) result;
+                            if (flag == 1) {
+                                tvTransferStatus.setText(R.string.progress_verify_account);
+                            } else if (flag == 2) {
+                                tvTransferStatus.setText(R.string.progress_send_request);
+                            } else if (flag == -1) {
+                                customStatusView.loadFailure();
+                                tvTransferStatus.setText(R.string.progress_transfer_fail);
+                                new Handler().postDelayed(() -> {
+                                    mLayoutTransferStatus.setVisibility(View.GONE);
+                                    int resId = R.string.tip_error_transfer;
+                                    new AlertDialog.Builder(QuickPayActivity.this)
+                                            .setMessage(resId)
+                                            .setNegativeButton(R.string.ok, (dialog1, which1) -> dialog1.cancel())
+                                            .create().show();
+                                }, 1500);
+                            }
+                        } else if (result instanceof String) {
+                            String hash = (String) result;
+                            tvTransferStatus.setText(R.string.progress_transfer_success);
+                            BLog.i(tag(), "the transfer success");
+                            customStatusView.loadSuccess();
+                            new Handler().postDelayed(() -> {
+                                Intent intent = new Intent();
+                                intent.putExtra(IntentParam.PARAM_PAY_ERROR_CODE, BrahmaConst.PAY_CODE_SUCCESS);
+                                intent.putExtra(IntentParam.PARAM_PAY_BLOCKCHAIN_TYPE, BrahmaConst.ETH_ACCOUNT_TYPE);
+                                intent.putExtra(IntentParam.PARAM_PAY_HASH, hash);
+                                setResult(RESULT_OK, intent);
+                                finish();
+                            }, 1200);
+                        }
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        customStatusView.loadFailure();
+                        tvTransferStatus.setText(R.string.progress_transfer_fail);
+                        new Handler().postDelayed(() -> {
+                            mLayoutTransferStatus.setVisibility(View.GONE);
+                            int resId = R.string.tip_error_transfer;
+                            if (e instanceof CipherException) {
+                                resId = R.string.tip_error_password;
+                            } else if (e instanceof TransactionException) {
+                                resId = R.string.tip_error_net;
+                            }
+                            new AlertDialog.Builder(QuickPayActivity.this)
+                                    .setMessage(resId)
+                                    .setNegativeButton(R.string.ok, (dialog1, which1) -> dialog1.cancel())
+                                    .create().show();
+                        }, 1500);
+
+                        BLog.i(tag(), "the transfer failed");
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                    }
+                });
+    }
+
+    // Ordinary Bitcoin payment
+    private void ordinaryBitcoinPayment(long feePerKb) {
+        if (tradeRemark == null || tradeRemark.isEmpty()) {
+            tradeRemark = "";
+        }
+        BtcAccountManager.getInstance().ordinaryPaymentWithBtc(receiptAddress, CommonUtil.convertBTCFromSatoshi(transferValue),
+                feePerKb, chosenAccount.getFilename(), orderId, tradeRemark)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onNext(String result) {
+                        if (result != null && result.length() > 0) {
+                            tvTransferStatus.setText(R.string.progress_transfer_success);
+                            BLog.i(tag(), "the transfer success");
+                            customStatusView.loadSuccess();
+                            new Handler().postDelayed(() -> {
+                                Intent intent = new Intent();
+                                intent.putExtra(IntentParam.PARAM_PAY_ERROR_CODE, BrahmaConst.PAY_CODE_SUCCESS);
+                                intent.putExtra(IntentParam.PARAM_PAY_BLOCKCHAIN_TYPE, BrahmaConst.ETH_ACCOUNT_TYPE);
+                                intent.putExtra(IntentParam.PARAM_PAY_HASH, result);
+                                setResult(RESULT_OK, intent);
+                                finish();
+                            }, 1200);
+                        } else {
+                            customStatusView.loadFailure();
+                            tvTransferStatus.setText(R.string.progress_transfer_fail);
+                            new Handler().postDelayed(() -> {
+                                mLayoutTransferStatus.setVisibility(View.GONE);
+                                int resId = R.string.tip_error_transfer;
+                                new AlertDialog.Builder(QuickPayActivity.this)
+                                        .setMessage(resId)
+                                        .setNegativeButton(R.string.ok, (dialog1, which1) -> dialog1.cancel())
+                                        .create().show();
+                            }, 1500);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        customStatusView.loadFailure();
+                        tvTransferStatus.setText(R.string.progress_transfer_fail);
+                        new Handler().postDelayed(() -> {
+                            mLayoutTransferStatus.setVisibility(View.GONE);
+                            new AlertDialog.Builder(QuickPayActivity.this)
+                                    .setMessage(R.string.tip_error_transfer)
                                     .setNegativeButton(R.string.ok, (dialog1, which1) -> dialog1.cancel())
                                     .create().show();
                         }, 1500);

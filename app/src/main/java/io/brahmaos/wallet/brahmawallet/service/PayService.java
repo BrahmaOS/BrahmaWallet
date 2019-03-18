@@ -537,4 +537,62 @@ public class PayService extends BaseService{
                     });
         });
     }
+
+    /**
+     * Quick payment order
+     */
+    public Observable<ApiRespResult> paymentOrder(Map<String, Object> params) {
+        return Observable.create(e -> {
+            paymentOrderByNet(params)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<ApiRespResult>() {
+                        @Override
+                        public void onCompleted() {
+                            e.onCompleted();
+                        }
+
+                        @Override
+                        public void onError(Throwable throwable) {
+                            throwable.printStackTrace();
+                            e.onError(throwable);
+                        }
+
+                        @Override
+                        public void onNext(ApiRespResult apr) {
+                            if (apr != null) {
+                                if (apr.getResult() == ApiConst.INVALID_TOKEN) {
+                                    getPayTokenForQuickPay("paymentOrderByNet", params)
+                                            .subscribeOn(Schedulers.io())
+                                            .observeOn(AndroidSchedulers.mainThread())
+                                            .subscribe(new Observer<ApiRespResult>() {
+                                                @Override
+                                                public void onNext(ApiRespResult apiRespResult) {
+                                                    e.onNext(apiRespResult);
+                                                }
+
+                                                @Override
+                                                public void onError(Throwable error) {
+                                                    error.printStackTrace();
+                                                }
+
+                                                @Override
+                                                public void onCompleted() {
+
+                                                }
+                                            });
+                                } else {
+                                    e.onNext(apr);
+                                }
+                            } else {
+                                e.onNext(null);
+                            }
+                        }
+                    });
+        });
+    }
+
+    public Observable<ApiRespResult> paymentOrderByNet(Map<String, Object> params) {
+        return Networks.getInstance().getPayApi().paymentOrder(params);
+    }
 }

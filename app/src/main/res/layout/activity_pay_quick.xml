@@ -790,6 +790,66 @@
                         android:src="@drawable/ic_check"/>
                 </RelativeLayout>
             </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_input_quick_account_password"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="@dimen/space_large"
+                android:orientation="vertical"
+                android:background="@color/white">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        android:text="@string/prompt_input_quick_account_password"
+                        android:paddingTop="@dimen/space_normal"
+                        android:paddingBottom="@dimen/space_small"
+                        android:textColor="@color/color_primary_text"
+                        android:textSize="@dimen/font_size_subheading"/>
+
+                    <ImageView
+                        android:id="@+id/iv_close_quick_account_password"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/space_small"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_keyboard_arrow_left"/>
+                </FrameLayout>
+
+                <include layout="@layout/horizontal_divider"/>
+                <io.brahmaos.wallet.brahmawallet.view.PassWordLayout
+                    android:id="@+id/et_quick_account_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_larger"
+                    app:box_draw_type="rect"
+                    app:interval_width="4dp"
+                    app:item_height="48dp"
+                    app:item_width="48dp"
+                    app:pass_inputed_type="stars"
+                    app:pass_leng="six" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:layout_height="0dp"/>
+                <Button
+                    android:id="@+id/btn_commit_quick_account_password"
+                    style="@style/ButtonSingle"
+                    android:enabled="false"
+                    android:layout_marginTop="@dimen/space_normal"
+                    android:layout_marginStart="@dimen/space_normal"
+                    android:layout_marginEnd="@dimen/space_normal"
+                    android:text="@string/action_confirm"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
         </FrameLayout>
 
     </android.support.v4.widget.NestedScrollView>
