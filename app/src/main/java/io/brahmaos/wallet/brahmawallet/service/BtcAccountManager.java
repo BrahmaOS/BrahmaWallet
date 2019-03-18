@@ -35,6 +35,7 @@ import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.event.EventTypeDef;
 import io.brahmaos.wallet.brahmawallet.model.BitcoinDownloadProgress;
+import io.brahmaos.wallet.brahmawallet.ui.pay.QuickPayActivity;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
 import io.brahmaos.wallet.util.RxEventBus;
@@ -224,7 +225,6 @@ public class BtcAccountManager extends BaseService{
 
             SendRequest request = SendRequest.forTx(transaction);
             request.feePerKb = Coin.valueOf(fee);
-            kit.wallet().sendCoinsOffline(request).getHashAsString();
             Wallet.SendResult sendResult = kit.wallet().sendCoins(kit.peerGroup(), request);
 
             ListeningExecutorService executorService = MoreExecutors.listeningDecorator(Executors.newCachedThreadPool());
@@ -258,7 +258,9 @@ public class BtcAccountManager extends BaseService{
 
                 SendRequest request = SendRequest.forTx(transaction);
                 request.feePerKb = Coin.valueOf(fee);
-                String txHash = kit.wallet().sendCoinsOffline(request).getHashAsString();
+                kit.wallet().completeTx(request);
+                String txHash = request.tx.getHashAsString();
+
                 if (txHash == null || txHash.isEmpty()) {
                     e.onNext(null);
                 } else {
@@ -280,20 +282,116 @@ public class BtcAccountManager extends BaseService{
                                 public void onNext(ApiRespResult apr) {
                                     if (apr != null && apr.getResult() == 0) {
                                         try {
-                                            Wallet.SendResult sendResult = kit.wallet().sendCoins(kit.peerGroup(), request);
+                                            kit.wallet().commitTx(request.tx);
+                                            Wallet.SendResult result = new Wallet.SendResult();
+                                            result.tx = request.tx;
+                                            // The tx has been committed to the pending pool by this point (via sendCoinsOffline -> commitTx), so it has
+                                            // a txConfidenceListener registered. Once the tx is broadcast the peers will update the memory pool with the
+                                            // count of seen peers, the memory pool will update the transaction confidence object, that will invoke the
+                                            // txConfidenceListener which will in turn invoke the wallets event listener onTransactionConfidenceChanged
+                                            // method.
+                                            result.broadcast = kit.peerGroup().broadcastTransaction(request.tx);
+                                            result.broadcastComplete = result.broadcast.future();
+
                                             ListeningExecutorService executorService = MoreExecutors.listeningDecorator(Executors.newCachedThreadPool());
 
-                                            sendResult.broadcastComplete.addListener(new Runnable() {
+                                            result.broadcastComplete.addListener(new Runnable() {
                                                 @Override
                                                 public void run() {
                                                     // The wallet has changed now, it'll get auto saved shortly or when the app shuts down.
                                                     System.out.println("Sent coins onwards! Transaction hash is " +
-                                                            sendResult.tx.getHashAsString());
-                                                    RxEventBus.get().post(EventTypeDef.BTC_TRANSACTION_BROADCAST_COMPLETE, sendResult.tx.getHashAsString());
+                                                            result.tx.getHashAsString());
+                                                    RxEventBus.get().post(EventTypeDef.BTC_TRANSACTION_BROADCAST_COMPLETE, result.tx.getHashAsString());
                                                 }
                                             }, executorService);
-                                            e.onNext(sendResult.tx.getHashAsString());
-                                        } catch (InsufficientMoneyException e1) {
+                                            e.onNext(result.tx.getHashAsString());
+                                        } catch (Exception e1) {
+                                            e1.printStackTrace();
+                                            e.onNext(null);
+                                        }
+                                        e.onCompleted();
+                                    } else {
+                                        e.onError(new RuntimeException("Error eth send transaction"));
+                                    }
+                                }
+                            });
+                }
+            } catch (Exception e1) {
+                e1.printStackTrace();
+                e.onError(e1);
+            }
+        });
+    }
+
+    // Ordinary payment with bitcoin
+    public Observable<String> ordinaryPaymentWithBtc(String receiveAddress, BigDecimal amount, long fee,
+                                                     String accountFilename, String orderId, String remark) {
+        return Observable.create(e -> {
+            try {
+                WalletAppKit kit = btcAccountKit.get(accountFilename);
+                Coin value = Coin.valueOf(CommonUtil.convertSatoshiFromBTC(amount).longValue());
+                System.out.println("Forwarding " + value.toFriendlyString() + " BTC");
+                Address to = Address.fromBase58(getNetworkParams(), receiveAddress);
+                Transaction transaction = new Transaction(getNetworkParams());
+                transaction.addOutput(value, to);
+
+                SendRequest request = SendRequest.forTx(transaction);
+                request.feePerKb = Coin.valueOf(fee);
+                kit.wallet().completeTx(request);
+                String txHash = request.tx.getHashAsString();
+
+                if (txHash == null || txHash.isEmpty()) {
+                    e.onNext(null);
+                } else {
+                    Map<String, Object> params = new HashMap<>();
+                    params.put(QuickPayActivity.PARAM_PRE_PAY_ID, orderId);
+                    params.put(QuickPayActivity.PARAM_SENDER, kit.wallet().currentChangeAddress().toBase58());
+                    params.put(QuickPayActivity.PARAM_COIN_CODE, BrahmaConst.PAY_COIN_CODE_BTC);
+                    params.put(QuickPayActivity.PARAM_RECEIVER, receiveAddress);
+                    params.put(QuickPayActivity.PARAM_TX_HASH, txHash);
+                    params.put(QuickPayActivity.PARAM_REMARK, remark);
+
+                    PayService.getInstance().paymentOrder(params)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Observer<ApiRespResult>() {
+                                @Override
+                                public void onCompleted() {
+                                }
+
+                                @Override
+                                public void onError(Throwable throwable) {
+                                    throwable.printStackTrace();
+                                    e.onError(throwable);
+                                }
+
+                                @Override
+                                public void onNext(ApiRespResult apr) {
+                                    if (apr != null && apr.getResult() == 0) {
+                                        try {
+                                            kit.wallet().commitTx(request.tx);
+                                            Wallet.SendResult result = new Wallet.SendResult();
+                                            result.tx = request.tx;
+                                            // The tx has been committed to the pending pool by this point (via sendCoinsOffline -> commitTx), so it has
+                                            // a txConfidenceListener registered. Once the tx is broadcast the peers will update the memory pool with the
+                                            // count of seen peers, the memory pool will update the transaction confidence object, that will invoke the
+                                            // txConfidenceListener which will in turn invoke the wallets event listener onTransactionConfidenceChanged
+                                            // method.
+                                            result.broadcast = kit.peerGroup().broadcastTransaction(request.tx);
+                                            result.broadcastComplete = result.broadcast.future();
+                                            ListeningExecutorService executorService = MoreExecutors.listeningDecorator(Executors.newCachedThreadPool());
+
+                                            result.broadcastComplete.addListener(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    // The wallet has changed now, it'll get auto saved shortly or when the app shuts down.
+                                                    System.out.println("Sent coins onwards! Transaction hash is " +
+                                                            result.tx.getHashAsString());
+                                                    RxEventBus.get().post(EventTypeDef.BTC_TRANSACTION_BROADCAST_COMPLETE, result.tx.getHashAsString());
+                                                }
+                                            }, executorService);
+                                            e.onNext(result.tx.getHashAsString());
+                                        } catch (Exception e1) {
                                             e1.printStackTrace();
                                             e.onNext(null);
                                         }

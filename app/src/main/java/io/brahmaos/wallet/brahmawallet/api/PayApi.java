@@ -51,4 +51,10 @@ public interface PayApi {
      */
     @POST("/pay/request/order")
     Observable<ApiRespResult> payRequestOrder(@Body Map<String, Object> params);
+
+    /**
+     * Payment order
+     */
+    @POST("/pay/payment/order")
+    Observable<ApiRespResult> paymentOrder(@Body Map<String, Object> params);
 }
