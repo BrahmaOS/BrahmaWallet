@@ -150,6 +150,7 @@ public class SplashActivity extends BaseActivity {
             if (BrahmaConfig.getInstance().isTouchId() && CommonUtil.isFinger(this)) {
                 Intent intent = new Intent();
                 intent.setClass(SplashActivity.this, FingerActivity.class);
+                intent.putExtra("isFirst", true);
                 startActivity(intent);
                 finish();
             } else if (MainService.getInstance().isHaveAccount()) {

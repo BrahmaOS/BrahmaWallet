@@ -16,6 +16,7 @@
 
 package io.brahmaos.wallet.brahmawallet;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
 
@@ -39,7 +40,7 @@ import io.rayup.sdk.RayUpApp;
  * Android Application class. Used for accessing singletons.
  */
 public class WalletApp extends Application {
-    private boolean firstOpenApp = true;
+//    private boolean firstOpenApp = true;
     private static Boolean isTimeOut = false;
 
     private Timer timerTimeOut = new Timer();
@@ -63,9 +64,10 @@ public class WalletApp extends Application {
         AppFrontBackHelper helper = new AppFrontBackHelper();
         helper.register(WalletApp.this, new AppFrontBackHelper.OnAppStatusListener() {
             @Override
-            public void onFront() {
-                if (!firstOpenApp && isTimeOut && BrahmaConfig.getInstance().isTouchId()
-                        && CommonUtil.isFinger(getApplicationContext())) {
+            public void onFront(Activity activity) {
+                if (/*!firstOpenApp && */isTimeOut && BrahmaConfig.getInstance().isTouchId()
+                        && CommonUtil.isFinger(getApplicationContext()) &&
+                        (null == activity || !FingerActivity.class.getName().equals(activity.getClass().getName()))) {
                     Intent intent = new Intent(WalletApp.this, FingerActivity.class);
                     startActivity(intent);
                 }
@@ -73,7 +75,7 @@ public class WalletApp extends Application {
 
             @Override
             public void onBack() {
-                firstOpenApp = false;
+//                firstOpenApp = false;
                 isTimeOut = false;
                 if (timerTimeOut != null) {
                     timerTimeOut.cancel();
@@ -100,9 +102,9 @@ public class WalletApp extends Application {
         return rayUpApp;
     }
 
-    public boolean isFirstOpenApp() {
-        return firstOpenApp;
-    }
+//    public boolean isFirstOpenApp() {
+//        return firstOpenApp;
+//    }
 
     public WalletDatabase getDatabase() {
         return WalletDatabase.getInstance(this);

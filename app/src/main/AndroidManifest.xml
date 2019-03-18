@@ -41,7 +41,8 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".ui.SplashActivity">
+        <activity android:name=".ui.SplashActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -50,9 +51,11 @@
         </activity>
         <activity
             android:name=".ui.account.CreateAccountActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_create_account" />
         <activity
             android:name=".ui.MainActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:launchMode="singleTask" />
         <activity android:name=".ui.account.AccountsActivity" />
         <activity
@@ -114,6 +117,7 @@
         <activity android:name=".ui.account.BackupKeystoreActivity" />
         <activity
             android:name=".ui.FingerActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleInstance"
             android:theme="@style/FadeTheme" />
         <activity
@@ -130,7 +134,8 @@
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity android:name=".ui.account.RestoreAccountActivity" />
+        <activity android:name=".ui.account.RestoreAccountActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
         <activity android:name=".ui.transfer.BtcTransferActivity" />
         <activity android:name=".ui.account.BtcAccountAssetsActivity" />
         <activity android:name=".ui.account.BtcAddressQrcodeActivity" />
@@ -151,7 +156,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.dapp.DappTestActivity" />
-        <activity android:name=".ui.account.AccountGuideActivity" />
+        <activity android:name=".ui.account.AccountGuideActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
         <activity android:name=".ui.pay.SetPayAccountPasswordActivity" />
         <activity android:name=".ui.pay.PayAccountInfoActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />

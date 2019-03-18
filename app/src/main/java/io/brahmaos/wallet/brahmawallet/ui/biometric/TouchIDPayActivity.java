@@ -285,6 +285,15 @@ public class TouchIDPayActivity extends BaseActivity implements FingerprintCore.
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        if (mFingerDialog != null) {
+            mFingerDialog.cancel();
+        }
+        fingerprintCore.stopListening();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         fingerprintCore.setCallback(null);

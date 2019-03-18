@@ -34,7 +34,7 @@ public class AppFrontBackHelper {
             //change from 0 to 1: from background to front
             if (activityStartCount == 1){
                 if(mOnAppStatusListener != null){
-                    mOnAppStatusListener.onFront();
+                    mOnAppStatusListener.onFront(activity);
                 }
             }
         }
@@ -72,7 +72,7 @@ public class AppFrontBackHelper {
     };
 
     public interface OnAppStatusListener{
-        void onFront();
+        void onFront(Activity activity);
         void onBack();
     }
 
