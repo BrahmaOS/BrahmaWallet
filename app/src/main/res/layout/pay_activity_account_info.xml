@@ -96,6 +96,7 @@
                         android:layout_toRightOf="@+id/tv_account_name"
                         android:layout_marginLeft="@dimen/space_normal"
                         android:layout_marginRight="@dimen/space_normal"
+                        android:gravity="right"
                         android:textColor="@color/color_secondary_text"/>
                 </RelativeLayout>
                 <include layout="@layout/horizontal_divider"/>
@@ -117,7 +118,7 @@
                         android:layout_marginLeft="@dimen/space_normal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_horizontal|left"
+                        android:gravity="center_horizontal|right"
                         android:textColor="@color/color_secondary_text"/>
                 </LinearLayout>
             </LinearLayout>

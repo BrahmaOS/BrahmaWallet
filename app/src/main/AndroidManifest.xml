@@ -118,7 +118,6 @@
         <activity
             android:name=".ui.FingerActivity"
             android:screenOrientation="portrait"
-            android:launchMode="singleInstance"
             android:theme="@style/FadeTheme" />
         <activity
             android:name=".ui.transfer.InstantExchangeActivity"
@@ -184,6 +183,7 @@
         <activity android:name=".ui.pay.ChangePayAccountNameActivity" />
         <activity android:name=".ui.base.BaseWebActivity" />
         <activity android:name=".ui.pay.CheckQuickAccountPasswordActivity" />
+        <activity android:name=".ui.pay.PayTransactionsListActivity" />
     </application>
 
 </manifest>

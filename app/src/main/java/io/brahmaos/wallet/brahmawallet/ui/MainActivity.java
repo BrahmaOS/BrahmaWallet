@@ -48,6 +48,7 @@ import io.brahmaos.wallet.brahmawallet.ui.home.QuickPayFragment;
 import io.brahmaos.wallet.brahmawallet.ui.home.WalletFragment;
 import io.brahmaos.wallet.brahmawallet.ui.pay.PayAccountInfoActivity;
 import io.brahmaos.wallet.brahmawallet.ui.pay.PayTestActivity;
+import io.brahmaos.wallet.brahmawallet.ui.pay.PayTransactionsListActivity;
 import io.brahmaos.wallet.brahmawallet.ui.setting.AboutActivity;
 import io.brahmaos.wallet.brahmawallet.ui.setting.HelpActivity;
 import io.brahmaos.wallet.brahmawallet.ui.setting.SettingsActivity;
@@ -250,11 +251,7 @@ public class MainActivity extends BaseActivity
             case R.id.layout_account_info:
                 if (null == BrahmaConfig.getInstance().getPayAccount() ||
                         BrahmaConfig.getInstance().getPayAccount().isEmpty()) {
-                    contentPager.setCurrentItem(PAY_FRAGMENT_POSITION);
-//                    currentFragmentPosition = PAY_FRAGMENT_POSITION;
-//                    invalidateOptionsMenu();
-//
-//                        toolbar.setTitle(getString(R.string.fragment_pay));
+//                    contentPager.setCurrentItem(PAY_FRAGMENT_POSITION);
                     showLongToast(getString(R.string.no_quick_pay_account));
 
                 } else {
@@ -262,10 +259,10 @@ public class MainActivity extends BaseActivity
                     startActivity(accInfoIntent);
                 }
                 break;
-//            case R.id.layout_transactions:
-//                Intent transListIntent = new Intent(this, TransactionsList.class);
-//                startActivity(transListIntent);
-//                break;
+            case R.id.layout_transactions:
+                Intent transListIntent = new Intent(this, PayTransactionsListActivity.class);
+                startActivity(transListIntent);
+                break;
             case R.id.layout_address:
                 Intent addrIntent = new Intent(this, ContactsActivity.class);
                 startActivity(addrIntent);

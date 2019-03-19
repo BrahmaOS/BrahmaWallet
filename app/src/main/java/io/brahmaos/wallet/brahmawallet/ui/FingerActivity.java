@@ -34,7 +34,7 @@ public class FingerActivity extends BaseActivity {
     
     FingerprintManager manager;
     KeyguardManager mKeyManager;
-//    private final static int REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS = 0;
+    private final static int REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS = 0;
     private boolean isSelfCancelled;
     private AlertDialog mFingerDialog = null;
     private CancellationSignal mCancellationSignal;
@@ -188,17 +188,17 @@ public class FingerActivity extends BaseActivity {
         manager.authenticate(cryptoObject, mCancellationSignal, 0, mSelfCallback, null);
     }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (requestCode == REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS) {
-//            // Challenge completed, proceed with using cipher
-//            if (resultCode == RESULT_OK) {
-//                Toast.makeText(this, "check success", Toast.LENGTH_SHORT).show();
-//            } else {
-//                Toast.makeText(this, "check failed", Toast.LENGTH_SHORT).show();
-//            }
-//        }
-//    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS) {
+            // Challenge completed, proceed with using cipher
+            if (resultCode == RESULT_OK) {
+                Toast.makeText(this, "check success", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "check failed", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 
     @Override
     protected void onDestroy() {
@@ -206,14 +206,18 @@ public class FingerActivity extends BaseActivity {
         stopListening();
     }
 
-//    @Override
-//    public boolean onKeyDown(int keyCode, KeyEvent event) {
-//        if (keyCode == KeyEvent.KEYCODE_BACK) {
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
 //            finish();
+            Intent startMain = new Intent(Intent.ACTION_MAIN);
+            startMain.addCategory(Intent.CATEGORY_HOME);
+            startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(startMain);
 //            timerExit.schedule(timerTask, 500);
-//        }
-//        return false;
-//    }
+        }
+        return false;
+    }
 //    private Timer timerExit = new Timer();
 //    private TimerTask timerTask = new TimerTask() {
 //        @Override

@@ -497,7 +497,7 @@
     <string name="label_set_payment_password">请为此快捷支付账号设置6位数字支付密码</string>
     <string name="label_repeat_password">请再次输入密码</string>
     <string name="tip_repeat_password_error">两次输入的密码不一致</string>
-    <string name="menu_account_info">账号信息</string>
+    <string name="menu_account_info">快捷账号信息</string>
     <string name="menu_transactions">账单</string>
     <string name="menu_address_book">地址本</string>
     <string name="info_account_id">账号标识</string>

@@ -24,6 +24,7 @@ import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.common.ReqParam;
 import io.brahmaos.wallet.brahmawallet.model.pay.AccountBalance;
+import io.brahmaos.wallet.brahmawallet.model.pay.PayTransaction;
 import io.brahmaos.wallet.brahmawallet.model.pay.MerchantReceiver;
 import io.brahmaos.wallet.brahmawallet.model.pay.PayRequestToken;
 import io.brahmaos.wallet.brahmawallet.statistic.network.StatisticHttpUtils;
@@ -595,4 +596,59 @@ public class PayService extends BaseService{
     public Observable<ApiRespResult> paymentOrderByNet(Map<String, Object> params) {
         return Networks.getInstance().getPayApi().paymentOrder(params);
     }
+
+    /**
+     * Get account order list.
+     * @param orderType 0 is for all orders
+     * @param orderStatus 0 is for all order states
+     * @param startTime get order from the start time, format: 2019-02-18 12:00:00
+     * @param endTime get order to the end time, format: 2019-02-18 12:00:00
+     * @param page start from 0 and the default is 0
+     * @param count order count for each page, and the default is 10
+     * @return count of order list
+     */
+    public Observable<List<PayTransaction>> getPayTransactions(int orderType, int orderStatus,
+                                                            String startTime, String endTime,
+                                                            int page, int count) {
+        return Observable.create(e -> {
+            Networks.getInstance().getPayApi()
+                    .getPayTransactions(orderType, orderStatus, startTime, endTime, page, count)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<ApiRespResult>() {
+                        @Override
+                        public void onCompleted() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable throwable) {
+                            throwable.printStackTrace();
+                            e.onError(throwable);
+
+                        }
+
+                        @Override
+                        public void onNext(ApiRespResult apr) {
+                            BLog.i(tag(), apr.toString());
+                            if (apr.getData() != null && apr.getData().containsKey("orders")
+                                    && apr.getData().get("orders") != null){
+                                ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
+                                try {
+                                    ArrayList<PayTransaction> payTransactions = objectMapper.readValue(
+                                            objectMapper.writeValueAsString(apr.getData().get("orders")),
+                                            new TypeReference<List<PayTransaction>>() {});
+                                    e.onNext(payTransactions);
+                                } catch (IOException e1) {
+                                    e1.printStackTrace();
+                                    e.onError(e1);
+                                }
+                            } else {
+                                e.onNext(null);
+                            }
+                        }
+                    });
+        });
+    }
+
 }

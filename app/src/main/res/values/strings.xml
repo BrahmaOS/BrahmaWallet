@@ -583,8 +583,8 @@
     <string name="label_set_payment_password">Set a 6-digit payment password</string>
     <string name="label_repeat_password">Please enter your password again</string>
     <string name="tip_repeat_password_error">Inconsistent password entered twice</string>
-    <string name="menu_account_info">Account Info</string>
-    <string name="menu_transactions">Transactions</string>
+    <string name="menu_account_info">Quick Account Info</string>
+    <string name="menu_transactions">Bills</string>
     <string name="menu_address_book">Address Book</string>
     <string name="menu_pay_test">模拟用户支付场景</string>
     <string name="info_account_id">Account ID</string>

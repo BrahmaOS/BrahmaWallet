@@ -57,4 +57,15 @@ public interface PayApi {
      */
     @POST("/pay/payment/order")
     Observable<ApiRespResult> paymentOrder(@Body Map<String, Object> params);
+
+    /**
+     * Pay orders
+     */
+    @GET("/pay/orders")
+    Observable<ApiRespResult> getPayTransactions(@Query("order_type") int orderType,
+                                               @Query("order_status") int orderStatus,
+                                               @Query("start_time") String startTime,
+                                               @Query("end_time") String endTime,
+                                               @Query("page") int page,
+                                               @Query("count") int count);
 }
