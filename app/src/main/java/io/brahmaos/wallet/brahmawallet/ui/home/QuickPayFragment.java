@@ -42,6 +42,7 @@ import io.brahmaos.wallet.brahmawallet.service.PayService;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseFragment;
 import io.brahmaos.wallet.brahmawallet.ui.pay.CheckQuickAccountPasswordActivity;
 import io.brahmaos.wallet.brahmawallet.ui.pay.PayAccountRechargeActivity;
+import io.brahmaos.wallet.brahmawallet.ui.pay.PayAccountWithdrawActivity;
 import io.brahmaos.wallet.brahmawallet.ui.pay.SetPayAccountPasswordActivity;
 import io.brahmaos.wallet.brahmawallet.view.CustomProgressDialog;
 import io.brahmaos.wallet.brahmawallet.view.HeightWrappingViewPager;
@@ -106,6 +107,12 @@ public class QuickPayFragment extends BaseFragment {
         LinearLayout layoutAddCredit = parentView.findViewById(R.id.layout_pay_add_credit);
         layoutAddCredit.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), PayAccountRechargeActivity.class);
+            startActivity(intent);
+        });
+
+        LinearLayout layoutWithdraw = parentView.findViewById(R.id.layout_pay_withdraw);
+        layoutWithdraw.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), PayAccountWithdrawActivity.class);
             startActivity(intent);
         });
 

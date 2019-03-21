@@ -115,4 +115,12 @@ public class BrahmaConst {
     public static final int PAY_COIN_CODE_ETH = 2;
     public static final int PAY_COIN_CODE_USDT = 8;
     public static final int PAY_COIN_CODE_BRM = 1200;
+
+    // withdraw config
+    public static final String WITHDRAW_BTC_MIN = "withdraw.btc.min";
+    public static final String WITHDRAW_BTC_FEE = "withdraw.btc.fee";
+    public static final String WITHDRAW_ETH_MIN = "withdraw.eth.min";
+    public static final String WITHDRAW_ETH_FEE = "withdraw.eth.fee";
+    public static final String WITHDRAW_BRM_MIN = "withdraw.brm.min";
+    public static final String WITHDRAW_BRM_FEE = "withdraw.brm.fee";
 }

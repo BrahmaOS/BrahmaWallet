@@ -624,6 +624,13 @@
     </string>
     <string name="tip_create_quick_account">&#8226;&#160;&#160;The password will be used to verify and open a Quick Account.</string>
 
+    <string name="title_pay_account_withdraw">Withdraw</string>
+    <string name="prompt_withdraw_amount">Withdraw amount</string>
+    <string name="prompt_amount_all">All</string>
+    <string name="prompt_fee">Fee</string>
+    <string name="prompt_available_amount">Available amount</string>
+    <string name="tip_withdraw_success">Withdraw success</string>
+
     <!-- Quick pay -->
     <string name="label_confirm_pay">Confirm Pay</string>
     <string name="tip_lack_param_trade_type">Lack trade type</string>

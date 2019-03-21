@@ -28,9 +28,11 @@ import io.brahmaos.wallet.brahmawallet.model.pay.AccountBalance;
 import io.brahmaos.wallet.brahmawallet.model.pay.PayTransaction;
 import io.brahmaos.wallet.brahmawallet.model.pay.MerchantReceiver;
 import io.brahmaos.wallet.brahmawallet.model.pay.PayRequestToken;
+import io.brahmaos.wallet.brahmawallet.model.pay.WithdrawConfig;
 import io.brahmaos.wallet.brahmawallet.statistic.network.StatisticHttpUtils;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
+import io.brahmaos.wallet.util.DataCryptoUtils;
 import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
@@ -651,6 +653,156 @@ public class PayService extends BaseService{
                         }
                     });
         });
+    }
+
+    /*
+     * Get quick pay withdraw config.
+     */
+    public Observable<List<WithdrawConfig>> getWithdrawConfig() {
+        return Observable.create(e -> {
+            getWithdrawConfigByNet()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<ApiRespResult>() {
+                        @Override
+                        public void onCompleted() {
+                            e.onCompleted();
+                        }
+
+                        @Override
+                        public void onError(Throwable throwable) {
+                            throwable.printStackTrace();
+                            e.onError(throwable);
+                        }
+
+                        @Override
+                        public void onNext(ApiRespResult apr) {
+                            if (apr != null) {
+                                if (apr.getResult() == ApiConst.INVALID_TOKEN) {
+                                    getPayTokenForQuickPay("getWithdrawConfigByNet", null)
+                                            .subscribeOn(Schedulers.io())
+                                            .observeOn(AndroidSchedulers.mainThread())
+                                            .subscribe(new Observer<ApiRespResult>() {
+                                                @Override
+                                                public void onNext(ApiRespResult apiRespResult) {
+                                                    if (apiRespResult.getData() != null && apiRespResult.getData().containsKey("items")
+                                                            && apiRespResult.getData().get("items") != null){
+                                                        ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
+                                                        try {
+                                                            ArrayList<WithdrawConfig> withdrawConfigs = objectMapper.readValue(objectMapper.writeValueAsString(apr.getData().get("items")), new TypeReference<List<WithdrawConfig>>() {});
+                                                            e.onNext(withdrawConfigs);
+                                                        } catch (IOException e1) {
+                                                            e1.printStackTrace();
+                                                            e.onError(e1);
+                                                        }
+                                                    } else {
+                                                        e.onNext(null);
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onError(Throwable error) {
+                                                    error.printStackTrace();
+                                                }
+
+                                                @Override
+                                                public void onCompleted() {
+
+                                                }
+                                            });
+                                } else if (apr.getData() != null && apr.getData().containsKey("items")
+                                        && apr.getData().get("items") != null){
+                                    BLog.i(tag(), apr.toString());
+                                    ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
+                                    try {
+                                        ArrayList<WithdrawConfig> withdrawConfigs = objectMapper.readValue(objectMapper.writeValueAsString(apr.getData().get("items")), new TypeReference<List<WithdrawConfig>>() {});
+                                        e.onNext(withdrawConfigs);
+                                    } catch (IOException e1) {
+                                        e1.printStackTrace();
+                                        e.onError(e1);
+                                    }
+                                } else {
+                                    e.onNext(null);
+                                }
+                            } else {
+                                e.onNext(null);
+                            }
+                        }
+                    });
+        });
+    }
+
+    public Observable<ApiRespResult> getWithdrawConfigByNet() {
+        return Networks.getInstance().getPayApi().getWithdrawConfig();
+    }
+
+    /*
+     * Quick account withdraw.
+     */
+    public Observable<ApiRespResult> quickAccountWithdraw(String receiverAddress,
+                                                          String amount,
+                                                          int coinCode,
+                                                          String payPassword) {
+        Map<String, Object> params = new HashMap<>();
+        params.put(ReqParam.PARAM_RECEIVER, receiverAddress);
+        params.put(ReqParam.PARAM_COIN_CODE, coinCode);
+        params.put(ReqParam.PARAM_AMOUNT, amount);
+        params.put(ReqParam.PARAM_PAY_PASSWORD, DataCryptoUtils.shaEncrypt(payPassword));
+
+        return Observable.create(e -> {
+            quickAccountWithdrawByNet(params)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<ApiRespResult>() {
+                        @Override
+                        public void onCompleted() {
+                            e.onCompleted();
+                        }
+
+                        @Override
+                        public void onError(Throwable throwable) {
+                            throwable.printStackTrace();
+                            e.onError(throwable);
+                        }
+
+                        @Override
+                        public void onNext(ApiRespResult apr) {
+                            if (apr != null) {
+                                if (apr.getResult() == ApiConst.INVALID_TOKEN) {
+                                    getPayTokenForQuickPay("quickAccountWithdrawByNet", params)
+                                            .subscribeOn(Schedulers.io())
+                                            .observeOn(AndroidSchedulers.mainThread())
+                                            .subscribe(new Observer<ApiRespResult>() {
+                                                @Override
+                                                public void onNext(ApiRespResult apiRespResult) {
+                                                    e.onNext(apiRespResult);
+                                                }
+
+                                                @Override
+                                                public void onError(Throwable error) {
+                                                    error.printStackTrace();
+                                                }
+
+                                                @Override
+                                                public void onCompleted() {
+
+                                                }
+                                            });
+                                } else if (apr.getResult() == 0){
+                                    e.onNext(apr);
+                                } else {
+                                    e.onNext(null);
+                                }
+                            } else {
+                                e.onNext(null);
+                            }
+                        }
+                    });
+        });
+    }
+
+    public Observable<ApiRespResult> quickAccountWithdrawByNet(Map<String, Object> params) {
+        return Networks.getInstance().getPayApi().quickAccountWithdraw(params);
     }
 
 }

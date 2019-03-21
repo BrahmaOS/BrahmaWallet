@@ -68,4 +68,16 @@ public interface PayApi {
                                                @Query("end_time") String endTime,
                                                @Query("page") int page,
                                                @Query("count") int count);
+
+    /**
+     * Get withdraw config
+     */
+    @GET("/pay/config/withdraw")
+    Observable<ApiRespResult> getWithdrawConfig();
+
+    /**
+     * Account withdraw
+     */
+    @POST("/pay/create/withdraw")
+    Observable<ApiRespResult> quickAccountWithdraw(@Body Map<String, Object> params);
 }
