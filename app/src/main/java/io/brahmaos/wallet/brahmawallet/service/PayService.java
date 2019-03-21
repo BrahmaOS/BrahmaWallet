@@ -1,6 +1,7 @@
 package io.brahmaos.wallet.brahmawallet.service;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -633,6 +634,7 @@ public class PayService extends BaseService{
                             BLog.i(tag(), apr.toString());
                             if (apr.getData() != null && apr.getData().containsKey("orders")
                                     && apr.getData().get("orders") != null){
+                                Log.d(tag(), "" + apr);
                                 ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
                                 try {
                                     ArrayList<PayTransaction> payTransactions = objectMapper.readValue(

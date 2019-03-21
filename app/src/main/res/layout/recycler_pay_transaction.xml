@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:id="@+id/layout_pay_trans_item"
     android:background="@drawable/list_item_bg"
     android:orientation="vertical">
 
@@ -40,7 +41,7 @@
                     android:ellipsize="end"
                     android:singleLine="true"
                     android:textColor="@color/color_primary_text"
-                    android:textSize="@dimen/font_size_body" />
+                    android:textSize="@dimen/font_size_subheading" />
 
                 <TextView
                     android:id="@+id/tv_trans_amount"
@@ -49,7 +50,7 @@
                     android:layout_marginRight="@dimen/space_smaller"
                     android:layout_toLeftOf="@+id/tv_coin_name"
                     android:textColor="@color/color_primary_text"
-                    android:textSize="@dimen/font_size_body"
+                    android:textSize="@dimen/font_size_subheading"
                     android:textStyle="bold" />
 
                 <TextView
@@ -58,7 +59,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:textColor="@color/color_hint_text"
-                    android:textSize="@dimen/font_size_body"
+                    android:textSize="@dimen/font_size_subheading"
                     android:textStyle="bold" />
             </RelativeLayout>
 
@@ -74,14 +75,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
-                    android:textSize="@dimen/font_size_body" />
+                    android:textSize="@dimen/font_size_subheading" />
 
                 <TextView
                     android:id="@+id/tv_pay_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:textSize="@dimen/font_size_body" />
+                    android:textSize="@dimen/font_size_subheading" />
             </RelativeLayout>
         </LinearLayout>
     </LinearLayout>

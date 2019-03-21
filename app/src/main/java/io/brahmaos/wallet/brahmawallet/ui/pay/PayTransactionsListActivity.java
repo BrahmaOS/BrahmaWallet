@@ -1,5 +1,6 @@
 package io.brahmaos.wallet.brahmawallet.ui.pay;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.NestedScrollView;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 import io.brahmaos.wallet.brahmawallet.R;
+import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.model.pay.PayTransaction;
 import io.brahmaos.wallet.brahmawallet.service.PayService;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
@@ -102,7 +104,6 @@ public class PayTransactionsListActivity extends BaseActivity {
                             loadMoreFinished = false;
                         }
                         for (PayTransaction transNew : apr) {
-                            Log.d(tag(), "getLatestPayTransList--" + transNew);
                             mPayTransList = apr;
                         }
                         lastTimeGroup = 0;
@@ -173,7 +174,6 @@ public class PayTransactionsListActivity extends BaseActivity {
                 loadMoreFinished = true;
             }
             for (PayTransaction transNew : apr) {
-                Log.d(tag(), "handlePayTransList--" + transNew);
                 mPayTransList.add(transNew);
             }
             lastTimeGroup = 0;
@@ -246,6 +246,14 @@ public class PayTransactionsListActivity extends BaseActivity {
             if (null == trans) {
                 return;
             }
+            if (holder.layoutTransItem != null) {
+                holder.layoutTransItem.setOnClickListener(v -> {
+                    Intent detailIntent = new Intent(PayTransactionsListActivity.this,
+                            PayTransactionDetailActivity.class);
+                    detailIntent.putExtra(IntentParam.PARAM_PAY_TRANS_DETAIL, trans);
+                    startActivity(detailIntent);
+                });
+            }
             holder.ivTransIcon.setImageResource(R.drawable.icon_brm);
             holder.tvMerchantName.setText(trans.getMerchantName());
             long time = CommonUtil.convertDateTimeStringToLong(trans.getCreateTime(), "yyyy-MM-dd hh:mm:ss");
@@ -275,6 +283,7 @@ public class PayTransactionsListActivity extends BaseActivity {
         }
 
         class ItemViewHolder extends RecyclerView.ViewHolder {
+            LinearLayout layoutTransItem;
             ImageView ivTransIcon;
             TextView tvMerchantName;
             TextView tvTransTime;
@@ -284,13 +293,13 @@ public class PayTransactionsListActivity extends BaseActivity {
 
             ItemViewHolder(View itemView) {
                 super(itemView);
+                layoutTransItem = itemView.findViewById(R.id.layout_pay_trans_item);
                 ivTransIcon = itemView.findViewById(R.id.iv_trans_icon);
                 tvMerchantName = itemView.findViewById(R.id.tv_merchant_name);
                 tvTransTime = itemView.findViewById(R.id.tv_trans_time);
                 tvAmount = itemView.findViewById(R.id.tv_trans_amount);
                 tvPayStatus = itemView.findViewById(R.id.tv_pay_status);
                 tvCoinName = itemView.findViewById(R.id.tv_coin_name);
-
             }
         }
 
@@ -309,13 +318,19 @@ public class PayTransactionsListActivity extends BaseActivity {
             String monthStr = CommonUtil.convertDateTimeLongToString(month, "yyyy-MM");
 
             viewHolder.tvDate.setText(monthStr != null ? monthStr : payTrans.getCreateTime());
+            viewHolder.layoutItemView.setOnClickListener(v -> {
+                Intent detailIntent = new Intent(PayTransactionsListActivity.this,
+                        PayTransactionDetailActivity.class);
+                detailIntent.putExtra(IntentParam.PARAM_PAY_TRANS_DETAIL, payTrans);
+                startActivity(detailIntent);
+            });
 
             setData(new ItemViewHolder(viewHolder.layoutItemView), payTrans);
         }
 
         class DateViewHolder extends RecyclerView.ViewHolder {
             TextView tvDate;
-            LinearLayout layoutItemView;
+            View layoutItemView;
             DateViewHolder(View itemView) {
                 super(itemView);
                 tvDate = itemView.findViewById(R.id.tv_date_group);

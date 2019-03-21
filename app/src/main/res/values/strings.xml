@@ -632,4 +632,22 @@
     <string name="desc_ordinary_payment">Full decentralized Pay</string>
     <string name="prompt_input_quick_account_password">Input quick account password</string>
     <string name="progress_transfer">transfer…</string>
+
+    <!-- Bill detail-->
+    <string name="menu_transaction_detail">Bill Details</string>
+    <string name="pay_trans_status_succ">Pay success</string>
+    <string name="pay_trans_status_fail">Pay fail</string>
+    <string name="pay_trans_status_confirm">Pay confirming</string>
+    <string name="pay_trans_status_unpaid">To be paid</string>
+    <string name="pay_trans_method">Payment Method</string>
+    <string name="pay_trans_method_normal">General Pay</string>
+    <string name="pay_trans_method_quick">Quick Pay</string>
+    <string name="pay_trans_order_amount">Order Amount</string>
+    <string name="pay_trans_fee">Fee</string>
+    <string name="pay_trans_hash">TxHash</string>
+    <string name="pay_trans_merchant_desc">Merchant Description</string>
+    <string name="pay_trans_merchant_name">Merchant Name</string>
+    <string name="pay_trans_order_time">Order CreateTime</string>
+    <string name="pay_trans_order_id">Order ID</string>
+    <string name="pay_trans_merchant_id">Merchant ID</string>
 </resources>

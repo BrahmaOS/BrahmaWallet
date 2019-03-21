@@ -541,4 +541,22 @@
     <string name="title_choose_payment_method">选择支付方式</string>
     <string name="desc_quick_payment">实时到账、无手续费</string>
     <string name="desc_ordinary_payment">完全的去中心化转账</string>
+
+    <!-- Bill detail-->
+    <string name="menu_transaction_detail">账单详情</string>
+    <string name="pay_trans_status_succ">支付成功</string>
+    <string name="pay_trans_status_fail">支付失败</string>
+    <string name="pay_trans_status_confirm">支付确认中</string>
+    <string name="pay_trans_status_unpaid">待支付</string>
+    <string name="pay_trans_method">支付方式</string>
+    <string name="pay_trans_method_normal">普通支付</string>
+    <string name="pay_trans_method_quick">快捷支付</string>
+    <string name="pay_trans_order_amount">订单金额</string>
+    <string name="pay_trans_fee">交易费</string>
+    <string name="pay_trans_hash">交易Hash</string>
+    <string name="pay_trans_merchant_desc">商品描述</string>
+    <string name="pay_trans_merchant_name">商品全称</string>
+    <string name="pay_trans_order_time">创建时间</string>
+    <string name="pay_trans_order_id">订单号</string>
+    <string name="pay_trans_merchant_id">商家订单号</string>
 </resources>

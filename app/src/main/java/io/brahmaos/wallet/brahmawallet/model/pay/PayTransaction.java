@@ -16,6 +16,8 @@ import io.brahmaos.wallet.util.CommonUtil;
 public class PayTransaction implements Serializable, Comparable<PayTransaction>{
     @JsonProperty("id")
     private String orderId;
+    @JsonProperty("merchant_order_id")
+    private String merchantOrderId;
     @JsonProperty("merchant_id")
     private int merchantId;
     @JsonProperty("merchant_name")
@@ -45,6 +47,7 @@ public class PayTransaction implements Serializable, Comparable<PayTransaction>{
     public String toString() {
         return "PayTransaction{" +
                 "id=" + orderId +
+                ", merchant_order_id=" + merchantOrderId +
                 ", merchant_id=" + merchantId +
                 ", merchant_name=" + merchantName +
                 ", type=" + orderType +
@@ -81,6 +84,14 @@ public class PayTransaction implements Serializable, Comparable<PayTransaction>{
 
     public void setMerchantId(int merchantId) {
         this.merchantId = merchantId;
+    }
+
+    public String getMerchantOrderId() {
+        return merchantOrderId;
+    }
+
+    public void setMerchantOrderId(String merchantOrderId) {
+        this.merchantOrderId = merchantOrderId;
     }
 
     public String getMerchantName() {

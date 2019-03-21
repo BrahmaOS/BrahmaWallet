@@ -32,6 +32,7 @@ public class IntentParam {
     public static final String PARAM_PAY_TOKEN_ADDRESS = "token.address";
     public static final String PARAM_PAY_SEND_VALUE = "send.value";
     public static final String PARAM_PAY_REMARK = "remark";
+    public static final String PARAM_PAY_TRANS_DETAIL = "pay.transaction";
 
     public static final String PARAM_PAY_ERROR_CODE = "error.code";
     public static final String PARAM_PAY_MSG = "msg";

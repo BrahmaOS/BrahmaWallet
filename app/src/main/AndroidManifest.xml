@@ -184,6 +184,7 @@
         <activity android:name=".ui.base.BaseWebActivity" />
         <activity android:name=".ui.pay.CheckQuickAccountPasswordActivity" />
         <activity android:name=".ui.pay.PayTransactionsListActivity" />
+        <activity android:name=".ui.pay.PayTransactionDetailActivity" />
     </application>
 
 </manifest>

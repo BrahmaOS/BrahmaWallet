@@ -13,18 +13,18 @@ public class PayUtil {
         }
         switch (status) {
             case 1:
-                tvPayStatus.setText("待支付");
+                tvPayStatus.setText(context.getString(R.string.pay_trans_status_unpaid));
                 tvPayStatus.setTextColor(context.getColor(R.color.tx_send));
                 return;
             case 2:
-                tvPayStatus.setText("支付确认中");
+                tvPayStatus.setText(context.getString(R.string.pay_trans_status_confirm));
                 tvPayStatus.setTextColor(context.getColor(R.color.tx_send));
                 return;
             case 3:
-                tvPayStatus.setText("");
+                tvPayStatus.setText(context.getString(R.string.pay_trans_status_succ));
                 return;
             case 4:
-                tvPayStatus.setText("支付失败");
+                tvPayStatus.setText(context.getString(R.string.pay_trans_status_fail));
                 tvPayStatus.setTextColor(context.getColor(R.color.tx_error));
                 return;
             default:
