@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/tv_date_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/space_normal"
+        android:paddingTop="@dimen/space_normal"
+        android:paddingBottom="@dimen/space_unit"
+        android:background="@color/main_bg"
+        android:textStyle="bold"
+        android:textColor="@color/color_hint_text" />
+    <include layout="@layout/recycler_pay_transaction"
+        android:id="@+id/item_view"/>
+</LinearLayout>

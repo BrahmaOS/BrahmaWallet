@@ -274,4 +274,43 @@ public class CommonUtil {
     public static boolean isNull(String content) {
         return content == null || content.isEmpty();
     }
+
+    public static long convertDateTimeStringToLong(String timeStr, String format) {
+        long result = 0;
+        if (null == timeStr || timeStr.isEmpty()) {
+            return result;
+        }
+        if (null == format || format.isEmpty()) {
+            format = "yyyy-MM-dd hh:mm:ss";
+        }
+        SimpleDateFormat formatter = new SimpleDateFormat(format);
+        Date date = null;
+        try {
+            date = formatter.parse(timeStr);
+        } catch (Exception e) {
+            date = null;
+        }
+        if (date != null) {
+            return date.getTime();
+        } else {
+            return result;
+        }
+    }
+
+    public static String convertDateTimeLongToString(long timeMill, String format) {
+        if (timeMill <= 0) {
+            return null;
+        }
+        if (null == format || format.isEmpty()) {
+            format = "yyyy-MM-dd hh:mm:ss";
+        }
+        try {
+            Date date = new Date(timeMill);
+            SimpleDateFormat sdf = new SimpleDateFormat(format);
+            return sdf.format(date);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 }

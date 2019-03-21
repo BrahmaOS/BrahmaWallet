@@ -19,37 +19,82 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:titleTextAppearance="@style/ToolbarTitleText"
-                app:title="@string/menu_transactions"/>
+                app:title="@string/menu_transactions"
+                app:titleTextAppearance="@style/ToolbarTitleText" />
 
         </android.support.design.widget.AppBarLayout>
 
-        <android.support.v4.widget.NestedScrollView
-            android:layout_marginTop="@dimen/height_toolbar"
-            android:background="@color/main_bg"
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_refresh_pay_trans_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_marginStart="@dimen/space_normal"
-                    android:layout_height="@dimen/toolbar_icon_size_smaller"
-                    android:textColor="@color/color_hint_text"
-                    android:gravity="center"
-                    android:text="xx-xx-xx"/>
+            android:layout_height="match_parent"
+            android:layout_marginTop="?attr/actionBarSize">
 
-                <android.support.v7.widget.RecyclerView
-                    android:background="@color/white"
-                    android:id="@+id/pay_transaction"
-                    android:paddingTop="@dimen/space_unit"
-                    android:paddingBottom="@dimen/space_unit"
+            <android.support.v4.widget.NestedScrollView
+                android:id="@+id/scroll_pay_trans"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-            </LinearLayout>
-        </android.support.v4.widget.NestedScrollView>
+                    android:layout_height="wrap_content"
+                    android:descendantFocusability="blocksDescendants"
+                    android:orientation="vertical">
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <LinearLayout
+                            android:id="@+id/layout_pay_trans"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:visibility="gone">
+<!--
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="@dimen/toolbar_icon_size_smaller"
+                                android:layout_margin="@dimen/space_normal"
+                                android:gravity="center"
+                                android:text="xx-xx-xx"
+                                android:textColor="@color/color_hint_text" />-->
+
+                            <android.support.v7.widget.RecyclerView
+                                android:id="@+id/pay_transaction"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@color/white"
+                                android:paddingBottom="@dimen/space_unit"
+                                android:paddingTop="@dimen/space_unit" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/layout_no_pay_trans"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:visibility="gone">
+
+                            <ImageView
+                                android:layout_width="80dp"
+                                android:layout_height="80dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/icon_no_tx" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/space_smaller"
+                                android:text="@string/no_transactions"
+                                android:textAlignment="center"
+                                android:textColor="@color/color_caption"
+                                android:textSize="@dimen/font_size_body" />
+                        </LinearLayout>
+                    </FrameLayout>
+                </LinearLayout>
+            </android.support.v4.widget.NestedScrollView>
+        </android.support.v4.widget.SwipeRefreshLayout>
     </android.support.design.widget.CoordinatorLayout>
 </android.support.v4.widget.DrawerLayout>
 

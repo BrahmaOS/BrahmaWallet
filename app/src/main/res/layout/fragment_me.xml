@@ -11,11 +11,11 @@
         <LinearLayout
             android:id="@+id/layout_account_info"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/layout_height_large"
+            android:layout_height="wrap_content"
             android:paddingLeft="@dimen/space_normal"
             android:paddingRight="@dimen/space_normal"
-            android:paddingTop="@dimen/space_small"
-            android:paddingBottom="@dimen/space_small"
+            android:paddingTop="@dimen/space_large"
+            android:paddingBottom="@dimen/space_large"
             android:background="@drawable/list_item_bg"
             android:onClick="onClickLayout">
 
@@ -40,36 +40,6 @@
                 android:text="@string/pay_account_info"
                 android:textSize="@dimen/font_size_subtitle" />
 
-            <!--<LinearLayout
-                android:layout_width="match_parent"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="@dimen/space_normal"
-                android:layout_marginRight="@dimen/space_normal"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/tv_account_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:ellipsize="middle"
-                    android:gravity="center_vertical"
-                    android:singleLine="true"
-                    android:text="@string/action_create_account"
-                    android:textSize="@dimen/font_size_subheading" />
-                <TextView
-                    android:id="@+id/tv_account_id"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:layout_weight="1"
-                    android:textSize="@dimen/font_size_body"
-                    android:text="0x12345678901234567890-qwer12345678sdfg234567890"
-                    android:singleLine="true"
-                    android:ellipsize="middle"
-                    android:textColor="@color/color_hint_text" />
-            </LinearLayout>-->
             <ImageView
                 android:layout_width="@dimen/toolbar_icon_size"
                 android:layout_height="@dimen/toolbar_icon_size"
@@ -79,10 +49,9 @@
 
         <LinearLayout
             android:id="@+id/layout_transactions"
-            android:paddingLeft="@dimen/space_normal"
-            android:paddingRight="@dimen/space_normal"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/layout_height_normal"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/space_normal"
             android:layout_marginTop="@dimen/space_normal"
             android:background="@drawable/list_item_bg"
             android:onClick="onClickLayout">
@@ -115,10 +84,9 @@
         <LinearLayout
             android:id="@+id/layout_address"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/layout_height_normal"
+            android:layout_height="wrap_content"
             android:layout_marginTop="1dp"
-            android:paddingLeft="@dimen/space_normal"
-            android:paddingRight="@dimen/space_normal"
+            android:padding="@dimen/space_normal"
             android:background="@drawable/list_item_bg"
             android:onClick="onClickLayout">
 
@@ -150,10 +118,9 @@
         <LinearLayout
             android:id="@+id/layout_help"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/layout_height_normal"
-            android:layout_marginTop="1dp"
-            android:paddingLeft="@dimen/space_normal"
-            android:paddingRight="@dimen/space_normal"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_normal"
+            android:padding="@dimen/space_normal"
             android:background="@drawable/list_item_bg"
             android:onClick="onClickLayout">
 
@@ -185,10 +152,9 @@
         <LinearLayout
             android:id="@+id/layout_about_us"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/layout_height_normal"
+            android:layout_height="wrap_content"
             android:layout_marginTop="1dp"
-            android:paddingLeft="@dimen/space_normal"
-            android:paddingRight="@dimen/space_normal"
+            android:padding="@dimen/space_normal"
             android:background="@drawable/list_item_bg"
             android:onClick="onClickLayout">
 
@@ -220,10 +186,10 @@
         <LinearLayout
             android:id="@+id/layout_pay_test"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/layout_height_normal"
-            android:layout_marginTop="1dp"
-            android:paddingLeft="@dimen/space_normal"
-            android:paddingRight="@dimen/space_normal"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_normal"
+            android:padding="@dimen/space_normal"
+            android:visibility="gone"
             android:background="@drawable/list_item_bg"
             android:onClick="onClickLayout">
 

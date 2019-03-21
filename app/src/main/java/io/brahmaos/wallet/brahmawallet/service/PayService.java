@@ -618,7 +618,7 @@ public class PayService extends BaseService{
                     .subscribe(new Observer<ApiRespResult>() {
                         @Override
                         public void onCompleted() {
-
+                            e.onCompleted();
                         }
 
                         @Override
