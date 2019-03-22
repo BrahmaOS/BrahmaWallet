@@ -154,7 +154,6 @@ public class PayTransactionsListActivity extends BaseActivity {
 
                 @Override
                 public void onCompleted() {
-                    showEmtpyView(false);
                     mSwipeRefreshLayout.setRefreshing(false);
                 }
             });
@@ -184,7 +183,6 @@ public class PayTransactionsListActivity extends BaseActivity {
                     @Override
                     public void onCompleted() {
                         mSwipeRefreshLayout.setRefreshing(false);
-                        showEmtpyView(false);
                     }
                 });
     }
