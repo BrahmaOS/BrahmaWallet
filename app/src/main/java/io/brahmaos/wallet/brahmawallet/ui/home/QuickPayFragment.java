@@ -16,6 +16,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +39,7 @@ import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.model.pay.AccountBalance;
+import io.brahmaos.wallet.brahmawallet.model.pay.PayTransaction;
 import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.service.PayService;
@@ -44,15 +48,25 @@ import io.brahmaos.wallet.brahmawallet.ui.base.BaseWebActivity;
 import io.brahmaos.wallet.brahmawallet.ui.pay.CheckQuickAccountPasswordActivity;
 import io.brahmaos.wallet.brahmawallet.ui.pay.PayAccountRechargeActivity;
 import io.brahmaos.wallet.brahmawallet.ui.pay.PayAccountWithdrawActivity;
+import io.brahmaos.wallet.brahmawallet.ui.pay.PayTransactionDetailActivity;
+import io.brahmaos.wallet.brahmawallet.ui.pay.PayTransactionsListActivity;
 import io.brahmaos.wallet.brahmawallet.ui.pay.SetPayAccountPasswordActivity;
 import io.brahmaos.wallet.brahmawallet.view.CustomProgressDialog;
 import io.brahmaos.wallet.brahmawallet.view.HeightWrappingViewPager;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
+import io.brahmaos.wallet.util.PayUtil;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+
+import static io.brahmaos.wallet.brahmawallet.common.BrahmaConst.COIN_SYMBOL_BRM;
+import static io.brahmaos.wallet.brahmawallet.common.BrahmaConst.COIN_SYMBOL_BTC;
+import static io.brahmaos.wallet.brahmawallet.common.BrahmaConst.COIN_SYMBOL_ETH;
+import static io.brahmaos.wallet.brahmawallet.common.BrahmaConst.PAY_COIN_CODE_BRM;
+import static io.brahmaos.wallet.brahmawallet.common.BrahmaConst.PAY_COIN_CODE_BTC;
+import static io.brahmaos.wallet.brahmawallet.common.BrahmaConst.PAY_COIN_CODE_ETH;
 
 public class QuickPayFragment extends BaseFragment {
     @Override
@@ -75,6 +89,9 @@ public class QuickPayFragment extends BaseFragment {
     private int pageNum = 3;
     private List<AccountBalance> accountBalances = new ArrayList<>();
     private Button mCreateQuickAccount;
+
+    private List<PayTransaction> mTransDataList = new ArrayList<>();
+    private List<View> mTransLayout = new ArrayList<>();
 
     /**
      * instance
@@ -177,7 +194,122 @@ public class QuickPayFragment extends BaseFragment {
                     getResources().getString(R.string.quick_pay_account_help),
                     BrahmaConfig.getInstance().getQuickAccountHelpUrl());
         });
+        mTransLayout.add(parentView.findViewById(R.id.bill_one));
+        mTransLayout.add(parentView.findViewById(R.id.bill_two));
+        mTransLayout.add(parentView.findViewById(R.id.bill_three));
         return true;
+    }
+
+    private void getLatestPayTransList() {
+        final int count = 3;
+        PayService.getInstance().getPayTransactions(0, 0, null, null, 0, count)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<List<PayTransaction>>() {
+                    @Override
+                    public void onNext(List<PayTransaction> apr) {
+                        if (apr != null && apr.size() > 0) {
+                            for (PayTransaction transNew : apr) {
+                                mTransDataList = apr;
+                            }
+                            notifyDataChange();
+                        } else {
+                            Log.d(tag(), "getLatestPayTransList---no pay transaction");
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        showShortToast(e == null ? "failed to get pay transactions." : e.toString());
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                    }
+                });
+    }
+
+    private void notifyDataChange() {
+        if (mTransDataList != null) {
+            for (int i = 0; i < mTransDataList.size() && i < mTransLayout.size(); i++) {
+                View view = mTransLayout.get(i);
+                PayTransaction data = mTransDataList.get(i);
+                setData(new ItemViewHolder(view), data);
+                if (null != view && null != data) {
+                    view.setOnClickListener(v -> {
+                        Intent detailIntent = new Intent(getActivity(),
+                                PayTransactionDetailActivity.class);
+                        detailIntent.putExtra(IntentParam.PARAM_PAY_TRANS_DETAIL, data);
+                        startActivity(detailIntent);
+                    });
+                }
+            }
+        }
+    }
+
+    private void setData(ItemViewHolder holder, PayTransaction trans) {
+        if (null == holder || null == trans) {
+            return;
+        }
+        if (trans.getMerchantIcon() != null && !trans.getMerchantIcon().isEmpty()) {
+            try {
+                Glide.with(getActivity())
+                        .load(trans.getMerchantIcon())
+                        .into(holder.ivTransIcon);
+            } catch (Exception e) {
+                Log.d(tag(), "load icon fail: " + e.toString());
+                holder.ivTransIcon.setImageResource(R.drawable.ic_store_black_24dp);
+            }
+        } else {
+            holder.ivTransIcon.setImageResource(R.drawable.ic_store_black_24dp);
+        }
+        holder.tvMerchantName.setText(trans.getMerchantName());
+        long time = CommonUtil.convertDateTimeStringToLong(trans.getCreateTime(), "yyyy-MM-dd hh:mm:ss");
+        String timeStr = CommonUtil.convertDateTimeLongToString(time, "MM-dd hh:mm");
+        holder.tvTransTime.setText(timeStr != null ? timeStr : trans.getCreateTime());
+        String amountStr = trans.getAmount();
+        try {
+            amountStr = "" + Double.parseDouble(trans.getAmount());
+        } catch (Exception e) {
+            amountStr = trans.getAmount();
+        }
+        if (amountStr != null) {
+            holder.tvAmount.setText(amountStr);
+        } else {
+            holder.tvAmount.setText("");
+        }
+        int txCoinCode = trans.getTxCoinCode();
+        if (PAY_COIN_CODE_BTC == txCoinCode) {
+            holder.tvCoinName.setText(COIN_SYMBOL_BTC);
+        } else if (PAY_COIN_CODE_ETH == txCoinCode) {
+            holder.tvCoinName.setText(COIN_SYMBOL_ETH);
+        } else if (PAY_COIN_CODE_BRM == txCoinCode) {
+            holder.tvCoinName.setText(COIN_SYMBOL_BRM);
+        }
+        PayUtil.setTextByStatus(getActivity(),
+                holder.tvPayStatus, trans.getOrderStatus());
+    }
+
+    class ItemViewHolder extends RecyclerView.ViewHolder {
+        LinearLayout layoutTransItem;
+        ImageView ivTransIcon;
+        TextView tvMerchantName;
+        TextView tvTransTime;
+        TextView tvAmount;
+        TextView tvPayStatus;
+        TextView tvCoinName;
+
+        ItemViewHolder(View itemView) {
+            super(itemView);
+            layoutTransItem = itemView.findViewById(R.id.layout_pay_trans_item);
+            ivTransIcon = itemView.findViewById(R.id.iv_trans_icon);
+            tvMerchantName = itemView.findViewById(R.id.tv_merchant_name);
+            tvTransTime = itemView.findViewById(R.id.tv_trans_time);
+            tvAmount = itemView.findViewById(R.id.tv_trans_amount);
+            tvPayStatus = itemView.findViewById(R.id.tv_pay_status);
+            tvCoinName = itemView.findViewById(R.id.tv_coin_name);
+        }
     }
 
     @Override
@@ -188,6 +320,7 @@ public class QuickPayFragment extends BaseFragment {
             layoutAddQuickPayAccount.setVisibility(View.GONE);
             swipeRefreshLayout.setVisibility(View.VISIBLE);
             getAccountBalance();
+            getLatestPayTransList();
         } else {
             layoutAddQuickPayAccount.setVisibility(View.VISIBLE);
             swipeRefreshLayout.setVisibility(View.GONE);

@@ -259,6 +259,7 @@ public class MainActivity extends BaseActivity
                     startActivity(accInfoIntent);
                 }
                 break;
+            case R.id.tv_pay_trans_more:
             case R.id.layout_transactions:
                 Intent transListIntent = new Intent(this, PayTransactionsListActivity.class);
                 startActivity(transListIntent);
