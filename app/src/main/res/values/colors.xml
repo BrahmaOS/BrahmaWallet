@@ -57,4 +57,9 @@
 
     <color name="color_common_black">#000000</color>
     <color name="color_common_gray">#c6c6c6</color>
+
+    <color name="payment_successful">#259B24</color>
+    <color name="payment_confirmation">#D57B1C</color>
+    <color name="payment_to_be_paid">#606060</color>
+    <color name="payment_failure">#E51C23</color>
 </resources>
