@@ -16,7 +16,7 @@
             android:layout_width="@dimen/icon_normal_size"
             android:layout_height="@dimen/icon_normal_size"
             android:layout_gravity="center"
-            android:scaleType="fitCenter" />
+            android:scaleType="fitCenter"/>
 
         <LinearLayout
             android:layout_width="match_parent"

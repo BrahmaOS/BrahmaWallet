@@ -51,14 +51,6 @@
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
                             android:visibility="gone">
-<!--
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="@dimen/toolbar_icon_size_smaller"
-                                android:layout_margin="@dimen/space_normal"
-                                android:gravity="center"
-                                android:text="xx-xx-xx"
-                                android:textColor="@color/color_hint_text" />-->
 
                             <android.support.v7.widget.RecyclerView
                                 android:id="@+id/pay_transaction"
@@ -73,6 +65,7 @@
                             android:id="@+id/layout_no_pay_trans"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/space_large"
                             android:orientation="vertical"
                             android:visibility="gone">
 

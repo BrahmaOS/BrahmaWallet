@@ -2,7 +2,6 @@ package io.brahmaos.wallet.util;
 
 import android.content.Context;
 import android.widget.TextView;
-
 import io.brahmaos.wallet.brahmawallet.R;
 
 public class PayUtil {
@@ -22,6 +21,7 @@ public class PayUtil {
                 return;
             case 3:
                 tvPayStatus.setText(context.getString(R.string.pay_trans_status_succ));
+                tvPayStatus.setTextColor(context.getColor(R.color.color_hint_text));
                 return;
             case 4:
                 tvPayStatus.setText(context.getString(R.string.pay_trans_status_fail));
@@ -32,5 +32,4 @@ public class PayUtil {
         }
 
     }
-
 }

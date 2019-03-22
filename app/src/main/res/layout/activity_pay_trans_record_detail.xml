@@ -47,8 +47,7 @@
                         android:id="@+id/iv_pay_detail_icon"
                         android:layout_width="@dimen/icon_pay_size"
                         android:layout_height="@dimen/icon_pay_size"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/icon_brm" />
+                        android:scaleType="fitCenter" />
 
                     <TextView
                         android:id="@+id/tv_pay_merchant_name"
@@ -57,7 +56,6 @@
                         android:layout_marginLeft="@dimen/space_normal"
                         android:ellipsize="end"
                         android:lines="1"
-                        android:text="KFC"
                         android:textColor="@color/color_primary_text"
                         android:textSize="@dimen/font_size_subheading" />
                 </LinearLayout>
@@ -67,14 +65,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/space_normal"
                     android:layout_marginRight="@dimen/space_normal"
-                    android:layout_marginTop="@dimen/space_normal"
+                    android:layout_marginTop="@dimen/space_small"
                     android:gravity="center">
 
                     <TextView
                         android:id="@+id/tv_pay_order_amount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="-56"
                         android:textColor="@color/color_primary_text"
                         android:textSize="@dimen/font_size_headline"
                         android:textStyle="bold" />
@@ -84,7 +81,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/space_normal"
-                        android:text="BRM"
                         android:textColor="@color/color_primary_text"
                         android:textSize="@dimen/font_size_subheading" />
                 </LinearLayout>
@@ -93,11 +89,10 @@
                     android:id="@+id/tv_pay_detail_status"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/space_small"
+                    android:layout_margin="@dimen/space_smaller"
                     android:gravity="center"
-                    android:text="success"
                     android:textColor="@color/color_hint_text"
-                    android:textSize="@dimen/font_size_caption" />
+                    android:textSize="@dimen/font_size_body" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -111,7 +106,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
-                        android:text="@string/pay_trans_merchant_desc"
+                        android:text="@string/pay_trans_method"
                         android:textSize="@dimen/font_size_subheading" />
 
                     <TextView
@@ -119,7 +114,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
-                        android:text="quick pay"
                         android:textColor="@color/color_primary_text"
                         android:textSize="@dimen/font_size_subheading" />
                 </RelativeLayout>
@@ -148,7 +142,6 @@
                         android:layout_marginRight="@dimen/space_smaller"
                         android:layout_toRightOf="@+id/tv_pay_menu_order_amount"
                         android:layout_toLeftOf="@+id/tv_pay_detail_coin_name"
-                        android:text="-112334444411233444112334441123344411233444112334441123344411233444"
                         android:gravity="end"
                         android:textStyle="bold"
                         android:textColor="@color/color_primary_text"
@@ -159,7 +152,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
-                        android:text="BRM"
                         android:textStyle="bold"
                         android:textColor="@color/color_primary_text"
                         android:textSize="@dimen/font_size_subheading" />
@@ -192,8 +184,7 @@
                         android:ellipsize="middle"
                         android:singleLine="true"
                         android:gravity="end"
-                        android:text="123456789987654345678990876544567899987456789"
-                        android:textColor="@color/color_primary_text"
+                        android:textColor="@color/link_color"
                         android:textSize="@dimen/font_size_subheading" />
 
                     <ImageView
@@ -233,7 +224,6 @@
                         android:layout_toRightOf="@+id/tv_merchant_desc_menu"
                         android:ellipsize="end"
                         android:lines="1"
-                        android:text="roe"
                         android:gravity="end"
                         android:textColor="@color/color_primary_text"
                         android:textSize="@dimen/font_size_subheading" />
@@ -263,7 +253,6 @@
                         android:ellipsize="end"
                         android:lines="1"
                         android:gravity="end"
-                        android:text="merchant"
                         android:textColor="@color/color_primary_text"
                         android:textSize="@dimen/font_size_subheading" />
                 </RelativeLayout>
@@ -271,9 +260,7 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/space_normal"
-                    android:paddingRight="@dimen/space_normal"
-                    android:paddingTop="@dimen/space_normal">
+                    android:padding="@dimen/space_normal">
 
                     <TextView
                         android:id="@+id/tv_order_id"
@@ -292,7 +279,6 @@
                         android:ellipsize="end"
                         android:lines="1"
                         android:gravity="end"
-                        android:text="merchant KFC"
                         android:textColor="@color/color_primary_text"
                         android:textSize="@dimen/font_size_subheading" />
                 </RelativeLayout>
@@ -303,7 +289,7 @@
                     android:layout_height="wrap_content"
                     android:paddingLeft="@dimen/space_normal"
                     android:paddingRight="@dimen/space_normal"
-                    android:paddingTop="@dimen/space_normal">
+                    android:paddingBottom="@dimen/space_normal">
 
                     <TextView
                         android:id="@+id/tv_merchant_order_id"
@@ -322,7 +308,6 @@
                         android:ellipsize="end"
                         android:lines="1"
                         android:gravity="end"
-                        android:text="merchant KFC ---kkkkkkkkkkk"
                         android:textColor="@color/color_primary_text"
                         android:textSize="@dimen/font_size_subheading" />
                 </RelativeLayout>

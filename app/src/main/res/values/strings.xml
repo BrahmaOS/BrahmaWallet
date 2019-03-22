@@ -47,14 +47,14 @@
     <string name="title_accounts">Accounts</string>
     <string name="title_tab_account_ethereum">Ethereum</string>
     <string name="title_tab_account_bitcoin">Bitcoin</string>
-    <string name="title_account_assets">Account Assets</string>
-    <string name="title_account_detail">Account Detail</string>
-    <string name="title_account_change_name">Change Name</string>
-    <string name="title_account_change_password">Change Password</string>
-    <string name="action_copy_address">Copy Address</string>
-    <string name="title_dialog_export_keystore">Export Keystore</string>
-    <string name="title_dialog_export_private_key">Export Private Key</string>
-    <string name="title_dialog_export_mnemonics">Export Mnemonics</string>
+    <string name="title_account_assets">Account assets</string>
+    <string name="title_account_detail">Account detail</string>
+    <string name="title_account_change_name">Change name</string>
+    <string name="title_account_change_password">Change password</string>
+    <string name="action_copy_address">Copy address</string>
+    <string name="title_dialog_export_keystore">Export keystore</string>
+    <string name="title_dialog_export_private_key">Export private key</string>
+    <string name="title_dialog_export_mnemonics">Export mnemonics</string>
 
     <string name="export_keystore_tip_1">
         Store offline. Please store keystore to a safe offline place. Never put it on internet.
@@ -583,9 +583,9 @@
     <string name="label_set_payment_password">Set a 6-digit payment password</string>
     <string name="label_repeat_password">Please enter your password again</string>
     <string name="tip_repeat_password_error">Inconsistent password entered twice</string>
-    <string name="menu_account_info">Quick Account Info</string>
+    <string name="menu_account_info">Quick account info</string>
     <string name="menu_transactions">Bills</string>
-    <string name="menu_address_book">Address Book</string>
+    <string name="menu_address_book">Address book</string>
     <string name="menu_pay_test">模拟用户支付场景</string>
     <string name="info_account_id">Account ID</string>
     <string name="title_pay_recharge">Recharge</string>
@@ -594,7 +594,7 @@
     <string name="tip_add_pay_account_failed">Open quick account failed!</string>
     <string name="label_commodity_information">Commodity</string>
     <string name="label_merchant_name">Merchant</string>
-    <string name="label_pay_type">Payment Method</string>
+    <string name="label_pay_type">Payment method</string>
     <string name="tip_lack_param">Lack param.</string>
     <string name="tip_invalid_param">Invalid param.</string>
     <string name="brm_pay">BRMPAY</string>
@@ -606,7 +606,7 @@
     <string name="label_account_balance">Account Balance</string>
     <string name="action_create_pay_account">Open pay account</string>
 
-    <string name="pay_account_info">Quick Account</string>
+    <string name="pay_account_info">Quick account</string>
     <string name="no_quick_pay_account">Please open the quick account.</string>
     <string-array name="avatar_change_choices">
         <item>Take photo</item>
@@ -632,7 +632,7 @@
     <string name="tip_withdraw_success">Withdraw success</string>
 
     <!-- Quick pay -->
-    <string name="label_confirm_pay">Confirm Pay</string>
+    <string name="label_confirm_pay">Confirm pay</string>
     <string name="tip_lack_param_trade_type">Lack trade type</string>
     <string name="title_choose_payment_method">Choose payment method</string>
     <string name="desc_quick_payment">More convenient, no fees</string>
@@ -641,20 +641,20 @@
     <string name="progress_transfer">transfer…</string>
 
     <!-- Bill detail-->
-    <string name="menu_transaction_detail">Bill Details</string>
-    <string name="pay_trans_status_succ">Pay success</string>
-    <string name="pay_trans_status_fail">Pay fail</string>
-    <string name="pay_trans_status_confirm">Pay confirming</string>
+    <string name="menu_transaction_detail">Bill details</string>
+    <string name="pay_trans_status_succ">Payment successful</string>
+    <string name="pay_trans_status_fail">Payment failed</string>
+    <string name="pay_trans_status_confirm">Payment confirmation</string>
     <string name="pay_trans_status_unpaid">To be paid</string>
-    <string name="pay_trans_method">Payment Method</string>
-    <string name="pay_trans_method_normal">General Pay</string>
-    <string name="pay_trans_method_quick">Quick Pay</string>
-    <string name="pay_trans_order_amount">Order Amount</string>
+    <string name="pay_trans_method">Payment method</string>
+    <string name="pay_trans_method_normal">Ordinary payment</string>
+    <string name="pay_trans_method_quick">Quick payment</string>
+    <string name="pay_trans_order_amount">Order amount</string>
     <string name="pay_trans_fee">Fee</string>
     <string name="pay_trans_hash">TxHash</string>
-    <string name="pay_trans_merchant_desc">Merchant Description</string>
-    <string name="pay_trans_merchant_name">Merchant Name</string>
-    <string name="pay_trans_order_time">Order CreateTime</string>
+    <string name="pay_trans_merchant_desc">Merchant description</string>
+    <string name="pay_trans_merchant_name">Merchant name</string>
+    <string name="pay_trans_order_time">Order createTime</string>
     <string name="pay_trans_order_id">Order ID</string>
-    <string name="pay_trans_merchant_id">Merchant ID</string>
+    <string name="pay_trans_merchant_id">Merchant order ID</string>
 </resources>

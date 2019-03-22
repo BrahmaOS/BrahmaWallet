@@ -1,8 +1,10 @@
 package io.brahmaos.wallet.brahmawallet.ui.pay;
 
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
@@ -16,6 +18,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 import java.util.List;
 import io.brahmaos.wallet.brahmawallet.R;
@@ -24,6 +28,7 @@ import io.brahmaos.wallet.brahmawallet.model.pay.PayTransaction;
 import io.brahmaos.wallet.brahmawallet.service.PayService;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.util.CommonUtil;
+import io.brahmaos.wallet.util.ImageUtil;
 import io.brahmaos.wallet.util.PayUtil;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
@@ -57,6 +62,7 @@ public class PayTransactionsListActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pay_transactions);
+        showNavBackBtn();
         mPayTransRecyclerView = findViewById(R.id.pay_transaction);
         mPayTransLayout = findViewById(R.id.layout_pay_trans);
         mNoPayTransLayout = findViewById(R.id.layout_no_pay_trans);
@@ -67,7 +73,9 @@ public class PayTransactionsListActivity extends BaseActivity {
         transLayoutManager.setSmoothScrollbarEnabled(true);
         mPayTransRecyclerView.setLayoutManager(transLayoutManager);
         mPayTransRecyclerView.setAdapter(new PayTransRecyclerAdapter());
-        mPayTransRecyclerView.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
+        DividerItemDecoration divider = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+        divider.setDrawable(getDrawable(R.drawable.recycleview_divider_line));
+        mPayTransRecyclerView.addItemDecoration(divider);
         // Solve the sliding lag problem
         mPayTransRecyclerView.setHasFixedSize(true);
         mPayTransRecyclerView.setNestedScrollingEnabled(false);
@@ -86,6 +94,24 @@ public class PayTransactionsListActivity extends BaseActivity {
             }
         });
         getPayTransList();
+    }
+
+    private void showEmtpyView(boolean show) {
+        if (show) {
+            if (mNoPayTransLayout != null) {
+                mNoPayTransLayout.setVisibility(View.VISIBLE);
+            }
+            if (mPayTransLayout != null) {
+                mPayTransLayout.setVisibility(View.GONE);
+            }
+        } else {
+            if (mNoPayTransLayout != null) {
+                mNoPayTransLayout.setVisibility(View.GONE);
+            }
+            if (mPayTransLayout != null) {
+                mPayTransLayout.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     // Called when scroll down.
@@ -107,9 +133,11 @@ public class PayTransactionsListActivity extends BaseActivity {
                             mPayTransList = apr;
                         }
                         lastTimeGroup = 0;
+                        showEmtpyView(false);
                         mPayTransRecyclerView.getAdapter().notifyDataSetChanged();
                     } else {
                         Log.d(tag(), "getLatestPayTransList---no pay transaction");
+                        showEmtpyView(true);
                     }
                     page++;
                 }
@@ -119,10 +147,14 @@ public class PayTransactionsListActivity extends BaseActivity {
                     e.printStackTrace();
                     showShortToast(e == null ? "failed to get pay transactions." : e.toString());
                     mSwipeRefreshLayout.setRefreshing(false);
+                    if (null == mPayTransList || mPayTransList.size() <= 0) {
+                        showEmtpyView(true);
+                    }
                 }
 
                 @Override
                 public void onCompleted() {
+                    showEmtpyView(false);
                     mSwipeRefreshLayout.setRefreshing(false);
                 }
             });
@@ -144,11 +176,15 @@ public class PayTransactionsListActivity extends BaseActivity {
                         e.printStackTrace();
                         showShortToast(e == null ? "failed to get pay transactions." : e.toString());
                         mSwipeRefreshLayout.setRefreshing(false);
+                        if (null == mPayTransList || mPayTransList.size() <= 0) {
+                            showEmtpyView(true);
+                        }
                     }
 
                     @Override
                     public void onCompleted() {
                         mSwipeRefreshLayout.setRefreshing(false);
+                        showEmtpyView(false);
                     }
                 });
     }
@@ -160,11 +196,11 @@ public class PayTransactionsListActivity extends BaseActivity {
                     loadMoreFinished = true;
                 }
                 mPayTransList = apr;
-                mPayTransLayout.setVisibility(View.VISIBLE);
                 lastTimeGroup = 0;
+                showEmtpyView(false);
                 mPayTransRecyclerView.getAdapter().notifyDataSetChanged();
             } else {
-                mNoPayTransLayout.setVisibility(View.VISIBLE);
+                showEmtpyView(true);
             }
         } else {
             if (null == apr) {
@@ -186,6 +222,7 @@ public class PayTransactionsListActivity extends BaseActivity {
         private static final int TYPE_FOOTER = 1;
         private static final int TYPE_CONTENT = 2;
         private static final int TYPE_DATE = 3;
+
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -254,7 +291,18 @@ public class PayTransactionsListActivity extends BaseActivity {
                     startActivity(detailIntent);
                 });
             }
-            holder.ivTransIcon.setImageResource(R.drawable.icon_brm);
+            if (trans.getMerchantIcon() != null && !trans.getMerchantIcon().isEmpty()) {
+                try {
+                    Glide.with(PayTransactionsListActivity.this)
+                            .load(trans.getMerchantIcon())
+                            .into(holder.ivTransIcon);
+                } catch (Exception e) {
+                    Log.d(tag(), "load icon fail: " + e.toString());
+                    holder.ivTransIcon.setImageResource(R.drawable.ic_store_black_24dp);
+                }
+            } else {
+                holder.ivTransIcon.setImageResource(R.drawable.ic_store_black_24dp);
+            }
             holder.tvMerchantName.setText(trans.getMerchantName());
             long time = CommonUtil.convertDateTimeStringToLong(trans.getCreateTime(), "yyyy-MM-dd hh:mm:ss");
             String timeStr = CommonUtil.convertDateTimeLongToString(time, "MM-dd hh:mm");

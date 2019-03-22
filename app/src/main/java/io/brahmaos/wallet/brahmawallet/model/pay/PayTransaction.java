@@ -22,6 +22,8 @@ public class PayTransaction implements Serializable, Comparable<PayTransaction>{
     private int merchantId;
     @JsonProperty("merchant_name")
     private String merchantName;
+    @JsonProperty("merchant_icon")
+    private String merchantIcon;
     @JsonProperty("type")
     private int orderType;
     @JsonProperty("status")
@@ -50,6 +52,7 @@ public class PayTransaction implements Serializable, Comparable<PayTransaction>{
                 ", merchant_order_id=" + merchantOrderId +
                 ", merchant_id=" + merchantId +
                 ", merchant_name=" + merchantName +
+                ", merchant_icon" + merchantIcon +
                 ", type=" + orderType +
                 ", status=" + orderStatus +
                 ", coin_code=" + coinCode +
@@ -100,6 +103,14 @@ public class PayTransaction implements Serializable, Comparable<PayTransaction>{
 
     public void setMerchantName(String merchantName) {
         this.merchantName = merchantName;
+    }
+
+    public String getMerchantIcon() {
+        return merchantIcon;
+    }
+
+    public void setMerchantIcon(String merchantIcon) {
+        this.merchantIcon = merchantIcon;
     }
 
     public int getOrderType() {

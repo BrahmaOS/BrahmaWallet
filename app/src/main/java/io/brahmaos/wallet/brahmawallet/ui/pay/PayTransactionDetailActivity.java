@@ -1,15 +1,21 @@
 package io.brahmaos.wallet.brahmawallet.ui.pay;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.model.pay.PayTransaction;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
+import io.brahmaos.wallet.brahmawallet.ui.transaction.BlockchainTxDetailActivity;
+import io.brahmaos.wallet.brahmawallet.ui.transaction.EtherscanTxDetailActivity;
 import io.brahmaos.wallet.util.PayUtil;
 
 import static io.brahmaos.wallet.brahmawallet.common.BrahmaConst.COIN_SYMBOL_BRM;
@@ -46,6 +52,7 @@ public class PayTransactionDetailActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pay_trans_record_detail);
+        showNavBackBtn();
         if (getIntent() != null) {
             mTransDetail = (PayTransaction) getIntent().getSerializableExtra(IntentParam.PARAM_PAY_TRANS_DETAIL);
         }
@@ -65,6 +72,23 @@ public class PayTransactionDetailActivity extends BaseActivity {
         tvCoinNameDetail = findViewById(R.id.tv_pay_detail_coin_name);
         layoutTxHash = findViewById(R.id.layout_pay_trans_hash);
         tvTxHash = findViewById(R.id.tv_pay_detail_hash);
+        tvTxHash.getPaint().setUnderlineText(true);
+        tvTxHash.setOnClickListener(v -> {
+            if (mTransDetail != null && tvTxHash.getText() != null && !(tvTxHash.getText().toString().isEmpty())) {
+                Intent txIntent = new Intent();
+
+                if (PAY_COIN_CODE_BTC == mTransDetail.getTxCoinCode()) {
+                    txIntent.setClass(PayTransactionDetailActivity.this, BlockchainTxDetailActivity.class);
+                    txIntent.putExtra(IntentParam.PARAM_TX_HASH, tvTxHash.getText().toString());
+                    startActivity(txIntent);
+                } else if (PAY_COIN_CODE_BRM == mTransDetail.getTxCoinCode()
+                        || PAY_COIN_CODE_ETH == mTransDetail.getTxCoinCode()) {
+                    txIntent.setClass(PayTransactionDetailActivity.this, EtherscanTxDetailActivity.class);
+                    txIntent.putExtra(IntentParam.PARAM_TX_HASH, tvTxHash.getText().toString());
+                    startActivity(txIntent);
+                }
+            }
+        });
         tvMerchantDesc = findViewById(R.id.tv_pay_detail_merchant_desc);
         tvOrderCreateTime = findViewById(R.id.tv_pay_detail_create_time);
         tvOrderId = findViewById(R.id.tv_pay_detail_order_id);
@@ -72,7 +96,18 @@ public class PayTransactionDetailActivity extends BaseActivity {
         tvMerchantOrderId = findViewById(R.id.tv_pay_detail_merchant_order_id);
 
         if (mTransDetail != null) {
-            ivPayTransIcon.setImageResource(R.drawable.icon_brm);
+            if (null != mTransDetail.getMerchantIcon() && !mTransDetail.getMerchantIcon().isEmpty()) {
+                try {
+                    Glide.with(PayTransactionDetailActivity.this)
+                            .load(mTransDetail.getMerchantIcon())
+                            .into(ivPayTransIcon);
+                } catch (Exception e) {
+                    Log.d(tag(), "load icon fail: " + e.toString());
+                    ivPayTransIcon.setImageResource(R.drawable.ic_store_black_24dp);
+                }
+            } else {
+                ivPayTransIcon.setImageResource(R.drawable.ic_store_black_24dp);
+            }
             tvMerchantName.setText("" + mTransDetail.getMerchantName());
             String amountStr = mTransDetail.getAmount();
             try {
