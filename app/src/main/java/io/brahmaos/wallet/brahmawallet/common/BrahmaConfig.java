@@ -408,4 +408,12 @@ public class BrahmaConfig {
     public String getHashRateUrl() {
         return BrahmaConst.HASH_RATE_URL;
     }
+
+    public String getQuickAccountHelpUrl() {
+        String url = "https://support.brahmaos.io/pay/what-is-quick-account_en";
+        if (languageLocale.equals(BrahmaConst.LANGUAGE_CHINESE)) {
+            url = "https://support.brahmaos.io/pay/what-is-quick-account_zh";
+        }
+        return url;
+    }
 }

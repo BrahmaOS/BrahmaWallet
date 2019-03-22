@@ -40,6 +40,7 @@ import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.service.PayService;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseFragment;
+import io.brahmaos.wallet.brahmawallet.ui.base.BaseWebActivity;
 import io.brahmaos.wallet.brahmawallet.ui.pay.CheckQuickAccountPasswordActivity;
 import io.brahmaos.wallet.brahmawallet.ui.pay.PayAccountRechargeActivity;
 import io.brahmaos.wallet.brahmawallet.ui.pay.PayAccountWithdrawActivity;
@@ -68,6 +69,7 @@ public class QuickPayFragment extends BaseFragment {
     private TextView mTvEthBalance;
     private TextView mTvBrmBalance;
     private TextView mTvBtcBalance;
+    private TextView mTvQuickAccountHelp;
 
     private List<ImageView> lstGuideIndicator = new ArrayList<>();
     private int pageNum = 3;
@@ -177,6 +179,12 @@ public class QuickPayFragment extends BaseFragment {
         mTvEthBalance = parentView.findViewById(R.id.tv_eth_amount);
         mTvBrmBalance = parentView.findViewById(R.id.tv_brm_amount);
         mTvBtcBalance = parentView.findViewById(R.id.tv_btc_amount);
+        mTvQuickAccountHelp = parentView.findViewById(R.id.tv_quick_account_help);
+        mTvQuickAccountHelp.setOnClickListener(v -> {
+            BaseWebActivity.startWeb(getActivity(),
+                    getResources().getString(R.string.quick_pay_account_help),
+                    BrahmaConfig.getInstance().getQuickAccountHelpUrl());
+        });
         return true;
     }
 

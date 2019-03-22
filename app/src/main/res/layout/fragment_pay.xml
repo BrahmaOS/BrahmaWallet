@@ -45,6 +45,7 @@
                     android:layout_marginEnd="@dimen/icon_large_size"
                     android:text="@string/action_create_pay_account"/>
                 <TextView
+                    android:id="@+id/tv_quick_account_help"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
