@@ -311,10 +311,10 @@ public class PayTransactionsListActivity extends BaseActivity {
             } catch (Exception e) {
                 amountStr = trans.getAmount();
             }
-            if (2 == trans.getOrderType()) {
-                holder.tvAmount.setText("+" + amountStr);
+            if (amountStr != null) {
+                holder.tvAmount.setText(amountStr);
             } else {
-                holder.tvAmount.setText("-" + amountStr);
+                holder.tvAmount.setText("");
             }
             int txCoinCode = trans.getTxCoinCode();
             if (PAY_COIN_CODE_BTC == txCoinCode) {

@@ -115,12 +115,12 @@ public class PayTransactionDetailActivity extends BaseActivity {
             } catch (Exception e) {
                 amountStr = mTransDetail.getAmount();
             }
-            if (2 == mTransDetail.getOrderType()) {
-                tvOrderAmount.setText("+" + amountStr);
-                tvOrderAmountDetail.setText("+" + amountStr);
+            if (amountStr != null) {
+                tvOrderAmount.setText(amountStr);
+                tvOrderAmountDetail.setText(amountStr);
             } else {
-                tvOrderAmount.setText("-" + amountStr);
-                tvOrderAmountDetail.setText("-" + amountStr);
+                tvOrderAmount.setText("");
+                tvOrderAmountDetail.setText("");
             }
             int txCoinCode = mTransDetail.getTxCoinCode();
             if (PAY_COIN_CODE_BTC == txCoinCode) {
