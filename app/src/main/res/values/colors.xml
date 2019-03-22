@@ -20,7 +20,7 @@
 
     <color name="color_summary">#808080</color>
     <color name="color_caption">#8b8b8b</color>
-    <color name="color_tab_divider">#30000000</color>
+    <color name="color_tab_divider">#20000000</color>
 
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
