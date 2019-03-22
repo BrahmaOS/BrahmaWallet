@@ -488,6 +488,10 @@
     <string name="label_choose_account">账号列表</string>
 
     <!-- brahma pay -->
+    <string name="label_pay_recharge">充值</string>
+    <string name="label_pay_withdraw">提现</string>
+    <string name="label_pay_receipt">收款</string>
+    <string name="label_pay_payment">付款</string>
     <string name="pay_msg_invalid_blockchain">公链类型错误</string>
     <string name="pay_msg_no_account">暂无账号</string>
     <string name="tip_insufficient_balance">账号余额不足</string>
@@ -534,6 +538,13 @@
     <string name="title_create_quick_pay">创建快捷账号</string>
     <string name="quick_account_check_password">为了验证您拥有此快捷账号的权限，请输入创建或导入快捷账号时设置的密码。</string>
     <string name="tip_create_quick_account">&#8226;&#160;&#160;密码将会用于验证并开通快捷支付账号。</string>
+
+    <string name="title_pay_account_withdraw">提币</string>
+    <string name="prompt_withdraw_amount">提币金额</string>
+    <string name="prompt_amount_all">全部</string>
+    <string name="prompt_fee">手续费</string>
+    <string name="prompt_available_amount">可用余额</string>
+    <string name="tip_withdraw_success">提币成功</string>
 
     <!-- Quick pay -->
     <string name="label_confirm_pay">确认支付</string>

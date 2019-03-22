@@ -189,7 +189,7 @@
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/font_size_subheading"
                         android:textColor="@color/color_secondary_text"
-                        android:text="@string/fees"/>
+                        android:text="@string/prompt_fee"/>
                     <TextView
                         android:id="@+id/tv_withdraw_fee"
                         android:layout_marginTop="@dimen/space_small"

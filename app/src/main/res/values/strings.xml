@@ -574,6 +574,10 @@
     <string name="label_choose_account">Accounts</string>
 
     <!-- brahma pay -->
+    <string name="label_pay_recharge">Recharge</string>
+    <string name="label_pay_withdraw">Withdraw</string>
+    <string name="label_pay_receipt">Receipt</string>
+    <string name="label_pay_payment">Payment</string>
     <string name="pay_msg_invalid_blockchain">Invalid blockchain.</string>
     <string name="pay_msg_no_account">No account</string>
     <string name="tip_insufficient_balance">Insufficient balance.</string>

@@ -118,14 +118,6 @@ public class QuickPayFragment extends BaseFragment {
             startActivity(intent);
         });
 
-        LinearLayout layoutPayReceipt = parentView.findViewById(R.id.layout_pay_receipt);
-        layoutPayReceipt.setOnClickListener(v -> {
-            // todo test
-            BrahmaConfig.getInstance().setPayAccount(null);
-            layoutAddQuickPayAccount.setVisibility(View.VISIBLE);
-            swipeRefreshLayout.setVisibility(View.GONE);
-        });
-
         DisplayMetrics display = this.getResources().getDisplayMetrics();
 
         int statusBarHeight = 0;

@@ -93,7 +93,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="@dimen/space_unit"
                                 android:textSize="@dimen/font_size_subheading"
-                                android:text="充值"/>
+                                android:text="@string/label_pay_recharge"/>
                         </LinearLayout>
                         <LinearLayout
                             android:id="@+id/layout_pay_withdraw"
@@ -112,10 +112,10 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="@dimen/space_unit"
                                 android:textSize="@dimen/font_size_subheading"
-                                android:text="提现"/>
+                                android:text="@string/label_pay_withdraw"/>
                         </LinearLayout>
                         <LinearLayout
-                            android:id="@+id/layout_pay_payment"
+                            android:id="@+id/layout_pay_receipt"
                             android:layout_weight="1"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -131,10 +131,10 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="@dimen/space_unit"
                                 android:textSize="@dimen/font_size_subheading"
-                                android:text="付款"/>
+                                android:text="@string/label_pay_receipt"/>
                         </LinearLayout>
                         <LinearLayout
-                            android:id="@+id/layout_pay_receipt"
+                            android:id="@+id/layout_pay_payment"
                             android:layout_weight="1"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -150,7 +150,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="@dimen/space_unit"
                                 android:textSize="@dimen/font_size_subheading"
-                                android:text="付款"/>
+                                android:text="@string/label_pay_payment"/>
                         </LinearLayout>
                     </LinearLayout>
                     <LinearLayout
