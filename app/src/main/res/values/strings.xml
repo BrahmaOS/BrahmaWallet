@@ -656,7 +656,7 @@
     <string name="pay_trans_order_amount">Order amount</string>
     <string name="pay_trans_fee">Fee</string>
     <string name="pay_trans_hash">TxHash</string>
-    <string name="pay_trans_merchant_desc">Merchant description</string>
+    <string name="pay_trans_merchant_desc">Order description</string>
     <string name="pay_trans_merchant_name">Merchant name</string>
     <string name="pay_trans_order_time">Order createTime</string>
     <string name="pay_trans_order_id">Order ID</string>

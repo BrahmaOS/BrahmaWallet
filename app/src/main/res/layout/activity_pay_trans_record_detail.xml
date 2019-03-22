@@ -178,7 +178,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/space_normal"
-                        android:layout_marginRight="@dimen/space_smaller"
+                        android:layout_marginRight="@dimen/space_unit"
                         android:layout_toLeftOf="@+id/iv_pay_detail_arrow"
                         android:layout_toRightOf="@+id/tv_pay_hash_menu"
                         android:ellipsize="middle"

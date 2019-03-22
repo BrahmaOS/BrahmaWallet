@@ -154,9 +154,21 @@ public class PayTransactionDetailActivity extends BaseActivity {
                 tvTxHash.setText("");
                 layoutTxHash.setVisibility(View.VISIBLE);
             }
-            tvMerchantDesc.setText("" + mTransDetail.getDesc());
-            tvOrderCreateTime.setText("" + mTransDetail.getCreateTime());
-            tvOrderId.setText("" + mTransDetail.getOrderId());
+            if (null != mTransDetail.getDesc()) {
+                tvMerchantDesc.setText(mTransDetail.getDesc());
+            } else {
+                tvMerchantDesc.setText("");
+            }
+            if (null != mTransDetail.getCreateTime()) {
+                tvOrderCreateTime.setText(mTransDetail.getCreateTime());
+            } else {
+                tvOrderCreateTime.setText("");
+            }
+            if (null != mTransDetail.getOrderId()) {
+                tvOrderId.setText(mTransDetail.getOrderId());
+            } else {
+                tvOrderId.setText("");
+            }
             String merchantOrderId = mTransDetail.getMerchantOrderId();
             if (null == merchantOrderId || merchantOrderId.isEmpty()) {
                 layoutMerchantOrderId.setVisibility(View.GONE);
