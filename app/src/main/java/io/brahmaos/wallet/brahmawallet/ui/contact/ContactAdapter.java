@@ -78,6 +78,7 @@ public class ContactAdapter extends IndexableAdapter<ContactEntity> {
         String ethAddress = entity.getAddress();
         if (ethAddress != null && ethAddress.length() > 0) {
             vh.layoutEthAddress.setVisibility(View.VISIBLE);
+            vh.layoutBtcAddress.setVisibility(View.GONE);
             vh.tvEthAddress.setText(EthereumAddressUtil.simplifyDisplay(ethAddress));
         } else {
             vh.layoutEthAddress.setVisibility(View.GONE);

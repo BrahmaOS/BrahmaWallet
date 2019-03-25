@@ -3,9 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
+    android:paddingTop="@dimen/space_normal"
     android:paddingLeft="@dimen/space_normal"
-    android:paddingRight="@dimen/space_normal"
-    android:paddingTop="@dimen/space_small">
+    android:paddingRight="@dimen/space_normal">
     <LinearLayout
         android:id="@+id/layout_info"
         android:layout_width="match_parent"
@@ -75,7 +75,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_below="@id/layout_info"
+        android:layout_marginTop="@dimen/space_normal"
         android:layout_height="1dp"
-        android:layout_marginTop="@dimen/space_small"
-        android:background="#f9f9f9"/>
+        android:background="#f4f4f4"/>
 </RelativeLayout>
