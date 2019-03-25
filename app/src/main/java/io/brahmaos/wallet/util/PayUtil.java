@@ -7,7 +7,7 @@ import io.brahmaos.wallet.brahmawallet.R;
 public class PayUtil {
 
     public static void setTextByStatus(Context context, TextView tvPayStatus, int status) {
-        if (null == tvPayStatus) {
+        if (null == context || null == tvPayStatus) {
             return;
         }
         switch (status) {

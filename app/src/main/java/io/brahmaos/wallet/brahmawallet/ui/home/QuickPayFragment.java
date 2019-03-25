@@ -234,9 +234,10 @@ public class QuickPayFragment extends BaseFragment {
         if (mTransDataList != null) {
             for (int i = 0; i < mTransDataList.size() && i < mTransLayout.size(); i++) {
                 View view = mTransLayout.get(i);
+                view.setVisibility(View.VISIBLE);
                 PayTransaction data = mTransDataList.get(i);
                 setData(new ItemViewHolder(view), data);
-                if (null != view && null != data) {
+                if (null != view && null != data && getActivity() != null) {
                     view.setOnClickListener(v -> {
                         Intent detailIntent = new Intent(getActivity(),
                                 PayTransactionDetailActivity.class);

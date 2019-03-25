@@ -661,4 +661,6 @@
     <string name="pay_trans_order_time">Order createTime</string>
     <string name="pay_trans_order_id">Order ID</string>
     <string name="pay_trans_merchant_id">Merchant order ID</string>
+    <string name="pay_recent_bills">Recent bills</string>
+    <string name="pay_more_bills">More</string>
 </resources>

@@ -570,4 +570,6 @@
     <string name="pay_trans_order_time">创建时间</string>
     <string name="pay_trans_order_id">平台单号</string>
     <string name="pay_trans_merchant_id">商户单号</string>
+    <string name="pay_recent_bills">最近账单</string>
+    <string name="pay_more_bills">更多</string>
 </resources>
