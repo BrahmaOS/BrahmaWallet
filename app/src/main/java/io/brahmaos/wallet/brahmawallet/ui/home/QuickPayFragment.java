@@ -1,28 +1,19 @@
 package io.brahmaos.wallet.brahmawallet.ui.home;
 
 import android.app.ProgressDialog;
-import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -31,29 +22,23 @@ import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
-import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.model.pay.AccountBalance;
 import io.brahmaos.wallet.brahmawallet.model.pay.PayTransaction;
-import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
-import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.service.PayService;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseFragment;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseWebActivity;
 import io.brahmaos.wallet.brahmawallet.ui.pay.CheckQuickAccountPasswordActivity;
+import io.brahmaos.wallet.brahmawallet.ui.pay.PayAccountTransferActivity;
 import io.brahmaos.wallet.brahmawallet.ui.pay.PayAccountRechargeActivity;
 import io.brahmaos.wallet.brahmawallet.ui.pay.PayAccountWithdrawActivity;
 import io.brahmaos.wallet.brahmawallet.ui.pay.PayTransactionDetailActivity;
-import io.brahmaos.wallet.brahmawallet.ui.pay.PayTransactionsListActivity;
-import io.brahmaos.wallet.brahmawallet.ui.pay.SetPayAccountPasswordActivity;
 import io.brahmaos.wallet.brahmawallet.view.CustomProgressDialog;
 import io.brahmaos.wallet.brahmawallet.view.HeightWrappingViewPager;
-import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
 import io.brahmaos.wallet.util.PayUtil;
@@ -132,6 +117,12 @@ public class QuickPayFragment extends BaseFragment {
         LinearLayout layoutWithdraw = parentView.findViewById(R.id.layout_pay_withdraw);
         layoutWithdraw.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), PayAccountWithdrawActivity.class);
+            startActivity(intent);
+        });
+
+        LinearLayout layoutTransfer = parentView.findViewById(R.id.layout_pay_transfer);
+        layoutTransfer.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), PayAccountTransferActivity.class);
             startActivity(intent);
         });
 

@@ -226,6 +226,7 @@
     <string name="tip_error_address">Tips: The correct address is generally 42 characters start with 0x</string>
     <string name="tip_same_address">The address can not be yourself</string>
     <string name="tip_invalid_amount">Invalid Amount</string>
+    <string name="tip_invalid_receiver">Invalid Receiver</string>
     <string name="tip_invalid_gas_price">Invalid gas price. Default 20 Gwei.</string>
     <string name="tip_invalid_gas_limit">Invalid gas limit. Default 200000.</string>
     <string name="tip_insufficient_eth">Insufficient ETH</string>
@@ -578,6 +579,7 @@
     <string name="label_pay_withdraw">Withdraw</string>
     <string name="label_pay_receipt">Receipt</string>
     <string name="label_pay_payment">Payment</string>
+    <string name="label_pay_transfer">Transfer</string>
     <string name="pay_msg_invalid_blockchain">Invalid blockchain.</string>
     <string name="pay_msg_no_account">No account</string>
     <string name="tip_insufficient_balance">Insufficient balance.</string>
@@ -643,6 +645,10 @@
     <string name="desc_ordinary_payment">Full decentralized Pay</string>
     <string name="prompt_input_quick_account_password">Input quick account password</string>
     <string name="progress_transfer">transfer…</string>
+    <string name="title_pay_account_transfer">Quick account transfer</string>
+    <string name="prompt_transfer_amount">Transfer amount</string>
+    <string name="prompt_transfer_receiver_account">Receiver account</string>
+    <string name="label_choose_transfer_coin">Choose Coin</string>
 
     <!-- Bill detail-->
     <string name="menu_transaction_detail">Bill details</string>

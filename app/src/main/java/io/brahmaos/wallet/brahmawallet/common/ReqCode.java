@@ -13,4 +13,5 @@ public class ReqCode {
     public static final int TAKE_PHOTO = 107;
 
     public static final int QUICK_PAYMENT_RECHARGE = 1000;
+    public static final int QUICK_PAYMENT_TRANSFER = 1001;
 }

@@ -220,6 +220,7 @@
     <string name="tip_error_address">提示: 地址一般为0x开头的42位字符</string>
     <string name="tip_same_address">地址不能为自己</string>
     <string name="tip_invalid_amount">请填写正确的金额</string>
+    <string name="tip_invalid_receiver">接收方账号不正确</string>
     <string name="tip_invalid_gas_price">请填写gas price. 通常为 20 Gwei。</string>
     <string name="tip_invalid_gas_limit">请填写gas limit，通常为 200000。</string>
     <string name="tip_insufficient_eth">ETH不足</string>
@@ -492,6 +493,7 @@
     <string name="label_pay_withdraw">提现</string>
     <string name="label_pay_receipt">收款</string>
     <string name="label_pay_payment">付款</string>
+    <string name="label_pay_transfer">转账</string>
     <string name="pay_msg_invalid_blockchain">公链类型错误</string>
     <string name="pay_msg_no_account">暂无账号</string>
     <string name="tip_insufficient_balance">账号余额不足</string>
@@ -552,6 +554,10 @@
     <string name="title_choose_payment_method">选择支付方式</string>
     <string name="desc_quick_payment">实时到账、无手续费</string>
     <string name="desc_ordinary_payment">完全的去中心化转账</string>
+    <string name="title_pay_account_transfer">快捷账号转账</string>
+    <string name="prompt_transfer_amount">转账金额</string>
+    <string name="prompt_transfer_receiver_account">对方账号</string>
+    <string name="label_choose_transfer_coin">选择币种</string>
 
     <!-- Bill detail-->
     <string name="menu_transaction_detail">账单详情</string>

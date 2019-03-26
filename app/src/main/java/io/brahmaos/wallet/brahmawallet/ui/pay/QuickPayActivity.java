@@ -99,6 +99,7 @@ public class QuickPayActivity extends BaseActivity {
 
     public static int TRADE_TYPE_RECHARGE = 1;
     public static int TRADE_TYPE_PAYMENT = 2;
+    public static int TRADE_TYPE_TRANSFER = 3;
     public static int PAYMENT_QUICK = 1;
     public static int PAYMENT_ORDINARY = 2;
 
@@ -175,6 +176,7 @@ public class QuickPayActivity extends BaseActivity {
     private int coinCode;
     private String orderId;
     private String intentParamSendValue;
+    private String receiptAccount;
     private BigInteger transferValue;
     private String tradeRemark;
 
@@ -240,6 +242,13 @@ public class QuickPayActivity extends BaseActivity {
             return;
         }
         tradeType = Integer.valueOf(tradeTypeStr);
+
+        receiptAccount = uri.getQueryParameter(PARAM_RECEIVER);
+        if (TRADE_TYPE_TRANSFER == tradeType && CommonUtil.isNull(receiptAccount)) {
+            showLongToast(R.string.tip_lack_param);
+            finish();
+            return;
+        }
 
         intentParamSendValue = uri.getQueryParameter(PARAM_AMOUNT);
         if (CommonUtil.isNull(intentParamSendValue)) {
@@ -472,6 +481,12 @@ public class QuickPayActivity extends BaseActivity {
                 mIvChoosePaymentMethodArrow.setVisibility(View.GONE);
                 paymentMethod = PAYMENT_ORDINARY;
             }
+        } else if (TRADE_TYPE_TRANSFER == tradeType) {
+            mTvCommodityInformation.setText(getString(R.string.title_pay_account_transfer));
+            mTvMerchantName.setVisibility(View.GONE);
+            paymentMethod = PAYMENT_QUICK;
+            mLayoutChoosePaymentMethod.setVisibility(View.GONE);
+            mLayoutAccount.setVisibility(View.GONE);
         }
 
         if (coinCode == BrahmaConst.PAY_COIN_CODE_BTC) {
@@ -1016,6 +1031,10 @@ public class QuickPayActivity extends BaseActivity {
             }
         }
 
+        if (TRADE_TYPE_TRANSFER == tradeType) {
+            showQuickPayPassword();
+            return;
+        }
         if (receiptAddress == null || receiptAddress.length() < 1) {
             showTipDialog(R.string.payment_invalid_create_order);
             createPreOrderId();
@@ -1082,7 +1101,11 @@ public class QuickPayActivity extends BaseActivity {
             mLayoutTransferStatus.setVisibility(View.VISIBLE);
             customStatusView.loadLoading();
             tvTransferStatus.setText(R.string.progress_transfer);
-            quickPayment(mLayoutPassword.getPassString());
+            if (TRADE_TYPE_TRANSFER == tradeType) {
+                quickAccountTransfer(mLayoutPassword.getPassString());
+            } else {
+                quickPayment(mLayoutPassword.getPassString());
+            }
         });
     }
 
@@ -1303,6 +1326,64 @@ public class QuickPayActivity extends BaseActivity {
                 });
     }
 
+    private void quickAccountTransfer(String password) {
+        Map<String, Object> params = new HashMap<>();
+        params.put(PARAM_COIN_CODE, coinCode);
+        params.put(PARAM_RECEIVER, receiptAccount);
+        params.put(PARAM_AMOUNT, intentParamSendValue);
+        params.put(PARAM_PAY_PASSWORD, DataCryptoUtils.shaEncrypt(password));
+        PayService.getInstance().quickAccountTransferByNet(params)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<ApiRespResult>() {
+                    @Override
+                    public void onNext(ApiRespResult apr) {
+                        if (apr != null && apr.getResult() == 0) {
+                            tvTransferStatus.setText(R.string.progress_transfer_success);
+                            BLog.i(tag(), "the transfer success");
+                            customStatusView.loadSuccess();
+                            new Handler().postDelayed(() -> {
+                                Intent intent = new Intent();
+                                intent.putExtra(IntentParam.PARAM_PAY_ERROR_CODE, BrahmaConst.PAY_CODE_SUCCESS);
+                                intent.putExtra(IntentParam.PARAM_PAY_BLOCKCHAIN_TYPE, BrahmaConst.ETH_ACCOUNT_TYPE);
+                                setResult(RESULT_OK, intent);
+                                finish();
+                            }, 1200);
+                        } else {
+                            customStatusView.loadFailure();
+                            tvTransferStatus.setText(R.string.progress_transfer_fail);
+                            new Handler().postDelayed(() -> {
+                                mLayoutTransferStatus.setVisibility(View.GONE);
+                                new AlertDialog.Builder(QuickPayActivity.this)
+                                        .setMessage(R.string.tip_error_transfer)
+                                        .setNegativeButton(R.string.ok, (dialog1, which1) -> dialog1.cancel())
+                                        .create().show();
+                            }, 1500);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        showShortToast("quickAccountTransfer failed: " + e.toString());
+                        customStatusView.loadFailure();
+                        tvTransferStatus.setText(R.string.progress_transfer_fail);
+                        new Handler().postDelayed(() -> {
+                            mLayoutTransferStatus.setVisibility(View.GONE);
+                            new AlertDialog.Builder(QuickPayActivity.this)
+                                    .setMessage(R.string.tip_error_transfer)
+                                    .setNegativeButton(R.string.ok, (dialog1, which1) -> dialog1.cancel())
+                                    .create().show();
+                        }, 1500);
+
+                        BLog.i(tag(), "the transfer failed");
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                    }
+                });
+    }
+
     // Quick account quick pay
     private void quickPayment(String password) {
         Map<String, Object> params = new HashMap<>();
@@ -1324,7 +1405,6 @@ public class QuickPayActivity extends BaseActivity {
                             new Handler().postDelayed(() -> {
                                 Intent intent = new Intent();
                                 intent.putExtra(IntentParam.PARAM_PAY_ERROR_CODE, BrahmaConst.PAY_CODE_SUCCESS);
-                                intent.putExtra(IntentParam.PARAM_PAY_BLOCKCHAIN_TYPE, BrahmaConst.ETH_ACCOUNT_TYPE);
                                 setResult(RESULT_OK, intent);
                                 finish();
                             }, 1200);

@@ -80,4 +80,10 @@ public interface PayApi {
      */
     @POST("/pay/create/withdraw")
     Observable<ApiRespResult> quickAccountWithdraw(@Body Map<String, Object> params);
+
+    /**
+     * Account transfer
+     */
+    @POST("/pay/create/transfer")
+    Observable<ApiRespResult> quickAccountTransfer(@Body Map<String, Object> params);
 }

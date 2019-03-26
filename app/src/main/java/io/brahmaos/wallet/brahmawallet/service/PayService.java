@@ -805,4 +805,8 @@ public class PayService extends BaseService{
         return Networks.getInstance().getPayApi().quickAccountWithdraw(params);
     }
 
+    public Observable<ApiRespResult> quickAccountTransferByNet(Map<String, Object> params) {
+        return Networks.getInstance().getPayApi().quickAccountTransfer(params);
+    }
+
 }
