@@ -649,6 +649,7 @@
     <string name="prompt_transfer_amount">Transfer amount</string>
     <string name="prompt_transfer_receiver_account">Receiver account</string>
     <string name="label_choose_transfer_coin">Choose Coin</string>
+    <string name="title_pay_account_receipt">Quick account receipt</string>
 
     <!-- Bill detail-->
     <string name="menu_transaction_detail">Bill details</string>

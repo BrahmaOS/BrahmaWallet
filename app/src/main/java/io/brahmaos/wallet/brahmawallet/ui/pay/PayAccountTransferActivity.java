@@ -35,6 +35,7 @@ import io.brahmaos.wallet.brahmawallet.ui.common.barcode.CaptureActivity;
 import io.brahmaos.wallet.brahmawallet.ui.common.barcode.Intents;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.BitcoinPaymentURI;
+import io.brahmaos.wallet.util.BrahmaOSURI;
 import io.brahmaos.wallet.util.ImageUtil;
 
 public class PayAccountTransferActivity extends BaseActivity {
@@ -66,6 +67,7 @@ public class PayAccountTransferActivity extends BaseActivity {
     @BindView(R.id.btn_transfer_confirm)
     Button btnTransferConfirm;
 
+    private String mAvaliableAmount = "";
     private int chosenCoinCode = BrahmaConst.PAY_COIN_CODE_BRM;
     private List<AccountBalance> accountBalances = new ArrayList<>();
 
@@ -77,8 +79,32 @@ public class PayAccountTransferActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pay_transfer);showNavBackBtn();
+        setContentView(R.layout.activity_pay_transfer);
+        showNavBackBtn();
         ButterKnife.bind(this);
+        if (null != getIntent()) {
+            String receiver = getIntent().getStringExtra(IntentParam.PARAM_PAY_TRANSFER_RECEIPT);
+            if (receiver != null) {
+                mEtReceiverAccount.setText(receiver);
+            }
+            String amount = getIntent().getStringExtra(IntentParam.PARAM_PAY_TRANSFER_AMOUNT);
+            if (amount != null) {
+                mEtTransferAmount.setText(amount);
+            }
+            String coinName = getIntent().getStringExtra(IntentParam.PARAM_PAY_TRANSFER_COIN);
+            if (coinName != null) {
+                if (coinName.equalsIgnoreCase(BrahmaConst.COIN_SYMBOL_BRM)) {
+                    initCoinType(BrahmaConst.PAY_COIN_CODE_BRM);
+                } else if (coinName.equalsIgnoreCase(BrahmaConst.COIN_SYMBOL_BTC)) {
+                    initCoinType(BrahmaConst.PAY_COIN_CODE_BTC);
+                } else if (coinName.equalsIgnoreCase(BrahmaConst.COIN_SYMBOL_ETH)) {
+                    initCoinType(BrahmaConst.PAY_COIN_CODE_ETH);
+                }
+            }
+        }
+        mTvAmountAll.setOnClickListener(v -> {
+            mEtTransferAmount.setText(mAvaliableAmount);
+        });
         initView();
         initData();
         initCoinType(chosenCoinCode);
@@ -160,6 +186,7 @@ public class PayAccountTransferActivity extends BaseActivity {
                 break;
             }
         }
+        mAvaliableAmount = accountBalance.getBalance();
         if (coinCode == BrahmaConst.PAY_COIN_CODE_BRM) {
             ImageManager.showTokenIcon(this, ivCoinIcon, R.drawable.icon_brm);
             tvCoinName.setText(String.format("%s (%s)", BrahmaConst.COIN_SYMBOL_BRM, BrahmaConst.COIN_BRM));
@@ -200,16 +227,7 @@ public class PayAccountTransferActivity extends BaseActivity {
                 if (data != null) {
                     String qrCode = data.getStringExtra(Intents.Scan.RESULT);
                     if (qrCode != null && qrCode.length() > 0) {
-                        if (chosenCoinCode == BrahmaConst.PAY_COIN_CODE_BTC) {
-                            BitcoinPaymentURI bitcoinUri = BitcoinPaymentURI.parse(qrCode);
-                            if (bitcoinUri == null) {
-                                showLongToast(R.string.invalid_btc_address);
-                                return;
-                            }
-                            mEtReceiverAccount.setText(bitcoinUri.getAddress());
-                        } else {
-                            mEtReceiverAccount.setText(qrCode);
-                        }
+                        mEtReceiverAccount.setText(qrCode);
                     } else {
                         showLongToast(R.string.tip_scan_code_failed);
                     }
@@ -217,11 +235,8 @@ public class PayAccountTransferActivity extends BaseActivity {
             }
         } else if (ReqCode.QUICK_PAYMENT_TRANSFER == requestCode) {
             if (resultCode == RESULT_OK) {
-                String hash = data.getStringExtra(IntentParam.PARAM_PAY_HASH);
-                if (hash != null && hash.length() > 0) {
-                    showLongToast(R.string.tip_recharge_success);
-                    finish();
-                }
+                showLongToast(R.string.tip_recharge_success);
+                finish();
             }
         }
 

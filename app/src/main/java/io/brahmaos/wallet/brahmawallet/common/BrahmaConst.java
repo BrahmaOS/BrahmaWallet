@@ -112,9 +112,9 @@ public class BrahmaConst {
 
     // coin code base brmpay
     public static final int PAY_COIN_CODE_BTC = 1;
-    public static final int PAY_COIN_CODE_ETH = 2;
-    public static final int PAY_COIN_CODE_USDT = 8;
-    public static final int PAY_COIN_CODE_BRM = 1200;
+    public static final int PAY_COIN_CODE_ETH = 1027;
+    public static final int PAY_COIN_CODE_USDT = 825;
+    public static final int PAY_COIN_CODE_BRM = 2657;
 
     // withdraw config
     public static final String WITHDRAW_BTC_MIN = "withdraw.btc.min";

@@ -39,4 +39,8 @@ public class IntentParam {
     public static final String PARAM_PAY_HASH = "hash";
     public static final String PARAM_ACCOUNT_PRIVATE_KEY = "account.private.key";
     public static final String PARAM_ACCOUNT_PUBLIC_KEY = "account.public.key";
+
+    public static final String PARAM_PAY_TRANSFER_RECEIPT = "receipt";
+    public static final String PARAM_PAY_TRANSFER_COIN = "coin_name";
+    public static final String PARAM_PAY_TRANSFER_AMOUNT = "amount";
 }

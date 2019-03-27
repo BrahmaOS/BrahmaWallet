@@ -3,10 +3,12 @@ package io.brahmaos.wallet.util;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -129,6 +131,38 @@ public class BrahmaOSURI {
         }
 
         return uriBuilder.build();
+    }
+    public String getURI() {
+        String queryParameters = null;
+        try {
+            for (Map.Entry<String, BrahmaOSURIParam> entry : parameters.entrySet()) {
+                if (queryParameters == null) {
+                    if (entry.getValue().isRequired()) {
+                        queryParameters = String.format("req-%s=%s", URLEncoder.encode(entry.getKey(), "UTF-8").replace("+", "%20"), URLEncoder.encode(entry.getValue().getValue(), "UTF-8").replace("+", "%20"));
+
+                        continue;
+                    }
+
+                    queryParameters = String.format("%s=%s", URLEncoder.encode(entry.getKey(), "UTF-8").replace("+", "%20"), URLEncoder.encode(entry.getValue().getValue(), "UTF-8").replace("+", "%20"));
+
+                    continue;
+                }
+
+                if (entry.getValue().isRequired()) {
+                    queryParameters = String.format("%s&req-%s=%s", queryParameters, URLEncoder.encode(entry.getKey(), "UTF-8").replace("+", "%20"), URLEncoder.encode(entry.getValue().getValue(), "UTF-8").replace("+", "%20"));
+
+                    continue;
+                }
+
+                queryParameters = String.format("%s&%s=%s", queryParameters, URLEncoder.encode(entry.getKey(), "UTF-8").replace("+", "%20"), URLEncoder.encode(entry.getValue().getValue(), "UTF-8").replace("+", "%20"));
+            }
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+
+            return null;
+        }
+        return String.format("%s%s%s", SCHEME, getAddress(), queryParameters == null ? "" : String.format("?%s", queryParameters));
     }
 
     public static class Builder {

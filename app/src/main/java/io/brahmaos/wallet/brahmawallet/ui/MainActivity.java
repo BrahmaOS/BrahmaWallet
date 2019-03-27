@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -33,7 +34,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
+import io.brahmaos.wallet.brahmawallet.common.ReqCode;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.model.VersionInfo;
 import io.brahmaos.wallet.brahmawallet.service.PayService;
@@ -42,11 +45,14 @@ import io.brahmaos.wallet.brahmawallet.ui.account.AccountsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.account.CreateAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseFragment;
+import io.brahmaos.wallet.brahmawallet.ui.common.barcode.CaptureActivity;
+import io.brahmaos.wallet.brahmawallet.ui.common.barcode.Intents;
 import io.brahmaos.wallet.brahmawallet.ui.contact.ContactsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.home.MeFragment;
 import io.brahmaos.wallet.brahmawallet.ui.home.QuickPayFragment;
 import io.brahmaos.wallet.brahmawallet.ui.home.WalletFragment;
 import io.brahmaos.wallet.brahmawallet.ui.pay.PayAccountInfoActivity;
+import io.brahmaos.wallet.brahmawallet.ui.pay.PayAccountTransferActivity;
 import io.brahmaos.wallet.brahmawallet.ui.pay.PayTestActivity;
 import io.brahmaos.wallet.brahmawallet.ui.pay.PayTransactionsListActivity;
 import io.brahmaos.wallet.brahmawallet.ui.setting.AboutActivity;
@@ -55,6 +61,7 @@ import io.brahmaos.wallet.brahmawallet.ui.setting.SettingsActivity;
 import io.brahmaos.wallet.brahmawallet.view.HomeViewPager;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
+import io.brahmaos.wallet.util.BrahmaOSURI;
 import io.brahmaos.wallet.util.PermissionUtil;
 
 public class MainActivity extends BaseActivity
@@ -198,6 +205,8 @@ public class MainActivity extends BaseActivity
             getMenuInflater().inflate(R.menu.menu_accounts, menu);
         } else if (currentFragmentPosition == ME_FRAGMENT_POSITION) {
             getMenuInflater().inflate(R.menu.menu_settings, menu);
+        } else if (currentFragmentPosition == PAY_FRAGMENT_POSITION) {
+            getMenuInflater().inflate(R.menu.menu_scan, menu);
         }
         return true;
     }
@@ -210,8 +219,20 @@ public class MainActivity extends BaseActivity
         } else if (item.getItemId() == R.id.menu_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
+        } else if (item.getItemId() == R.id.menu_scan) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestCameraScanPermission();
+            } else {
+                scanAddressCode();
+            }
         }
         return super.onOptionsItemSelected(item);
+    }
+    private void scanAddressCode() {
+        Intent intent = new Intent(this, CaptureActivity.class);
+        intent.putExtra(Intents.Scan.PROMPT_MESSAGE, "");
+        startActivityForResult(intent, ReqCode.SCAN_QR_CODE);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -343,6 +364,59 @@ public class MainActivity extends BaseActivity
                 handleExternalStoragePermission();
             } else {
                 PermissionUtil.openSettingActivity(this, getString(R.string.tip_external_storage_permission));
+            }
+        } else if (requestCode == ReqCode.SCAN_QR_CODE) {
+            if (resultCode == RESULT_OK) {
+                if (data != null) {
+                    String qrCode = data.getStringExtra(Intents.Scan.RESULT);
+                    if (qrCode != null && qrCode.length() > 0) {
+                        BrahmaOSURI brahmaOsUri = BrahmaOSURI.parse(qrCode);
+                        if (brahmaOsUri == null) {
+                            showLongToast(R.string.tip_invalid_receiver);
+                            return;
+                        }
+//                        Intent transferActivity = new Intent(this, PayAccountTransferActivity.class);
+//                        transferActivity.putExtra(IntentParam.PARAM_PAY_TRANSFER_RECEIPT, brahmaOsUri.getAddress());
+//                        if (brahmaOsUri.getAmount() != null) {
+//                            transferActivity.putExtra(IntentParam.PARAM_PAY_TRANSFER_AMOUNT, String.valueOf(brahmaOsUri.getAmount()));
+//                        }
+//                        transferActivity.putExtra(IntentParam.PARAM_PAY_TRANSFER_COIN, brahmaOsUri.getCoin());
+//                        startActivity(transferActivity);
+                        if (null == brahmaOsUri.getAmount() || brahmaOsUri.getAmount() <= 0) {
+                            showShortToast(getString(R.string.tip_invalid_amount));
+                            return;
+                        }
+                        String sendValueStr = String.valueOf(brahmaOsUri.getAmount());
+                        if (sendValueStr.length() < 1) {
+                            showLongToast(R.string.tip_invalid_amount);
+                            return;
+                        }
+                        if (null == brahmaOsUri.getAddress() || !brahmaOsUri.getAddress().startsWith("0x")) {
+                            showLongToast(R.string.tip_invalid_receiver);
+                            return;
+                        }
+                        int coinCode = BrahmaConst.PAY_COIN_CODE_BRM;
+                        if (null != brahmaOsUri.getCoin()) {
+                            String coinName = brahmaOsUri.getCoin();
+                            if (coinName.equalsIgnoreCase(BrahmaConst.COIN_SYMBOL_BRM)) {
+                                coinCode = BrahmaConst.PAY_COIN_CODE_BRM;
+                            } else if (coinName.equalsIgnoreCase(BrahmaConst.COIN_SYMBOL_BTC)) {
+                                coinCode = BrahmaConst.PAY_COIN_CODE_BTC;
+                            } else if (coinName.equalsIgnoreCase(BrahmaConst.COIN_SYMBOL_ETH)) {
+                                coinCode = BrahmaConst.PAY_COIN_CODE_ETH;
+                            }
+                        }
+                        Uri uri = Uri.parse(String.format("brahmaos://wallet/pay?trade_type=3&amount=%s&coin_code=%d&sender=%s&receiver=%s",
+                                sendValueStr, coinCode, BrahmaConfig.getInstance().getPayAccount(), brahmaOsUri.getAddress()));
+                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                        startActivity(intent);
+
+                    } else {
+                        showLongToast(R.string.tip_scan_code_failed);
+                    }
+                } else {
+                    showLongToast(R.string.tip_scan_code_failed);
+                }
             }
         }
 

@@ -558,6 +558,7 @@
     <string name="prompt_transfer_amount">转账金额</string>
     <string name="prompt_transfer_receiver_account">对方账号</string>
     <string name="label_choose_transfer_coin">选择币种</string>
+    <string name="title_pay_account_receipt">快捷账号收款</string>
 
     <!-- Bill detail-->
     <string name="menu_transaction_detail">账单详情</string>
