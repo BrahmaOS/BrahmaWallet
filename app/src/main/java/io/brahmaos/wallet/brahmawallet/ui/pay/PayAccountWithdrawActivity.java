@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -68,7 +69,13 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class PayAccountWithdrawActivity extends BaseActivity {
+
     // UI references.
+    @BindView(R.id.content_layout)
+    LinearLayout layoutContent;
+    @BindView(R.id.loading_pbar)
+    ProgressBar progressBarLoading;
+
     @BindView(R.id.iv_pay_account_avatar)
     ImageView ivPayAccountAvatar;
     @BindView(R.id.tv_account_name)
@@ -129,6 +136,7 @@ public class PayAccountWithdrawActivity extends BaseActivity {
     }
 
     private void initView() {
+
         layoutChooseToken.setOnClickListener(v -> {
             android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(this);
             View dialogView = getLayoutInflater().inflate(R.layout.dialog_recharge_coins, null);
@@ -183,6 +191,10 @@ public class PayAccountWithdrawActivity extends BaseActivity {
                     .into(ivPayAccountAvatar);
         }
         accountBalances = PayService.getInstance().getAccountBalances();
+
+        layoutContent.setVisibility(View.GONE);
+        progressBarLoading.setVisibility(View.VISIBLE);
+
         PayService.getInstance().getWithdrawConfig()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -207,7 +219,7 @@ public class PayAccountWithdrawActivity extends BaseActivity {
     }
 
     private void initWithdrawConfig() {
-        if (withdrawConfigs != null) {
+        if (withdrawConfigs != null && withdrawConfigs.size() > 0) {
             if (chosenCoinCode == BrahmaConst.PAY_COIN_CODE_BTC) {
                 for (WithdrawConfig config : withdrawConfigs) {
                     if (config.getName().equals(BrahmaConst.WITHDRAW_BTC_MIN)) {
@@ -239,6 +251,9 @@ public class PayAccountWithdrawActivity extends BaseActivity {
                 }
             }
             mTvWithdrawFee.setText(withdrawFee);
+
+            layoutContent.setVisibility(View.VISIBLE);
+            progressBarLoading.setVisibility(View.GONE);
         }
     }
 

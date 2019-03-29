@@ -34,8 +34,6 @@ import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.ui.common.barcode.CaptureActivity;
 import io.brahmaos.wallet.brahmawallet.ui.common.barcode.Intents;
 import io.brahmaos.wallet.util.BLog;
-import io.brahmaos.wallet.util.BitcoinPaymentURI;
-import io.brahmaos.wallet.util.BrahmaOSURI;
 import io.brahmaos.wallet.util.ImageUtil;
 
 public class PayAccountTransferActivity extends BaseActivity {
