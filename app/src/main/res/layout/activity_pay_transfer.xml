@@ -108,13 +108,13 @@
                 android:layout_marginTop="@dimen/space_normal"
                 android:paddingTop="@dimen/space_normal"
                 android:paddingBottom="@dimen/space_larger"
-                android:paddingStart="@dimen/space_normal"
-                android:paddingEnd="@dimen/space_normal"
                 android:background="@color/white"
                 android:orientation="vertical">
                 <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/space_small"
+                    android:paddingEnd="@dimen/space_small">
                     <android.support.design.widget.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -144,6 +144,8 @@
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/space_small"
+                    android:paddingEnd="@dimen/space_small"
                     android:layout_marginTop="@dimen/space_smaller">
                     <android.support.design.widget.TextInputLayout
                         android:layout_width="match_parent"
@@ -174,8 +176,10 @@
                 </FrameLayout>
                 <TextView
                     android:id="@+id/tv_available_amount"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/space_normal"
+                    android:paddingEnd="@dimen/space_normal"
                     android:textSize="@dimen/font_size_body"
                     android:textColor="@color/color_hint_text"/>
             </LinearLayout>

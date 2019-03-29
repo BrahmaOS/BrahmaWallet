@@ -117,13 +117,13 @@
                     android:layout_marginTop="@dimen/space_normal"
                     android:paddingTop="@dimen/space_normal"
                     android:paddingBottom="@dimen/space_larger"
-                    android:paddingStart="@dimen/space_normal"
-                    android:paddingEnd="@dimen/space_normal"
                     android:background="@color/white"
                     android:orientation="vertical">
                     <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:paddingStart="@dimen/space_small"
+                        android:paddingEnd="@dimen/space_small">
                         <android.support.design.widget.TextInputLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -153,7 +153,9 @@
                     <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/space_smaller">
+                        android:layout_marginTop="@dimen/space_smaller"
+                        android:paddingStart="@dimen/space_small"
+                        android:paddingEnd="@dimen/space_small">
                         <android.support.design.widget.TextInputLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -185,7 +187,8 @@
                         android:id="@+id/tv_available_amount"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="2dp"
+                        android:paddingStart="@dimen/space_normal"
+                        android:paddingEnd="@dimen/space_normal"
                         android:singleLine="true"
                         android:textSize="@dimen/font_size_body"
                         android:textColor="@color/color_hint_text"/>
@@ -193,7 +196,9 @@
                     <RelativeLayout
                         android:layout_marginTop="@dimen/space_large"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:paddingStart="@dimen/space_normal"
+                        android:paddingEnd="@dimen/space_normal">
                         <TextView
                             android:id="@+id/tv_title_withdraw_fee"
                             android:layout_width="wrap_content"
@@ -203,7 +208,7 @@
                             android:text="@string/prompt_fee"/>
                         <TextView
                             android:id="@+id/tv_withdraw_fee"
-                            android:layout_marginTop="@dimen/space_small"
+                            android:layout_marginTop="@dimen/space_smaller"
                             android:layout_below="@id/tv_title_withdraw_fee"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -220,7 +225,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_below="@id/iv_withdraw_fee_help"
-                            android:layout_marginTop="@dimen/space_small"
+                            android:layout_marginTop="@dimen/space_smaller"
                             android:layout_alignParentEnd="true"
                             android:textSize="@dimen/font_size_subheading"
                             android:textColor="@color/color_primary_text"
