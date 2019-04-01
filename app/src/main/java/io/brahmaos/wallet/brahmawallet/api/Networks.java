@@ -198,22 +198,24 @@ public class Networks {
         OkHttpClient.Builder okHttpClient = new OkHttpClient.Builder().protocols(Collections.singletonList(Protocol.HTTP_1_1));
 
         // Add header configuration interceptors for all requests
-        Interceptor headerIntercept = new Interceptor() {
-            @Override
-            public Response intercept(Chain chain) throws IOException {
-                Request.Builder builder = chain.request().newBuilder();
-                builder.addHeader("X-Client-Platform", "Android");
-                builder.addHeader("Content-Type", "application/json; charset=utf-8");
-                builder.addHeader("X-Client-Version", BuildConfig.VERSION_NAME);
-                builder.addHeader("X-Client-Build", String.valueOf(BuildConfig.VERSION_CODE));
-                if (BrahmaConfig.getInstance().getPayRequestToken() != null &&
-                        BrahmaConfig.getInstance().getPayRequestTokenType() != null) {
-                    builder.addHeader("Authorization", String.format("%s %s",
-                            BrahmaConfig.getInstance().getPayRequestTokenType(),
-                            BrahmaConfig.getInstance().getPayRequestToken()));
-                }
-                Request request = builder.build();
+        Interceptor headerIntercept = chain -> {
+            Request.Builder builder = chain.request().newBuilder();
+            builder.addHeader("X-Client-Platform", "Android");
+            builder.addHeader("Content-Type", "application/json; charset=utf-8");
+            builder.addHeader("X-Client-Version", BuildConfig.VERSION_NAME);
+            builder.addHeader("X-Client-Build", String.valueOf(BuildConfig.VERSION_CODE));
+            if (BrahmaConfig.getInstance().getPayRequestToken() != null &&
+                    BrahmaConfig.getInstance().getPayRequestTokenType() != null) {
+                builder.addHeader("Authorization", String.format("%s %s",
+                        BrahmaConfig.getInstance().getPayRequestTokenType(),
+                        BrahmaConfig.getInstance().getPayRequestToken()));
+            }
+            Request request = builder.build();
+            try {
                 return chain.proceed(request);
+            } catch (Exception e) {
+                BLog.w(tag(), "header intercept exception, " + e.getMessage());
+                return null;
             }
         };
         okHttpClient.addNetworkInterceptor(headerIntercept);
