@@ -71,6 +71,9 @@ public class QuickPayFragment extends BaseFragment {
     private TextView mTvBtcBalance;
     private TextView mTvQuickAccountHelp;
 
+    private LinearLayout layoutBills;
+    private LinearLayout layoutNoTx;
+
     private List<ImageView> lstGuideIndicator = new ArrayList<>();
     private int pageNum = 3;
     private List<AccountBalance> accountBalances = new ArrayList<>();
@@ -132,6 +135,11 @@ public class QuickPayFragment extends BaseFragment {
             Intent intent = new Intent(getActivity(), PayAccountTransferActivity.class);
             startActivity(intent);
         });
+
+        layoutBills = parentView.findViewById(R.id.recent_bills_layout);
+        layoutNoTx = parentView.findViewById(R.id.no_tx_layout);
+        layoutNoTx.setVisibility(View.VISIBLE);
+        layoutBills.setVisibility(View.GONE);
 
         DisplayMetrics display = this.getResources().getDisplayMetrics();
 
@@ -229,13 +237,17 @@ public class QuickPayFragment extends BaseFragment {
     }
 
     private void notifyDataChange() {
+
+        boolean hasTx = false;
+
         if (mTransDataList != null) {
             for (int i = 0; i < mTransDataList.size() && i < mTransLayout.size(); i++) {
                 View view = mTransLayout.get(i);
                 view.setVisibility(View.VISIBLE);
                 PayTransaction data = mTransDataList.get(i);
                 setData(new ItemViewHolder(view), data);
-                if (null != view && null != data && getActivity() != null) {
+                if (null != data && getActivity() != null) {
+                    hasTx = true;
                     view.setOnClickListener(v -> {
                         Intent detailIntent = new Intent(getActivity(),
                                 PayTransactionDetailActivity.class);
@@ -244,6 +256,14 @@ public class QuickPayFragment extends BaseFragment {
                     });
                 }
             }
+        }
+
+        if (!hasTx) {
+            layoutNoTx.setVisibility(View.VISIBLE);
+            layoutBills.setVisibility(View.GONE);
+        } else {
+            layoutNoTx.setVisibility(View.GONE);
+            layoutBills.setVisibility(View.VISIBLE);
         }
     }
 

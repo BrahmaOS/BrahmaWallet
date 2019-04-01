@@ -234,7 +234,7 @@
                                 android:layout_marginStart="@dimen/space_smaller"
                                 android:layout_toEndOf="@id/iv_eth_icon"
                                 android:text="ETH (Ethereum)"
-                                android:textColor="@color/color_secondary_text"
+                                android:textColor="@color/color_primary_text"
                                 android:textSize="@dimen/font_size_subtitle" />
 
                             <TextView
@@ -276,7 +276,7 @@
                                 android:layout_marginStart="@dimen/space_smaller"
                                 android:layout_toEndOf="@id/iv_brm_icon"
                                 android:text="BRM (BrahmaOS)"
-                                android:textColor="@color/color_secondary_text"
+                                android:textColor="@color/color_primary_text"
                                 android:textSize="@dimen/font_size_subtitle" />
 
                             <TextView
@@ -318,7 +318,7 @@
                                 android:layout_marginStart="@dimen/space_smaller"
                                 android:layout_toEndOf="@id/iv_btc_icon"
                                 android:text="BTC (Bitcoin)"
-                                android:textColor="@color/color_secondary_text"
+                                android:textColor="@color/color_primary_text"
                                 android:textSize="@dimen/font_size_subtitle" />
 
                             <TextView
@@ -364,45 +364,70 @@
                                 android:textSize="@dimen/font_size_subheading" />
                         </RelativeLayout>
 
-                        <LinearLayout
-                            android:id="@+id/bill_one"
+                        <FrameLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:visibility="gone">
-
-                            <include layout="@layout/recycler_pay_transaction" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/bill_two"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:visibility="gone">
-
+                            android:layout_height="wrap_content">
                             <LinearLayout
+                                android:id="@+id/no_tx_layout"
                                 android:layout_width="match_parent"
-                                android:layout_height="1px"
-                                android:background="@color/viewfinder_btn_bg" />
-
-                            <include layout="@layout/recycler_pay_transaction" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/bill_three"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:visibility="gone">
-
+                                android:layout_height="wrap_content"
+                                android:padding="8dp"
+                                android:orientation="vertical">
+                                <ImageView
+                                    android:layout_width="48dp"
+                                    android:layout_height="48dp"
+                                    android:layout_gravity="center"
+                                    android:src="@drawable/icon_no_tx"/>
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/space_smaller"
+                                    android:text="@string/no_transactions"
+                                    android:textAlignment="center"
+                                    android:textColor="@color/color_caption"
+                                    android:textSize="@dimen/font_size_body"/>
+                            </LinearLayout>
                             <LinearLayout
+                                android:id="@+id/recent_bills_layout"
                                 android:layout_width="match_parent"
-                                android:layout_height="1px"
-                                android:background="@color/viewfinder_btn_bg" />
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+                                <LinearLayout
+                                    android:id="@+id/bill_one"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:visibility="gone">
+                                    <include layout="@layout/recycler_pay_transaction" />
+                                </LinearLayout>
 
-                            <include layout="@layout/recycler_pay_transaction" />
-                        </LinearLayout>
+                                <LinearLayout
+                                    android:id="@+id/bill_two"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:visibility="gone">
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="1px"
+                                        android:background="@color/viewfinder_btn_bg" />
+                                    <include layout="@layout/recycler_pay_transaction" />
+                                </LinearLayout>
+                                <LinearLayout
+                                    android:id="@+id/bill_three"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:visibility="gone">
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="1px"
+                                        android:background="@color/viewfinder_btn_bg" />
+                                    <include layout="@layout/recycler_pay_transaction" />
+                                </LinearLayout>
+                            </LinearLayout>
+                        </FrameLayout>
+
                     </LinearLayout>
                 </LinearLayout>
             </android.support.v4.widget.NestedScrollView>
