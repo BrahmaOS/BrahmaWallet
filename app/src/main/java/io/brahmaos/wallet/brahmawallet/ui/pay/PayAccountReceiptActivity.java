@@ -13,7 +13,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 
 import java.util.Locale;
 
@@ -39,9 +38,13 @@ public class PayAccountReceiptActivity extends BaseActivity {
     @BindView(R.id.tv_input_amount)
     TextView tvPaymentAmount;
 
+    @BindView(R.id.recv_desc_tv)
+    TextView tvRecvDesc;
+
     private String mQuickAccountID;
-    private String mChosenCoin = "brm";
+    private String mChosenCoin = BrahmaConst.COIN_SYMBOL_BRM;
     private Double mAmount;
+    private String currentAmount = "";
 
     @Override
     protected String tag() {
@@ -70,30 +73,27 @@ public class PayAccountReceiptActivity extends BaseActivity {
             RelativeLayout layoutCoinBrm = dialogView.findViewById(R.id.layout_coin_brm);
             layoutCoinBrm.setOnClickListener(v1 -> {
                 mChosenCoin = BrahmaConst.COIN_SYMBOL_BRM;
-                tvChosenToken.setText(BrahmaConst.COIN_SYMBOL_BRM);
                 alertDialog.cancel();
-                showQrCode();
+                updateRecvDesc();
             });
             RelativeLayout layoutCoinEth = dialogView.findViewById(R.id.layout_coin_eth);
             layoutCoinEth.setOnClickListener(v1 -> {
                 mChosenCoin = BrahmaConst.COIN_SYMBOL_ETH;
-                tvChosenToken.setText(BrahmaConst.COIN_SYMBOL_ETH);
                 alertDialog.cancel();
-                showQrCode();
+                updateRecvDesc();
             });
             RelativeLayout layoutCoinBtc = dialogView.findViewById(R.id.layout_coin_btc);
             layoutCoinBtc.setOnClickListener(v1 -> {
                 mChosenCoin = BrahmaConst.COIN_SYMBOL_BTC;
-                tvChosenToken.setText(BrahmaConst.COIN_SYMBOL_BTC);
                 alertDialog.cancel();
-                showQrCode();
+                updateRecvDesc();
             });
         });
+
         tvPaymentAmount.setOnClickListener(v -> {
             final View dialogView = getLayoutInflater().inflate(R.layout.dialog_transfer_btc_amount, null);
             final EditText etAmount = dialogView.findViewById(R.id.et_btc_amount);
-
-            AlertDialog passwordDialog = new AlertDialog.Builder(this, R.style.Theme_AppCompat_Light_Dialog_Alert_Self)
+            AlertDialog inputAmountDialog = new AlertDialog.Builder(this, R.style.Theme_AppCompat_Light_Dialog_Alert_Self)
                     .setView(dialogView)
                     .setCancelable(true)
                     .setPositiveButton(R.string.confirm, (dialog, which) -> {
@@ -101,12 +101,8 @@ public class PayAccountReceiptActivity extends BaseActivity {
                             mAmount = Double.valueOf(etAmount.getText().toString());
                             if (mAmount > 0) {
                                 dialog.cancel();
-                                String text = String.format(Locale.getDefault(), "%s %s %s",
-                                        getString(R.string.prompt_receive),
-                                        etAmount.getText().toString(),
-                                        mChosenCoin);
-                                tvPaymentAmount.setText(text);
-                                showQrCode();
+                                currentAmount = etAmount.getText().toString();
+                                updateRecvDesc();
                             } else {
                                 showShortToast(getString(R.string.tip_invalid_amount));
                             }
@@ -115,19 +111,27 @@ public class PayAccountReceiptActivity extends BaseActivity {
                         }
                     })
                     .create();
-            passwordDialog.setOnShowListener(dialog -> {
+            inputAmountDialog.setOnShowListener(dialog -> {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                assert imm != null;
                 imm.showSoftInput(etAmount, InputMethodManager.SHOW_IMPLICIT);
             });
 
-            passwordDialog.show();
+            inputAmountDialog.show();
         });
+    }
+
+    private void updateRecvDesc() {
+        String text = String.format(Locale.getDefault(), "%s %s %s",
+                getString(R.string.prompt_receive), currentAmount, mChosenCoin);
+        tvRecvDesc.setText(text);
+        showQrCode();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        showQrCode();
+        updateRecvDesc();
     }
 
     private void showQrCode() {
