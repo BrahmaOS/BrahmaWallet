@@ -18,8 +18,10 @@ import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
+import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.util.CommonUtil;
+import io.brahmaos.wallet.util.EthereumAddressUtil;
 import io.brahmaos.wallet.util.QRCodeUtil;
 
 public class AddressQrcodeActivity extends BaseActivity {
@@ -29,8 +31,15 @@ public class AddressQrcodeActivity extends BaseActivity {
     ImageView ivAddressCode;
     @BindView(R.id.tv_account_address)
     TextView tvAccountAddress;
-    @BindView(R.id.btn_copy_address)
-    Button btnCopyAddress;
+    @BindView(R.id.copy_iv)
+    ImageView ivCopyAddress;
+
+    @BindView(R.id.account_name_tv)
+    TextView tvAccountName;
+
+    @BindView(R.id.avatar_iv)
+    ImageView ivAvatar;
+
     @Override
     protected String tag() {
         return AddressQrcodeActivity.class.getName();
@@ -50,9 +59,12 @@ public class AddressQrcodeActivity extends BaseActivity {
     }
 
     private void initView() {
-        tvAccountAddress.setText(account.getAddress());
 
-        btnCopyAddress.setOnClickListener(v -> {
+        tvAccountAddress.setText(EthereumAddressUtil.simplifyDisplay(account.getAddress()));
+        tvAccountName.setText(account.getName());
+        ImageManager.showAccountAvatar(this, ivAvatar, account);
+
+        ivCopyAddress.setOnClickListener(v -> {
             ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData clipData = ClipData.newPlainText("text",account.getAddress());
             if (cm != null) {
