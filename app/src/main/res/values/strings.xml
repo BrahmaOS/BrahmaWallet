@@ -1,6 +1,4 @@
-<resources
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="MissingTranslation">
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="app_name">Wallet</string>
     <string name="cancel">Cancel</string>
     <string name="confirm">Confirm</string>
@@ -15,8 +13,8 @@
     <string name="create">Create</string>
 
     <string name="fragment_wallet">Wallet</string>
-    <string name="fragment_hash_rate">HashRate</string>
-    <string name="fragment_discover">Discover</string>
+    <string name="fragment_pay">Quick Pay</string>
+    <string name="fragment_me">Me</string>
 
     <string name="title_brahma_wallet">Wallet</string>
     <string name="brahma_wallet_desc">Your smart digital wallet</string>
@@ -38,8 +36,8 @@
     <!-- Drawer menu -->
     <string name="nav_menu_other">Other</string>
     <string name="nav_menu_setting">Settings</string>
-    <string name="nav_menu_help">FAQ</string>
-    <string name="nav_menu_info">About</string>
+    <string name="nav_menu_help">Help</string>
+    <string name="nav_menu_info">About Us</string>
 
     <!-- Strings related to dialog -->
     <string name="dialog_title_quit_import">Quit the import?</string>
@@ -49,14 +47,14 @@
     <string name="title_accounts">Accounts</string>
     <string name="title_tab_account_ethereum">Ethereum</string>
     <string name="title_tab_account_bitcoin">Bitcoin</string>
-    <string name="title_account_assets">Account Assets</string>
-    <string name="title_account_detail">Account Detail</string>
-    <string name="title_account_change_name">Change Name</string>
-    <string name="title_account_change_password">Change Password</string>
-    <string name="action_copy_address">Copy Address</string>
-    <string name="title_dialog_export_keystore">Export Keystore</string>
-    <string name="title_dialog_export_private_key">Export Private Key</string>
-    <string name="title_dialog_export_mnemonics">Export Mnemonics</string>
+    <string name="title_account_assets">Account assets</string>
+    <string name="title_account_detail">Account detail</string>
+    <string name="title_account_change_name">Change name</string>
+    <string name="title_account_change_password">Change password</string>
+    <string name="action_copy_address">Copy address</string>
+    <string name="title_dialog_export_keystore">Export keystore</string>
+    <string name="title_dialog_export_private_key">Export private key</string>
+    <string name="title_dialog_export_mnemonics">Export mnemonics</string>
 
     <string name="export_keystore_tip_1">
         Store offline. Please store keystore to a safe offline place. Never put it on internet.
@@ -101,6 +99,13 @@
     <string name="label_account_name">Name</string>
     <string name="label_account_address">Address</string>
     <string name="label_qrcode">Address Code</string>
+    <string name="label_touch_id">Touch ID Pay</string>
+    <string name="touch_id_info">Touch ID makes payment safer and quicker</string>
+    <string name="touch_id_view">View</string>
+    <string name="touch_id_notice">Touch ID Payment Notice</string>
+    <string name="touch_id_open">Agree And Open</string>
+    <string name="touch_id_close">Close</string>
+    <string name="touch_id_open_succ">Open Successfully</string>
     <string name="action_change_account_name">Change Name</string>
     <string name="action_change_password">Change Password</string>
     <string name="action_export_private_key">Export Private Key</string>
@@ -108,6 +113,12 @@
     <string name="action_delete_account">Delete Account</string>
     <string name="action_export_mnemonics">Export Mnemonics</string>
 
+    <string name="touch_id_no_hardware">The device has not detected the fingerprint hardware!</string>
+    <string name="touch_id_no_fingerprint">The device does not enter fingerprints, please go to the system -> settings to add fingerprints.</string>
+    <string name="verify_fingerprint">Verify Fingerprint</string>
+    <string name="touch_id_failed_to_get_key">Can not get key for this account!</string>
+    <string name="touch_id_auth_succ">Success open touch id auth.</string>
+    <string name="touch_id_auth_fail">Failed open touch id auth！</string>
     <string name="success_change_account_name">Change account name success!</string>
     <string name="error_change_account_name">Change account name error!!!</string>
     <string name="success_change_password">Change password success!</string>
@@ -119,6 +130,7 @@
     <string name="prompt_current_password">Current Password</string>
     <string name="prompt_new_password">New Password</string>
     <string name="tip_reset_password">Forget account password? You can reset password by using private key import.</string>
+    <string name="tip_reset_finger">Note: If you have open Touch ID Pay, you need reopen it after changing password.</string>
 
     <!-- Strings related to progress -->
     <string name="sync">sync…</string>
@@ -133,6 +145,10 @@
     <string name="prompt_account_name">Name</string>
     <string name="prompt_password">Password</string>
     <string name="prompt_repeat_password">Repeat password</string>
+    <string name="prompt_account_password">Account Password</string>
+    <string name="prompt_close_touch_id">Are you sure you want to close Touch ID Pay?</string>
+    <string name="prompt_sure">Sure</string>
+    <string name="prompt_no">No</string>
     <string name="action_agree">Agree on</string>
     <string name="service_agreement">&#160;Service Agreement&#160;</string>
     <string name="protocol_and">and</string>
@@ -210,6 +226,7 @@
     <string name="tip_error_address">Tips: The correct address is generally 42 characters start with 0x</string>
     <string name="tip_same_address">The address can not be yourself</string>
     <string name="tip_invalid_amount">Invalid Amount</string>
+    <string name="tip_invalid_receiver">Invalid Receiver</string>
     <string name="tip_invalid_gas_price">Invalid gas price. Default 20 Gwei.</string>
     <string name="tip_invalid_gas_limit">Invalid gas limit. Default 200000.</string>
     <string name="tip_insufficient_eth">Insufficient ETH</string>
@@ -225,6 +242,7 @@
     <string name="tip_camera_permission">You have not authorized the camera yet. Please go to the settings page.</string>
     <string name="tip_external_storage_permission">You have not authorized the external storage yet. Please go to the settings page.</string>
     <string name="label_balance">Balance</string>
+    <string name="btn_use_password">Use Password</string>
 
     <!-- Strings related to login -->
     <string name="title_activity_account_change_password">Change Password</string>
@@ -232,8 +250,9 @@
 
     <!-- Strings related to Settings -->
     <string name="title_setting">Settings</string>
-    <string name="title_setting_lang_currency">Language &amp; Currency</string>
+    <string name="title_setting_lang_currency">General</string>
     <string name="title_setting_network">Blockchain Network</string>
+    <string name="title_setting_privacy">Privacy</string>
     <string name="title_setting_other">Other</string>
 
     <string name="pref_title_net_list">Ethereum Network</string>
@@ -283,8 +302,8 @@
     </string-array>
     <string name="pref_title_touch_id">Touch ID</string>
     <string name="pref_summary_touch_id">No operation after 5s</string>
-    <string name="pref_title_statistic">Statistic Module</string>
-    <string name="pref_summary_statistic">Collecting user behavior data and crash log</string>
+    <string name="pref_title_statistic">Usage statistics and crash reports</string>
+    <string name="pref_summary_statistic">Help to improve the use experience</string>
 
     <!-- shared preferences -->
     <string name="key_network_url">ethereum.network.url</string>
@@ -394,7 +413,7 @@
     <string name="confirm_error">Wrong mnemonic order, please check.</string>
 
     <!-- string about us -->
-    <string name="title_about_us">About</string>
+    <string name="title_about_us">About Us</string>
     <string name="about_current_version">Current Version: </string>
     <string name="desc_wallet">
         Brahma Wallet is a fully open source, decentralized mobile light wallet. It is designed to provide users with a secure, easy-to-use digital asset wallet application.
@@ -412,7 +431,7 @@
     <string name="title_service_terms">Brahma Wallet Service Agreement</string>
 
     <!-- string about contacts -->
-    <string name="title_contacts">Contacts</string>
+    <string name="title_contacts">Address Book</string>
     <string name="title_choose_contact">Choose Contact</string>
     <string name="title_add_contact">Add Contact</string>
     <string name="title_my_accounts">My Accounts</string>
@@ -445,6 +464,7 @@
     <string name="tip_fingerprint">Click to start verification</string>
     <string name="fail_fingerprint_verification">Fingerprint verification failed</string>
     <string name="error_fingerprint_verification">Fingerprint verification failed</string>
+    <string name="fingerprint_changed">Verification failed. If the fingerprint was changed, please reset Touch ID Pay.</string>
 
     <!-- instant exchange -->
     <string name="title_activity_instant_exchange">Flash Exchange</string>
@@ -555,7 +575,99 @@
     <string name="label_choose_account">Accounts</string>
 
     <!-- brahma pay -->
+    <string name="label_pay_recharge">Recharge</string>
+    <string name="label_pay_withdraw">Withdraw</string>
+    <string name="label_pay_receipt">Receipt</string>
+    <string name="label_pay_payment">Payment</string>
+    <string name="label_pay_transfer">Transfer</string>
     <string name="pay_msg_invalid_blockchain">Invalid blockchain.</string>
     <string name="pay_msg_no_account">No account</string>
     <string name="tip_insufficient_balance">Insufficient balance.</string>
+    <string name="quick_pay_account_help">What\'s quick account?</string>
+    <string name="label_choose_eth_account">Choose from existing ETH accounts</string>
+    <string name="title_pay_set_password">Set Payment Password</string>
+    <string name="label_set_payment_password">Set a 6-digit payment password</string>
+    <string name="label_repeat_password">Please enter your password again</string>
+    <string name="tip_repeat_password_error">Inconsistent password entered twice</string>
+    <string name="menu_account_info">Quick account info</string>
+    <string name="menu_transactions">Bills</string>
+    <string name="menu_address_book">Address book</string>
+    <string name="menu_pay_test">模拟用户支付场景</string>
+    <string name="info_account_id">Account ID</string>
+    <string name="title_pay_recharge">Recharge</string>
+    <string name="label_confirm_eht_account_for_quick_pay">Please confirm if you have an account</string>
+    <string name="tip_add_pay_account_success">Open quick account success.</string>
+    <string name="tip_add_pay_account_failed">Open quick account failed!</string>
+    <string name="label_commodity_information">Commodity</string>
+    <string name="label_merchant_name">Merchant</string>
+    <string name="label_pay_type">Payment method</string>
+    <string name="tip_lack_param">Lack param.</string>
+    <string name="tip_invalid_param">Invalid param.</string>
+    <string name="brm_pay">BRMPAY</string>
+    <string name="label_quick_payment_account_recharge">Quick payment account recharge</string>
+    <string name="payment_type_ordinary_payment">Ordinary Payment</string>
+    <string name="payment_type_quick_payment">Quick Payment</string>
+    <string name="payment_invalid_create_order">Create order invalid!</string>
+    <string name="tip_recharge_success">Recharge success.</string>
+    <string name="label_account_balance">Account Balance</string>
+    <string name="action_create_pay_account">Open pay account</string>
+
+    <string name="pay_account_info">Quick account</string>
+    <string name="no_quick_pay_account">Please open the quick account.</string>
+    <string-array name="avatar_change_choices">
+        <item>Take photo</item>
+        <item>Choose photo from Gallery</item>
+    </string-array>
+    <string name="avatar_choose_fail">Failed to choose avatar from Gallery</string>
+    <string name="avatar_camera_fail">Failed to take photo</string>
+    <string name="avatar_crop_fail">Failed to crop the image</string>
+    <string name="avatar_save_fail">Failed to save new avatar</string>
+    <string name="avatar_changed">Avatar changed successfully</string>
+    <string name="title_open_quick_pay">Open Quick Account</string>
+    <string name="title_create_quick_pay">Create Quick Account</string>
+    <string name="quick_account_check_password">
+        Please enter the password you have set when creating or importing the quick account to verify that you have access to this account.
+    </string>
+    <string name="tip_create_quick_account">&#8226;&#160;&#160;The password will be used to verify and open a Quick Account.</string>
+
+    <string name="title_pay_account_withdraw">Withdraw</string>
+    <string name="prompt_withdraw_amount">Withdraw amount</string>
+    <string name="prompt_amount_all">All</string>
+    <string name="prompt_fee">Fee</string>
+    <string name="prompt_available_amount">Available amount</string>
+    <string name="tip_withdraw_success">Withdraw success</string>
+
+    <!-- Quick pay -->
+    <string name="label_confirm_pay">Confirm pay</string>
+    <string name="tip_lack_param_trade_type">Lack trade type</string>
+    <string name="title_choose_payment_method">Choose payment method</string>
+    <string name="desc_quick_payment">More convenient, no fees</string>
+    <string name="desc_ordinary_payment">Full decentralized Pay</string>
+    <string name="prompt_input_quick_account_password">Input quick account password</string>
+    <string name="progress_transfer">transfer…</string>
+    <string name="title_pay_account_transfer">Quick account transfer</string>
+    <string name="prompt_transfer_amount">Transfer amount</string>
+    <string name="prompt_transfer_receiver_account">Receiver account</string>
+    <string name="label_choose_transfer_coin">Choose Coin</string>
+    <string name="title_pay_account_receipt">Quick account receipt</string>
+
+    <!-- Bill detail-->
+    <string name="menu_transaction_detail">Bill details</string>
+    <string name="pay_trans_status_succ">Payment successful</string>
+    <string name="pay_trans_status_fail">Payment failed</string>
+    <string name="pay_trans_status_confirm">Payment confirmation</string>
+    <string name="pay_trans_status_unpaid">To be paid</string>
+    <string name="pay_trans_method">Payment method</string>
+    <string name="pay_trans_method_normal">Ordinary payment</string>
+    <string name="pay_trans_method_quick">Quick payment</string>
+    <string name="pay_trans_order_amount">Order amount</string>
+    <string name="pay_trans_fee">Fee</string>
+    <string name="pay_trans_hash">TxHash</string>
+    <string name="pay_trans_merchant_desc">Order description</string>
+    <string name="pay_trans_merchant_name">Merchant name</string>
+    <string name="pay_trans_order_time">Order createTime</string>
+    <string name="pay_trans_order_id">Order ID</string>
+    <string name="pay_trans_merchant_id">Merchant order ID</string>
+    <string name="pay_recent_bills">Recent bills</string>
+    <string name="pay_more_bills">More</string>
 </resources>

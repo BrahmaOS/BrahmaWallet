@@ -57,6 +57,7 @@ import java.util.Date;
 import java.util.List;
 
 import io.brahmaos.wallet.brahmawallet.WalletApp;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.AllTokenEntity;
@@ -132,7 +133,7 @@ public class AccountViewModel extends AndroidViewModel {
     }
 
     /**
-     * Generate ethereum & btc account via mnemonics
+     * Generate ethereum & btc & default quick pay account via mnemonics
      */
     public Completable createAccountWithMnemonic(String name, String password) {
         return Completable.fromAction(() -> {
@@ -191,6 +192,8 @@ public class AccountViewModel extends AndroidViewModel {
 
                     // set mnemonic code in cache for backup
                     MainService.getInstance().setMnemonicCode(mnemonicCode);
+
+                    createDefaultQuickAccount(chain, password, name);
                 }
             } catch (IOException | CipherException | UnreadableWalletException e) {
                 e.printStackTrace();
@@ -198,6 +201,36 @@ public class AccountViewModel extends AndroidViewModel {
         });
     }
 
+    private void createDefaultQuickAccount(DeterministicKeyChain chain, String password, String name) {
+        try {
+            // create ethereum quick pay account
+            List<ChildNumber> payAccountKeyPath = HDUtils.parsePath("M/44H/2048H/0H/0/0");
+            DeterministicKey payAccountKey = chain.getKeyByPath(payAccountKeyPath, true);
+
+            BigInteger payAccountPrivateKey = payAccountKey.getPrivKey();
+
+            ECKeyPair payAccountECKeyPair = ECKeyPair.create(payAccountPrivateKey);
+
+            BigInteger publicKey = payAccountECKeyPair.getPublicKey();
+            publicKey.toString(16);
+
+            WalletFile payAccountWalletFile = Wallet.createLight(password, payAccountECKeyPair);
+
+            String payAccountFilename = "default_quick_account_" + payAccountWalletFile.getAddress() + ".json";
+
+            File payAccountDestination = new File(getApplication().getFilesDir(), payAccountFilename);
+            ObjectMapper payAccountObject = ObjectMapperFactory.getObjectMapper();
+            payAccountObject.writeValue(payAccountDestination, payAccountWalletFile);
+
+            String accountID = BrahmaWeb3jService.getInstance().prependHexPrefix(payAccountWalletFile.getAddress());
+
+            BrahmaConfig.getInstance().setPayAccountName(name);
+            BrahmaConfig.getInstance().setPayAccountID(accountID);
+            BrahmaConfig.getInstance().setPayAccountWalletFileName(payAccountFilename);
+        } catch (IOException | CipherException e) {
+            BLog.e("QuickAccount", "create fail: " + e.toString());
+        }
+    }
     /**
      * Generate ethereum account via mnemonics
      */
@@ -359,6 +392,9 @@ public class AccountViewModel extends AndroidViewModel {
                     btcAccount.setType(BrahmaConst.BTC_ACCOUNT_TYPE);
                     btcAccount.setCryptoMnemonics(encryptMnemonic);
                     ((WalletApp) getApplication()).getRepository().createAccount(btcAccount);
+
+                    createDefaultQuickAccount(chain, password, accountName);
+
                     e.onNext(address);
                 }
             } catch (MnemonicException e1) {

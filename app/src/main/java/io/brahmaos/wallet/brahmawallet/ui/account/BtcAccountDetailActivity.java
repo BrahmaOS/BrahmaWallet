@@ -23,12 +23,14 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
 import io.brahmaos.wallet.brahmawallet.service.BtcAccountManager;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
+import io.brahmaos.wallet.brahmawallet.ui.biometric.TouchIDPayActivity;
 import io.brahmaos.wallet.brahmawallet.view.CustomProgressDialog;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
@@ -67,6 +69,7 @@ public class BtcAccountDetailActivity extends BaseActivity {
     private AccountEntity account;
     private AccountViewModel mViewModel;
     private CustomProgressDialog progressDialog;
+    private RelativeLayout mLayoutTouchID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +77,7 @@ public class BtcAccountDetailActivity extends BaseActivity {
         setContentView(R.layout.activity_btc_account_detail);
         ButterKnife.bind(this);
         showNavBackBtn();
+        mLayoutTouchID = (RelativeLayout) findViewById(R.id.layout_account_touch_id);
         accountId = getIntent().getIntExtra(IntentParam.PARAM_ACCOUNT_ID, 0);
         if (accountId <= 0) {
             finish();
@@ -123,6 +127,13 @@ public class BtcAccountDetailActivity extends BaseActivity {
         layoutAccountAddressQRCode.setOnClickListener(v -> {
             Intent intent = new Intent(BtcAccountDetailActivity.this, BtcAddressQrcodeActivity.class);
             intent.putExtra(IntentParam.PARAM_ACCOUNT_ID, account.getId());
+            startActivity(intent);
+        });
+
+        mLayoutTouchID.setOnClickListener(v -> {
+            Intent intent = new Intent(this, TouchIDPayActivity.class);
+            intent.putExtra(IntentParam.PARAM_ACCOUNT_ID, account.getId());
+            intent.putExtra(IntentParam.PARAM_ACCOUNT_TYPE, BrahmaConst.BTC_ACCOUNT_TYPE);
             startActivity(intent);
         });
 

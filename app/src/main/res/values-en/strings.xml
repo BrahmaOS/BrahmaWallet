@@ -22,8 +22,8 @@
     <string name="error_network">Network connect error!</string>
 
     <string name="fragment_wallet">Wallet</string>
-    <string name="fragment_hash_rate">HashRate</string>
-    <string name="fragment_discover">Discover</string>
+    <string name="fragment_pay">Quick Pay</string>
+    <string name="fragment_me">Me</string>
 
     <string name="action_next">Next</string>
     <string name="action_confirm">Confirm</string>
@@ -36,8 +36,8 @@
     <!-- Drawer menu -->
     <string name="nav_menu_other">Other</string>
     <string name="nav_menu_setting">Settings</string>
-    <string name="nav_menu_help">FAQ</string>
-    <string name="nav_menu_info">About</string>
+    <string name="nav_menu_help">Help</string>
+    <string name="nav_menu_info">About Us</string>
 
     <!-- Strings related to dialog -->
     <string name="dialog_title_quit_import">Quit the import?</string>
@@ -99,6 +99,13 @@
     <string name="label_account_name">Name</string>
     <string name="label_account_address">Address</string>
     <string name="label_qrcode">Address Code</string>
+    <string name="label_touch_id">Touch ID Pay</string>
+    <string name="touch_id_info">Touch ID make payments safer and quicker</string>
+    <string name="touch_id_view">View</string>
+    <string name="touch_id_notice">Touch ID Payment Notice</string>
+    <string name="touch_id_open">Agree And Open</string>
+    <string name="touch_id_close">Close</string>
+    <string name="touch_id_open_succ">Open Successfully</string>
     <string name="action_change_account_name">Change Name</string>
     <string name="action_change_password">Change Password</string>
     <string name="action_export_private_key">Export Private Key</string>
@@ -106,6 +113,10 @@
     <string name="action_delete_account">Delete Account</string>
     <string name="action_export_mnemonics">Export Mnemonics</string>
 
+    <string name="touch_id_no_hardware">The device has not detected the fingerprint hardware!</string>
+    <string name="touch_id_no_fingerprint">The device does not enter fingerprints, please go to the system -> settings to add fingerprints.</string>
+    <string name="verify_fingerprint">Verify Fingerprint</string>
+    <string name="touch_id_failed_to_get_key">Can not get key for this account!</string>
     <string name="success_change_account_name">Change account name success!</string>
     <string name="error_change_account_name">Change account name error!!!</string>
     <string name="success_change_password">Change password success!</string>
@@ -117,6 +128,7 @@
     <string name="prompt_current_password">Current Password</string>
     <string name="prompt_new_password">New Password</string>
     <string name="tip_reset_password">Forget account password? You can reset password by using private key import.</string>
+    <string name="tip_reset_finger">Note: If you have open Touch ID Pay, you need reopen it after changing password.</string>
 
     <!-- Strings related to progress -->
     <string name="sync">sync…</string>
@@ -131,6 +143,10 @@
     <string name="prompt_account_name">Name</string>
     <string name="prompt_password">Password</string>
     <string name="prompt_repeat_password">Repeat password</string>
+    <string name="prompt_account_password">Account Password</string>
+    <string name="prompt_close_touch_id">Are you sure you want to close Touch ID Pay?</string>
+    <string name="prompt_sure">Sure</string>
+    <string name="prompt_no">No</string>
     <string name="action_agree">Agree on</string>
     <string name="service_agreement">&#160;Service Agreement&#160;</string>
     <string name="protocol_and">and</string>
@@ -223,6 +239,7 @@
     <string name="tip_camera_permission">You have not authorized the camera yet. Please go to the settings page.</string>
     <string name="tip_external_storage_permission">You have not authorized the external storage yet. Please go to the settings page.</string>
     <string name="label_balance">Balance</string>
+    <string name="btn_use_password">Use Password</string>
 
     <!-- Strings related to login -->
     <string name="title_activity_account_change_password">Change Password</string>
@@ -230,8 +247,9 @@
 
     <!-- Strings related to Settings -->
     <string name="title_setting">Settings</string>
-    <string name="title_setting_lang_currency">Language &amp; Currency</string>
+    <string name="title_setting_lang_currency">General</string>
     <string name="title_setting_network">Blockchain Network</string>
+    <string name="title_setting_privacy">Privacy</string>
     <string name="title_setting_other">Other</string>
 
     <string name="pref_title_net_list">Ethereum Network</string>
@@ -281,8 +299,8 @@
     </string-array>
     <string name="pref_title_touch_id">Touch ID</string>
     <string name="pref_summary_touch_id">No operation after 5s</string>
-    <string name="pref_title_statistic">Statistic Module</string>
-    <string name="pref_summary_statistic">Collecting user behavior data and crash log</string>
+    <string name="pref_title_statistic">Usage statistics and crash reports</string>
+    <string name="pref_summary_statistic">Help to improve the use experience</string>
 
     <!-- shared preferences -->
     <string name="key_network_url">ethereum.network.url</string>
@@ -390,7 +408,7 @@
     <string name="backup_success">Backup Success</string>
 
     <!-- string about us -->
-    <string name="title_about_us">About</string>
+    <string name="title_about_us">About Us</string>
     <string name="about_current_version">Current Version: </string>
     <string name="desc_wallet">
         Brahma Wallet is a fully open source, decentralized mobile light wallet. It is designed to provide users with a secure, easy-to-use digital asset wallet application.
@@ -408,7 +426,7 @@
     <string name="title_service_terms">Brahma Wallet Service Agreement</string>
 
     <!-- string about contacts -->
-    <string name="title_contacts">Contacts</string>
+    <string name="title_contacts">Address Book</string>
     <string name="title_choose_contact">Choose Contact</string>
     <string name="title_add_contact">Add Contact</string>
     <string name="title_my_accounts">My Accounts</string>
@@ -441,6 +459,7 @@
     <string name="tip_fingerprint">Click to start verification</string>
     <string name="fail_fingerprint_verification">Fingerprint verification failed</string>
     <string name="error_fingerprint_verification">Fingerprint verification failed</string>
+    <string name="fingerprint_changed">Verification failed. If the fingerprint was changed, please reset Touch ID Pay.</string>
 
     <!-- instant exchange -->
     <string name="title_activity_instant_exchange">Flash Exchange</string>

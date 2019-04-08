@@ -60,6 +60,7 @@ public class MainService extends BaseService{
         BrahmaWeb3jService.getInstance().init(context);
         TransactionService.getInstance().init(context);
         BtcAccountManager.getInstance().init(context);
+        PayService.getInstance().init(context);
         return true;
     }
 
@@ -136,6 +137,9 @@ public class MainService extends BaseService{
         return Observable.create(e -> {
             RayUpApp app = ((WalletApp) context.getApplicationContext()).getRayUpApp();
             Map<Integer, Map<String, CoinQuote>> coinQuotes = app.getLatestCoinQuotesByCodeV2(symbols, "USD,CNY");
+            if (null == coinQuotes) {
+                return;
+            }
             Iterator<Map.Entry<Integer, Map<String, CoinQuote>>> iterator = coinQuotes.entrySet().iterator();
 
             List<CryptoCurrency> currencies = new ArrayList<>();

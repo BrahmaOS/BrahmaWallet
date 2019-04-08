@@ -6,13 +6,19 @@ import android.support.annotation.NonNull;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 import io.brahmaos.wallet.brahmawallet.BuildConfig;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.util.BLog;
+import okhttp3.Authenticator;
+import okhttp3.Credentials;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
@@ -78,6 +84,13 @@ public class Networks {
         return kyperApi;
     }
 
+    // brm pay
+    private PayApi payApi;
+    public PayApi getPayApi() {
+        payApi = PayConfigRetrofit(PayApi.class);
+        return payApi;
+    }
+
     private <T> T configRetrofit(Class<T> service, boolean isAddCommonParam) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BuildConfig.WALLET_API_URL)
@@ -111,6 +124,28 @@ public class Networks {
         return retrofit.create(service);
     }
 
+    private <T> T PayConfigRetrofit(Class<T> service) {
+        if (BrahmaConfig.debugFlag) {
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(BrahmaConst.PAY_DEV_HOST)
+                    .client(payConfigClient())
+                    .addConverterFactory(JacksonConverterFactory.create(mapper))
+                    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                    .build();
+
+            return retrofit.create(service);
+        } else {
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(BrahmaConst.PAY_HOST)
+                    .client(payConfigClient())
+                    .addConverterFactory(JacksonConverterFactory.create(mapper))
+                    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                    .build();
+
+            return retrofit.create(service);
+        }
+    }
+
     private OkHttpClient configClient(final boolean isAddCommonParam) {
         OkHttpClient.Builder okHttpClient = new OkHttpClient.Builder();
 
@@ -135,6 +170,66 @@ public class Networks {
             public Response intercept(Chain chain) throws IOException {
                 Request request = chain.request();
                 Response response = chain.proceed(request);
+                ResponseBody responseBody = response.body();
+                BufferedSource source = responseBody.source();
+                source.request(Long.MAX_VALUE);  // Buffer the entire body.
+                return response;
+            }
+        };
+        okHttpClient.addNetworkInterceptor(responseInterceptor);
+
+        if (BuildConfig.LOG_DEBUG) {
+            HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+                @Override
+                public void log(@NonNull String message) {
+                    BLog.i(tag(), message);
+                }
+            });
+            httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            okHttpClient.addInterceptor(httpLoggingInterceptor);
+        }
+
+        okHttpClient.connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
+
+        return okHttpClient.build();
+    }
+
+    private OkHttpClient payConfigClient() {
+        OkHttpClient.Builder okHttpClient = new OkHttpClient.Builder().protocols(Collections.singletonList(Protocol.HTTP_1_1));
+
+        // Add header configuration interceptors for all requests
+        Interceptor headerIntercept = chain -> {
+            Request.Builder builder = chain.request().newBuilder();
+            builder.addHeader("X-Client-Platform", "Android");
+            builder.addHeader("Content-Type", "application/json; charset=utf-8");
+            builder.addHeader("X-Client-Version", BuildConfig.VERSION_NAME);
+            builder.addHeader("X-Client-Build", String.valueOf(BuildConfig.VERSION_CODE));
+            if (BrahmaConfig.getInstance().getPayRequestToken() != null &&
+                    BrahmaConfig.getInstance().getPayRequestTokenType() != null) {
+                builder.addHeader("Authorization", String.format("%s %s",
+                        BrahmaConfig.getInstance().getPayRequestTokenType(),
+                        BrahmaConfig.getInstance().getPayRequestToken()));
+            }
+            Request request = builder.build();
+            try {
+                return chain.proceed(request);
+            } catch (Exception e) {
+                BLog.w(tag(), "header intercept exception, " + e.getMessage());
+                return null;
+            }
+        };
+        okHttpClient.addNetworkInterceptor(headerIntercept);
+
+        // Response Interceptor
+        Interceptor responseInterceptor = new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                Request request = chain.request();
+                Response response = chain.proceed(request);
+                String accessToken = response.header("access_token");
+                if (accessToken != null) {
+                    BrahmaConfig.getInstance().setPayRequestToken(accessToken);
+                }
                 ResponseBody responseBody = response.body();
                 BufferedSource source = responseBody.source();
                 source.request(Long.MAX_VALUE);  // Buffer the entire body.

@@ -6,18 +6,20 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.support.v7.widget.DrawableUtils;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.db.entity.ContactEntity;
+import io.brahmaos.wallet.util.BitcoinAddressUtil;
+import io.brahmaos.wallet.util.EthereumAddressUtil;
 import io.brahmaos.wallet.util.ImageUtil;
 import me.yokeyword.indexablerv.IndexableAdapter;
 
@@ -75,16 +77,19 @@ public class ContactAdapter extends IndexableAdapter<ContactEntity> {
 
         String ethAddress = entity.getAddress();
         if (ethAddress != null && ethAddress.length() > 0) {
-            vh.ivEthIcon.setVisibility(View.VISIBLE);
+            vh.layoutEthAddress.setVisibility(View.VISIBLE);
+            vh.layoutBtcAddress.setVisibility(View.GONE);
+            vh.tvEthAddress.setText(EthereumAddressUtil.simplifyDisplay(ethAddress));
         } else {
-            vh.ivEthIcon.setVisibility(View.GONE);
+            vh.layoutEthAddress.setVisibility(View.GONE);
         }
 
         String btcAddress = entity.getBtcAddress();
         if (btcAddress != null && btcAddress.length() > 0) {
-            vh.ivBtcIcon.setVisibility(View.VISIBLE);
+            vh.layoutBtcAddress.setVisibility(View.VISIBLE);
+            vh.tvBtcAddress.setText(BitcoinAddressUtil.simplifyDisplay(btcAddress));
         } else {
-            vh.ivBtcIcon.setVisibility(View.GONE);
+            vh.layoutBtcAddress.setVisibility(View.GONE);
         }
     }
 
@@ -100,15 +105,23 @@ public class ContactAdapter extends IndexableAdapter<ContactEntity> {
     private class ContentVH extends RecyclerView.ViewHolder {
         TextView tvName;
         ImageView ivAvatar;
-        ImageView ivEthIcon;
-        ImageView ivBtcIcon;
+
+        LinearLayout layoutEthAddress;
+        TextView tvEthAddress;
+
+        LinearLayout layoutBtcAddress;
+        TextView tvBtcAddress;
 
         ContentVH(View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tv_name);
             ivAvatar = itemView.findViewById(R.id.iv_avatar);
-            ivEthIcon = itemView.findViewById(R.id.eth_icon);
-            ivBtcIcon = itemView.findViewById(R.id.btc_icon);
+
+            layoutEthAddress = itemView.findViewById(R.id.eth_address_layout);
+            tvEthAddress = itemView.findViewById(R.id.eth_address_tv);
+
+            layoutBtcAddress = itemView.findViewById(R.id.btc_address_layout);
+            tvBtcAddress = itemView.findViewById(R.id.btc_address_tv);
         }
     }
 }

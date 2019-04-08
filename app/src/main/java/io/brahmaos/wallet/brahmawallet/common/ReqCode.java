@@ -10,4 +10,8 @@ public class ReqCode {
     public static final int CHOOSE_IMAGE = 104;
     public static final int CROP_IMAGE = 105;
     public static final int SCAN_BITCOIN_QR_CODE = 106;
+    public static final int TAKE_PHOTO = 107;
+
+    public static final int QUICK_PAYMENT_RECHARGE = 1000;
+    public static final int QUICK_PAYMENT_TRANSFER = 1001;
 }

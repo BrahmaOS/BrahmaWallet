@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/layout_pay_trans_item"
+    android:background="@drawable/list_item_bg"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/space_normal">
+
+        <ImageView
+            android:id="@+id/iv_trans_icon"
+            android:layout_width="@dimen/icon_normal_size"
+            android:layout_height="@dimen/icon_normal_size"
+            android:layout_gravity="center"
+            android:scaleType="fitCenter"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/space_normal"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginBottom="@dimen/space_unit"
+                android:gravity="top">
+
+                <TextView
+                    android:id="@+id/tv_merchant_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginRight="@dimen/space_smaller"
+                    android:layout_toLeftOf="@+id/tv_trans_amount"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:textColor="@color/color_primary_text"
+                    android:textSize="@dimen/font_size_subheading" />
+
+                <TextView
+                    android:id="@+id/tv_trans_amount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/space_smaller"
+                    android:layout_toLeftOf="@+id/tv_coin_name"
+                    android:textColor="@color/color_primary_text"
+                    android:textSize="@dimen/font_size_subheading"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_coin_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:textColor="@color/color_hint_text"
+                    android:textSize="@dimen/font_size_subheading"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginTop="@dimen/space_unit"
+                android:gravity="bottom">
+
+                <TextView
+                    android:id="@+id/tv_trans_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:textSize="@dimen/font_size_subheading" />
+
+                <TextView
+                    android:id="@+id/tv_pay_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:textSize="@dimen/font_size_subheading" />
+            </RelativeLayout>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

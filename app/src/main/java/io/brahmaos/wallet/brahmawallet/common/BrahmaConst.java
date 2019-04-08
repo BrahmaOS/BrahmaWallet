@@ -24,6 +24,12 @@ public class BrahmaConst {
     public static final int DEFAULT_TOKEN_COUNT = 20;
     public static final int DEFAULT_TOKEN_SHOW_FLAG = 1;
     public static final int DEFAULT_TOKEN_HIDE_FLAG = 0;
+    public static final String PRIVATE_KEY = "privateKey";
+    public static final String PUBLIC_KEY = "publicKey";
+    public static final String PAY_REQUEST_SIGN_TYPE = "ecdsa-keccak256";
+
+    public static final String PAY_DEV_HOST = "https://api.dev.brmpay.com/";
+    public static final String PAY_HOST = "https://api.brmpay.com/";
 
     public static final String rayupAccessKeyId = "727965f2c89511e8af75560001a43649";
     public static final String rayupAccessKeySecret = "cnlo/siVEeivdVYAAaQ2SQ==";
@@ -103,4 +109,18 @@ public class BrahmaConst {
     public static final int PAY_CODE_SUCCESS = 0;
     public static final int PAY_CODE_INVALID_BLOCKCHAIN = 101;
     public static final int PAY_CODE_NO_ACCOUNT = 102;
+
+    // coin code base brmpay
+    public static final int PAY_COIN_CODE_BTC = 1;
+    public static final int PAY_COIN_CODE_ETH = 1027;
+    public static final int PAY_COIN_CODE_USDT = 825;
+    public static final int PAY_COIN_CODE_BRM = 2657;
+
+    // withdraw config
+    public static final String WITHDRAW_BTC_MIN = "withdraw.btc.min";
+    public static final String WITHDRAW_BTC_FEE = "withdraw.btc.fee";
+    public static final String WITHDRAW_ETH_MIN = "withdraw.eth.min";
+    public static final String WITHDRAW_ETH_FEE = "withdraw.eth.fee";
+    public static final String WITHDRAW_BRM_MIN = "withdraw.brm.min";
+    public static final String WITHDRAW_BRM_FEE = "withdraw.brm.fee";
 }

@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -15,6 +16,8 @@ import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
+import io.brahmaos.wallet.util.BitcoinAddressUtil;
+import io.brahmaos.wallet.util.EthereumAddressUtil;
 import me.yokeyword.indexablerv.IndexableHeaderAdapter;
 
 
@@ -49,27 +52,54 @@ public class ContactsHeaderAdapter extends IndexableHeaderAdapter<AccountEntity>
         ContentVH vh = (ContentVH) holder;
         vh.tvName.setText(entity.getName());
         ImageManager.showAccountAvatar(ctx, vh.ivAvatar, entity);
+
         if (entity.getType() == BrahmaConst.ETH_ACCOUNT_TYPE) {
-            vh.ivEthIcon.setVisibility(View.VISIBLE);
-            vh.ivBtcIcon.setVisibility(View.GONE);
+            String ethAddress = entity.getAddress();
+            if (ethAddress != null && ethAddress.length() > 0) {
+                vh.layoutEthAddress.setVisibility(View.VISIBLE);
+                vh.layoutBtcAddress.setVisibility(View.GONE);
+                vh.tvEthAddress.setText(EthereumAddressUtil.simplifyDisplay(ethAddress));
+            } else {
+                vh.layoutEthAddress.setVisibility(View.GONE);
+            }
         } else {
-            vh.ivEthIcon.setVisibility(View.GONE);
-            vh.ivBtcIcon.setVisibility(View.VISIBLE);
+            vh.layoutEthAddress.setVisibility(View.GONE);
+        }
+
+        if (entity.getType() == BrahmaConst.BTC_ACCOUNT_TYPE) {
+            String btcAddress = entity.getAddress();
+            if (btcAddress != null && btcAddress.length() > 0) {
+                vh.layoutBtcAddress.setVisibility(View.VISIBLE);
+                vh.layoutEthAddress.setVisibility(View.GONE);
+                vh.tvBtcAddress.setText(BitcoinAddressUtil.simplifyDisplay(btcAddress));
+            } else {
+                vh.layoutBtcAddress.setVisibility(View.GONE);
+            }
+        } else {
+            vh.layoutBtcAddress.setVisibility(View.GONE);
         }
     }
 
     private class ContentVH extends RecyclerView.ViewHolder {
         TextView tvName;
         ImageView ivAvatar;
-        ImageView ivEthIcon;
-        ImageView ivBtcIcon;
+
+        LinearLayout layoutEthAddress;
+        TextView tvEthAddress;
+
+        LinearLayout layoutBtcAddress;
+        TextView tvBtcAddress;
 
         ContentVH(View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tv_name);
             ivAvatar = itemView.findViewById(R.id.iv_avatar);
-            ivEthIcon = itemView.findViewById(R.id.eth_icon);
-            ivBtcIcon = itemView.findViewById(R.id.btc_icon);
+
+            layoutEthAddress = itemView.findViewById(R.id.eth_address_layout);
+            tvEthAddress = itemView.findViewById(R.id.eth_address_tv);
+
+            layoutBtcAddress = itemView.findViewById(R.id.btc_address_layout);
+            tvBtcAddress = itemView.findViewById(R.id.btc_address_tv);
         }
     }
 }

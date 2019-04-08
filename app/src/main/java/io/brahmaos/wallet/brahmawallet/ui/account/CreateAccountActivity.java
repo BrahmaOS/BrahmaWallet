@@ -49,6 +49,8 @@ public class CreateAccountActivity extends BaseActivity {
     TextView tvServiceAgreement;
     @BindView(R.id.privacy_policy_tv)
     TextView tvPrivacyPolicy;
+    @BindView(R.id.tv_quick_account_tip)
+    TextView tipQuickAccount;
 
     private CustomProgressDialog customProgressDialog;
     private AccountViewModel mViewModel;
@@ -65,6 +67,7 @@ public class CreateAccountActivity extends BaseActivity {
         setContentView(R.layout.activity_create_account);
         ButterKnife.bind(this);
         showNavBackBtn();
+        tipQuickAccount.setVisibility(View.VISIBLE);
         mViewModel = ViewModelProviders.of(this).get(AccountViewModel.class);
         mViewModel.getAccounts().observe(this, accountEntities -> {
             if (accountEntities == null) {

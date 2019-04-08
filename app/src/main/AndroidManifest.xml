@@ -11,7 +11,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.USE_FINGERPRINT" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
-    <uses-permission android:name= "android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
         android:name=".WalletApp"
@@ -41,7 +41,8 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".ui.SplashActivity">
+        <activity android:name=".ui.SplashActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -50,9 +51,11 @@
         </activity>
         <activity
             android:name=".ui.account.CreateAccountActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_create_account" />
         <activity
             android:name=".ui.MainActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:launchMode="singleTask" />
         <activity android:name=".ui.account.AccountsActivity" />
         <activity
@@ -107,18 +110,18 @@
         <activity
             android:name=".ui.contact.ShowContactAvatarActivity"
             android:label="@string/title_show_contact_avatar"
-            android:theme="@style/AppTheme"/>
-
+            android:theme="@style/AppTheme" />
         <activity android:name=".ui.setting.ServiceTermsActivity" />
         <activity android:name=".ui.account.MnemonicBackupActivity" />
         <activity android:name=".ui.account.ConfirmMnemonicActivity" />
         <activity android:name=".ui.account.BackupKeystoreActivity" />
         <activity
             android:name=".ui.FingerActivity"
-            android:launchMode="singleInstance"
+            android:screenOrientation="portrait"
             android:theme="@style/FadeTheme" />
-        <activity android:name=".ui.transfer.InstantExchangeActivity"
-            android:windowSoftInputMode="adjustResize"/>
+        <activity
+            android:name=".ui.transfer.InstantExchangeActivity"
+            android:windowSoftInputMode="adjustResize" />
         <activity android:name=".ui.setting.HelpActivity" />
         <activity android:name=".ui.transaction.TransactionsActivity" />
         <activity android:name=".ui.transaction.EthTransactionsActivity" />
@@ -126,12 +129,12 @@
         <activity android:name=".ui.transaction.EtherscanTxDetailActivity" />
         <activity android:name=".ui.transaction.TransactionDetailActivity" />
         <activity android:name=".ui.setting.FeedbackActivity" />
-
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity android:name=".ui.account.RestoreAccountActivity" />
+        <activity android:name=".ui.account.RestoreAccountActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
         <activity android:name=".ui.transfer.BtcTransferActivity" />
         <activity android:name=".ui.account.BtcAccountAssetsActivity" />
         <activity android:name=".ui.account.BtcAddressQrcodeActivity" />
@@ -144,13 +147,47 @@
         <activity android:name=".ui.transaction.BtcTransactionDetailActivity" />
         <activity android:name=".ui.transaction.BlockchainTxDetailActivity" />
         <activity android:name=".ui.dapp.DappActivity" />
-        <activity android:name=".ui.transfer.QuickTransferActivity"
+        <activity
+            android:name=".ui.transfer.QuickTransferActivity"
             android:theme="@style/transparent_activity">
             <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
+                <action android:name="android.intent.action.VIEW" />
             </intent-filter>
         </activity>
         <activity android:name=".ui.dapp.DappTestActivity" />
+        <activity android:name=".ui.account.AccountGuideActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
+        <activity android:name=".ui.pay.SetPayAccountPasswordActivity" />
+        <activity android:name=".ui.pay.PayAccountInfoActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
+        <activity android:name=".ui.pay.PayTestActivity" />
+        <activity android:name=".ui.biometric.TouchIDPayActivity" />
+        <activity android:name=".ui.pay.PayAccountRechargeActivity" />
+        <activity
+            android:name=".ui.pay.QuickPayActivity"
+            android:exported="true"
+            android:theme="@style/transparent_activity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.APP_BROWSER" />
+
+                <data
+                    android:host="wallet"
+                    android:path="/pay"
+                    android:scheme="brahmaos" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".ui.pay.ChangePayAccountNameActivity" />
+        <activity android:name=".ui.base.BaseWebActivity" />
+        <activity android:name=".ui.pay.CheckQuickAccountPasswordActivity" />
+        <activity android:name=".ui.pay.PayTransactionsListActivity" />
+        <activity android:name=".ui.pay.PayTransactionDetailActivity" />
+        <activity android:name=".ui.pay.PayAccountWithdrawActivity" />
+        <activity android:name=".ui.pay.PayAccountTransferActivity" />
+        <activity android:name=".ui.pay.PayAccountReceiptActivity" />
     </application>
 
 </manifest>

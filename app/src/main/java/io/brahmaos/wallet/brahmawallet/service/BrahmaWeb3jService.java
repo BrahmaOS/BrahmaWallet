@@ -1,9 +1,16 @@
 package io.brahmaos.wallet.brahmawallet.service;
 
 import android.app.Application;
+import android.content.SharedPreferences;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.bitcoinj.crypto.ChildNumber;
+import org.bitcoinj.crypto.DeterministicKey;
+import org.bitcoinj.crypto.HDUtils;
+import org.bitcoinj.wallet.DeterministicKeyChain;
+import org.bitcoinj.wallet.DeterministicSeed;
+import org.bitcoinj.wallet.UnreadableWalletException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,6 +28,10 @@ import org.web3j.abi.datatypes.Utf8String;
 import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
+import org.web3j.crypto.ECKeyPair;
+import org.web3j.crypto.Hash;
+import org.web3j.crypto.RawTransaction;
+import org.web3j.crypto.TransactionEncoder;
 import org.web3j.crypto.Wallet;
 import org.web3j.crypto.WalletFile;
 import org.web3j.crypto.WalletUtils;
@@ -33,11 +44,13 @@ import org.web3j.protocol.core.methods.request.Transaction;
 import org.web3j.protocol.core.methods.response.EthCall;
 import org.web3j.protocol.core.methods.response.EthGasPrice;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
+import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
 import org.web3j.protocol.core.methods.response.EthGetTransactionReceipt;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.exceptions.TransactionException;
 import org.web3j.protocol.http.HttpService;
+import org.web3j.tx.ChainId;
 import org.web3j.tx.Contract;
 import org.web3j.tx.ManagedTransaction;
 import org.web3j.tx.RawTransactionManager;
@@ -53,30 +66,42 @@ import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.SecureRandom;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.brahmaos.wallet.brahmawallet.WalletApp;
+import io.brahmaos.wallet.brahmawallet.api.ApiConst;
+import io.brahmaos.wallet.brahmawallet.api.ApiRespResult;
 import io.brahmaos.wallet.brahmawallet.api.Networks;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
+import io.brahmaos.wallet.brahmawallet.common.ReqParam;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.AllTokenEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 import io.brahmaos.wallet.brahmawallet.model.CryptoCurrency;
 import io.brahmaos.wallet.brahmawallet.model.KyberToken;
+import io.brahmaos.wallet.brahmawallet.model.pay.PayRequestToken;
+import io.brahmaos.wallet.brahmawallet.ui.pay.QuickPayActivity;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
+import io.brahmaos.wallet.util.DataCryptoUtils;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import rx.Completable;
 import rx.Observable;
 import rx.Observer;
+import rx.Scheduler;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 public class BrahmaWeb3jService extends BaseService{
@@ -226,6 +251,232 @@ public class BrahmaWeb3jService extends BaseService{
         });
     }
 
+    /**
+     * Calculating transactions hash
+     * @return 1: verifying the account;
+     *         2: sending request
+     *         3: create order success
+     *         {hash}: transfer success
+     *         -1: create order failed
+     */
+    public Observable<Object> accountRechargeWithEthereum(AccountEntity account, TokenEntity token,
+                                                          String password, String destinationAddress,
+                                                          BigDecimal amount, BigDecimal gasPrice,
+                                                          BigInteger gasLimit, String remark,
+                                                          String orderId) {
+        return Observable.create(e -> {
+            try {
+                e.onNext(1);
+                Web3j web3 = Web3jFactory.build(
+                        new HttpService(BrahmaConfig.getInstance().getNetworkUrl()));
+                Credentials credentials = WalletUtils.loadCredentials(
+                        password, context.getFilesDir() + "/" +  account.getFilename());
+                BLog.i(tag(), "load credential success");
+                e.onNext(2);
+                String transactionHash = "";
+                BigDecimal gasPriceWei = Convert.toWei(gasPrice, Convert.Unit.GWEI);
+                RawTransactionManager txManager = new RawTransactionManager(web3, credentials);
+                EthGetTransactionCount ethGetTransactionCount = web3.ethGetTransactionCount(
+                        credentials.getAddress(), DefaultBlockParameterName.PENDING).send();
+                BigInteger nonce = ethGetTransactionCount.getTransactionCount();
+                RawTransaction rawTransaction;
+                if (token.getName().toLowerCase().equals(BrahmaConst.ETHEREUM)) {
+                    rawTransaction = RawTransaction.createTransaction(
+                            nonce,
+                            gasPriceWei.toBigIntegerExact(),
+                            gasLimit,
+                            destinationAddress,
+                            Convert.toWei(amount, Convert.Unit.ETHER).toBigInteger(),
+                            Numeric.toHexString(remark.getBytes()));
+                } else {
+                    Function function = new Function(
+                            "transfer",
+                            Arrays.<Type>asList(new Address(destinationAddress),
+                                    new Uint256(amount.multiply(new BigDecimal(Math.pow(10, 18))).toBigInteger())),
+                            Collections.<TypeReference<?>>emptyList());
+                    String encodedFunction = FunctionEncoder.encode(function);
+
+                    rawTransaction = RawTransaction.createTransaction(
+                            nonce,
+                            gasPriceWei.toBigIntegerExact(),
+                            gasLimit,
+                            token.getAddress(),
+                            BigInteger.ZERO,
+                            encodedFunction);
+                }
+                byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, credentials);
+                String hexValue = Numeric.toHexString(signedMessage);
+                String txHash = Numeric.toHexString(Hash.sha3(signedMessage));
+
+                PayService.getInstance().rechargeOrder(orderId, txHash)
+                        .flatMap((Func1<ApiRespResult, Observable<EthSendTransaction>>) apr -> {
+                            if (apr != null && apr.getResult() == 0) {
+                                try {
+                                    return Observable.from(web3.ethSendRawTransaction(hexValue).sendAsync(), Schedulers.io())
+                                            .subscribeOn(Schedulers.io());
+                                } catch (Exception e1) {
+                                    e1.printStackTrace();
+                                }
+                            }
+                            return Observable.from((new EthSendTransaction[] {null}));
+                        })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Observer<EthSendTransaction>() {
+                            @Override
+                            public void onCompleted() {
+                            }
+
+                            @Override
+                            public void onError(Throwable throwable) {
+                                throwable.printStackTrace();
+                                e.onError(throwable);
+                            }
+
+                            @Override
+                            public void onNext(EthSendTransaction ethSendTransaction) {
+                                if (ethSendTransaction == null) {
+                                    BLog.e(tag(), "eth send transaction response is null");
+                                    e.onError(new RuntimeException("Error eth send transaction"));
+                                } else {
+                                    if (ethSendTransaction.getError() != null) {
+                                        BLog.e(tag(), ethSendTransaction.getError().toString());
+                                        e.onError(new RuntimeException(ethSendTransaction.getError().getMessage()));
+                                    } else {
+                                        String hash = ethSendTransaction.getTransactionHash();
+                                        BLog.d(tag(), "the txhash on blockchain is: " + hash + "" +
+                                                "--------- the cal hash is: " + txHash);
+                                        e.onNext(hash);
+                                        e.onCompleted();
+                                    }
+                                }
+                            }
+                        });
+            } catch (IOException | CipherException e1) {
+                e1.printStackTrace();
+                e.onError(e1);
+            }
+        });
+    }
+
+    /**
+     * Calculating transactions hash
+     * @return 1: verifying the account;
+     *         2: sending request
+     *         3: create order success
+     *         {hash}: transfer success
+     *         -1: create order failed
+     */
+    public Observable<Object> paymentWithEthereum(AccountEntity account, TokenEntity token,
+                                                       String password, String destinationAddress,
+                                                       BigDecimal amount, BigDecimal gasPrice,
+                                                       BigInteger gasLimit, String remark,
+                                                       String orderId) {
+        return Observable.create(e -> {
+            try {
+                e.onNext(1);
+                Web3j web3 = Web3jFactory.build(
+                        new HttpService(BrahmaConfig.getInstance().getNetworkUrl()));
+                Credentials credentials = WalletUtils.loadCredentials(
+                        password, context.getFilesDir() + "/" +  account.getFilename());
+                BLog.i(tag(), "load credential success");
+                e.onNext(2);
+                BigDecimal gasPriceWei = Convert.toWei(gasPrice, Convert.Unit.GWEI);
+                EthGetTransactionCount ethGetTransactionCount = web3.ethGetTransactionCount(
+                        credentials.getAddress(), DefaultBlockParameterName.PENDING).send();
+                BigInteger nonce = ethGetTransactionCount.getTransactionCount();
+                RawTransaction rawTransaction;
+                if (token.getName().toLowerCase().equals(BrahmaConst.ETHEREUM)) {
+                    rawTransaction = RawTransaction.createTransaction(
+                            nonce,
+                            gasPriceWei.toBigIntegerExact(),
+                            gasLimit,
+                            destinationAddress,
+                            Convert.toWei(amount, Convert.Unit.ETHER).toBigInteger(),
+                            Numeric.toHexString(remark.getBytes()));
+                } else {
+                    Function function = new Function(
+                            "transfer",
+                            Arrays.<Type>asList(new Address(destinationAddress),
+                                    new Uint256(amount.multiply(new BigDecimal(Math.pow(10, 18))).toBigInteger())),
+                            Collections.<TypeReference<?>>emptyList());
+                    String encodedFunction = FunctionEncoder.encode(function);
+
+                    rawTransaction = RawTransaction.createTransaction(
+                            nonce,
+                            gasPriceWei.toBigIntegerExact(),
+                            gasLimit,
+                            token.getAddress(),
+                            BigInteger.ZERO,
+                            encodedFunction);
+                }
+                byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, credentials);
+                String hexValue = Numeric.toHexString(signedMessage);
+                String txHash = Numeric.toHexString(Hash.sha3(signedMessage));
+
+                Map<String, Object> params = new HashMap<>();
+                params.put(QuickPayActivity.PARAM_PRE_PAY_ID, orderId);
+                params.put(QuickPayActivity.PARAM_SENDER, account.getAddress());
+                if (token.getName().toLowerCase().equals(BrahmaConst.ETHEREUM)) {
+                    params.put(QuickPayActivity.PARAM_COIN_CODE, BrahmaConst.PAY_COIN_CODE_ETH);
+                } else {
+                    params.put(QuickPayActivity.PARAM_COIN_CODE, BrahmaConst.PAY_COIN_CODE_BRM);
+                }
+                params.put(QuickPayActivity.PARAM_RECEIVER, destinationAddress);
+                params.put(QuickPayActivity.PARAM_TX_HASH, txHash);
+                params.put(QuickPayActivity.PARAM_REMARK, remark);
+
+                PayService.getInstance().paymentOrder(params)
+                        .flatMap((Func1<ApiRespResult, Observable<EthSendTransaction>>) apr -> {
+                            if (apr != null && apr.getResult() == 0) {
+                                try {
+                                    return Observable.from(web3.ethSendRawTransaction(hexValue).sendAsync(), Schedulers.io())
+                                            .subscribeOn(Schedulers.io());
+                                } catch (Exception e1) {
+                                    e1.printStackTrace();
+                                }
+                            }
+                            return Observable.from((new EthSendTransaction[] {null}));
+                        })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Observer<EthSendTransaction>() {
+                            @Override
+                            public void onCompleted() {
+                            }
+
+                            @Override
+                            public void onError(Throwable throwable) {
+                                throwable.printStackTrace();
+                                e.onError(throwable);
+                            }
+
+                            @Override
+                            public void onNext(EthSendTransaction ethSendTransaction) {
+                                if (ethSendTransaction == null) {
+                                    BLog.e(tag(), "eth send transaction response is null");
+                                    e.onError(new RuntimeException("Error eth send transaction"));
+                                } else {
+                                    if (ethSendTransaction.getError() != null) {
+                                        BLog.e(tag(), ethSendTransaction.getError().toString());
+                                        e.onError(new RuntimeException(ethSendTransaction.getError().getMessage()));
+                                    } else {
+                                        String hash = ethSendTransaction.getTransactionHash();
+                                        BLog.d(tag(), "the txhash on blockchain is: " + hash + "" +
+                                                "--------- the cal hash is: " + txHash);
+                                        e.onNext(hash);
+                                        e.onCompleted();
+                                    }
+                                }
+                            }
+                        });
+            } catch (IOException | CipherException e1) {
+                e1.printStackTrace();
+                e.onError(e1);
+            }
+        });
+    }
+
     private TransactionReceipt sendTransactionReceiptRequest(
             Web3j web3j, String transactionHash) throws IOException {
         EthGetTransactionReceipt transactionReceipt =
@@ -248,6 +499,29 @@ public class BrahmaWeb3jService extends BaseService{
                     e.onNext(privateKey.toString(16));
                 } else {
                     e.onNext("");
+                }
+            } catch (IOException | CipherException e1) {
+                e1.printStackTrace();
+                e.onError(e1);
+            }
+            e.onCompleted();
+        });
+    }
+
+    public Observable<Map> getEcKeyByPassword(String fileName, String password) {
+        return Observable.create(e -> {
+            try {
+                Credentials credentials = WalletUtils.loadCredentials(
+                        password, context.getFilesDir() + "/" +  fileName);
+                BigInteger privateKey = credentials.getEcKeyPair().getPrivateKey();
+                BigInteger publicKey = credentials.getEcKeyPair().getPublicKey();
+                Map<String, String> ecKeys = new HashMap<>();
+                if (WalletUtils.isValidPrivateKey(privateKey.toString(16))) {
+                    ecKeys.put(BrahmaConst.PRIVATE_KEY, privateKey.toString(16));
+                    ecKeys.put(BrahmaConst.PUBLIC_KEY, publicKey.toString(16));
+                    e.onNext(ecKeys);
+                } else {
+                    e.onNext(null);
                 }
             } catch (IOException | CipherException e1) {
                 e1.printStackTrace();

@@ -4,15 +4,22 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Locale;
 
 import io.brahmaos.wallet.brahmawallet.R;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 import io.brahmaos.wallet.brahmawallet.statistic.utils.StatisticEventAgent;
+import io.brahmaos.wallet.util.BLog;
 
 /**
  * the project common config
@@ -31,12 +38,27 @@ public class BrahmaConfig {
     private static final String KEY_ASSETS_VISIBLE = "assets.visible";
     private static final String KEY_TOKEN_LIST_HASH = "token.list.hash";
     private static final String KEY_TOKEN_LIST_VERSION = "token.list.version";
+    private static final String KEY_PAY_REQUEST_TOKEN = "pay.request.token";
+    private static final String KEY_PAY_REQUEST_TOKEN_TYPE = "pay.request.token.type";
+    private static final String KEY_PAY_ACCOUNT = "quick.pay.account";
+    private static final String KEY_PAY_ACCOUNT_ID = "quick.pay.account.id";
+    private static final String KEY_PAY_ACCOUNT_NAME = "quick.pay.account.name";
+    private static final String KEY_PAY_ACCOUNT_WALLET_FILE_NAME = "quick.pay.account.wallet.file.name";
+
+    private static final String PAY_ACCOUNT_AVATAR_FOLDER = "pay_account";
+    private static final String PAY_ACCOUNT_AVATAR_JPG_NAME = "avatar.jpg";
 
     // false: main net; true: ropsten testnet;
-    public static boolean debugFlag = false;
+    public static boolean debugFlag = true;
     private String networkUrl;
     private String languageLocale;
     private String currencyUnit;
+    private String payRequestToken;
+    private String payRequestTokenType;
+    private String payAccount;
+    private String payAccountID;
+    private String payAccountName;
+    private String payAccountWallet;
     private boolean assetsVisible = true;
     private String tokenListHash;
     private boolean touchId = false;
@@ -55,6 +77,12 @@ public class BrahmaConfig {
 
         languageLocale = sharedPref.getString(context.getString(R.string.key_wallet_language), null);
         currencyUnit = sharedPref.getString(context.getString(R.string.key_wallet_currency_unit), null);
+        payRequestToken = sharedPref.getString(KEY_PAY_REQUEST_TOKEN, null);
+        payRequestTokenType = sharedPref.getString(KEY_PAY_REQUEST_TOKEN_TYPE, null);
+        payAccount = sharedPref.getString(KEY_PAY_ACCOUNT, null);
+        payAccountID = sharedPref.getString(KEY_PAY_ACCOUNT_ID, null);
+        payAccountName = sharedPref.getString(KEY_PAY_ACCOUNT_NAME, "");
+        payAccountWallet = sharedPref.getString(KEY_PAY_ACCOUNT_WALLET_FILE_NAME, "");
         assetsVisible = sharedPref.getBoolean(KEY_ASSETS_VISIBLE, true);
         tokenListHash = sharedPref.getString(KEY_TOKEN_LIST_HASH, "");
         touchId = sharedPref.getBoolean(context.getString(R.string.key_touch_id_switch), false);
@@ -152,6 +180,112 @@ public class BrahmaConfig {
         resources.updateConfiguration(config, dm);
     }
 
+    public String getPayRequestToken() {
+        return payRequestToken;
+    }
+
+    public void setPayRequestToken(String payRequestToken) {
+        this.payRequestToken = payRequestToken;
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(KEY_PAY_REQUEST_TOKEN, payRequestToken);
+        editor.apply();
+    }
+
+    public String getPayRequestTokenType() {
+        return payRequestTokenType;
+    }
+
+    public void setPayRequestTokenType(String payRequestTokenType) {
+        this.payRequestTokenType = payRequestTokenType;
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(KEY_PAY_REQUEST_TOKEN_TYPE, payRequestTokenType);
+        editor.apply();
+    }
+
+    public String getPayAccount() {
+        return payAccount;
+    }
+
+    public void setPayAccount(String payAccount) {
+        this.payAccount = payAccount;
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(KEY_PAY_ACCOUNT, payAccount);
+        editor.apply();
+    }
+
+    public String getPayAccountID() {
+        return payAccountID;
+    }
+
+    public void setPayAccountID(String payAccountID) {
+        this.payAccountID = payAccountID;
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(KEY_PAY_ACCOUNT_ID, payAccountID);
+        editor.apply();
+    }
+
+    public String getPayAccountName() {
+        return payAccountName;
+    }
+
+    public void setPayAccountName(String payAccountName) {
+        this.payAccountName = payAccountName;
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(KEY_PAY_ACCOUNT_NAME, payAccountName);
+        editor.apply();
+    }
+
+    public String getPayAccountWalletFileName() {
+        return payAccountWallet;
+    }
+
+    public void setPayAccountWalletFileName(String payAccountWallet) {
+        this.payAccountWallet = payAccountWallet;
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(KEY_PAY_ACCOUNT_WALLET_FILE_NAME, payAccountWallet);
+        editor.apply();
+    }
+
+    public Bitmap getPayAccountAvatar() {
+        try {
+            FileInputStream f = new FileInputStream(context.getApplicationContext().getFilesDir()
+                    + "/" + PAY_ACCOUNT_AVATAR_FOLDER + "/" + PAY_ACCOUNT_AVATAR_JPG_NAME);
+            Bitmap bm = null;
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inSampleSize = 8;
+            bm = BitmapFactory.decodeStream(f, null, options);
+            return bm;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public boolean savePayAccountAvatar(Bitmap bitmap) {
+        boolean result = false;
+        File dir = new File(context.getApplicationContext().getFilesDir()
+                + "/" + PAY_ACCOUNT_AVATAR_FOLDER);
+        if(!dir.exists()) {
+            dir.mkdirs();
+        }
+        File file = new File(dir + "/" + PAY_ACCOUNT_AVATAR_JPG_NAME);
+        FileOutputStream os =null;
+        try {
+            os =new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG,100, os);
+            os.flush();
+            result = true;
+        } catch(Exception e) {
+        } finally {
+            try {
+                os.close();
+            } catch (IOException ie) {
+            }
+            bitmap = null;
+            System.gc();
+        }
+        return result;
+    }
+
     public boolean isAssetsVisible() {
         return assetsVisible;
     }
@@ -174,18 +308,26 @@ public class BrahmaConfig {
         editor.apply();
     }
 
-    public String getServiceTermsUrl() {
-        String serviceUrl = BrahmaConst.PAGE_BASE_URL + BrahmaConst.HELP_PREFIX + "service_en.html";
+    public String getFingerprintTermsUrl() {
+        String url = "https://support.brahmaos.io/wallet/policies/fingerprint-terms_en";
         if (languageLocale.equals(BrahmaConst.LANGUAGE_CHINESE)) {
-            serviceUrl = BrahmaConst.PAGE_BASE_URL + BrahmaConst.HELP_PREFIX + "service_zh.html";
+            url = "https://support.brahmaos.io/wallet/policies/fingerprint-terms_zh";
+        }
+        return url;
+    }
+
+    public String getServiceTermsUrl() {
+        String serviceUrl = "https://support.brahmaos.io/wallet/policies/service_en";
+        if (languageLocale.equals(BrahmaConst.LANGUAGE_CHINESE)) {
+            serviceUrl = "https://support.brahmaos.io/wallet/policies/service_zh";
         }
         return serviceUrl;
     }
 
     public String getPrivacyUrl() {
-        String serviceUrl = BrahmaConst.PAGE_BASE_URL + BrahmaConst.HELP_PREFIX + "privacy_policy_en.html";
+        String serviceUrl = "https://support.brahmaos.io/wallet/policies/privacy_en";
         if (languageLocale.equals(BrahmaConst.LANGUAGE_CHINESE)) {
-            serviceUrl = BrahmaConst.PAGE_BASE_URL + BrahmaConst.HELP_PREFIX + "privacy_policy_zh.html";
+            serviceUrl = "https://support.brahmaos.io/wallet/policies/privacy_zh";
         }
         return serviceUrl;
     }
@@ -206,6 +348,11 @@ public class BrahmaConfig {
         return allowStatistic;
     }
 
+    public boolean getTouchIDPayState(String accountAddr) {
+        // Touch ID pay is default closed.
+        return sharedPref.getBoolean(accountAddr, false);
+    }
+
     public void setTouchId(boolean touchId) {
         this.touchId = touchId;
         SharedPreferences.Editor editor = sharedPref.edit();
@@ -219,6 +366,12 @@ public class BrahmaConfig {
         editor.putBoolean(context.getString(R.string.key_statistic_switch), allow);
         editor.apply();
         StatisticEventAgent.allowStatistic(context, allow);
+    }
+
+    public void setTouchIDPayState(String accountAddr, boolean state) {
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putBoolean(accountAddr, state);
+        editor.apply();
     }
 
     public int getTokenListVersion() {
@@ -254,5 +407,13 @@ public class BrahmaConfig {
 
     public String getHashRateUrl() {
         return BrahmaConst.HASH_RATE_URL;
+    }
+
+    public String getQuickAccountHelpUrl() {
+        String url = "https://support.brahmaos.io/pay/what-is-quick-account_en";
+        if (languageLocale.equals(BrahmaConst.LANGUAGE_CHINESE)) {
+            url = "https://support.brahmaos.io/pay/what-is-quick-account_zh";
+        }
+        return url;
     }
 }

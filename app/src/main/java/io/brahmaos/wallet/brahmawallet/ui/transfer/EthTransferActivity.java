@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.hardware.fingerprint.FingerprintManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.BottomSheetDialog;
@@ -38,7 +39,9 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.brahmaos.wallet.brahmawallet.FingerprintCore;
 import io.brahmaos.wallet.brahmawallet.R;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.common.ReqCode;
@@ -62,7 +65,7 @@ import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class EthTransferActivity extends BaseActivity {
+public class EthTransferActivity extends BaseActivity implements FingerprintCore.SimpleAuthenticationCallback{
 
     @Override
     protected String tag() {
@@ -110,6 +113,20 @@ public class EthTransferActivity extends BaseActivity {
     private AccountViewModel mViewModel;
     private List<AccountEntity> mAccounts = new ArrayList<>();
     private List<AccountAssets> mAccountAssetsList = new ArrayList<>();
+    private FingerprintCore mFingerprintCore;
+    private AlertDialog mFingerDialog = null;
+    private LinearLayout layoutTransferStatus;
+    private CustomStatusView customStatusView;
+    private String receiverAddress;
+    private String transferAmount;
+    private String remark;
+    private String gasPriceStr;
+    private String gasLimitStr;
+    private BigDecimal finalAmount;
+    private BigDecimal gasPrice;
+    private BigInteger gasLimit;
+    private TextView tvTransferStatus;
+    private BottomSheetDialog transferInfoDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,6 +141,8 @@ public class EthTransferActivity extends BaseActivity {
             finish();
         }
         initView();
+        mFingerprintCore = new FingerprintCore(this);
+        mFingerprintCore.setCallback(this);
     }
 
     private void initView() {
@@ -343,12 +362,12 @@ public class EthTransferActivity extends BaseActivity {
     }
 
     private void showTransferInfo() {
-        String receiverAddress = etReceiverAddress.getText().toString().trim();
-        String transferAmount = etAmount.getText().toString().trim();
-        String remark = etRemark.getText().toString().trim();
+        receiverAddress = etReceiverAddress.getText().toString().trim();
+        transferAmount = etAmount.getText().toString().trim();
+        remark = etRemark.getText().toString().trim();
         BigDecimal amount = BigDecimal.ZERO;
-        String gasPriceStr = etGasPrice.getText().toString().trim();
-        String gasLimitStr = etGasLimit.getText().toString().trim();
+        gasPriceStr = etGasPrice.getText().toString().trim();
+        gasLimitStr = etGasLimit.getText().toString().trim();
 
         String tips = "";
         boolean cancel = false;
@@ -423,10 +442,10 @@ public class EthTransferActivity extends BaseActivity {
             return;
         }
 
-        BigDecimal gasPrice = new BigDecimal(gasPriceStr);
-        BigInteger gasLimit = new BigInteger(gasLimitStr);
+        gasPrice = new BigDecimal(gasPriceStr);
+        gasLimit = new BigInteger(gasLimitStr);
 
-        final BottomSheetDialog transferInfoDialog = new BottomSheetDialog(this);
+        transferInfoDialog = new BottomSheetDialog(this);
         View view = getLayoutInflater().inflate(R.layout.bottom_sheet_dialog_transfer_info, null);
         transferInfoDialog.setContentView(view);
         transferInfoDialog.setCancelable(false);
@@ -455,89 +474,224 @@ public class EthTransferActivity extends BaseActivity {
         TextView tvTransferToken = view.findViewById(R.id.tv_dialog_transfer_token);
         tvTransferToken.setText(mToken.getShortName());
 
-        LinearLayout layoutTransferStatus = view.findViewById(R.id.layout_transfer_status);
-        CustomStatusView customStatusView = view.findViewById(R.id.as_status);
-        TextView tvTransferStatus = view.findViewById(R.id.tv_transfer_status);
+        layoutTransferStatus = view.findViewById(R.id.layout_transfer_status);
+        customStatusView = view.findViewById(R.id.as_status);
+        tvTransferStatus = view.findViewById(R.id.tv_transfer_status);
         Button confirmBtn = view.findViewById(R.id.btn_commit_transfer);
-        BigDecimal finalAmount = amount;
+        finalAmount = amount;
         confirmBtn.setOnClickListener(v -> {
             StatisticEventAgent.onClick(EthTransferActivity.this, "btn_commit_transfer");
-            final View dialogView = getLayoutInflater().inflate(R.layout.dialog_account_password, null);
-            EditText etPassword = dialogView.findViewById(R.id.et_password);
-            AlertDialog passwordDialog = new AlertDialog.Builder(EthTransferActivity.this, R.style.Theme_AppCompat_Light_Dialog_Alert_Self)
-                    .setView(dialogView)
-                    .setCancelable(false)
-                    .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel())
-                    .setPositiveButton(R.string.ok, (dialog, which) -> {
-                        dialog.cancel();
-                        // show transfer progress
-                        layoutTransferStatus.setVisibility(View.VISIBLE);
-                        customStatusView.loadLoading();
-                        String password = etPassword.getText().toString();
-                        BrahmaWeb3jService.getInstance().sendTransfer(mAccount, mToken, password, receiverAddress,
-                                finalAmount, gasPrice, gasLimit, remark)
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(new Observer<Object>() {
-                                    @Override
-                                    public void onNext(Object result) {
-                                        if (result instanceof Integer) {
-                                            int flag = (Integer) result;
-                                            if (flag == 1) {
-                                                tvTransferStatus.setText(R.string.progress_verify_account);
-                                            } else if (flag == 2) {
-                                                tvTransferStatus.setText(R.string.progress_send_request);
-                                            }
-                                        } else if (result instanceof String) {
-                                            tvTransferStatus.setText(R.string.progress_transfer_success);
-                                            BLog.i(tag(), "the transfer success");
-                                            customStatusView.loadSuccess();
-                                            new Handler().postDelayed(() -> {
-                                                transferInfoDialog.cancel();
-                                                // Eth transfer is a real-time arrival, and token transfer may take longer,
-                                                // so there is no need to refresh
-                                                if (mToken.getName().toLowerCase().equals(BrahmaConst.ETHEREUM)) {
-                                                    RxBus.get().post(EventTypeDef.ACCOUNT_ASSETS_TRANSFER, "succ");
-                                                }
-                                                finish();
-                                            }, 1200);
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onError(Throwable e) {
-                                        e.printStackTrace();
-                                        customStatusView.loadFailure();
-                                        tvTransferStatus.setText(R.string.progress_transfer_fail);
-                                        new Handler().postDelayed(() -> {
-                                            layoutTransferStatus.setVisibility(View.GONE);
-                                            int resId = R.string.tip_error_transfer;
-                                            if (e instanceof CipherException) {
-                                                resId = R.string.tip_error_password;
-                                            } else if (e instanceof TransactionException) {
-                                                resId = R.string.tip_error_net;
-                                            }
-                                            new AlertDialog.Builder(EthTransferActivity.this)
-                                                    .setMessage(resId)
-                                                    .setNegativeButton(R.string.ok, (dialog1, which1) -> dialog1.cancel())
-                                                    .create().show();
-                                        }, 1500);
-
-                                        BLog.i(tag(), "the transfer failed");
-                                    }
-
-                                    @Override
-                                    public void onCompleted() {
-                                    }
-                                });
-                        })
-                    .create();
-            passwordDialog.setOnShowListener(dialog -> {
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(etPassword, InputMethodManager.SHOW_IMPLICIT);
-            });
-            passwordDialog.show();
+            if (BrahmaConfig.getInstance().getTouchIDPayState(mAccount.getAddress())) {
+                showFingerprintDialog();
+            } else {
+                showPasswordDialog();
+            }
         });
     }
 
+    private void showFingerprintDialog() {
+        mFingerDialog = new AlertDialog.Builder(this)
+                .setCancelable(false)
+                .create();
+        View fingerView = View.inflate(this, R.layout.fingerdialog, null);
+        TextView cancelTv = fingerView.findViewById(R.id.fingerprint_cancel_tv);
+        cancelTv.setOnClickListener(tv -> {
+            mFingerprintCore.stopListening();
+            if (!BrahmaConfig.getInstance().getTouchIDPayState(mAccount.getAddress())) {
+                mFingerprintCore.clearTouchIDPay(mAccount.getAddress());
+            }
+            mFingerDialog.cancel();
+        });
+        mFingerDialog.show();
+        mFingerDialog.setContentView(fingerView);
+
+        try {
+            mFingerprintCore.decryptWithFingerprint(mAccount.getAddress());
+        } catch (Exception e) {
+            BLog.d(tag(), "Failed to decryptWithFingerprint: " + e.toString());
+            mFingerDialog.cancel();
+            showPayChoiceDialog(getString(R.string.fingerprint_changed));
+        }
+    }
+
+    private void showPasswordDialog() {
+        final View dialogView = getLayoutInflater().inflate(R.layout.dialog_account_password, null);
+        EditText etPassword = dialogView.findViewById(R.id.et_password);
+        AlertDialog passwordDialog = new AlertDialog.Builder(EthTransferActivity.this, R.style.Theme_AppCompat_Light_Dialog_Alert_Self)
+                .setView(dialogView)
+                .setCancelable(false)
+                .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel())
+                .setPositiveButton(R.string.ok, (dialog, which) -> {
+                    dialog.cancel();
+                    // show transfer progress
+                    layoutTransferStatus.setVisibility(View.VISIBLE);
+                    customStatusView.loadLoading();
+                    String password = etPassword.getText().toString();
+                    BrahmaWeb3jService.getInstance().sendTransfer(mAccount, mToken, password, receiverAddress,
+                            finalAmount, gasPrice, gasLimit, remark)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Observer<Object>() {
+                                @Override
+                                public void onNext(Object result) {
+                                    if (result instanceof Integer) {
+                                        int flag = (Integer) result;
+                                        if (flag == 1) {
+                                            tvTransferStatus.setText(R.string.progress_verify_account);
+                                        } else if (flag == 2) {
+                                            tvTransferStatus.setText(R.string.progress_send_request);
+                                        }
+                                    } else if (result instanceof String) {
+                                        tvTransferStatus.setText(R.string.progress_transfer_success);
+                                        BLog.i(tag(), "the transfer success");
+                                        customStatusView.loadSuccess();
+                                        new Handler().postDelayed(() -> {
+                                            transferInfoDialog.cancel();
+                                            // Eth transfer is a real-time arrival, and token transfer may take longer,
+                                            // so there is no need to refresh
+                                            if (mToken.getName().toLowerCase().equals(BrahmaConst.ETHEREUM)) {
+                                                RxBus.get().post(EventTypeDef.ACCOUNT_ASSETS_TRANSFER, "succ");
+                                            }
+                                            finish();
+                                        }, 1200);
+                                    }
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    e.printStackTrace();
+                                    customStatusView.loadFailure();
+                                    tvTransferStatus.setText(R.string.progress_transfer_fail);
+                                    new Handler().postDelayed(() -> {
+                                        layoutTransferStatus.setVisibility(View.GONE);
+                                        int resId = R.string.tip_error_transfer;
+                                        if (e instanceof CipherException) {
+                                            resId = R.string.tip_error_password;
+                                        } else if (e instanceof TransactionException) {
+                                            resId = R.string.tip_error_net;
+                                        }
+                                        new AlertDialog.Builder(EthTransferActivity.this)
+                                                .setMessage(resId)
+                                                .setNegativeButton(R.string.ok, (dialog1, which1) -> dialog1.cancel())
+                                                .create().show();
+                                    }, 1500);
+
+                                    BLog.i(tag(), "the transfer failed");
+                                }
+
+                                @Override
+                                public void onCompleted() {
+                                }
+                            });
+                })
+                .create();
+        passwordDialog.setOnShowListener(dialog -> {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(etPassword, InputMethodManager.SHOW_IMPLICIT);
+        });
+        passwordDialog.show();
+    }
+
+    private void showPayChoiceDialog(String msg) {
+        new AlertDialog.Builder(EthTransferActivity.this)
+                .setMessage(msg)
+                .setCancelable(false)
+                .setNegativeButton(R.string.ok, (dialog1, which1) -> dialog1.cancel())
+                .setPositiveButton(getString(R.string.btn_use_password), (dialog1, which1) -> {
+                    dialog1.cancel();
+                    showPasswordDialog();
+                })
+                .create().show();
+    }
+
+    @Override
+    public void onAuthenticationFail() {
+        showLongToast(getString(R.string.fail_fingerprint_verification));
+        if (mFingerDialog != null) {
+            mFingerDialog.cancel();
+        }
+        showPayChoiceDialog(getString(R.string.fail_fingerprint_verification));
+    }
+
+    @Override
+    public void onAuthenticationError(int errorCode, CharSequence errString) {
+        showLongToast("" + errString);
+        if (FingerprintManager.FINGERPRINT_ERROR_LOCKOUT == errorCode ||
+                FingerprintManager.FINGERPRINT_ERROR_LOCKOUT_PERMANENT == errorCode) {
+            if (mFingerDialog != null) {
+                mFingerDialog.cancel();
+            }
+            showPayChoiceDialog("" + errString);
+        }
+    }
+
+    @Override
+    public void onAuthenticationHelp(int helpCode, CharSequence helpString) {
+        showLongToast("" + helpString);
+    }
+
+    @Override
+    public void onAuthenticationSucceeded(String data) {
+        if (mFingerDialog != null) {
+            mFingerDialog.cancel();
+        }
+        layoutTransferStatus.setVisibility(View.VISIBLE);
+        customStatusView.loadLoading();
+        BrahmaWeb3jService.getInstance().sendTransfer(mAccount, mToken, data, receiverAddress,
+                finalAmount, gasPrice, gasLimit, remark)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Object>() {
+                    @Override
+                    public void onNext(Object result) {
+                        if (result instanceof Integer) {
+                            int flag = (Integer) result;
+                            if (flag == 1) {
+                                tvTransferStatus.setText(R.string.progress_verify_account);
+                            } else if (flag == 2) {
+                                tvTransferStatus.setText(R.string.progress_send_request);
+                            }
+                        } else if (result instanceof String) {
+                            tvTransferStatus.setText(R.string.progress_transfer_success);
+                            BLog.i(tag(), "the transfer success");
+                            customStatusView.loadSuccess();
+                            new Handler().postDelayed(() -> {
+                                transferInfoDialog.cancel();
+                                // Eth transfer is a real-time arrival, and token transfer may take longer,
+                                // so there is no need to refresh
+                                if (mToken.getName().toLowerCase().equals(BrahmaConst.ETHEREUM)) {
+                                    RxBus.get().post(EventTypeDef.ACCOUNT_ASSETS_TRANSFER, "succ");
+                                }
+                                finish();
+                            }, 1200);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        customStatusView.loadFailure();
+                        tvTransferStatus.setText(R.string.progress_transfer_fail);
+                        new Handler().postDelayed(() -> {
+                            layoutTransferStatus.setVisibility(View.GONE);
+                            int resId = R.string.tip_error_transfer;
+                            if (e instanceof CipherException) {
+                                resId = R.string.tip_error_password;
+                            } else if (e instanceof TransactionException) {
+                                resId = R.string.tip_error_net;
+                            }
+                            new AlertDialog.Builder(EthTransferActivity.this)
+                                    .setMessage(resId)
+                                    .setNegativeButton(R.string.ok, (dialog1, which1) -> dialog1.cancel())
+                                    .create().show();
+                        }, 1500);
+
+                        BLog.i(tag(), "the transfer failed");
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                    }
+                });
+    }
 }

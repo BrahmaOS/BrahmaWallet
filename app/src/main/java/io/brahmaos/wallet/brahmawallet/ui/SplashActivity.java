@@ -28,6 +28,8 @@ import io.brahmaos.wallet.brahmawallet.db.entity.AllTokenEntity;
 import io.brahmaos.wallet.brahmawallet.model.TokensVersionInfo;
 import io.brahmaos.wallet.brahmawallet.service.BtcAccountManager;
 import io.brahmaos.wallet.brahmawallet.service.MainService;
+import io.brahmaos.wallet.brahmawallet.ui.account.AccountGuideActivity;
+import io.brahmaos.wallet.brahmawallet.ui.account.CreateAccountActivity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
 import io.brahmaos.wallet.util.BLog;
@@ -54,6 +56,8 @@ public class SplashActivity extends BaseActivity {
     private boolean flagAllTokens = false;
     // End of countdown sign
     private boolean flagCountdown = false;
+    // the flag of get all accounts
+    private boolean flagAllAccounts = false;
 
     private AccountViewModel mViewModel;
 
@@ -72,14 +76,18 @@ public class SplashActivity extends BaseActivity {
         super.onStart();
         // Get the account list to prevent the home page sloshing
         mViewModel.getAccounts().observe(this, accountEntities -> {
-            if (accountEntities != null && accountEntities.size() > 0) {
-                MainService.getInstance().setHaveAccount(true);
-                // init btc account walletAppKit
-                for (AccountEntity accountEntity : accountEntities) {
-                    if (accountEntity.getType() == BrahmaConst.BTC_ACCOUNT_TYPE) {
-                        BtcAccountManager.getInstance().initExistsWalletAppKit(accountEntity);
+            if (accountEntities != null) {
+                flagAllAccounts = true;
+                if (accountEntities.size() > 0) {
+                    MainService.getInstance().setHaveAccount(true);
+                    // init btc account walletAppKit
+                    for (AccountEntity accountEntity : accountEntities) {
+                        if (accountEntity.getType() == BrahmaConst.BTC_ACCOUNT_TYPE) {
+                            BtcAccountManager.getInstance().initExistsWalletAppKit(accountEntity);
+                        }
                     }
                 }
+                jumpToMain();
             }
         });
 
@@ -138,15 +146,21 @@ public class SplashActivity extends BaseActivity {
 
     // main page
     private void jumpToMain() {
-        if (flagCountdown && flagAllTokens) {
+        if (flagAllAccounts && flagCountdown && flagAllTokens) {
             if (BrahmaConfig.getInstance().isTouchId() && CommonUtil.isFinger(this)) {
                 Intent intent = new Intent();
                 intent.setClass(SplashActivity.this, FingerActivity.class);
+                intent.putExtra("isFirst", true);
+                startActivity(intent);
+                finish();
+            } else if (MainService.getInstance().isHaveAccount()) {
+                Intent intent = new Intent();
+                intent.setClass(SplashActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
             } else {
                 Intent intent = new Intent();
-                intent.setClass(SplashActivity.this, MainActivity.class);
+                intent.setClass(SplashActivity.this, AccountGuideActivity.class);
                 startActivity(intent);
                 finish();
             }

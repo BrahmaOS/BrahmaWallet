@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:id="@+id/layout_quick_account_password"
+            android:layout_width="match_parent"
+            android:layout_height="360dp"
+            android:paddingBottom="@dimen/space_large"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:text="@string/prompt_input_quick_account_password"
+                    android:paddingTop="@dimen/space_normal"
+                    android:paddingBottom="@dimen/space_small"
+                    android:textColor="@color/color_primary_text"
+                    android:textSize="@dimen/font_size_subheading"/>
+
+                <ImageView
+                    android:id="@+id/iv_close_dialog"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_small"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_close"/>
+            </FrameLayout>
+
+            <include layout="@layout/horizontal_divider"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingStart="@dimen/space_normal"
+                android:paddingEnd="@dimen/space_normal"
+                android:orientation="vertical">
+                <io.brahmaos.wallet.brahmawallet.view.PassWordLayout
+                    android:id="@+id/et_quick_account_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_larger"
+                    app:box_draw_type="rect"
+                    app:interval_width="4dp"
+                    app:item_height="48dp"
+                    app:item_width="48dp"
+                    app:pass_inputed_type="stars"
+                    app:pass_leng="six" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:layout_height="0dp"/>
+                <Button
+                    android:id="@+id/btn_commit_transfer"
+                    style="@style/ButtonSingle"
+                    android:layout_marginTop="@dimen/space_normal"
+                    android:text="@string/action_confirm"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_transfer_status"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:background="@color/white">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text="@string/title_transfer_request"
+                android:paddingTop="@dimen/space_normal"
+                android:paddingBottom="@dimen/space_small"
+                android:textColor="@color/color_primary_text"
+                android:textSize="@dimen/font_size_subheading"/>
+
+            <include layout="@layout/horizontal_divider"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
+                <io.brahmaos.wallet.brahmawallet.view.CustomStatusView
+                    android:id="@+id/as_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="3dp"
+                    app:progress_radius="24dp"
+                    app:progress_width="3dp" />
+                <TextView
+                    android:id="@+id/tv_transfer_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_smaller"
+                    android:textSize="@dimen/font_size_subheading"
+                    android:textColor="@color/color_secondary_text"/>
+            </LinearLayout>
+        </LinearLayout>
+
+    </FrameLayout>
+
+</android.support.design.widget.CoordinatorLayout >

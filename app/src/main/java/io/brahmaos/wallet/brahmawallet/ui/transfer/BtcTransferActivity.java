@@ -7,6 +7,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.hardware.fingerprint.FingerprintManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.BottomSheetDialog;
@@ -48,7 +49,9 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.brahmaos.wallet.brahmawallet.FingerprintCore;
 import io.brahmaos.wallet.brahmawallet.R;
+import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.common.ReqCode;
@@ -79,7 +82,7 @@ import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class BtcTransferActivity extends BaseActivity {
+public class BtcTransferActivity extends BaseActivity implements FingerprintCore.SimpleAuthenticationCallback{
 
     @Override
     protected String tag() {
@@ -121,6 +124,12 @@ public class BtcTransferActivity extends BaseActivity {
     private BottomSheetDialog transferInfoDialog;
     private TextView tvTransferStatus;
     private CustomStatusView customStatusView;
+    private FingerprintCore mFingerprintCore;
+    private AlertDialog mFingerDialog = null;
+    private LinearLayout layoutTransferStatus;
+    private String receiverAddress;
+    private BigDecimal finalAmount;
+    private long feePerKb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,6 +173,8 @@ public class BtcTransferActivity extends BaseActivity {
                 });
 
         initView();
+        mFingerprintCore = new FingerprintCore(this);
+        mFingerprintCore.setCallback(this);
     }
 
     private void initView() {
@@ -304,7 +315,7 @@ public class BtcTransferActivity extends BaseActivity {
     }
 
     private void showTransferInfo() {
-        String receiverAddress = etReceiverAddress.getText().toString().trim();
+        receiverAddress = etReceiverAddress.getText().toString().trim();
         String transferAmount = etAmount.getText().toString().trim();
         String remark = etRemark.getText().toString().trim();
         BigDecimal amount = BigDecimal.ZERO;
@@ -323,7 +334,7 @@ public class BtcTransferActivity extends BaseActivity {
         }
 
         BigDecimal feePrice = new BigDecimal(feePerByte);
-        long feePerKb = feePrice.multiply(new BigDecimal(BtcAccountManager.BYTES_PER_BTC_KB)).longValue();
+        feePerKb = feePrice.multiply(new BigDecimal(BtcAccountManager.BYTES_PER_BTC_KB)).longValue();
         long btcTotalBalance = kit.wallet().getBalance().value;
 
         if (!cancel) {
@@ -374,47 +385,29 @@ public class BtcTransferActivity extends BaseActivity {
         TextView tvTransferAmount = view.findViewById(R.id.tv_dialog_transfer_amount);
         tvTransferAmount.setText(String.valueOf(amount));
 
-        LinearLayout layoutTransferStatus = view.findViewById(R.id.layout_transfer_status);
+        layoutTransferStatus = view.findViewById(R.id.layout_transfer_status);
         customStatusView = view.findViewById(R.id.as_status);
         tvTransferStatus = view.findViewById(R.id.tv_transfer_status);
         Button confirmBtn = view.findViewById(R.id.btn_commit_transfer);
-        final BigDecimal finalAmount = amount;
+        finalAmount = amount;
         confirmBtn.setOnClickListener(v -> {
             StatisticEventAgent.onClick(BtcTransferActivity.this, "btn_commit_transfer");
-            final View dialogView = getLayoutInflater().inflate(R.layout.dialog_account_password, null);
-            EditText etPassword = dialogView.findViewById(R.id.et_password);
-            AlertDialog passwordDialog = new AlertDialog.Builder(BtcTransferActivity.this, R.style.Theme_AppCompat_Light_Dialog_Alert_Self)
-                    .setView(dialogView)
-                    .setCancelable(false)
-                    .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel())
-                    .setPositiveButton(R.string.ok, (dialog, which) -> {
-                        dialog.cancel();
-                        String password = etPassword.getText().toString();
-                        if (isValidPassword(password)) {
-                            // show transfer progress
-                            layoutTransferStatus.setVisibility(View.VISIBLE);
-                            if (BtcAccountManager.getInstance().transfer(receiverAddress, finalAmount, feePerKb, mAccount.getFilename())) {
-                                customStatusView.loadLoading();
-                            } else {
-                                customStatusView.loadFailure();
-                                tvTransferStatus.setText(R.string.progress_transfer_fail);
-                                new Handler().postDelayed(() -> {
-                                    layoutTransferStatus.setVisibility(View.GONE);
-                                    int resId = R.string.tip_error_transfer;
-                                    new AlertDialog.Builder(BtcTransferActivity.this)
-                                            .setMessage(resId)
-                                            .setNegativeButton(R.string.ok, (dialog1, which1) -> dialog1.cancel())
-                                            .create().show();
-                                }, 1500);
-                            }
-                        }
-                    })
-                    .create();
-            passwordDialog.setOnShowListener(dialog -> {
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(etPassword, InputMethodManager.SHOW_IMPLICIT);
-            });
-            passwordDialog.show();
+            if (kit != null && kit.wallet() != null) {
+                final String mainAddress;
+                if (kit.wallet().getActiveKeyChain() != null &&
+                        kit.wallet().getActiveKeyChain().getIssuedReceiveKeys() != null &&
+                        kit.wallet().getActiveKeyChain().getIssuedReceiveKeys().size() > 0) {
+                    mainAddress = kit.wallet().getActiveKeyChain().getIssuedReceiveKeys().get(0).
+                            toAddress(BtcAccountManager.getInstance().getNetworkParams()).toBase58();
+                } else {
+                    mainAddress = kit.wallet().currentChangeAddress().toBase58();
+                }
+                if (BrahmaConfig.getInstance().getTouchIDPayState(mainAddress)) {
+                    showFingerprintDialog(mainAddress);
+                } else {
+                    showPasswordDialog();
+                }
+            }
         });
     }
 
@@ -443,5 +436,131 @@ public class BtcTransferActivity extends BaseActivity {
                 })
                 .create();
         errorDialog.show();
+    }
+
+
+    private void showFingerprintDialog(String mainAddress) {
+        mFingerDialog = new AlertDialog.Builder(this)
+                .setCancelable(false)
+                .create();
+        View fingerView = View.inflate(this, R.layout.fingerdialog, null);
+        TextView cancelTv = fingerView.findViewById(R.id.fingerprint_cancel_tv);
+        cancelTv.setOnClickListener(tv -> {
+            mFingerprintCore.stopListening();
+            if (!BrahmaConfig.getInstance().getTouchIDPayState(mainAddress)) {
+                mFingerprintCore.clearTouchIDPay(mainAddress);
+            }
+            mFingerDialog.cancel();
+        });
+        mFingerDialog.show();
+        mFingerDialog.setContentView(fingerView);
+
+        try {
+            mFingerprintCore.decryptWithFingerprint(mainAddress);
+        } catch (Exception e) {
+            BLog.d(tag(), "Failed to decryptWithFingerprint: " + e.toString());
+            mFingerDialog.cancel();
+            showPayChoiceDialog(getString(R.string.fingerprint_changed));
+        }
+    }
+
+    private void showPasswordDialog() {
+        final View dialogView = getLayoutInflater().inflate(R.layout.dialog_account_password, null);
+        EditText etPassword = dialogView.findViewById(R.id.et_password);
+        AlertDialog passwordDialog = new AlertDialog.Builder(BtcTransferActivity.this, R.style.Theme_AppCompat_Light_Dialog_Alert_Self)
+                .setView(dialogView)
+                .setCancelable(false)
+                .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel())
+                .setPositiveButton(R.string.ok, (dialog, which) -> {
+                    dialog.cancel();
+                    String password = etPassword.getText().toString();
+                    if (isValidPassword(password)) {
+                        // show transfer progress
+                        layoutTransferStatus.setVisibility(View.VISIBLE);
+                        if (BtcAccountManager.getInstance().transfer(receiverAddress, finalAmount, feePerKb, mAccount.getFilename())) {
+                            customStatusView.loadLoading();
+                        } else {
+                            customStatusView.loadFailure();
+                            tvTransferStatus.setText(R.string.progress_transfer_fail);
+                            new Handler().postDelayed(() -> {
+                                layoutTransferStatus.setVisibility(View.GONE);
+                                int resId = R.string.tip_error_transfer;
+                                new AlertDialog.Builder(BtcTransferActivity.this)
+                                        .setMessage(resId)
+                                        .setNegativeButton(R.string.ok, (dialog1, which1) -> dialog1.cancel())
+                                        .create().show();
+                            }, 1500);
+                        }
+                    }
+                })
+                .create();
+        passwordDialog.setOnShowListener(dialog -> {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(etPassword, InputMethodManager.SHOW_IMPLICIT);
+        });
+        passwordDialog.show();
+    }
+
+    private void showPayChoiceDialog(String msg) {
+        new AlertDialog.Builder(this)
+                .setMessage(msg)
+                .setCancelable(false)
+                .setNegativeButton(R.string.ok, (dialog1, which1) -> dialog1.cancel())
+                .setPositiveButton(getString(R.string.btn_use_password), (dialog1, which1) -> {
+                    dialog1.cancel();
+                    showPasswordDialog();
+                })
+                .create().show();
+    }
+
+    @Override
+    public void onAuthenticationFail() {
+        showLongToast(getString(R.string.fail_fingerprint_verification));
+        if (mFingerDialog != null) {
+            mFingerDialog.cancel();
+        }
+        showPayChoiceDialog(getString(R.string.fail_fingerprint_verification));
+    }
+
+    @Override
+    public void onAuthenticationError(int errorCode, CharSequence errString) {
+        showLongToast("" + errString);
+        if (FingerprintManager.FINGERPRINT_ERROR_LOCKOUT == errorCode ||
+                FingerprintManager.FINGERPRINT_ERROR_LOCKOUT_PERMANENT == errorCode) {
+            if (mFingerDialog != null) {
+                mFingerDialog.cancel();
+            }
+            showPayChoiceDialog("" + errString);
+        }
+    }
+
+    @Override
+    public void onAuthenticationHelp(int helpCode, CharSequence helpString) {
+        showLongToast("" + helpString);
+    }
+
+    @Override
+    public void onAuthenticationSucceeded(String data) {
+        if (mFingerDialog != null) {
+            mFingerDialog.cancel();
+        }
+        if (isValidPassword(data)) {
+            // show transfer progress
+            layoutTransferStatus.setVisibility(View.VISIBLE);
+            if (BtcAccountManager.getInstance().transfer(receiverAddress, finalAmount, feePerKb, mAccount.getFilename())) {
+                customStatusView.loadLoading();
+            } else {
+                customStatusView.loadFailure();
+                tvTransferStatus.setText(R.string.progress_transfer_fail);
+                new Handler().postDelayed(() -> {
+                    layoutTransferStatus.setVisibility(View.GONE);
+                    int resId = R.string.tip_error_transfer;
+                    new AlertDialog.Builder(BtcTransferActivity.this)
+                            .setMessage(resId)
+                            .setNegativeButton(R.string.ok, (dialog1, which1) -> dialog1.cancel())
+                            .create().show();
+                }, 1500);
+            }
+        }
     }
 }

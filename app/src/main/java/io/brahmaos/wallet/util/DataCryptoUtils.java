@@ -3,6 +3,8 @@ package io.brahmaos.wallet.util;
 import android.util.Log;
 
 import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.spec.KeySpec;
 
 import javax.crypto.Cipher;
@@ -107,7 +109,7 @@ public class DataCryptoUtils {
             if (hex.length() == 1) {
                 hex = '0' + hex;
             }
-            sb.append(hex.toUpperCase());
+            sb.append(hex);
         }
         return sb.toString();
     }
@@ -122,5 +124,19 @@ public class DataCryptoUtils {
             result[i] = (byte) (high * 16 + low);
         }
         return result;
+    }
+
+    public static String shaEncrypt(String strSrc) {
+        MessageDigest md = null;
+        String strDes = null;
+        byte[] bt = strSrc.getBytes();
+        try {
+            md = MessageDigest.getInstance("SHA-1");
+            md.update(bt);
+            strDes = parseByte2HexStr(md.digest()); // to HexString
+        } catch (NoSuchAlgorithmException e) {
+            return null;
+        }
+        return strDes;
     }
 }

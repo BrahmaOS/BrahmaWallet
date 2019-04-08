@@ -278,7 +278,7 @@ public class StatisticHttpUtils {
         return devObj;
     }
 
-    private static String getUDID(Context context) {
+    public static String getUDID(Context context) {
         StringBuilder udid = new StringBuilder();
         String vendor = Build.MANUFACTURER;
         String sn = android.os.Build.SERIAL;

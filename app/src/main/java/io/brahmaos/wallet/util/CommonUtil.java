@@ -10,11 +10,42 @@ import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.util.DisplayMetrics;
 
+import org.spongycastle.jce.ECNamedCurveTable;
+import org.spongycastle.jce.provider.BouncyCastleProvider;
+import org.spongycastle.jce.spec.ECNamedCurveParameterSpec;
+import org.spongycastle.jce.spec.ECNamedCurveSpec;
+import org.spongycastle.util.encoders.Base64;
+import org.spongycastle.util.encoders.Hex;
+import org.web3j.crypto.ECKeyPair;
+import org.web3j.crypto.Hash;
+import org.web3j.crypto.Sign;
+import org.web3j.crypto.WalletUtils;
+import org.web3j.utils.Numeric;
+
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URLEncoder;
+import java.security.InvalidKeyException;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.Signature;
+import java.security.SignatureException;
+import java.security.spec.ECPrivateKeySpec;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.TreeMap;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 
 import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
@@ -185,4 +216,101 @@ public class CommonUtil {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return formatter.format(date);
     }
+
+    public static int getCurrentSecondTimestamp() {
+        Date curDate =  new Date(System.currentTimeMillis());
+        if (null == curDate) {
+            return 0;
+        }
+        String timestamp = String.valueOf(curDate.getTime());
+        int length = timestamp.length();
+        if (length > 3) {
+            return Integer.valueOf(timestamp.substring(0,length-3));
+        } else {
+            return 0;
+        }
+    }
+
+    public static int getNonce() {
+        return new Random().nextInt(100);
+    }
+
+    public static String generateSignature(String uri, TreeMap<String,Object> params, String secKey) {
+        String securityContent = generateSecurityContent(uri, params);
+        String messageSig;
+        try {
+            ECKeyPair ecKeyPair = ECKeyPair.create(Hex.decode(secKey));
+            Sign.SignatureData signatureData = Sign.signMessage(securityContent.getBytes(), ecKeyPair, true);
+            String messageR = Numeric.cleanHexPrefix(Numeric.toHexString(signatureData.getR()));
+            String messageS = Numeric.cleanHexPrefix(Numeric.toHexString(signatureData.getS()));
+            String messageV = String.format("%02x", (signatureData.getV() - 27) & 0xFF);
+            messageSig = String.format("%s%s%s", messageR, messageS, messageV);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        return messageSig;
+
+    }
+
+    public static String generateSecurityContent(String uri, TreeMap<String,Object> params){
+        StringBuilder sb = new StringBuilder(uri);
+        if (params != null && params.keySet().size() > 0) {
+            boolean firstFlag = true;
+            Iterator iterator = params.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry entry = (Map.Entry<String, String>) iterator.next();
+                if (firstFlag) {
+                    sb.append("?").append(entry.getKey()).append("=").append(entry.getValue());
+                    firstFlag = false;
+                } else {
+                    sb.append("&").append(entry.getKey()).append("=").append(entry.getValue());
+                }
+            }
+        }
+        return sb.toString();
+    }
+
+    public static boolean isNull(String content) {
+        return content == null || content.isEmpty();
+    }
+
+    public static long convertDateTimeStringToLong(String timeStr, String format) {
+        long result = 0;
+        if (null == timeStr || timeStr.isEmpty()) {
+            return result;
+        }
+        if (null == format || format.isEmpty()) {
+            format = "yyyy-MM-dd hh:mm:ss";
+        }
+        SimpleDateFormat formatter = new SimpleDateFormat(format);
+        Date date = null;
+        try {
+            date = formatter.parse(timeStr);
+        } catch (Exception e) {
+            date = null;
+        }
+        if (date != null) {
+            return date.getTime();
+        } else {
+            return result;
+        }
+    }
+
+    public static String convertDateTimeLongToString(long timeMill, String format) {
+        if (timeMill <= 0) {
+            return null;
+        }
+        if (null == format || format.isEmpty()) {
+            format = "yyyy-MM-dd hh:mm:ss";
+        }
+        try {
+            Date date = new Date(timeMill);
+            SimpleDateFormat sdf = new SimpleDateFormat(format);
+            return sdf.format(date);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 }

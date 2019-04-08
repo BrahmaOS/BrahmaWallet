@@ -147,6 +147,12 @@
                         android:layout_height="wrap_content"
                         android:text="@string/tip_create_account_one"/>
                     <TextView
+                        android:id="@+id/tv_quick_account_tip"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tip_create_quick_account"
+                        android:visibility="gone"/>
+                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/tip_create_account_two"/>

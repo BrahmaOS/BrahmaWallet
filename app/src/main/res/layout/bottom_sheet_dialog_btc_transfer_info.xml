@@ -144,6 +144,7 @@
                     style="@style/ButtonSingle"
                     android:layout_marginTop="@dimen/space_normal"
                     android:text="@string/action_confirm"
+                    android:enabled="false"
                     android:textStyle="bold" />
 
             </LinearLayout>

@@ -1,0 +1,437 @@
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v4.widget.NestedScrollView
+            android:id="@+id/layout_add_quick_pay_account"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/layout_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:orientation="vertical">
+
+                    <FrameLayout
+                        android:id="@+id/guide_fragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <io.brahmaos.wallet.brahmawallet.view.HeightWrappingViewPager
+                            android:id="@+id/guide_vpager"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
+                        <LinearLayout
+                            android:id="@+id/indicator_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom"
+                            android:gravity="center"
+                            android:orientation="horizontal" />
+                    </FrameLayout>
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/btn_create_quick_account"
+                    style="@style/MainButtonSingle"
+                    android:layout_marginEnd="@dimen/icon_large_size"
+                    android:layout_marginStart="@dimen/icon_large_size"
+                    android:layout_marginTop="@dimen/space_largest"
+                    android:text="@string/action_create_pay_account" />
+
+                <TextView
+                    android:id="@+id/tv_quick_account_help"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_normal"
+                    android:gravity="center"
+                    android:text="@string/quick_pay_account_help"
+                    android:textColor="@color/master"
+                    android:textSize="@dimen/font_size_subheading" />
+            </LinearLayout>
+        </android.support.v4.widget.NestedScrollView>
+
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_refresh_layout_pay_account_info"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/main_bg">
+
+            <android.support.v4.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        android:orientation="horizontal"
+                        android:paddingBottom="@dimen/space_normal"
+                        android:paddingTop="20dp">
+
+                        <LinearLayout
+                            android:id="@+id/layout_pay_add_credit"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="@dimen/icon_pay_size"
+                                android:layout_height="@dimen/icon_pay_size"
+                                android:padding="2dp"
+                                android:src="@drawable/icon_pay_recharge" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/space_unit"
+                                android:text="@string/label_pay_recharge"
+                                android:textSize="@dimen/font_size_subheading" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/layout_pay_withdraw"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="@dimen/icon_pay_size"
+                                android:layout_height="@dimen/icon_pay_size"
+                                android:padding="2dp"
+                                android:src="@drawable/icon_pay_withdraw" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/space_unit"
+                                android:text="@string/label_pay_withdraw"
+                                android:textSize="@dimen/font_size_subheading" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/layout_pay_receipt"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="@dimen/icon_pay_size"
+                                android:layout_height="@dimen/icon_pay_size"
+                                android:padding="2dp"
+                                android:src="@drawable/icon_pay_payment" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/space_unit"
+                                android:text="@string/label_pay_receipt"
+                                android:textSize="@dimen/font_size_subheading" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/layout_pay_payment"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:visibility="gone"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="@dimen/icon_pay_size"
+                                android:layout_height="@dimen/icon_pay_size"
+                                android:padding="2dp"
+                                android:src="@drawable/icon_pay_receipt" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/space_unit"
+                                android:text="@string/label_pay_payment"
+                                android:textSize="@dimen/font_size_subheading" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/layout_pay_transfer"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="@dimen/icon_pay_size"
+                                android:layout_height="@dimen/icon_pay_size"
+                                android:padding="2dp"
+                                android:src="@drawable/icon_pay_receipt" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/space_unit"
+                                android:text="@string/label_pay_transfer"
+                                android:textSize="@dimen/font_size_subheading" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_normal"
+                        android:background="@color/white"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/space_normal"
+                            android:text="@string/label_account_balance" />
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingBottom="@dimen/space_small"
+                            android:paddingEnd="@dimen/space_normal"
+                            android:paddingStart="@dimen/space_normal"
+                            android:paddingTop="@dimen/space_small">
+
+                            <ImageView
+                                android:id="@+id/iv_eth_icon"
+                                android:layout_width="@dimen/icon_normal_size"
+                                android:layout_height="@dimen/icon_normal_size"
+                                android:layout_gravity="center"
+                                android:padding="@dimen/space_smaller"
+                                android:src="@drawable/icon_eth" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_marginStart="@dimen/space_smaller"
+                                android:layout_toEndOf="@id/iv_eth_icon"
+                                android:text="ETH (Ethereum)"
+                                android:textColor="@color/color_primary_text"
+                                android:textSize="@dimen/font_size_subtitle" />
+
+                            <TextView
+                                android:id="@+id/tv_eth_amount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerVertical="true"
+                                android:text="0.00"
+                                android:textColor="@color/color_primary_text"
+                                android:textSize="@dimen/font_size_subtitle" />
+                        </RelativeLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="1px"
+                            android:background="@color/viewfinder_btn_bg" />
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingBottom="@dimen/space_small"
+                            android:paddingEnd="@dimen/space_normal"
+                            android:paddingStart="@dimen/space_normal"
+                            android:paddingTop="@dimen/space_small">
+
+                            <ImageView
+                                android:id="@+id/iv_brm_icon"
+                                android:layout_width="@dimen/icon_normal_size"
+                                android:layout_height="@dimen/icon_normal_size"
+                                android:layout_gravity="center"
+                                android:padding="@dimen/space_smaller"
+                                android:src="@drawable/icon_brm" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_marginStart="@dimen/space_smaller"
+                                android:layout_toEndOf="@id/iv_brm_icon"
+                                android:text="BRM (BrahmaOS)"
+                                android:textColor="@color/color_primary_text"
+                                android:textSize="@dimen/font_size_subtitle" />
+
+                            <TextView
+                                android:id="@+id/tv_brm_amount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerVertical="true"
+                                android:text="0.00"
+                                android:textColor="@color/color_primary_text"
+                                android:textSize="@dimen/font_size_subtitle" />
+                        </RelativeLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="1px"
+                            android:background="@color/viewfinder_btn_bg" />
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingBottom="@dimen/space_small"
+                            android:paddingEnd="@dimen/space_normal"
+                            android:paddingStart="@dimen/space_normal"
+                            android:paddingTop="@dimen/space_small">
+
+                            <ImageView
+                                android:id="@+id/iv_btc_icon"
+                                android:layout_width="@dimen/icon_normal_size"
+                                android:layout_height="@dimen/icon_normal_size"
+                                android:layout_gravity="center"
+                                android:padding="@dimen/space_smaller"
+                                android:src="@drawable/icon_btc" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_marginStart="@dimen/space_smaller"
+                                android:layout_toEndOf="@id/iv_btc_icon"
+                                android:text="BTC (Bitcoin)"
+                                android:textColor="@color/color_primary_text"
+                                android:textSize="@dimen/font_size_subtitle" />
+
+                            <TextView
+                                android:id="@+id/tv_btc_amount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerVertical="true"
+                                android:text="0.00"
+                                android:textColor="@color/color_primary_text"
+                                android:textSize="@dimen/font_size_subtitle" />
+                        </RelativeLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_normal"
+                        android:background="@color/white"
+                        android:orientation="vertical"
+                        android:padding="@dimen/space_normal">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/space_normal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentLeft="true"
+                                android:text="@string/pay_recent_bills"
+                                android:textSize="@dimen/font_size_subheading" />
+
+                            <TextView
+                                android:id="@+id/tv_pay_trans_more"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:onClick="onClickLayout"
+                                android:text="@string/pay_more_bills"
+                                android:textColor="@color/colorPrimary"
+                                android:textSize="@dimen/font_size_subheading" />
+                        </RelativeLayout>
+
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <LinearLayout
+                                android:id="@+id/no_tx_layout"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:padding="8dp"
+                                android:orientation="vertical">
+                                <ImageView
+                                    android:layout_width="48dp"
+                                    android:layout_height="48dp"
+                                    android:layout_gravity="center"
+                                    android:src="@drawable/icon_no_tx"/>
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/space_smaller"
+                                    android:text="@string/no_transactions"
+                                    android:textAlignment="center"
+                                    android:textColor="@color/color_caption"
+                                    android:textSize="@dimen/font_size_body"/>
+                            </LinearLayout>
+                            <LinearLayout
+                                android:id="@+id/recent_bills_layout"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+                                <LinearLayout
+                                    android:id="@+id/bill_one"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:visibility="gone">
+                                    <include layout="@layout/recycler_pay_transaction" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:id="@+id/bill_two"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:visibility="gone">
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="1px"
+                                        android:background="@color/viewfinder_btn_bg" />
+                                    <include layout="@layout/recycler_pay_transaction" />
+                                </LinearLayout>
+                                <LinearLayout
+                                    android:id="@+id/bill_three"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:visibility="gone">
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="1px"
+                                        android:background="@color/viewfinder_btn_bg" />
+                                    <include layout="@layout/recycler_pay_transaction" />
+                                </LinearLayout>
+                            </LinearLayout>
+                        </FrameLayout>
+
+                    </LinearLayout>
+                </LinearLayout>
+            </android.support.v4.widget.NestedScrollView>
+        </android.support.v4.widget.SwipeRefreshLayout>
+    </FrameLayout>
+
+</android.support.design.widget.CoordinatorLayout>
