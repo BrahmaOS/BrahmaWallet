@@ -67,6 +67,11 @@ public class CommonUtil {
         return bigDecimal.divide(new BigDecimal(Math.pow(10, 18)), 4, BigDecimal.ROUND_HALF_UP);
     }
 
+    public static BigDecimal getAccountFromWeiAllDigit(BigInteger value) {
+        BigDecimal bigDecimal = new BigDecimal(value);
+        return bigDecimal.divide(new BigDecimal(Math.pow(10, 18)), 18, BigDecimal.ROUND_HALF_UP).stripTrailingZeros();
+    }
+
     public static BigDecimal convertBTCFromSatoshi(long value) {
         BigDecimal bigDecimal = new BigDecimal(value);
         return bigDecimal.divide(new BigDecimal(Math.pow(10, 8)), 8, BigDecimal.ROUND_HALF_UP);

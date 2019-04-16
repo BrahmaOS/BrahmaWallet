@@ -97,6 +97,8 @@ public class EthTransferActivity extends BaseActivity implements FingerprintCore
     EditText etReceiverAddress;
     @BindView(R.id.et_amount)
     EditText etAmount;
+    @BindView(R.id.tv_amount_all)
+    TextView tvAllAmount;
     @BindView(R.id.layout_text_input_remark)
     TextInputLayout layoutRemarkInput;
     @BindView(R.id.et_remark)
@@ -238,6 +240,10 @@ public class EthTransferActivity extends BaseActivity implements FingerprintCore
         });
         getGasPrice();
 
+        tvAllAmount.setOnClickListener(v -> {
+            showMaxTransferAmount();
+        });
+
         ivContacts.setOnClickListener(v -> {
             Intent intent = new Intent(EthTransferActivity.this, ChooseContactActivity.class);
             startActivityForResult(intent, ReqCode.CHOOSE_TRANSFER_CONTACT);
@@ -277,6 +283,36 @@ public class EthTransferActivity extends BaseActivity implements FingerprintCore
                 }
                 if (assets.getTokenEntity().getName().toLowerCase().equals(BrahmaConst.ETHEREUM.toLowerCase())) {
                     tvEthBalance.setText(String.valueOf(CommonUtil.getAccountFromWei(assets.getBalance())));
+                }
+            }
+        }
+    }
+
+    private void showMaxTransferAmount() {
+        for (AccountAssets assets : mAccountAssetsList) {
+            if (assets.getAccountEntity().getAddress().toLowerCase().equals(mAccount.getAddress().toLowerCase())) {
+                if (mToken.getName().toLowerCase().equals(BrahmaConst.ETHEREUM) &&
+                        assets.getTokenEntity().getName().toLowerCase().equals(BrahmaConst.ETHEREUM)) {
+                    gasPriceStr = etGasPrice.getText().toString().trim();
+                    gasLimitStr = etGasLimit.getText().toString().trim();
+                    if (gasPriceStr.length() < 1) {
+                        gasPriceStr = "20";
+                    }
+
+                    if (gasLimitStr.length() < 1) {
+                        gasLimitStr = "200000";
+                    }
+                    gasPrice = new BigDecimal(gasPriceStr);
+                    gasLimit = new BigInteger(gasLimitStr);
+                    BigInteger gasValue = Convert.toWei(new BigDecimal(gasLimit).multiply(gasPrice), Convert.Unit.GWEI).toBigInteger();
+                    // eth need to remove gas fee
+                    BigInteger maxAmount = assets.getBalance().subtract(gasValue);
+                    if (maxAmount.compareTo(BigInteger.ZERO) < 0) {
+                        maxAmount = BigInteger.ZERO;
+                    }
+                    etAmount.setText(String.valueOf(CommonUtil.getAccountFromWeiAllDigit(maxAmount)));
+                } else if (assets.getTokenEntity().getAddress().toLowerCase().equals(mToken.getAddress().toLowerCase())) {
+                    etAmount.setText(String.valueOf(CommonUtil.getAccountFromWeiAllDigit(assets.getBalance())));
                 }
             }
         }
@@ -423,10 +459,14 @@ public class EthTransferActivity extends BaseActivity implements FingerprintCore
             cancel = true;
         }
 
+        gasPrice = new BigDecimal(gasPriceStr);
+        gasLimit = new BigInteger(gasLimitStr);
+        BigDecimal gasValue = Convert.fromWei(Convert.toWei(new BigDecimal(gasLimit).multiply(gasPrice), Convert.Unit.GWEI), Convert.Unit.ETHER);
+
         // check the ether is enough
         if (!cancel && mToken.getName().toLowerCase().equals(BrahmaConst.ETHEREUM)) {
             totalBalance = ethTotalBalance;
-            if (CommonUtil.convertWeiFromEther(amount.add(BrahmaConst.DEFAULT_FEE)).compareTo(totalBalance) > 0) {
+            if (CommonUtil.convertWeiFromEther(amount.add(gasValue)).compareTo(totalBalance) > 0) {
                 tips = getString(R.string.tip_insufficient_eth);
                 cancel = true;
             }
@@ -441,9 +481,6 @@ public class EthTransferActivity extends BaseActivity implements FingerprintCore
             dialogTip.show();
             return;
         }
-
-        gasPrice = new BigDecimal(gasPriceStr);
-        gasLimit = new BigInteger(gasLimitStr);
 
         transferInfoDialog = new BottomSheetDialog(this);
         View view = getLayoutInflater().inflate(R.layout.bottom_sheet_dialog_transfer_info, null);
@@ -465,7 +502,6 @@ public class EthTransferActivity extends BaseActivity implements FingerprintCore
         TextView tvGasLimit = view.findViewById(R.id.tv_gas_limit);
         tvGasLimit.setText(gasLimitStr);
         TextView tvGasValue = view.findViewById(R.id.tv_gas_value);
-        BigDecimal gasValue = Convert.fromWei(Convert.toWei(new BigDecimal(gasLimit).multiply(gasPrice), Convert.Unit.GWEI), Convert.Unit.ETHER);
         tvGasValue.setText(String.valueOf(gasValue.setScale(9, BigDecimal.ROUND_HALF_UP)));
 
         TextView tvTransferAmount = view.findViewById(R.id.tv_dialog_transfer_amount);

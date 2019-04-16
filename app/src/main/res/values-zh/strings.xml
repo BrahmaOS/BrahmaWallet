@@ -216,6 +216,7 @@
     <string name="prompt_receiver_address">收款地址</string>
     <string name="prompt_amount">金额</string>
     <string name="prompt_remark">备注</string>
+    <string name="prompt_all_amount">全部</string>
     <string name="title_dialog_choose_account">选择账号</string>
     <string name="tip_error_address">提示: 地址一般为0x开头的42位字符</string>
     <string name="tip_same_address">地址不能为自己</string>

@@ -216,7 +216,7 @@
                             android:layout_height="wrap_content"
                             android:hint="@string/prompt_send_amount"
                             android:textSize="@dimen/font_size_subheading"
-                            android:inputType="text"/>
+                            android:inputType="numberDecimal"/>
                     </android.support.design.widget.TextInputLayout>
 
                     <RelativeLayout
@@ -285,7 +285,7 @@
                             android:layout_height="wrap_content"
                             android:textSize="@dimen/font_size_subheading"
                             android:hint="@string/prompt_receive_amount"
-                            android:inputType="text"/>
+                            android:inputType="numberDecimal"/>
                     </android.support.design.widget.TextInputLayout>
 
                     <RelativeLayout

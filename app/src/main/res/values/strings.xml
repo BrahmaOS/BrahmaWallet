@@ -219,6 +219,7 @@
     <string name="prompt_receiver_address">Receiver Address</string>
     <string name="prompt_amount">Amount</string>
     <string name="prompt_remark">Remark</string>
+    <string name="prompt_all_amount">All</string>
     <string name="prompt_gas_price">Gas Price</string>
     <string name="prompt_gas_limit">Gas Limit</string>
     <string name="unit_gas_price">Gwei</string>

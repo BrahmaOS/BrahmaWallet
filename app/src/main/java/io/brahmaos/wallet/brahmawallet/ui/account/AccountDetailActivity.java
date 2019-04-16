@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -155,41 +156,56 @@ public class AccountDetailActivity extends BaseActivity {
         });
         tvExportKeystore.setOnClickListener(v -> {
             final View dialogView = getLayoutInflater().inflate(R.layout.dialog_account_password, null);
-            AlertDialog passwordDialog = new AlertDialog.Builder(this)
+            EditText etPassword = dialogView.findViewById(R.id.et_password);
+            AlertDialog passwordDialog = new AlertDialog.Builder(this, R.style.Theme_AppCompat_Light_Dialog_Alert_Self)
                     .setView(dialogView)
                     .setCancelable(true)
                     .setPositiveButton(R.string.confirm, (dialog, which) -> {
                         dialog.cancel();
-                        String password = ((EditText) dialogView.findViewById(R.id.et_password)).getText().toString();
+                        String password = etPassword.getText().toString();
                         exportKeystore(password);
                     })
                     .create();
+            passwordDialog.setOnShowListener(dialog -> {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(etPassword, InputMethodManager.SHOW_IMPLICIT);
+            });
             passwordDialog.show();
         });
         tvExportPrivateKey.setOnClickListener(v -> {
             final View dialogView = getLayoutInflater().inflate(R.layout.dialog_account_password, null);
-            AlertDialog passwordDialog = new AlertDialog.Builder(this)
+            EditText etPassword = dialogView.findViewById(R.id.et_password);
+            AlertDialog passwordDialog = new AlertDialog.Builder(this, R.style.Theme_AppCompat_Light_Dialog_Alert_Self)
                     .setView(dialogView)
                     .setCancelable(true)
                     .setPositiveButton(R.string.confirm, (dialog, which) -> {
                         dialog.cancel();
-                        String password = ((EditText) dialogView.findViewById(R.id.et_password)).getText().toString();
+                        String password = etPassword.getText().toString();
                         exportPrivateKey(password);
                     })
                     .create();
+            passwordDialog.setOnShowListener(dialog -> {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(etPassword, InputMethodManager.SHOW_IMPLICIT);
+            });
             passwordDialog.show();
         });
         tvDeleteAccount.setOnClickListener(v -> {
             final View dialogView = getLayoutInflater().inflate(R.layout.dialog_account_password, null);
-            AlertDialog passwordDialog = new AlertDialog.Builder(this)
+            EditText etPassword = dialogView.findViewById(R.id.et_password);
+            AlertDialog passwordDialog = new AlertDialog.Builder(this, R.style.Theme_AppCompat_Light_Dialog_Alert_Self)
                     .setView(dialogView)
                     .setCancelable(true)
                     .setPositiveButton(R.string.confirm, (dialog, which) -> {
                         dialog.cancel();
-                        String password = ((EditText) dialogView.findViewById(R.id.et_password)).getText().toString();
+                        String password = etPassword.getText().toString();
                         prepareDeleteAccount(password);
                     })
                     .create();
+            passwordDialog.setOnShowListener(dialog -> {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(etPassword, InputMethodManager.SHOW_IMPLICIT);
+            });
             passwordDialog.show();
         });
     }
