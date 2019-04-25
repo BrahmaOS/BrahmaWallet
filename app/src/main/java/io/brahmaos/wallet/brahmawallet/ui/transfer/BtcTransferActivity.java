@@ -1,9 +1,7 @@
 package io.brahmaos.wallet.brahmawallet.ui.transfer;
 
 import android.Manifest;
-import android.animation.ObjectAnimator;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -17,35 +15,23 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.common.base.Splitter;
-import com.hwangjr.rxbus.RxBus;
 
-import org.bitcoinj.core.Transaction;
-import org.bitcoinj.core.Utils;
 import org.bitcoinj.kits.WalletAppKit;
-import org.web3j.crypto.CipherException;
-import org.web3j.protocol.exceptions.TransactionException;
-import org.web3j.utils.Convert;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -56,14 +42,9 @@ import io.brahmaos.wallet.brahmawallet.common.BrahmaConst;
 import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.common.ReqCode;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
-import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 import io.brahmaos.wallet.brahmawallet.event.EventTypeDef;
-import io.brahmaos.wallet.brahmawallet.model.AccountAssets;
-import io.brahmaos.wallet.brahmawallet.model.BitcoinDownloadProgress;
-import io.brahmaos.wallet.brahmawallet.service.BrahmaWeb3jService;
 import io.brahmaos.wallet.brahmawallet.service.BtcAccountManager;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
-import io.brahmaos.wallet.brahmawallet.service.MainService;
 import io.brahmaos.wallet.brahmawallet.statistic.utils.StatisticEventAgent;
 import io.brahmaos.wallet.brahmawallet.ui.account.BtcAccountAssetsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
@@ -80,7 +61,6 @@ import io.brahmaos.wallet.util.RxEventBus;
 import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 public class BtcTransferActivity extends BaseActivity implements FingerprintCore.SimpleAuthenticationCallback{
 

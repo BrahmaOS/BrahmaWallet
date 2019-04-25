@@ -1,5 +1,7 @@
 package io.brahmaos.wallet.util;
 
+import org.bitcoinj.core.Address;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -8,6 +10,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import io.brahmaos.wallet.brahmawallet.R;
+import io.brahmaos.wallet.brahmawallet.service.BtcAccountManager;
 
 
 /**
@@ -183,7 +188,17 @@ public class BitcoinPaymentURI {
         }
 
         if (!string.toLowerCase().startsWith(SCHEME)) {
-            return null;
+            Address address = null;
+            try {
+                address = Address.fromBase58(BtcAccountManager.getInstance().getNetworkParams(), string);
+            } catch (Exception ignored) {
+
+            }
+            if (address != null) {
+                return new BitcoinPaymentURI.Builder().address(address.toBase58()).build();
+            } else {
+                return null;
+            }
         }
 
         String bitcoinPaymentURIWithoutScheme = string.replaceFirst(SCHEME, "");
