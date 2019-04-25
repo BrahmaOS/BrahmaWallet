@@ -159,21 +159,37 @@
                             android:src="@drawable/icon_contacts"/>
                     </FrameLayout>
 
-                    <android.support.design.widget.TextInputLayout
+                    <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:theme="@style/customEditTextLineColor"
-                        android:layout_marginTop="@dimen/space_smaller"
-                        app:hintTextAppearance="@style/customEditTextHint">
-                        <EditText
-                            android:id="@+id/et_amount"
+                        android:layout_height="wrap_content">
+                        <android.support.design.widget.TextInputLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/prompt_amount"
-                            android:textSize="@dimen/font_size_subheading"
-                            android:inputType="numberDecimal"
-                            android:singleLine="true"/>
-                    </android.support.design.widget.TextInputLayout>
+                            android:theme="@style/customEditTextLineColor"
+                            android:layout_marginTop="@dimen/space_smaller"
+                            app:hintTextAppearance="@style/customEditTextHint">
+                            <EditText
+                                android:id="@+id/et_amount"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="@string/prompt_amount"
+                                android:textSize="@dimen/font_size_subheading"
+                                android:inputType="numberDecimal"
+                                android:singleLine="true"/>
+                        </android.support.design.widget.TextInputLayout>
+                        <TextView
+                            android:id="@+id/tv_amount_all"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingTop="10dp"
+                            android:paddingBottom="10dp"
+                            android:paddingStart="16dp"
+                            android:paddingEnd="4dp"
+                            android:layout_marginBottom="@dimen/space_unit"
+                            android:layout_gravity="end|bottom"
+                            android:textColor="@color/master"
+                            android:text="@string/prompt_all_amount"/>
+                    </FrameLayout>
 
                     <android.support.design.widget.TextInputLayout
                         android:id="@+id/layout_text_input_remark"

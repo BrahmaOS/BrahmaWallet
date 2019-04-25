@@ -28,8 +28,10 @@ import android.widget.TextView;
 import com.google.common.base.Splitter;
 
 import org.bitcoinj.kits.WalletAppKit;
+import org.web3j.utils.Convert;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +45,7 @@ import io.brahmaos.wallet.brahmawallet.common.IntentParam;
 import io.brahmaos.wallet.brahmawallet.common.ReqCode;
 import io.brahmaos.wallet.brahmawallet.db.entity.AccountEntity;
 import io.brahmaos.wallet.brahmawallet.event.EventTypeDef;
+import io.brahmaos.wallet.brahmawallet.model.AccountAssets;
 import io.brahmaos.wallet.brahmawallet.service.BtcAccountManager;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.statistic.utils.StatisticEventAgent;
@@ -86,6 +89,8 @@ public class BtcTransferActivity extends BaseActivity implements FingerprintCore
     EditText etReceiverAddress;
     @BindView(R.id.et_amount)
     EditText etAmount;
+    @BindView(R.id.tv_amount_all)
+    TextView tvAllAmount;
     @BindView(R.id.layout_text_input_remark)
     TextInputLayout layoutRemarkInput;
     @BindView(R.id.et_remark)
@@ -206,6 +211,10 @@ public class BtcTransferActivity extends BaseActivity implements FingerprintCore
             intent.putExtra(IntentParam.PARAM_ACCOUNT_TYPE, BrahmaConst.BTC_ACCOUNT_TYPE);
             startActivityForResult(intent, ReqCode.CHOOSE_TRANSFER_CONTACT);
         });
+
+        tvAllAmount.setOnClickListener(v -> {
+            showMaxTransferAmount();
+        });
     }
 
     @Override
@@ -291,6 +300,18 @@ public class BtcTransferActivity extends BaseActivity implements FingerprintCore
             tvAccountName.setText(account.getName());
             tvAccountAddress.setText(CommonUtil.generateSimpleAddress(kit.wallet().currentReceiveAddress().toBase58()));
             tvBtcBalance.setText(String.valueOf(CommonUtil.convertUnit(BrahmaConst.BITCOIN, kit.wallet().getBalance().value)));
+        }
+    }
+
+    private void showMaxTransferAmount() {
+        if (kit != null && kit.wallet() != null) {
+            int inputSize = kit.wallet().getUnspents().size();
+            // calculate transaction size
+            int txBytes = inputSize * 180 + 2 * 34 + 10 + 40;
+            String feePerByte = etBtcMinerFee.getText().toString().trim();
+            int feePrice = Integer.valueOf(feePerByte);
+            long maxAmount = kit.wallet().getBalance().value - feePrice * txBytes;
+            etAmount.setText(String.valueOf(CommonUtil.convertUnit(BrahmaConst.BITCOIN, maxAmount)));
         }
     }
 
