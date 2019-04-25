@@ -21,7 +21,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.brahmaos.wallet.brahmawallet.R;
-import io.brahmaos.wallet.brahmawallet.common.BrahmaConfig;
 import io.brahmaos.wallet.brahmawallet.db.entity.AllTokenEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 import io.brahmaos.wallet.brahmawallet.service.ImageManager;
@@ -47,12 +46,6 @@ public class TokensActivity extends BaseActivity {
     private AccountViewModel mViewModel;
     private List<TokenEntity> chooseTokes = null;
     private List<AllTokenEntity> allTokens = new ArrayList<>();
-    // test rinkerby token
-    private AllTokenEntity testToken = new AllTokenEntity(0, "BrahmaOS", "BRM(TEST)",
-                                          "0xb958c57d1896823b8f4178a21e1bf6796371eac4", "", 1, 100000);
-    // test ropsten
-    private AllTokenEntity ropstenKyberToken = new AllTokenEntity(0, "Kyber Network Test", "KNC(TEST)",
-            "0x4E470dc7321E84CA96FcAEDD0C8aBCebbAEB68C6", "", 1, 1000001);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,9 +63,6 @@ public class TokensActivity extends BaseActivity {
             if (allTokenEntities != null) {
                 BLog.i(tag(), "the length is:" + allTokenEntities.size());
                 allTokens = allTokenEntities;
-                if (BrahmaConfig.debugFlag) {
-                    allTokens.add(ropstenKyberToken);
-                }
             }
             refreshTokenList();
         });

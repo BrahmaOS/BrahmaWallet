@@ -49,7 +49,7 @@ public class BrahmaConfig {
     private static final String PAY_ACCOUNT_AVATAR_JPG_NAME = "avatar.jpg";
 
     // false: main net; true: ropsten testnet;
-    public static boolean debugFlag = true;
+    public static boolean debugFlag = false;
     private String networkUrl;
     private String languageLocale;
     private String currencyUnit;

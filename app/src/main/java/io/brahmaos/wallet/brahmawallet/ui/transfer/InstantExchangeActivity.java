@@ -63,9 +63,9 @@ import io.brahmaos.wallet.brahmawallet.ui.setting.HelpActivity;
 import io.brahmaos.wallet.brahmawallet.view.CustomProgressDialog;
 import io.brahmaos.wallet.brahmawallet.view.CustomStatusView;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
-import io.brahmaos.wallet.util.AnimationUtil;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
+import io.rayup.sdk.model.EthToken;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -958,6 +958,33 @@ public class InstantExchangeActivity extends BaseActivity {
                                             tvTransferStatus.setText(R.string.progress_transfer_success);
                                             BLog.i(tag(), "the transfer success");
                                             customStatusView.loadSuccess();
+
+                                            // add coin for home assets
+                                            if (!receiveToken.getSymbol().toUpperCase().equals(BrahmaConst.COIN_SYMBOL_ETH)) {
+                                                mViewModel.getAllTokens().observe(InstantExchangeActivity.this, allTokens -> {
+                                                    if (allTokens != null && allTokens.size() > 0) {
+                                                        for (AllTokenEntity allTokenEntity : allTokens) {
+                                                            if (allTokenEntity.getAddress().toLowerCase().equals(receiveToken.getContractAddress().toLowerCase())) {
+                                                                TokenEntity currentToken = new TokenEntity();
+                                                                currentToken.setAddress(allTokenEntity.getAddress());
+                                                                currentToken.setName(allTokenEntity.getName());
+                                                                currentToken.setShortName(allTokenEntity.getShortName());
+                                                                currentToken.setAvatar(allTokenEntity.getAvatar());
+                                                                currentToken.setCode(allTokenEntity.getCode());
+                                                                mViewModel.checkToken(currentToken).subscribeOn(Schedulers.io())
+                                                                        .observeOn(AndroidSchedulers.mainThread())
+                                                                        .subscribe(() -> {
+                                                                                    BLog.e(tag(), "Success to check token:" + currentToken.getName());
+                                                                                },
+                                                                                throwable -> {
+                                                                                    BLog.e(tag(), "Unable to check token", throwable);
+                                                                                });
+                                                            }
+                                                        }
+                                                    }
+                                                });
+                                            }
+
                                             new Handler().postDelayed(() -> {
                                                 transferInfoDialog.cancel();
                                                 Intent intent = new Intent();
