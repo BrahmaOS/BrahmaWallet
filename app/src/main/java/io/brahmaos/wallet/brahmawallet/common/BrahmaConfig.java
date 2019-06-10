@@ -386,7 +386,11 @@ public class BrahmaConfig {
     }
 
     public String getEtherscanTxsUrl(AccountEntity mAccount, TokenEntity mToken) {
-        String etherscanUrl = BrahmaConst.ETHERSCAN_BASE_URL + "address/" + mAccount.getAddress().toLowerCase();
+        String baseUrl = BrahmaConst.ETHERSCAN_BASE_URL;
+        if (BrahmaConfig.debugFlag) {
+            baseUrl = BrahmaConst.ETHERSCAN_ROPSTEN_BASE_URL;
+        }
+        String etherscanUrl = baseUrl + "address/" + mAccount.getAddress().toLowerCase();
         if (!mToken.getName().toLowerCase().equals(BrahmaConst.ETHEREUM)) {
             etherscanUrl += "#tokentxns";
         }
@@ -394,7 +398,11 @@ public class BrahmaConfig {
     }
 
     public String getEtherscanTxDetailUrl(String txHash) {
-        return BrahmaConst.ETHERSCAN_BASE_URL + "tx/" + txHash;
+        String baseUrl = BrahmaConst.ETHERSCAN_BASE_URL;
+        if (BrahmaConfig.debugFlag) {
+            baseUrl = BrahmaConst.ETHERSCAN_ROPSTEN_BASE_URL;
+        }
+        return baseUrl + "tx/" + txHash;
     }
 
     public String getBlochchainTxDetailUrl(String txHash) {
