@@ -54,6 +54,7 @@
     <string name="action_copy_address">Copy address</string>
     <string name="title_dialog_export_keystore">Export keystore</string>
     <string name="title_dialog_export_private_key">Export private key</string>
+    <string name="title_dialog_export_public_key">Export public key</string>
     <string name="title_dialog_export_mnemonics">Export mnemonics</string>
 
     <string name="export_keystore_tip_1">
@@ -109,6 +110,7 @@
     <string name="action_change_account_name">Change Name</string>
     <string name="action_change_password">Change Password</string>
     <string name="action_export_private_key">Export Private Key</string>
+    <string name="action_export_public_key">Export Public Key</string>
     <string name="action_export_keystore">Export Keystore</string>
     <string name="action_delete_account">Delete Account</string>
     <string name="action_export_mnemonics">Export Mnemonics</string>
@@ -219,6 +221,7 @@
     <string name="prompt_receiver_address">Receiver Address</string>
     <string name="prompt_amount">Amount</string>
     <string name="prompt_remark">Remark</string>
+    <string name="prompt_all_amount">All</string>
     <string name="prompt_gas_price">Gas Price</string>
     <string name="prompt_gas_limit">Gas Limit</string>
     <string name="unit_gas_price">Gwei</string>

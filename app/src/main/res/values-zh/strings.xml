@@ -53,6 +53,7 @@
     <string name="title_dialog_export_keystore">导出Keystore</string>
     <string name="title_dialog_export_private_key">导出私钥</string>
     <string name="title_dialog_export_mnemonics">导出助记词</string>
+    <string name="title_dialog_export_public_key">导出公钥</string>
     <string name="export_keystore_tip_1">
         离线保存，复制Keystore文件到安全、离线的地方保存。切勿保存到邮箱、网盘、聊天工具等，非常危险。
     </string>
@@ -106,6 +107,7 @@
     <string name="action_change_account_name">更改账号名</string>
     <string name="action_change_password">更改密码</string>
     <string name="action_export_private_key">导出私钥</string>
+    <string name="action_export_public_key">导出公钥</string>
     <string name="action_export_keystore">导出Keystore</string>
     <string name="action_delete_account">删除账号</string>
     <string name="action_export_mnemonics">导出助记词</string>
@@ -216,6 +218,7 @@
     <string name="prompt_receiver_address">收款地址</string>
     <string name="prompt_amount">金额</string>
     <string name="prompt_remark">备注</string>
+    <string name="prompt_all_amount">全部</string>
     <string name="title_dialog_choose_account">选择账号</string>
     <string name="tip_error_address">提示: 地址一般为0x开头的42位字符</string>
     <string name="tip_same_address">地址不能为自己</string>

@@ -45,6 +45,7 @@ import io.brahmaos.wallet.brahmawallet.service.ImageManager;
 import io.brahmaos.wallet.brahmawallet.service.MainService;
 import io.brahmaos.wallet.brahmawallet.ui.base.BaseActivity;
 import io.brahmaos.wallet.brahmawallet.ui.transaction.EthTransactionsActivity;
+import io.brahmaos.wallet.brahmawallet.ui.transaction.EtherscanTxsActivity;
 import io.brahmaos.wallet.brahmawallet.ui.transaction.TransactionsActivity;
 import io.brahmaos.wallet.brahmawallet.view.CustomProgressDialog;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
@@ -286,12 +287,12 @@ public class EthAccountAssetsActivity extends BaseActivity {
 
             holder.layoutAssets.setOnClickListener(v -> {
                 if (tokenEntity.getName().toLowerCase().equals(BrahmaConst.ETHEREUM)) {
-                    Intent intent = new Intent(EthAccountAssetsActivity.this, EthTransactionsActivity.class);
+                    Intent intent = new Intent(EthAccountAssetsActivity.this, EtherscanTxsActivity.class);
                     intent.putExtra(IntentParam.PARAM_ACCOUNT_INFO, account);
                     intent.putExtra(IntentParam.PARAM_TOKEN_INFO, tokenEntity);
                     startActivity(intent);
                 } else {
-                    Intent intent = new Intent(EthAccountAssetsActivity.this, TransactionsActivity.class);
+                    Intent intent = new Intent(EthAccountAssetsActivity.this, EtherscanTxsActivity.class);
                     intent.putExtra(IntentParam.PARAM_ACCOUNT_INFO, account);
                     intent.putExtra(IntentParam.PARAM_TOKEN_INFO, tokenEntity);
                     startActivity(intent);

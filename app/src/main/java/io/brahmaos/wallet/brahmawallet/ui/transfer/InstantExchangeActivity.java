@@ -63,9 +63,9 @@ import io.brahmaos.wallet.brahmawallet.ui.setting.HelpActivity;
 import io.brahmaos.wallet.brahmawallet.view.CustomProgressDialog;
 import io.brahmaos.wallet.brahmawallet.view.CustomStatusView;
 import io.brahmaos.wallet.brahmawallet.viewmodel.AccountViewModel;
-import io.brahmaos.wallet.util.AnimationUtil;
 import io.brahmaos.wallet.util.BLog;
 import io.brahmaos.wallet.util.CommonUtil;
+import io.rayup.sdk.model.EthToken;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -633,7 +633,7 @@ public class InstantExchangeActivity extends BaseActivity {
         sendTokensRecyclerView.getAdapter().notifyDataSetChanged();
     }
 
-    // show recevie kyber token
+    // show receive kyber token
     private void showReceiveKyberTokens() {
         InputMethodManager imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null) {
@@ -857,7 +857,7 @@ public class InstantExchangeActivity extends BaseActivity {
         String tips = "";
         boolean cancel = false;
 
-        if (!cancel && gasPriceStr.length() < 1) {
+        if (gasPriceStr.length() < 1) {
             tips = getString(R.string.tip_invalid_gas_price);
             cancel = true;
         }
@@ -929,16 +929,14 @@ public class InstantExchangeActivity extends BaseActivity {
         BigDecimal gasValue = Convert.fromWei(Convert.toWei(new BigDecimal(gasLimit).multiply(gasPrice), Convert.Unit.GWEI), Convert.Unit.ETHER);
         tvGasValue.setText(gasValue.setScale(9, BigDecimal.ROUND_HALF_UP).toString());
 
-        LinearLayout layoutTransferInfo = view.findViewById(R.id.layout_transfer_info);
         LinearLayout layoutTransferStatus = view.findViewById(R.id.layout_transfer_status);
         CustomStatusView customStatusView = view.findViewById(R.id.as_status);
         TextView tvTransferStatus = view.findViewById(R.id.tv_transfer_status);
         Button confirmBtn = view.findViewById(R.id.btn_commit_transfer);
-        BigDecimal finalAmount = amount;
         confirmBtn.setOnClickListener(v -> {
             final View dialogView = getLayoutInflater().inflate(R.layout.dialog_account_password, null);
-
-            AlertDialog passwordDialog = new AlertDialog.Builder(InstantExchangeActivity.this)
+            EditText etPassword = dialogView.findViewById(R.id.et_password);
+            AlertDialog passwordDialog = new AlertDialog.Builder(InstantExchangeActivity.this, R.style.Theme_AppCompat_Light_Dialog_Alert_Self)
                     .setView(dialogView)
                     .setCancelable(false)
                     .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel())
@@ -947,7 +945,7 @@ public class InstantExchangeActivity extends BaseActivity {
                         // show transfer progress
                         layoutTransferStatus.setVisibility(View.VISIBLE);
                         customStatusView.loadLoading();
-                        String password = ((EditText) dialogView.findViewById(R.id.et_password)).getText().toString();
+                        String password = etPassword.getText().toString();
                         BrahmaWeb3jService.getInstance().sendInstantExchangeTransfer(mAccount, sendToken,
                                 receiveToken, new BigDecimal(srcAmount), new BigDecimal(maxDestAmount),
                                 slippageRate, password, gasPrice, gasLimit)
@@ -960,6 +958,33 @@ public class InstantExchangeActivity extends BaseActivity {
                                             tvTransferStatus.setText(R.string.progress_transfer_success);
                                             BLog.i(tag(), "the transfer success");
                                             customStatusView.loadSuccess();
+
+                                            // add coin for home assets
+                                            if (!receiveToken.getSymbol().toUpperCase().equals(BrahmaConst.COIN_SYMBOL_ETH)) {
+                                                mViewModel.getAllTokens().observe(InstantExchangeActivity.this, allTokens -> {
+                                                    if (allTokens != null && allTokens.size() > 0) {
+                                                        for (AllTokenEntity allTokenEntity : allTokens) {
+                                                            if (allTokenEntity.getAddress().toLowerCase().equals(receiveToken.getContractAddress().toLowerCase())) {
+                                                                TokenEntity currentToken = new TokenEntity();
+                                                                currentToken.setAddress(allTokenEntity.getAddress());
+                                                                currentToken.setName(allTokenEntity.getName());
+                                                                currentToken.setShortName(allTokenEntity.getShortName());
+                                                                currentToken.setAvatar(allTokenEntity.getAvatar());
+                                                                currentToken.setCode(allTokenEntity.getCode());
+                                                                mViewModel.checkToken(currentToken).subscribeOn(Schedulers.io())
+                                                                        .observeOn(AndroidSchedulers.mainThread())
+                                                                        .subscribe(() -> {
+                                                                                    BLog.e(tag(), "Success to check token:" + currentToken.getName());
+                                                                                },
+                                                                                throwable -> {
+                                                                                    BLog.e(tag(), "Unable to check token", throwable);
+                                                                                });
+                                                            }
+                                                        }
+                                                    }
+                                                });
+                                            }
+
                                             new Handler().postDelayed(() -> {
                                                 transferInfoDialog.cancel();
                                                 Intent intent = new Intent();
@@ -1001,6 +1026,10 @@ public class InstantExchangeActivity extends BaseActivity {
                                 });
                     })
                     .create();
+            passwordDialog.setOnShowListener(dialog -> {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(etPassword, InputMethodManager.SHOW_IMPLICIT);
+            });
             passwordDialog.show();
         });
     }

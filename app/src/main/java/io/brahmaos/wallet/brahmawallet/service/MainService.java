@@ -246,8 +246,17 @@ public class MainService extends BaseService{
                     "", "", BrahmaConst.DEFAULT_TOKEN_SHOW_FLAG, BrahmaConst.COIN_CODE_ETH);
             AllTokenEntity brmToken = new AllTokenEntity(0, "BrahmaOS", "BRM",
                     "0xd7732e3783b0047aa251928960063f863ad022d8", "", BrahmaConst.DEFAULT_TOKEN_SHOW_FLAG, BrahmaConst.COIN_CODE_BRM);
+
+            // test ropsten
+            AllTokenEntity ropstenKyberToken = new AllTokenEntity(0, "Kyber Network Test", "KNC(TEST)",
+                    "0x4E470dc7321E84CA96FcAEDD0C8aBCebbAEB68C6", "", BrahmaConst.DEFAULT_TOKEN_SHOW_FLAG, 1000001);
             allTokenEntities.add(brmToken);
             allTokenEntities.add(ethToken);
+
+            if (BrahmaConfig.debugFlag) {
+                allTokenEntities.add(ropstenKyberToken);
+            }
+
             addressList.add("");
             addressList.add("0xd7732e3783b0047aa251928960063f863ad022d8");
             for (EthToken coin : coins) {

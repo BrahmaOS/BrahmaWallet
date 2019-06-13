@@ -15,8 +15,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.common.base.Splitter;
+import com.subgraph.orchid.encoders.Hex;
 
+import org.bitcoinj.core.ECKey;
+import org.bitcoinj.crypto.DeterministicKey;
 import org.bitcoinj.kits.WalletAppKit;
+import org.bitcoinj.wallet.DeterministicKeyChain;
+import org.bitcoinj.wallet.DeterministicSeed;
+import org.bitcoinj.wallet.KeyChain;
+import org.bitcoinj.wallet.Wallet;
 
 import java.util.List;
 
@@ -64,12 +71,18 @@ public class BtcAccountDetailActivity extends BaseActivity {
     TextView tvChangePassword;
     @BindView(R.id.tv_export_mnemonics)
     TextView tvExportMnemonics;
+    @BindView(R.id.tv_export_public_key)
+    TextView tvExportPublicKey;
+    @BindView(R.id.tv_export_private_key)
+    TextView tvExportPrivateKey;
 
     private int accountId;
     private AccountEntity account;
     private AccountViewModel mViewModel;
     private CustomProgressDialog progressDialog;
     private RelativeLayout mLayoutTouchID;
+    private String publicKey;
+    private String privateKey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,6 +122,16 @@ public class BtcAccountDetailActivity extends BaseActivity {
         WalletAppKit kit = BtcAccountManager.getInstance().getBtcWalletAppKit(account.getFilename());
         if (kit != null && kit.wallet() != null) {
             tvAccountAddress.setText(CommonUtil.generateSimpleAddress(kit.wallet().currentReceiveAddress().toBase58()));
+
+            Wallet wallet = kit.wallet();
+            DeterministicKeyChain deterministicKeyChain = wallet.getActiveKeyChain();
+            DeterministicKey refund = deterministicKeyChain.getKey(KeyChain.KeyPurpose.REFUND);
+            while (refund != null && refund.getDepth() > 0) {
+                refund = refund.getParent();
+            }
+            BLog.i(tag(), refund.toString());
+            publicKey = refund.getPublicKeyAsHex();
+            privateKey = refund.getPrivateKeyAsHex();
         }
 
         layoutAccountName.setOnClickListener(v -> {
@@ -160,6 +183,44 @@ public class BtcAccountDetailActivity extends BaseActivity {
             });
             passwordDialog.show();
         });
+
+        tvExportPublicKey.setOnClickListener(v -> {
+            final View dialogView = getLayoutInflater().inflate(R.layout.dialog_export_public_key, null);
+            TextView tvPublicKey = dialogView.findViewById(R.id.tv_dialog_public_key);
+            tvPublicKey.setText(publicKey);
+            AlertDialog privateKeyDialog = new AlertDialog.Builder(this)
+                    .setView(dialogView)
+                    .setCancelable(false)
+                    .setNegativeButton(R.string.cancel, ((dialog, which) -> {
+                        dialog.cancel();
+                    }))
+                    .setPositiveButton(R.string.copy, (dialog, which) -> {
+                        ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                        cm.setText(publicKey);
+                        showLongToast(R.string.tip_success_copy);
+                    })
+                    .create();
+            privateKeyDialog.show();
+        });
+
+        tvExportPrivateKey.setOnClickListener(v -> {
+            final View dialogView = getLayoutInflater().inflate(R.layout.dialog_account_password, null);
+            final EditText etPassword = dialogView.findViewById(R.id.et_password);
+            AlertDialog passwordDialog = new AlertDialog.Builder(this, R.style.Theme_AppCompat_Light_Dialog_Alert_Self)
+                    .setView(dialogView)
+                    .setCancelable(true)
+                    .setPositiveButton(R.string.confirm, (dialog, which) -> {
+                        dialog.cancel();
+                        String password = etPassword.getText().toString();
+                        exportPrivateKey(password);
+                    })
+                    .create();
+            passwordDialog.setOnShowListener(dialog -> {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(etPassword, InputMethodManager.SHOW_IMPLICIT);
+            });
+            passwordDialog.show();
+        });
     }
 
     private void exportMnemonics(String password) {
@@ -181,6 +242,35 @@ public class BtcAccountDetailActivity extends BaseActivity {
                         .setPositiveButton(R.string.copy, (dialog, which) -> {
                             ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                             cm.setText(mnemonicsCode);
+                            showLongToast(R.string.tip_success_copy);
+                        })
+                        .create();
+                privateKeyDialog.show();
+            }
+        } else {
+            showPasswordErrorDialog();
+        }
+    }
+
+    private void exportPrivateKey(String password) {
+        String mnemonicsCode = DataCryptoUtils.aes128Decrypt(account.getCryptoMnemonics(), password);
+        if (mnemonicsCode != null) {
+            List<String> mnemonicsCodes = Splitter.on(" ").splitToList(mnemonicsCode);
+            if (mnemonicsCodes.size() == 0 || mnemonicsCodes.size() % 3 > 0) {
+                showPasswordErrorDialog();
+            } else {
+                final View dialogView = getLayoutInflater().inflate(R.layout.dialog_export_private_key, null);
+                TextView tvPrivate = dialogView.findViewById(R.id.tv_dialog_private_key);
+                tvPrivate.setText(privateKey);
+                AlertDialog privateKeyDialog = new AlertDialog.Builder(this)
+                        .setView(dialogView)
+                        .setCancelable(false)
+                        .setNegativeButton(R.string.cancel, ((dialog, which) -> {
+                            dialog.cancel();
+                        }))
+                        .setPositiveButton(R.string.copy, (dialog, which) -> {
+                            ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                            cm.setText(privateKey);
                             showLongToast(R.string.tip_success_copy);
                         })
                         .create();
