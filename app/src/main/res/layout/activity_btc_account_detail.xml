@@ -152,16 +152,39 @@
                     android:focusable="true"
                     android:background="@drawable/list_item_bg"
                     android:text="@string/action_change_password"/>
+
                 <TextView
+                    android:layout_marginTop="@dimen/space_normal"
                     android:id="@+id/tv_export_mnemonics"
                     android:clickable="true"
                     android:focusable="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="1dp"
                     android:padding="@dimen/space_normal"
                     android:background="@drawable/list_item_bg"
                     android:text="@string/action_export_mnemonics"/>
+                <TextView
+                    android:id="@+id/tv_export_public_key"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:padding="@dimen/space_normal"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="@drawable/list_item_bg"
+                    android:text="@string/action_export_public_key"/>
+
+                <TextView
+                    android:id="@+id/tv_export_private_key"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:padding="@dimen/space_normal"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="@drawable/list_item_bg"
+                    android:text="@string/action_export_private_key"/>
+
                 <!--<include layout="@layout/horizontal_divider"/>
                 <TextView
                     android:id="@+id/tv_delete_account"

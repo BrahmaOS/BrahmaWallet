@@ -53,6 +53,7 @@
     <string name="title_dialog_export_keystore">导出Keystore</string>
     <string name="title_dialog_export_private_key">导出私钥</string>
     <string name="title_dialog_export_mnemonics">导出助记词</string>
+    <string name="title_dialog_export_public_key">导出公钥</string>
     <string name="export_keystore_tip_1">
         离线保存，复制Keystore文件到安全、离线的地方保存。切勿保存到邮箱、网盘、聊天工具等，非常危险。
     </string>
@@ -106,6 +107,7 @@
     <string name="action_change_account_name">更改账号名</string>
     <string name="action_change_password">更改密码</string>
     <string name="action_export_private_key">导出私钥</string>
+    <string name="action_export_public_key">导出公钥</string>
     <string name="action_export_keystore">导出Keystore</string>
     <string name="action_delete_account">删除账号</string>
     <string name="action_export_mnemonics">导出助记词</string>
