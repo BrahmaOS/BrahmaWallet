@@ -41,7 +41,7 @@ import io.brahmaos.wallet.brahmawallet.db.entity.ContactEntity;
 import io.brahmaos.wallet.brahmawallet.db.entity.TokenEntity;
 
 
-@Database(entities = {AccountEntity.class, TokenEntity.class, AllTokenEntity.class, ContactEntity.class}, version = 6, exportSchema = false)
+@Database(entities = {AccountEntity.class, TokenEntity.class, AllTokenEntity.class, ContactEntity.class}, version = 7, exportSchema = false)
 @TypeConverters(DateConverter.class)
 public abstract class WalletDatabase extends RoomDatabase {
 
@@ -102,6 +102,7 @@ public abstract class WalletDatabase extends RoomDatabase {
                 .addMigrations(MIGRATION_3_4)
                 .addMigrations(MIGRATION_4_5)
                 .addMigrations(MIGRATION_5_6)
+                .addMigrations(MIGRATION_6_7)
                 .build();
     }
 
@@ -158,6 +159,14 @@ public abstract class WalletDatabase extends RoomDatabase {
         public void migrate(SupportSQLiteDatabase database) {
             database.execSQL("ALTER TABLE tokens ADD COLUMN code INTEGER default 0 not null");
             database.execSQL("ALTER TABLE all_tokens ADD COLUMN code INTEGER default 0 not null");
+        }
+    };
+
+    private static final Migration MIGRATION_6_7 = new Migration(5, 6) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("INSERT INTO tokens (name, address, shortName, avatar, code) " +
+                    "values (\"Tether\", \"usdt\", \"USDT\", \"\", \"" + BrahmaConst.COIN_CODE_BTC + "\")");
         }
     };
 

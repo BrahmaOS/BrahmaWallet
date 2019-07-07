@@ -96,6 +96,7 @@ public class BrahmaConst {
     public static final int COIN_CODE_BTC = RayUpConst.COIN_BTC;
     public static final int COIN_CODE_ETH = RayUpConst.COIN_ETH;
     public static final int COIN_CODE_BRM = RayUpConst.COIN_BRM;
+    public static final int COIN_CODE_USDT = RayUpConst.COIN_USDT;
 
     public static final String COIN_BTC = "Bitcoin";
     public static final String COIN_ETH = "Ethereum";

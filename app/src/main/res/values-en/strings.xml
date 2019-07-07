@@ -10,6 +10,7 @@
     <string name="unit_usd">USD</string>
     <string name="account_eth">ETH</string>
     <string name="account_btc">BTC</string>
+    <string name="account_usdt">USDT</string>
     <string name="create">Create</string>
 
     <string name="title_brahma_wallet">Wallet</string>

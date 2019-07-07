@@ -8,6 +8,7 @@
     <string name="delete">删除</string>
     <string name="unit_cny">CNY</string>
     <string name="unit_usd">USD</string>
+    <string name="account_usdt">USDT</string>
     <string name="create">立即创建</string>
 
     <string name="title_brahma_wallet">梵钱包</string>
