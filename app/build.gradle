@@ -113,8 +113,16 @@ dependencies {
     // Paging
     implementation 'android.arch.paging:runtime:1.0.0-beta1'
     implementation 'me.yokeyword:indexablerecyclerview:1.3.0'
-    implementation 'org.bitcoinj:bitcoinj-core:0.14.7'
+    implementation 'org.bitcoinj:bitcoinj-core:0.15.1'
     implementation 'com.aurelhubert:ahbottomnavigation:2.2.0'
     implementation files('libs/rayup-api-1.6.0b5.jar')
 
+    implementation 'foundation.omni:omnij-core:0.5.8'
+    implementation 'foundation.omni:omnij-dsl:0.5.8'
+    implementation 'foundation.omni:omnij-money:0.5.8'
+    implementation ('foundation.omni:omnij-rest-client:0.5.8')
+    implementation ('foundation.omni:omnij-rpc:0.5.8')
+    implementation ('foundation.omni:omnij-cli:0.5.8') {
+        exclude group: 'org.slf4j', module: 'slf4j-simple'
+    }
 }
